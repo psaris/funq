@@ -1,2 +1,2 @@
 # funq
-A Functional Introduction to Machine Learning in Q
+Fun Q: A Functional Introduction to Machine Learning in Q

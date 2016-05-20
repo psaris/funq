@@ -4,8 +4,8 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 
 ## Plotting
 ## Least Squares Regression
-## Gradeint Descent
+## Gradient Descent
 ## Logistic Regression
-## One vs All
+## One vs All Logistic Regression
 ## Neural Networks
 ## Clustering

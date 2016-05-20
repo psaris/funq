@@ -255,7 +255,7 @@ plt X
 .ml.kmedians[X]\[k]             / manhattan distance (taxicab metric)
 
 / classic machine learning iris data
-iris:("FFFFS";1#",") 0: `iris.txt
+iris:("FFFFS";1#",") 0: `iris.csv
 X:value flip 4#/:iris
 plt X 3
 

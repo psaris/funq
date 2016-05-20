@@ -19,7 +19,6 @@ plot:{[w;h;c;X]
  p:reverse k!p;                                        / generate plot
  p}
 
-c10:" .:-=+*#%@"          / http://paulbourke.net/dataformats/asciiart
 c10:" .-:=+x#%@"          / 10 characters
 c16:" .-:=+*xoXO#$&%@"    / 16 characters
 c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"

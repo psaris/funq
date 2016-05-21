@@ -5,7 +5,7 @@
 /\l qml.q
 \c 20 80
 
-/ box-muller (copied from qtips/stat.q)
+/ box-muller (copied from qtips/stat.q) (m?-n in k6)
 bm:{
  if[count[x] mod 2;'`length];
  x:2 0N#x;
@@ -14,6 +14,13 @@ bm:{
  x: r*cos theta;
  x,:r*sin theta;
  x}
+
+/ (h)ttp (g)et (.Q.hg in 3.4)
+hg:{
+ h:(1+i 1)_ first x:(0,(count x)^(i:where "/"=x)2)_x:string x;
+ m:"GET ",((2<count i)_"/",x 1)," HTTP/1.1\r\nHost: ",h,s:"\r\n\r\n";
+ c:(4+first r ss s)_r:(`$((count first x)^i 2)# first x) m;
+ c}
 
 \
 / define a plotting function
@@ -137,7 +144,10 @@ plt X,Y
 plt X,.ml.lpredict[X] enlist THETA
 
 / digit recognition
-/ multiple runs of logistic regression (one for each digit)
+
+/ download data
+f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";"t10k-images-idx3-ubyte")
+{if[()~key hsym `$x;(`$":",x) 1: hg hsym `$"http://yann.lecun.com/exdb/mnist/",x,:".gz";system"gunzip -v ",x]} each f
 
 / load training data
 Y:enlist y:"i"$.mnist.ldidx read1 `$"train-labels-idx1-ubyte"
@@ -155,6 +165,7 @@ THETA:(1;1+count X)#0f
 mf:(first .fmincg.fmincg[20;;THETA 0]@) / pass minimization func as parameter
 cgf:.ml.rlogcostgrad[lambda;X]          / cost gradient function
 
+/ multiple runs of logistic regression (one for each digit)
 / train one set of parameters for each number
 / NOTE: peach across digits
 THETA:.ml.onevsall[mf;cgf;Y;lbls]

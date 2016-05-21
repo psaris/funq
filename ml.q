@@ -96,11 +96,11 @@ checknngradients:{[l;n]
 / n can be any network topology dimension
 nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  THETA:mcut[n] theta;
- X1:last a:lpredict\[enlist[X],THETA];
+ Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
- J:lcost[X1;YMAT];
+ J:lcost[Y;YMAT];
  if[l>0f;J+:(l%2*n)*{x$x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
- D:X1-YMAT;
+ D:Y-YMAT;
  a:addint each -1_a;
  D:{[D;THETA;a]1_(flip[THETA]$D)*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
  g:(a($/:)'D)%n;

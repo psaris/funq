@@ -177,6 +177,9 @@ p w:where not y=p
 plt X[;i:rand w]
 ([]p;y) i
 
+/ confusion matrix
+.ml.cm[y;"i"$p]
+
 / confirm analytic gradient is equal to numeric gradient
 .ml.checknngradients[.1f;3 5 3]
 
@@ -235,18 +238,15 @@ Yt:enlist yt:"i"$.mnist.ldidx read1 `$"t10k-labels-idx1-ubyte"
 Xt:flip "f"$raze each .mnist.ldidx read1 `$"t10k-images-idx3-ubyte"
 
 / how well can we predict
-100*avg yt=p:.ml.predictonevsall[Xt] .ml.mcut[n] theta
+100*avg yt=p:.ml.predictonevsall[Xt] enlist THETA
 
 / view a few mistakes
 p w:where not yt=p
 plt Xt[;rw:rand w]
 ([]p;yt) rw
 
-/ which digits are difficult to learn
-desc count each group yt w
-
-/ which digits are often mistaken for each other
-desc count each group ([]p;yt) w
+/ confusion matrix
+.ml.cm[yt;"i"$p]
 
 / clustering
 

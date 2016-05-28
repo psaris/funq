@@ -75,6 +75,13 @@ imin:{x?min x}                  / index of min element
 / predict each number and pick best
 predictonevsall:{[X;THETA]imax each flip X lpredict/ THETA}
 
+/ confusion matrix
+cm:{
+ n:count u:asc distinct x,y;
+ m:.[;;1+]/[(n;n)#0;flip (u?y;u?x)];
+ t:([]x:u)!flip (`$string[u])!m;
+ t}
+
 / cut a vector into n matrices
 mcut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}

@@ -282,3 +282,9 @@ show g:.ml.cgroup[.ml.edist;X;C]
 / plot errors with increasing number of centroids
 plt (.ml.distortion .ml.ecdist[X] .ml.kmeans[X]@) each neg 1+til 10
 
+/ heirarchical agglomerative clustering (HAC)
+l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering
+t:.ml.tree flip 2#l                 / build dendrogram
+plt 10#reverse l 2                  / determine optimal number of clusters
+g:2 1 0!(raze/) each 2 .ml.slice/ t / cut into 3 clusters
+100*avg iris.species=distinct[iris.species] .ml.ugrp g

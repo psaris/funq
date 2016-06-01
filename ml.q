@@ -164,3 +164,53 @@ distortion:sum sum each
 
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}
+
+/ dissimilarity matrix
+dismat:{[df;X].[;;:;0w]/[df[X] each flip X;flip (i;i:til count X 0)]}
+
+/ lance-williams algorithm update functions
+single:{.5 .5 0 -.5}
+complete:{.5 .5 0 .5}
+average:{(x%sum x _:2),0 0f}
+weighted:{.5 .5 0 0}
+centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
+ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
+
+/ implementation of lance-williams algorithm for performing
+/ heirarchical agglomerative clustering. given (u)pdate (f)unction to
+/ determine distance between new and remaining clusters and
+/ (d)issimilarity (m)atrix, return (from;to;distance;#elements).  uf
+/ in `single`complete`average`weighted`centroid`ward
+lm:{[uf;dm]
+ n:count dm 0;
+ if[0w=d@:i:.ml.imin d:(n#dm)@'dm n;:dm]; / find closest clusters
+ j:dm[n] i;                               / find j
+ c:uf (count each group dm[n+1])@/:(i;j;til n); / determine coefficients
+ nd:sum c*nd,d,enlist abs(-/)nd:dm(i;j);        / calc new distances
+ dm[til n;i]:dm[i]:nd;                          / update distances
+ dm[i;i]:0w;                                    / fix diagonal
+ dm[j;(::)]:0w;                                 / erase j
+ dm[til n+2;j]:(n#0w),i,i;    / erase j and set aux data
+ dm[n]:.ml.imin each n#dm;    / find next closest element
+ dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
+ dm[n+2 3 4 5;dm[n+2]?0N]:(j;i;d;count where i=dm n+1);
+ dm}
+
+/ given a (d)istance (f)unction and (u)pdate (f)unction, construct the
+/ linkage (dendrogram) statistics of data in X
+linkage:{[df;uf;X]
+ dm:dismat[df] X;
+ dm,:enlist .ml.imin each dm;
+ dm,:enlist til count dm 0;
+ dm,:(1;1;1f;1)*(4;count dm 0)#0N;
+ l:-1_'-4#lm[uf] over dm;
+ l}
+
+/ merge node y[0] into y[1] in tree x
+graft:{@[x;y;:;(::;x y)]}
+
+/ build a complete dendrogram from linkage data x
+tree:{1#(til[1+count x],(::)) graft/ x}
+
+/ cut a single layer off tree
+slice:{$[type x;x;type f:first x;(1_x),f;type ff:first f;(1_f),(1_x),ff;f,1_x]}

@@ -8,4 +8,5 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## Logistic Regression
 ## One vs All Logistic Regression
 ## Neural Networks
-## Clustering
+## K-Means/Medians Clustering
+## Heirarchical Agglomerative Clustering

@@ -2,7 +2,7 @@
 \l mnist.q
 \l plot.q
 \l fmincg.q
-\l /Users/nick/q/qml/src/qml.q
+/\l qml.q
 \c 20 80
 
 / box-muller (copied from qtips/stat.q) (m?-n in k6)
@@ -282,7 +282,7 @@ show g:.ml.cgroup[.ml.edist;X;C]
 / plot errors with increasing number of centroids
 plt (.ml.distortion .ml.ecdist[X] .ml.kmeans[X]@) each neg 1+til 10
 
-/ heirarchical agglomerative clustering (HAC)
+/ heirarchical (agglomerative) clustering analysis (HCA)
 l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering
 t:.ml.tree flip 2#l                 / build dendrogram
 plt 10#reverse l 2                  / determine optimal number of clusters

@@ -9,4 +9,5 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## One vs All Logistic Regression
 ## Neural Networks
 ## K-Means/Medians Clustering
-## Heirarchical Agglomerative Clustering
+## Heirarchical Clustering Analysis (HCA)
+## Expectation Maximization (EM)

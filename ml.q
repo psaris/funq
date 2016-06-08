@@ -214,3 +214,49 @@ tree:{1#(til[1+count x],(::)) graft/ x}
 
 / cut a single layer off tree
 slice:{$[type x;x;type f:first x;(1_x),f;type ff:first f;(1_f),(1_x),ff;f,1_x]}
+
+/ binomial pdf (not atomic because of factorial)
+binpdf:{[n;k;p]
+ if[0<max type each (n;p;k);:.z.s'[n;k;p]];
+ r:prd[1+k+til n]%prd 1+til n-:k;
+ r*:prd (p;1f-p) xexp (k;n);
+ r}
+
+/ binomial log likelihood
+binll:{[n;k;p](k*log p)+(n-k)*log 1f-p}
+/ binomial likelihood approximation (without the coefficient)
+binla:{[n;k;p](p xexp k)*(1f-p) xexp n-k}
+/ binomial maximum likelihood
+binml:{[n;x;w]{(1#x)%sum x}w$/:"f"$(x;n-x)}
+
+/ gaussian
+gauss:{[mu;s;x]
+ p:exp -.5*(x*x-:mu)%s*s;
+ p%:s*sqrt 2f*acos -1f;
+ p}
+
+/ gaussian multivariate
+gaussmv:{[mu;s2;X]
+ if[type s2;s2:diag count[X]#s2];
+ p:exp -.5*sum X*inv[s2]$X-:mu;
+ p*:sqrt 1f%.qml.mdet s2;
+ p*:(2f*acos -1f) xexp -.5*count X;
+ p}
+
+/ gaussian maximum likelihood
+gaussml:{[X;w](mu;sqrt w wavg X*X-:mu:w wavg X)}
+/ gaussian maximum likelihood multi variate
+gaussmlmv:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
+
+/ guassian log likelihood
+gaussll:{[mu;s2;X] -.5*sum (log 2*acos -1f;log s2;(X*X-:mu)%s2)}
+
+/ (l)ikelhood (f)unction, (m)aximization (f)unction
+/ with prior probabilities (p)hi and distribution parameters (t)heta
+em:{[lf;mf;X;pt]
+ if[0>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
+ l:$[1<count pt;(lf[X] .) peach flip 1_pt;count[$[type X;X;X 0]]?/:count[pt 0]#1f];
+ W:p%\:sum p:l*phi:pt 0;         / weights (responsibilities)
+ if[0h<type phi;phi:avg each W]; / new prior probabilities (if phi is a list)
+ theta:flip mf[X] peach W;       / new coefficients
+ enlist[phi],theta}

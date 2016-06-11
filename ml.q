@@ -177,15 +177,15 @@ centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
 ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
 / implementation of lance-williams algorithm for performing
-/ hierarchical agglomerative clustering. given (u)pdate (f)unction to
+/ hierarchical agglomerative clustering. given (l)inkage (f)unction to
 / determine distance between new and remaining clusters and
-/ (d)issimilarity (m)atrix, return (from;to;distance;#elements).  uf
+/ (d)issimilarity (m)atrix, return (from;to;distance;#elements).  lf
 / in `single`complete`average`weighted`centroid`ward
-lm:{[uf;dm]
+lw:{[lf;dm]
  n:count dm 0;
  if[0w=d@:i:.ml.imin d:(n#dm)@'dm n;:dm]; / find closest clusters
  j:dm[n] i;                               / find j
- c:uf (count each group dm[n+1])@/:(i;j;til n); / determine coefficients
+ c:lf (count each group dm[n+1])@/:(i;j;til n); / determine coefficients
  nd:sum c*nd,d,enlist abs(-/)nd:dm(i;j);        / calc new distances
  dm[til n;i]:dm[i]:nd;                          / update distances
  dm[i;i]:0w;                                    / fix diagonal
@@ -196,14 +196,14 @@ lm:{[uf;dm]
  dm[n+2 3 4 5;dm[n+2]?0N]:(j;i;d;count where i=dm n+1);
  dm}
 
-/ given a (d)istance (f)unction and (u)pdate (f)unction, construct the
+/ given a (d)istance (f)unction and (l)inkage (f)unction, construct the
 / linkage (dendrogram) statistics of data in X
-linkage:{[df;uf;X]
+linkage:{[df;lf;X]
  dm:dismat[df] X;
  dm,:enlist .ml.imin each dm;
  dm,:enlist til count dm 0;
  dm,:(1;1;1f;1)*(4;count dm 0)#0N;
- l:-1_'-4#lm[uf] over dm;
+ l:-1_'-4#lw[lf] over dm;
  l}
 
 / merge node y[0] into y[1] in tree x

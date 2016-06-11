@@ -282,7 +282,7 @@ show g:.ml.cgroup[.ml.edist;X;C]
 / plot errors with increasing number of centroids
 plt (.ml.distortion .ml.ecdist[X] .ml.kmeans[X]@) each neg 1+til 10
 
-/ heirarchical (agglomerative) clustering analysis (HCA)
+/ hierarchical (agglomerative) clustering analysis (HCA)
 l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering
 t:.ml.tree flip 2#l                 / build dendrogram
 plt 10#reverse l 2                  / determine optimal number of clusters
@@ -300,7 +300,7 @@ theta: .6 .5                    / initial coefficients
 lf:.ml.binla[n]                 / likelhood function
 mf:.ml.binml[n]                 / parameter maximization function
 / pass phi as 1 because coins are picked with equal probability
-.ml.em[lf;mf;x] (1;theta) 
+.ml.em[lf;mf;x] (1;theta)
 .ml.em[lf;mf;x] over (1;theta)  / call until convergence
 .ml.em[lf;mf;x] over 2          / let .ml.em initialize parameters
 / which flips came from which theta? pick maximum log likelhood

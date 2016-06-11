@@ -177,7 +177,7 @@ centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
 ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
 / implementation of lance-williams algorithm for performing
-/ heirarchical agglomerative clustering. given (u)pdate (f)unction to
+/ hierarchical agglomerative clustering. given (u)pdate (f)unction to
 / determine distance between new and remaining clusters and
 / (d)issimilarity (m)atrix, return (from;to;distance;#elements).  uf
 / in `single`complete`average`weighted`centroid`ward

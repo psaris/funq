@@ -270,17 +270,17 @@ iris:("FFFFS";1#",") 0: `iris.csv
 I:value flip 4#/:iris
 plt I 3
 
-/ find 3 centroids
-flip  C:.ml.kmeans[I]/[-3]
-
-/ classify
-show g:.ml.cgroup[.ml.edist;I;C]
-
-/ how well can we predict
-100*avg iris.species=distinct[iris.species] .ml.ugrp g
+flip  C:.ml.kmeans[I]/[-3]       / find 3 centroids
+show g:.ml.cgroup[.ml.edist;I;C] / classify
+100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 
 / plot errors with increasing number of centroids
 plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
+
+/ cosine similarity (distance)
+flip C:.ml.lloyd[.ml.cosdist;avg;I]/[-3] /find 3 centroids
+show g:.ml.cgroup[.ml.cosdist;I;C]       / classify
+100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 
 / hierarchical (agglomerative) clustering analysis (HCA)
 l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering

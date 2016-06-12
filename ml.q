@@ -129,8 +129,10 @@ sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 
 edist:{sum x*x-:y}              / euclidian distance
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
-
 hmean:{1f%avg 1f%x}             / harmonic mean
+
+cossim:{(sum x*y)%sqrt(sum x*x)*sum y*y} / cosine similarity
+cosdist:(')[1f-;cossim]                  / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid

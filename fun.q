@@ -362,3 +362,9 @@ g:0 1 2!value group .ml.imax each flip lf[I]'[a[1];a[2]]
 / from 3 closest points trained on 100 observations
 nn:.ml.knn[.ml.edist;3;iris.species i;X@\:i]'[flip X (_')/i:desc -100?count X 0]
 100*avg nn=iris.species _/i
+
+/ markov clustering
+/ https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pd
+sm:.5<simmat[.ml.edist;1%sqrt 2] I / similarity matrix
+distinct  where each flip 0< .ml.mcl[2;1.5;10] over sm
+/ are there 4 species: www.siam.org/students/siuro/vol4/S01075.pdf

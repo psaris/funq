@@ -169,6 +169,7 @@ ugrp:{(key[x] where count each value x)iasc raze x}
 
 / dissimilarity matrix
 dismat:{[df;X].[;;:;0w]/[df[X] each flip X;flip (i;i:til count X 0)]}
+simmat:{[df;s;X]exp neg .ml.dismat[df;X]%2*s*s}  / similarity matrix
 
 / lance-williams algorithm update functions
 single:{.5 .5 0 -.5}
@@ -271,3 +272,13 @@ mode:{where max[x]=x:count each group x}
 / pick k closest values to x from training data X and return the
 / (c)lassification that occurs most frequently
 knn:{[df;k;c;X;x]first mode c k#iasc df[X;x]}
+
+/ markov clusetering
+/ if type of X is not a real or float, add loops and normalize
+/ (p)rune is an integer, take p largest, otherwise take everything > p
+mcl:{[e;r;p;X]
+ if[8h>type X 0;X%:sum each X|:.ml.diag count[X]#1b];
+ X:xexp[(e-1)$[X]/X;r];
+ X*:$[-8h<type p;(p>iasc idesc@)';p<]X;
+ X%:sum each X;
+ X}

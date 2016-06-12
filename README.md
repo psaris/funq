@@ -11,3 +11,4 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## K-Means/Medians Clustering
 ## Hierarchical Clustering Analysis (HCA)
 ## Expectation Maximization (EM)
+## K-Nearest Neighbors

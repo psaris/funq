@@ -260,3 +260,12 @@ em:{[lf;mf;X;pt]
  if[0h<type phi;phi:avg each W]; / new prior probabilities (if phi is a list)
  theta:flip mf[X] peach W;       / new coefficients
  enlist[phi],theta}
+
+/ return value(s) which occur most frequently
+mode:{where max[x]=x:count each group x}
+
+/ k nearest neighbors
+
+/ pick k closest values to x from training data X and return the
+/ (c)lassification that occurs most frequently
+knn:{[df;k;c;X;x]first mode c k#iasc df[X;x]}

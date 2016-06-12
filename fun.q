@@ -267,20 +267,20 @@ plt X
 
 / classic machine learning iris data
 iris:("FFFFS";1#",") 0: `iris.csv
-X:value flip 4#/:iris
-plt X 3
+I:value flip 4#/:iris
+plt I 3
 
 / find 3 centroids
-flip  C:.ml.kmeans[X]/[-3]
+flip  C:.ml.kmeans[I]/[-3]
 
 / classify
-show g:.ml.cgroup[.ml.edist;X;C]
+show g:.ml.cgroup[.ml.edist;I;C]
 
 / how well can we predict
 100*avg iris.species=distinct[iris.species] .ml.ugrp g
 
 / plot errors with increasing number of centroids
-plt (.ml.distortion .ml.ecdist[X] .ml.kmeans[X]@) each neg 1+til 10
+plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
 
 / hierarchical (agglomerative) clustering analysis (HCA)
 l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering
@@ -344,15 +344,21 @@ mf:.ml.gaussmlmv
 
 / lets try the iris data again for >2d
 
-X:value flip 4#/:iris
 k:count distinct iris`species
 phi:k#1f%k                      / equal prior probability
-mu:flip X[;neg[k]?count X 0]    / random initialization
-S:k#enlist X cov\:/: X          / sample covariance
+mu:flip I[;neg[k]?count I 0]    / random initialization
+S:k#enlist I cov\:/: I          / sample covariance
 lf:{.ml.gaussmv[y;z;x]}
 mf:.ml.gaussmlmv
-.ml.em[lf;mf;X] over (phi;mu;S)
-a:.ml.em[lf;mf;X] over k          / let .ml.em initialize parameters
+.ml.em[lf;mf;I] over (phi;mu;S)
+a:.ml.em[lf;mf;I] over k          / let .ml.em initialize parameters
 / how well did it cluster the data?
-g:0 1 2!value group .ml.imax each flip lf[X]'[a[1];a[2]]
+g:0 1 2!value group .ml.imax each flip lf[I]'[a[1];a[2]]
 100*avg iris.species=distinct[iris.species] .ml.ugrp g
+
+/ k nearest neighbors
+
+/ pick classification that occurs most frequently
+/ from 3 closest points trained on 100 observations
+nn:.ml.knn[.ml.edist;3;iris.species i;X@\:i]'[flip X (_')/i:desc -100?count X 0]
+100*avg nn=iris.species _/i

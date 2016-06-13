@@ -15,13 +15,6 @@ bm:{
  x,:r*sin theta;
  x}
 
-/ (h)ttp (g)et (.Q.hg in 3.4)
-hg:{
- h:(1+i 1)_ first x:(0,(count x)^(i:where "/"=x)2)_x:string x;
- m:"GET ",((2<count i)_"/",x 1)," HTTP/1.1\r\nHost: ",h,s:"\r\n\r\n";
- c:(4+first r ss s)_r:(`$((count first x)^i 2)# first x) m;
- c}
-
 \
 / define a plotting function
 plt:.plot.plot[28;15;1_.plot.c16]
@@ -147,7 +140,7 @@ plt X,.ml.lpredict[X] enlist THETA
 
 / download data
 f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";"t10k-images-idx3-ubyte")
-{if[()~key hsym `$x;(`$":",x) 1: hg hsym `$"http://yann.lecun.com/exdb/mnist/",x,:".gz";system"gunzip -v ",x]} each f
+{if[()~key hsym `$x;(`$":",x) 1: .Q.hg hsym `$"http://yann.lecun.com/exdb/mnist/",x,:".gz";system"gunzip -v ",x]} each f
 
 / load training data
 Y:enlist y:"i"$.mnist.ldidx read1 `$"train-labels-idx1-ubyte"
@@ -207,17 +200,15 @@ mf:{first .fmincg.fmincg[5;.ml.nncost[0f;n;X[;y];YMAT[;y]];x]}
 
 /https://www.quora.com/Whats-the-difference-between-gradient-descent-and-stochastic-gradient-descent
 / A: permutate, run n non-permuted epochs
-i:{neg[x]?x} count X 0;X:X[;i];YMAT:YMAT[;i];Y:Y[;i];y:Y 0
+i:0N?count X 0;X:X[;i];YMAT:YMAT[;i];Y:Y[;i];y:Y 0
 theta:1 .ml.sgd[mf;til;10000;X]/ theta
 / B: run n permuted epochs
-theta:1 .ml.sgd[mf;{neg[x]?x};10000;X]/ theta
+theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
 / C: run n random (with replacement) epochs (aka bootstrap)
 theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
 
 / NOTE: can run any above example with cost threshold
-theta:(1f<first .ml.nncost[0f;n;X;YMAT]@) .ml.sgd[mf;{neg[x]?x};10000;X]/ theta
-
-/ TIP: 3.4 {neg[x]?x} == 0N?x
+theta:(1f<first .ml.nncost[0f;n;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
 
 / what is the total cost?
 first .ml.nncost[0f;n;X;YMAT;theta]

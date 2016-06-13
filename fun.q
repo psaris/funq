@@ -283,7 +283,7 @@ show g:.ml.cgroup[.ml.cosdist;I;C]       / classify
 100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 
 / hierarchical (agglomerative) clustering analysis (HCA)
-l:.ml.linkage[.ml.edist;.ml.ward] X / perform clustering
+l:.ml.linkage[.ml.edist;.ml.ward] I / perform clustering
 t:.ml.tree flip 2#l                 / build dendrogram
 plt 10#reverse l 2                  / determine optimal number of clusters
 g:2 1 0!(raze/) each 2 .ml.slice/ t / cut into 3 clusters
@@ -365,6 +365,6 @@ nn:.ml.knn[.ml.edist;3;iris.species i;X@\:i]'[flip X (_')/i:desc -100?count X 0]
 
 / markov clustering
 / https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pd
-sm:.5<simmat[.ml.edist;1%sqrt 2] I / similarity matrix
+sm:.5<.ml.gaussk[I;1f%sqrt 2f] each flip I / similarity matrix based on gaussian kernel
 distinct  where each flip 0< .ml.mcl[2;1.5;10] over sm
 / are there 4 species: www.siam.org/students/siuro/vol4/S01075.pdf

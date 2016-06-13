@@ -167,10 +167,6 @@ distortion:sum sum each
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}
 
-/ dissimilarity matrix
-dismat:{[df;X].[;;:;0w]/[df[X] each flip X;flip (i;i:til count X 0)]}
-simmat:{[df;s;X]exp neg .ml.dismat[df;X]%2*s*s}  / similarity matrix
-
 / lance-williams algorithm update functions
 single:{.5 .5 0 -.5}
 complete:{.5 .5 0 .5}
@@ -202,7 +198,8 @@ lw:{[lf;dm]
 / given a (d)istance (f)unction and (l)inkage (f)unction, construct the
 / linkage (dendrogram) statistics of data in X
 linkage:{[df;lf;X]
- dm:dismat[df] X;
+ dm:df[X] each flip X;                       / dissimilarity matrix
+ dm:.[;;:;0w]/[dm;flip (i;i:til count X 0)]; / ignore loops
  dm,:enlist .ml.imin each dm;
  dm,:enlist til count dm 0;
  dm,:(1;1;1f;1)*(4;count dm 0)#0N;
@@ -232,9 +229,12 @@ binla:{[n;k;p](p xexp k)*(1f-p) xexp n-k}
 / binomial maximum likelihood
 binml:{[n;x;w]{(1#x)%sum x}w$/:"f"$(x;n-x)}
 
+/ gaussian kernel
+gaussk:{[mu;s;x] exp (sum x*x-:mu)%-2*s*s}
+
 / gaussian
 gauss:{[mu;s;x]
- p:exp -.5*(x*x-:mu)%s*s;
+ p:exp (x*x-:mu)%-2*s*s;
  p%:s*sqrt 2f*acos -1f;
  p}
 

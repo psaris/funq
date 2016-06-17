@@ -192,7 +192,7 @@ lw:{[lf;dm]
  dm[til n+2;j]:(n#0w),i,i;    / erase j and set aux data
  dm[n]:.ml.imin each n#dm;    / find next closest element
  dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
- dm[n+2 3 4 5;dm[n+2]?0N]:(j;i;d;count where i=dm n+1);
+ dm:@[dm;n+2 3 4 5;,;(j;i;d;count where i=dm n+1)];
  dm}
 
 / given a (d)istance (f)unction and (l)inkage (f)unction, construct the
@@ -202,8 +202,8 @@ linkage:{[df;lf;X]
  dm:.[;;:;0w]/[dm;flip (i;i:til count X 0)]; / ignore loops
  dm,:enlist .ml.imin each dm;
  dm,:enlist til count dm 0;
- dm,:(1;1;1f;1)*(4;count dm 0)#0N;
- l:-1_'-4#lw[lf] over dm;
+ dm,:4#();
+ l:-4#lw[lf] over dm;
  l}
 
 / merge node y[0] into y[1] in tree x

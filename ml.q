@@ -182,15 +182,15 @@ ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 / in `single`complete`average`weighted`centroid`ward
 lw:{[lf;dm]
  n:count dm 0;
- if[0w=d@:i:.ml.imin d:(n#dm)@'dm n;:dm]; / find closest clusters
- j:dm[n] i;                               / find j
+ if[0w=d@:i:imin d:(n#dm)@'dm n;:dm]; / find closest clusters
+ j:dm[n] i;                           / find j
  c:lf (count each group dm[n+1])@/:(i;j;til n); / determine coefficients
  nd:sum c*nd,d,enlist abs(-/)nd:dm(i;j);        / calc new distances
  dm[til n;i]:dm[i]:nd;                          / update distances
  dm[i;i]:0w;                                    / fix diagonal
  dm[j;(::)]:0w;                                 / erase j
  dm[til n+2;j]:(n#0w),i,i;    / erase j and set aux data
- dm[n]:.ml.imin each n#dm;    / find next closest element
+ dm[n]:imin each n#dm;        / find next closest element
  dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
  dm:@[dm;n+2 3 4 5;,;(j;i;d;count where i=dm n+1)];
  dm}
@@ -200,7 +200,7 @@ lw:{[lf;dm]
 linkage:{[df;lf;X]
  dm:df[X] each flip X;                       / dissimilarity matrix
  dm:.[;;:;0w]/[dm;flip (i;i:til count X 0)]; / ignore loops
- dm,:enlist .ml.imin each dm;
+ dm,:enlist imin each dm;
  dm,:enlist til count dm 0;
  dm,:4#();
  l:-4#lw[lf] over dm;
@@ -277,7 +277,7 @@ knn:{[df;k;c;X;x]first mode c k#iasc df[X;x]}
 / if type of X is not a real or float, add loops and normalize
 / (p)rune is an integer, take p largest, otherwise take everything > p
 mcl:{[e;r;p;X]
- if[8h>type X 0;X%:sum each X|:.ml.diag count[X]#1b];
+ if[8h>type X 0;X%:sum each X|:diag count[X]#1b];
  X:xexp[(e-1)$[X]/X;r];
  X*:$[-8h<type p;(p>iasc idesc@)';p<]X;
  X%:sum each X;

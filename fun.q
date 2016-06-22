@@ -214,10 +214,10 @@ theta:(1f<first .ml.nncost[0f;n;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
 first .ml.nncost[0f;n;X;YMAT;theta]
 
 / how well did we learn
-100*avg y=p:.ml.predictonevsall[X] .ml.mcut[n] theta
+100*avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta
 
 / visualize hidden features
-plt 1_ last first .ml.mcut[n] theta
+plt 1_ last first .ml.nncut[n] theta
 
 / view a few mistakes
 p w:where not y=p

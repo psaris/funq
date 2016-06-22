@@ -18,6 +18,32 @@ rlingrad:{[l;X;Y;THETA]
  g}
 lingrad:rlingrad[0f]
 
+/ collaborative filtering cost
+rcfcost:{[l;X;Y;THETA]
+ J:.5*sum sum 0f^J*J:(flip[THETA]$X)-Y;
+ if[l>0f;J+:.5*l*sum sum over/:(X*X;THETA*THETA)];
+ J}
+cfcost:rcfcost:[0f]
+
+/ regularized collaborative filtering gradient
+rcfgrad:{[l;X;Y;THETA]
+ g:(THETA;X)$'(g;flip g:0f^(flip[THETA]$X)-Y);
+ if[l>0f;g+:l*(X;THETA)];
+ g}
+cfgrad:rcfgrad[0f]
+
+/ collaborative filtering cut
+cfcut:{[n;x](last n;0N)#/:(0;prd[n])_x}
+
+/ regularized collaborative filtering cost & gradient
+rcfcostgrad:{[l;Y;n;xtheta]
+ X:first XTHETA:cfcut[n] xtheta;THETA:last XTHETA;
+ J:.5*sum sum g*g:0f^(flip[THETA]$X)-Y;
+ g:(THETA;X)$'(g;flip g);
+ if[l>0f;J+:.5*l*sum sum over/:(X*X;THETA*THETA);g+:l*(X;THETA)];
+ (J;2 raze/ g)}
+cfcostgrad:rcfcostgrad[0f]
+
 / gf: gradient function
 gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
 
@@ -82,8 +108,8 @@ cm:{
  t:([]x:u)!flip (`$string[u])!m;
  t}
 
-/ cut a vector into n matrices
-mcut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
+/ neural network cut
+nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}
 
 / (f)unction, x, (e)psilon
@@ -96,13 +122,13 @@ checknngradients:{[l;n]
  y:1+(1+til n 1) mod last n;
  YMAT:flip diag[last[n]#1f]"i"$y-1;
  g:2 raze/ rloggrad[l;X;YMAT] THETA; / analytic gradient
- f:(rlogcost[l;X;YMAT]mcut[n]@);
+ f:(rlogcost[l;X;YMAT]nncut[n]@);
  ng:numgrad[f;theta] count[theta]#1e-4; / numerical gradient
  (g;ng)}
 
 / n can be any network topology dimension
 nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
- THETA:mcut[n] theta;
+ THETA:nncut[n] theta;
  Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
  J:lcost[Y;YMAT];

@@ -1,6 +1,7 @@
 \d .ml
 
-addint:{((1;count x 0)#1f),x}   / add intercept
+prepend:{((1;count y 0)#x),y}
+addint:prepend[1f]              / add intercept
 
 predict:{[X;THETA]THETA$addint X} / regression predict
 
@@ -242,26 +243,32 @@ tree:{1#(til[1+count x],(::)) graft/ x}
 slice:{$[type x;x;type f:first x;(1_x),f;type ff:first f;(1_f),(1_x),ff;f,1_x]}
 
 / binomial pdf (not atomic because of factorial)
-binpdf:{[n;k;p]
- if[0<max type each (n;p;k);:.z.s'[n;k;p]];
+binpdf:{[n;p;k]
+ if[0<max type each (n;p;k);:.z.s'[n;p;k]];
  r:prd[1+k+til n]%prd 1+til n-:k;
  r*:prd (p;1f-p) xexp (k;n);
  r}
 
-/ binomial log likelihood
-binll:{[n;k;p](k*log p)+(n-k)*log 1f-p}
+/ binomial log likelihood (for multinomial set n=0)
+binll:{[n;p;k](k*log p)+$[n;(n-k)*log 1f-p;0f]}
 / binomial likelihood approximation (without the coefficient)
-binla:{[n;k;p](p xexp k)*(1f-p) xexp n-k}
+binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
 / binomial maximum likelihood
-binml:{[n;x;w]{(1#x)%sum x}w$/:"f"$(x;n-x)}
+binml:{[n;x;w]$[type x;1#w wavg x%n;x .z.s[n]\: w]}
 
+/ multinomial log likelhood
+multill:binll[0]
+/ multinomial likelihood approximation
+multila:binla[0]
+/ multinomial maximum likelihood (where n is for add n smoothing)
+multiml:{[n;x;w]$[type x;1#w wsum x%n;(x:x,'n) .z.s[sum/[x]]\: w,1f]}
 / gaussian kernel
-gaussk:{[mu;s;x] exp (sum x*x-:mu)%-2*s*s}
+gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}
 
 / gaussian
-gauss:{[mu;s;x]
- p:exp (x*x-:mu)%-2*s*s;
- p%:s*sqrt 2f*acos -1f;
+gauss:{[mu;s2;x]
+ p:exp (x*x-:mu)%-2*s2;
+ p%:sqrt 2f*s2*acos -1f;
  p}
 
 / gaussian multivariate
@@ -273,18 +280,18 @@ gaussmv:{[mu;s2;X]
  p}
 
 / gaussian maximum likelihood
-gaussml:{[X;w](mu;sqrt w wavg X*X-:mu:w wavg X)}
+gaussml:{[x;w]$[type x;(mu;w wavg x*x-:mu:w wavg x);x .z.s\: w]}
 / gaussian maximum likelihood multi variate
 gaussmlmv:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
 / guassian log likelihood
-gaussll:{[mu;s2;X] -.5*sum (log 2*acos -1f;log s2;(X*X-:mu)%s2)}
+gaussll:{[mu;s2;X] -.5*sum (log 2f*acos -1f;log s2;(X*X-:mu)%s2)}
 
 / (l)ikelhood (f)unction, (m)aximization (f)unction
 / with prior probabilities (p)hi and distribution parameters (t)heta
 em:{[lf;mf;X;pt]
- if[0>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
- l:$[1<count pt;(lf[X] .) peach flip 1_pt;count[$[type X;X;X 0]]?/:count[pt 0]#1f];
+ if[0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
+ l:$[1<count pt;{(x . z) y}[lf;X] peach flip 1_pt;count[$[type X;X;X 0]]?/:count[pt 0]#1f];
  W:p%\:sum p:l*phi:pt 0;         / weights (responsibilities)
  if[0h<type phi;phi:avg each W]; / new prior probabilities (if phi is a list)
  theta:flip mf[X] peach W;       / new coefficients
@@ -301,10 +308,27 @@ knn:{[df;k;c;X;x]first mode c k#iasc df[X;x]}
 
 / markov clusetering
 / if type of X is not a real or float, add loops and normalize
-/ (p)rune is an integer, take p largest, otherwise take everything > p
+/ if (p)rune is an integer, take p largest, otherwise take everything > p
 mcl:{[e;r;p;X]
  if[8h>type X 0;X%:sum each X|:diag count[X]#1b];
  X:xexp[(e-1)$[X]/X;r];
  X*:$[-8h<type p;(p>iasc idesc@)';p<]X;
  X%:sum each X;
  X}
+
+/ naive bayes
+
+/ fit parameters given (m)aximization (f)unction
+/ returns a dictionary with prior and conditional likelihoods
+fitnb:{[mf;w;X;y]count'[g],'{x[1_y;first y]}[mf] peach prepend[w;X]@\:/:g:group y}
+/ using a [log]likelihood (f)unction and (cl)assi(f)ication compute
+/ densities for X
+densitynb:{[f;clf;X]clf[;0],'(1_'clf) {(x . y) z}[f]'\: X}
+/ given dictionary of sample densities, compute posterior probabilities
+probabilitynb:{[d]d%\:sum d}
+/ given prior (p)robabilities and a dictionary of sample densities,
+/ predict class
+predictnb:{[d] imax each flip prd flip d}
+/ given prior (p)robabilities and a dictionary of sample log
+/ densities, predict class
+lpredictnb:{[d] imax each flip sum @[flip d;0;log]}

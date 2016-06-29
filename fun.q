@@ -258,7 +258,7 @@ plt X
 
 / classic machine learning iris data
 iris:("FFFFS";1#",") 0: `iris.csv
-I:value flip 4#/:iris
+I:value 4#flip iris
 plt I 3
 
 flip  C:.ml.kmeans[I]/[-3]       / find 3 centroids
@@ -288,31 +288,31 @@ g:2 1 0!(raze/) each 2 .ml.slice/ t / cut into 3 clusters
 n:10
 x:sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
 theta: .6 .5                    / initial coefficients
-lf:.ml.binla[n]                 / likelhood function
+lf:.ml.binla[n]                 / likelihood function
 mf:.ml.binml[n]                 / parameter maximization function
 / pass phi as 1 because coins are picked with equal probability
 .ml.em[lf;mf;x] (1;theta)
 .ml.em[lf;mf;x] over (1;theta)  / call until convergence
 .ml.em[lf;mf;x] over 2          / let .ml.em initialize parameters
-/ which flips came from which theta? pick maximum log likelhood
-.ml.imax each flip .ml.binll[n;x] each last .ml.em[lf;mf;x] over (1;theta)
+/ which flips came from which theta? pick maximum log likelkhood
+.ml.imax each flip .ml.binll[n;;x] each last .ml.em[lf;mf;x] over (1;theta)
 
 / gaussian mixtures
 / http://mccormickml.com/2014/08/04/gaussian-mixture-models-tutorial-and-matlab-code/
 / 1d gauss
 mu0:10 20 30                    / distribution's mu
-s0: 1 3 2                       / distribution's sigma
+s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
 X:raze X0:mu0+s0*(bm ?[;1f]@) each m0 / build dataset
-plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s0;X0]) / plot 1d data and guassian curves
+plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
 phi:k#1f%k;                     / guess that distributions occur with equal frequency
 mu:neg[k]?X;                    / pick k random points as centers
-s:k#dev X;                      / use the whole datasets deviation
-lf:{.ml.gauss[y;z;x]}           / likelhood function
+s2:k#var X;                     / use the whole datasets variance
+lf:.ml.gauss                    / likelihood function
 mf:.ml.gaussml                  / maximum function
-.ml.em[lf;mf;X] over pt:(phi;mu;s) / returns best guess for (phi;mu;s)
-.ml.em[lf;mf;X] over k          / TODO: broken
+.ml.em[lf;mf;X] over pt:(phi;mu;s2) / returns best guess for (phi;mu;s)
+.ml.em[lf;mf;X] over k
 
 / 2d gauss
 mu0:(10 20;-10 -20;0 0)
@@ -328,7 +328,7 @@ phi:k#1f%k                      / equal probability
 mu:flip X[;neg[k]?count X 0]    / pick k ransom points for mu
 S:k#enlist X cov\:/: X          / full covariance matrix
 
-lf:{.ml.gaussmv[y;z;x]}
+lf:.ml.gaussmv
 mf:.ml.gaussmlmv
 .ml.em[lf;mf;X] over (phi;mu;S)
 .ml.em[lf;mf;X] over k          / let .ml.em initialize parameters
@@ -339,23 +339,86 @@ k:count distinct iris`species
 phi:k#1f%k                      / equal prior probability
 mu:flip I[;neg[k]?count I 0]    / random initialization
 S:k#enlist I cov\:/: I          / sample covariance
-lf:{.ml.gaussmv[y;z;x]}
+lf:.ml.gaussmv
 mf:.ml.gaussmlmv
 .ml.em[lf;mf;I] over (phi;mu;S)
 a:.ml.em[lf;mf;I] over k          / let .ml.em initialize parameters
 / how well did it cluster the data?
-g:0 1 2!value group .ml.imax each flip lf[I]'[a[1];a[2]]
+g:0 1 2!value group .ml.imax each flip lf[;;I]'[a[1];a[2]]
 100*avg iris.species=distinct[iris.species] .ml.ugrp g
 
 / k nearest neighbors
 
 / pick classification that occurs most frequently
 / from 3 closest points trained on 100 observations
-nn:.ml.knn[.ml.edist;3;iris.species i;X@\:i]'[flip X (_')/i:desc -100?count X 0]
+nn:.ml.knn[.ml.edist;3;iris.species i;I@\:i]'[flip I (_')/i:desc -100?count I 0]
 100*avg nn=iris.species _/i
 
 / markov clustering
-/ https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pd
-sm:.5<.ml.gaussk[I;1f%sqrt 2f] each flip I / similarity matrix based on gaussian kernel
+/ https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pdf
+sm:.5<.ml.gaussk[I;.5] each flip I / similarity matrix based on gaussian kernel
 distinct  where each flip 0< .ml.mcl[2;1.5;10] over sm
-/ are there 4 species: www.siam.org/students/siuro/vol4/S01075.pdf
+/ are there 4 species: http://www.siam.org/students/siuro/vol4/S01075.pdf
+
+/ https://en.wikipedia.org/wiki/Naive_Bayes_classifier
+X:(6 5.92 5.58 5.92 5 5.5 5.42 5.75;
+ 180 190 170 165 100 150 130 150f;
+ 12 11 12 10 6 8 7 9f)
+y:`male`male`male`male`female`female`female`female / classes
+Xt:(6 7f;130 190f;8 12f)                           / test data
+flip clf:.ml.fitnb[.ml.gaussml;1f;X;y]             / build classifier
+flip d:.ml.densitynb[.ml.gauss;clf] Xt             / compute densities
+flip .ml.probabilitynb d        / convert densities to probabilities
+`female`male~.ml.predictnb d    / make classification predictions
+`female`male~.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] Xt / use log likelihood
+
+/ iris
+clf:.ml.fitnb[.ml.gaussml;1f;I;iris.species] / build classifier
+d:.ml.densitynb[.ml.gauss;clf] I             / compute densities
+flip .ml.probabilitynb d        / convert densities to probabilities
+96f~100*avg iris.species=.ml.predictnb d / how good is classification
+96f~100*avg iris.species=.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] I / use log likelihood
+
+/ inf2b-learn-note07-2up.pdf
+X:(2 0 0 1 5 0 0 1 0 0 0;       / goal
+ 0 0 1 0 0 0 3 1 4 0 0;         / tutor
+ 0 8 0 0 0 1 2 0 1 0 1;         / variance
+ 0 0 1 8 0 1 0 2 0 0 0;         / speed
+ 1 3 0 0 1 0 0 0 0 0 7;         / drink
+ 1 1 3 8 0 0 0 0 1 0 0;         / defence
+ 1 0 5 0 1 6 1 1 0 0 1;         / performance
+ 1 0 0 1 9 1 0 2 0 0 0)         / field
+Xt:flip(8 0 0 1 7 1 0 1;0 1 3 0 3 0 1 0)
+y:(6#`sport),5#`informatics
+/ bernoulli
+flip clf:.ml.fitnb[.ml.binml[1];1f;0<X;y] / build classifier
+flip d:.ml.densitynb[.ml.binla[1];clf] Xt / compute densities
+`sport`informatics~.ml.predictnb d        / make classification prediction
+
+/ bernoulli - add one smoothing
+flip clf:.ml.fitnb[.ml.binml[2];1f;1+0<X;y]
+`sport`informatics~.ml.predictnb .ml.densitynb[.ml.binla[2];clf] Xt
+`sport`informatics~.ml.lpredictnb .ml.densitynb[.ml.binll[2];clf] Xt / use log likelihood
+
+/ multinomial - add one smoothing
+flip clf:.ml.fitnb[.ml.multiml[1];1f;X;y]
+`sport`informatics~.ml.predictnb .ml.densitynb[.ml.multila;clf] Xt
+`sport`informatics~.ml.lpredictnb .ml.densitynb[.ml.multill;clf] Xt / use log likelihood
+
+/ https://www.youtube.com/watch?v=km2LoOpdB3A
+X:(2 2 1 1; / chinese
+ 1 0 0 0;   / beijing
+ 0 1 0 0;   / shanghai
+ 0 0 1 0;   / macao
+ 0 0 0 1;   / tokyo
+ 0 0 0 1)   / japan
+y:`c`c`c`j
+Xt:flip enlist 3 0 0 0 1 1
+
+/ multinomial - add one smoothing
+flip clf:.ml.fitnb[.ml.multiml[1];1f;X;y]
+flip d:.ml.densitynb[.ml.multila;clf] Xt
+flip .ml.probabilitynb d
+(1#`c)~.ml.predictnb d
+
+/2 .ml.em[.ml.multila;.ml.multiml[1];X]/  2

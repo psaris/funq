@@ -332,3 +332,22 @@ predictnb:{[d] imax each flip prd flip d}
 / given prior (p)robabilities and a dictionary of sample log
 / densities, predict class
 lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
+
+/ decision trees
+
+odds:{x%sum x:count each x}
+entropy:{neg sum x*2 xlog x}
+eog:entropy odds group@
+gain:{(eog[x]-sum (odds gy)*eog each x gy;gy:group y)} / information gain
+
+/ given a (t)able of classifiers and labels where the first column is
+/ target attribute create a decision tree using the id3 algorithm
+id3:{[t]
+ if[1=count u:distinct a:first d:flip t;:first u];
+ ba:imax first each g:a gain/: 1 _d;
+ b:.z.s each ((1#ba)_t) last g ba;
+ (ba;b)}
+
+/ classify the (d)ictionary based on decision (tree) produced via the
+/ id3 algorithm
+id3c:{[tree;d]$[0h>type tree;tree;.z.s[last[tree] d first tree;d]]}

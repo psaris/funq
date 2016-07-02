@@ -422,3 +422,12 @@ flip .ml.probabilitynb d
 (1#`c)~.ml.predictnb d
 
 /2 .ml.em[.ml.multila;.ml.multiml[1];X]/  2
+
+/ decision trees
+
+/ http://www.cise.ufl.edu/~ddd/cap6635/Fall-97/Short-papers/2.htm
+/ http://www.saedsayad.com/decision_tree.htm
+
+/ load weather data, remove the day column and move Play to front
+tree:.ml.id3 `Play xcols 1_/: t:("SSSSSS";1#",") 0: `:weather.csv
+100*avg t.Play=.ml.id3c[tree] each t / accuracy

@@ -427,7 +427,9 @@ flip .ml.probabilitynb d
 
 / http://www.cise.ufl.edu/~ddd/cap6635/Fall-97/Short-papers/2.htm
 / http://www.saedsayad.com/decision_tree.htm
+/ Paper_3-A_comparative_study_of_decision_tree_ID3_and_C4.5.pdf
 
 / load weather data, remove the day column and move Play to front
 tree:.ml.id3 `Play xcols 1_/: t:("SSSSSS";1#",") 0: `:weather.csv
 100*avg t.Play=.ml.id3c[tree] each t / accuracy
+71.428571428571431=100*avg t.Play=.ml.id3c[.ml.id3 `Play xcols 2_/: t] each t

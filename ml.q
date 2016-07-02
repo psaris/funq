@@ -297,14 +297,14 @@ em:{[lf;mf;X;pt]
  theta:flip mf[X] peach W;       / new coefficients
  enlist[phi],theta}
 
-/ return value(s) which occur most frequently
-mode:{where max[x]=x:count each group x}
+/ return value which occur most frequently
+mode:{imax count each group x}
 
 / k nearest neighbors
 
 / pick k closest values to x from training data X and return the
 / (c)lassification that occurs most frequently
-knn:{[df;k;c;X;x]first mode c k#iasc df[X;x]}
+knn:{[df;k;c;X;x]mode c k#iasc df[X;x]}
 
 / markov clusetering
 / if type of X is not a real or float, add loops and normalize
@@ -344,6 +344,7 @@ gain:{(eog[x]-sum (odds gy)*eog each x gy;gy:group y)} / information gain
 / target attribute create a decision tree using the id3 algorithm
 id3:{[t]
  if[1=count u:distinct a:first d:flip t;:first u];
+ if[1=count d;:mode first d];
  ba:imax first each g:a gain/: 1 _d;
  b:.z.s each ((1#ba)_t) last g ba;
  (ba;b)}

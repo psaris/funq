@@ -338,17 +338,53 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 odds:{x%sum x:count each x}
 entropy:{neg sum x*2 xlog x}
 eog:entropy odds group@
-gain:{(eog[x]-sum (odds gy)*eog each x gy;gy:group y)} / information gain
+gain:{[n;x;y] / information gain (optionally (n)ormalized by splitinfo)
+ g:eog[x]-sum (o:odds gy)*(not nk:null k:key gy)*eog each x gy:group y;
+ if[n;g%:entropy o]; / gain ratio
+ / distribute nulls down stream (TODO: need to lower weight based on proportion)
+ if[count w:where nk;gy:(k[w]_gy),\:gy k first w];
+ (g;::;gy)}
+
+isnom:{type[x] in 1 2 4 10 11h} / is nominal
+
+/ Improved use of continues attributes in c4.5 (quinlan) MDL
+cgaina:{[gf;x;y] / continuous gain adapter
+ if[isnom y;:gf[x;y]];          /TODO: handle null numbers
+ g:(gain[0b;x] y >) each -1_u:asc distinct y; / use gain (not gf)
+ g@:i:imax first each g;           / highest gain (not gain ratio)
+ g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
+ g[0]%:entropy odds g 2;           / covert to gain ratio
+ g[1]:(avg u[i+0 1])<;             / split function
+ g}
+
+/ wilson score - binary confidence interval (Edwin Bidwell Wilson)
+wscore:{[f;z;n]((f+z2n%2)+-1 1*z*sqrt((z2n%4)+f-f*f)%n)%1f+z2n:z*z%n}
+/ pessimistic error
+perr:{[z;x]last wscore[$[1=count g:group x;0;min count each g]%n;z;n:count x]}
+
+/ given a (t)able of classifiers and labels where the first column is
+/ target attribute create a decision tree using the (g)ain (f)unction.
+/ pruning subtrees with minimum (n)umber of leaves and given confidence
+/ pessimistic error
+dt:{[gf;n;z;t]
+ if[1=count d:flip t;:first d]; / no features to test
+ if[all 1_(=':) a:first d;:a];  / all values are equal
+ if[not n<count a;:a];          / don't split unless >n leaves
+ if[all 0>=gr:first each g:gf[a] peach 1 _d;:a]; / compute gain (ratio)
+ b:@[1_g ba;1;.z.s[gf;n;z] peach ((1#ba:imax gr)_t)@]; / classify subtree
+ if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:a]]; / prune
+ (ba;b)}
+
+/ decision tree classifier: classify the (d)ictionary based on
+/ decision (t)ree
+dtc:{[t;d]mode dtcr[t;d]}
+dtcr:{[t;d]                     / recursive component
+ if[type t;:t];
+ if[null k:d t 0;:raze t[1;1] .z.s\: d];
+ v:.z.s[t[1;1] t[1;0] k;d];
+ v}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
-id3:{[t]
- if[1=count u:distinct a:first d:flip t;:first u];
- if[1=count d;:mode first d];
- ba:imax first each g:a gain/: 1 _d;
- b:.z.s each ((1#ba)_t) last g ba;
- (ba;b)}
-
-/ classify the (d)ictionary based on decision (tree) produced via the
-/ id3 algorithm
-id3c:{[tree;d]$[0h>type tree;tree;.z.s[last[tree] d first tree;d]]}
+id3:dt[gain[0b];1;0]
+q48:dt[cgaina[gain[1b]]]        / like c4.5 and j4.8

@@ -14,4 +14,4 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## K-Nearest Neighbors (kNN)
 ## Markov Clustering Algorithm (MCL)
 ## Naive Bayes
-## Decision Tree (ID3,Q48)
+## Decision Tree (ID3,C4.5)

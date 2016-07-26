@@ -341,8 +341,8 @@ eog:entropy odds group@
 gain:{[n;x;y] / information gain (optionally (n)ormalized by splitinfo)
  g:eog[x]-sum (o:odds gy)*(not nk:null k:key gy)*eog each x gy:group y;
  if[n;g%:entropy o]; / gain ratio
- / distribute nulls down stream (TODO: need to lower weight based on proportion)
- if[count w:where nk;gy:(k[w]_gy),\:gy k first w];
+ / TODO: distribute nulls down each branch with proportionate weight
+ / if[count w:where nk;gy:(k[w]_gy),\:gy k first w];
  (g;::;gy)}
 
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
@@ -353,7 +353,7 @@ cgaina:{[gf;x;y] / continuous gain adapter
  g:(gain[0b;x] y >) each -1_u:asc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
  g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
- g[0]%:entropy odds g 2;           / covert to gain ratio
+ g[0]%:entropy odds g 2;           / convert to gain ratio
  g[1]:(avg u[i+0 1])<;             / split function
  g}
 
@@ -378,13 +378,13 @@ dt:{[gf;n;z;t]
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
 dtc:{[t;d]mode dtcr[t;d]}
-dtcr:{[t;d]                     / recursive component
- if[type t;:t];
- if[null k:d t 0;:raze t[1;1] .z.s\: d];
- v:.z.s[t[1;1] t[1;0] k;d];
+dtcr:{[t;d]                              / recursive component
+ if[type t;:t];                          / list of values
+ if[null k:d t 0;:raze t[1;1] .z.s\: d]; / dig deeper for null values
+ v:.z.s[t[1;1] t[1;0] k;d];              / split on next attribute
  v}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[gain[0b];1;0]
-q48:dt[cgaina[gain[1b]]]        / like c4.5 and j4.8
+q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)

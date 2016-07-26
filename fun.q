@@ -430,19 +430,15 @@ flip .ml.probabilitynb d
 / Paper_3-A_comparative_study_of_decision_tree_ID3_and_C4.5.pdf
 
 / load weather data, remove the day column and move Play to front
-tree:.ml.id3 `Play xcols 1_/: t:("SSSSSS";1#",") 0: `:weather.csv
+tree:.ml.id3 t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
 100*avg t.Play=.ml.dtc[tree] each t / accuracy
-71.428571428571431=100*avg t.Play=.ml.dtc[.ml.id3 `Play xcols 2_/: t] each t
+71.428571428571431=100*avg t.Play=.ml.dtc[.ml.id3 (1#`Outlook) _ t] each t
 
 / c4.5
-
+/ change humidity into a continuous variable
 t[`Humidity]:85 90 78 96 80 70 65 95 70 80 70 90 75 80
-t[0 1 2 3 4;`Wind]:`
-tree:.ml.id3 `Play xcols 1_/: t
-show last last tree:.ml.c45[2;neg .qml.nicdf .0] `Play xcols 1_/: t
+show last last tree:.ml.id3 t / id3 creates bushy tree
+show last last tree:.ml.q45[2;neg .qml.nicdf .0] t / 4.5 picks a split value
 100*avg t.Play=.ml.dtc[tree] each t / accuracy
+/ handle nulls by using the remaining attributes
 .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
-.ml.gain[0b][t.Play;t.Wind]
-.ml.cgaina[.ml.gain[1b]][t.Play;t.Wind]
-.ml.cgaina[.ml.gain[1b]][t.Play;t.Humidity]
-.ml.cgaina[.ml.gain[1b]][t.Play;t.Temperature]

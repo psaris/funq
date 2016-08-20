@@ -1,6 +1,7 @@
 \d .ml
 
 prepend:{((1;count y 0)#x),y}
+append:{y,((1;count y 0)#x)}
 addint:prepend[1f]              / add intercept
 
 predict:{[X;THETA]THETA$addint X} / regression predict
@@ -388,3 +389,31 @@ dtcr:{[t;d]                              / recursive component
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[gain[0b];1;0]
 q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
+
+/ sparse matrix manipulation
+
+dim:{$[n:count x;n,$[0h=type x;.z.s x 0;()];n]}
+/ sparse from matrix
+sparse:{(dim x;`p#where count each i;raze i;raze x@'i:where each not 0f=x)}
+/ transpose
+sflip:@[;0 2 1 3]
+/ sparse matrix multiplication
+smm:{enlist[(x[0;0];y[0;1])],value flip 0!select sum w*v by r,c from ej[`;flip ``c`v!1_y;flip`r``w!1_x]}
+/ matrix from sparse
+full:{./[x[0]#0f;flip x 1 2;:;x 3]}
+
+/ given a (p)robability of random surfing and (A)djacency matrix
+/ obtain the page rank by matrix inversion (inverse iteration)
+pageranki:{[p;A]r%sum r:first enlist[r] lsq diag[r:n#1f]-((1f-p)%n:count A)+p*A%1f|sum each A}
+
+/ given a (p)robability of random surfing, (A)djacency matrix and
+/ (r)ank vector, multiply by the google matrix to obtain a better
+/ ranking
+pagerankr:{[p;A;r]((1f-p)%n)+p*((r%1f|d)$A)+(s:sum r where 0f=d:sum each A)%n:count A}
+
+/ given a (p)robability of random surfing and (A)djacency matrix
+/ create the markov Google matrix
+google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum each A)%n:count A}
+
+/ return a sorted dictionary of the ranked values
+drank:{desc til[count x]!x}

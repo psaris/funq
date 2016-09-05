@@ -129,17 +129,11 @@ checknngradients:{[l;n]
  (g;ng)}
 
 checkcfgradients:{[l;n]
- n:5 4 3;
- nu:n 0;nm:n 1;nf:n 2;                  / num users, num movies, num features
- X_t:nm?/:nf#1f;
- THETA_t:nu?/:nf#1f;
- Y:flip[THETA_t]$X_t;
- Y*:0N 1@.5<nm?/:nu#1f;
- 
- X:nm?/:nf#1f;
- THETA:nu?/:nf#1f;
- xtheta:2 raze/ (X;THETA);
- g:2 raze/ rcfgrad[l;X;Y] THETA; / analytic gradient
+ nu:n 0;nm:n 1;nf:n 2;          / num users, num movies, num features
+ Y:flip[nu?/:nf#1f]$nm?/:nf#1f; / random recommendations
+ Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
+ xtheta:2 raze/ (X:nm?/:nf#1f;THETA:nu?/:nf#1f); / random initial parameters
+ g:2 raze/ rcfgrad[l;X;Y] THETA;                 / analytic gradient
  f:(rcfcost[l;;Y] . cfcut[n]@);
  ng:numgrad[f;xtheta] count[xtheta]#1e-4; / numerical gradient
  (g;ng)}

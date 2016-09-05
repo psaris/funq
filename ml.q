@@ -20,7 +20,7 @@ rlingrad:{[l;X;Y;THETA]
  g}
 lingrad:rlingrad[0f]
 
-/ collaborative filtering cost
+/ regularized collaborative filtering cost
 rcfcost:{[l;X;Y;THETA]
  J:.5*sum sum 0f^J*J:(flip[THETA]$X)-Y;
  if[l>0f;J+:.5*l*sum sum over/:(X*X;THETA*THETA)];
@@ -34,8 +34,8 @@ rcfgrad:{[l;X;Y;THETA]
  g}
 cfgrad:rcfgrad[0f]
 
-/ collaborative filtering cut
-cfcut:{[n;x](last n;0N)#/:(0;prd[n])_x}
+/ collaborative filtering cut where n:(nu;nm;nf)
+cfcut:{[n;x](last n;0N)#/:(0;prd 1_ n)_x}
 
 / regularized collaborative filtering cost & gradient
 rcfcostgrad:{[l;Y;n;xtheta]
@@ -127,6 +127,23 @@ checknngradients:{[l;n]
  f:(rlogcost[l;X;YMAT]nncut[n]@);
  ng:numgrad[f;theta] count[theta]#1e-4; / numerical gradient
  (g;ng)}
+
+checkcfgradients:{[l;n]
+ n:5 4 3;
+ nu:n 0;nm:n 1;nf:n 2;                  / num users, num movies, num features
+ X_t:nm?/:nf#1f;
+ THETA_t:nu?/:nf#1f;
+ Y:flip[THETA_t]$X_t;
+ Y*:0N 1@.5<nm?/:nu#1f;
+ 
+ X:nm?/:nf#1f;
+ THETA:nu?/:nf#1f;
+ xtheta:2 raze/ (X;THETA);
+ g:2 raze/ rcfgrad[l;X;Y] THETA; / analytic gradient
+ f:(rcfcost[l;;Y] . cfcut[n]@);
+ ng:numgrad[f;xtheta] count[xtheta]#1e-4; / numerical gradient
+ (g;ng)}
+
 
 / n can be any network topology dimension
 nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency

@@ -110,6 +110,12 @@ cm:{
  t:([]x:u)!flip (`$string[u])!m;
  t}
 
+/ load mnist dataset
+ldmnist:{
+ d:first (1#4;1#"i") 1: 4_(h:4*1+x 3)#x;
+ x:d#$[0>i:x[2]-0x0b;::;first ((2 4 4 8;"hief")@\:i,()) 1:] h _x;
+ x}
+
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}

@@ -1,5 +1,4 @@
 \l ml.q
-\l mnist.q
 \l plot.q
 \l fmincg.q
 \l qml.q
@@ -14,6 +13,13 @@ bm:{
  x: r*cos theta;
  x,:r*sin theta;
  x}
+
+/ copied from qtips/util.q
+pivot:{[t]
+ u:`$string asc distinct last f:flip key t;
+ pf:{x#(`$string y)!z};
+ p:?[t;();g!g:-1_ k;(pf;`u;last k:key f;last key flip value t)];
+ p}
 
 \
 / define a plotting function
@@ -143,8 +149,8 @@ f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";
 {if[()~key hsym `$x;(`$":",x) 1: .Q.hg hsym `$"http://yann.lecun.com/exdb/mnist/",x,:".gz";system"gunzip -v ",x]} each f
 
 / load training data
-Y:enlist y:"i"$.mnist.ldidx read1 `$"train-labels-idx1-ubyte"
-X:flip "f"$raze each .mnist.ldidx read1 `$"train-images-idx3-ubyte"
+Y:enlist y:"i"$.ml.ldmnist read1 `$"train-labels-idx1-ubyte"
+X:flip "f"$raze each .ml.ldmnist read1 `$"train-images-idx3-ubyte"
 
 / visualize data
 / redefine plot (to include space)
@@ -225,8 +231,8 @@ plt X[;rw:rand w]
 ([]p;y) rw
 
 / load testing data
-Yt:enlist yt:"i"$.mnist.ldidx read1 `$"t10k-labels-idx1-ubyte"
-Xt:flip "f"$raze each .mnist.ldidx read1 `$"t10k-images-idx3-ubyte"
+Yt:enlist yt:"i"$.ml.ldmnist read1 `$"t10k-labels-idx1-ubyte"
+Xt:flip "f"$raze each .ml.ldmnist read1 `$"t10k-images-idx3-ubyte"
 
 / how well can we predict
 100*avg yt=p:.ml.predictonevsall[Xt] enlist THETA

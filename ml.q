@@ -51,7 +51,30 @@ gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
 
 mlsq:{flip inv[y$/:y]$x$/:y}    / normal equations
 
-zscore:{(x-avg x)%dev x}        / feature normalization
+/ center data
+demean:{x-$[type x;avg;avg each]x}
+/ apply f to centered (then decenter)
+fdemean:{[f;x]a+f x-a:$[type x;avg;avg each]x}
+/ feature normalization (centered/unit variance)
+zscore:{x%$[t;sdev;sdev each]x-:$[t:type x;avg;avg each]x}
+/ apply f to normalized (then denormalize)
+fzscore:{[f;x]a+d*f x%d:$[t;sdev;sdev each]x-:a:$[t:type x;avg;avg each] x}
+
+/ compute the average of the top n items 
+navg:{[n;x;y]avg y (n&count x)#idesc x}
+/ compute the weighted average of the top n items 
+nwavg:{[n;x;y](x$y i)%sum abs x@:i:(n&count x)#idesc x}
+
+/ user-user collaborative filtering
+/ (s)imilarity (f)unction, (a)veraging (f)unction
+/ (R)ating matrix and new (r)ating vector
+uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
+
+/ spearman's rank (tied value get averaged rank)
+/srank:{(avg each rank[x] group x) x}
+srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
+/ spearman's rank correlation
+scor:{srank[x] cor srank y}
 
 sigmoid:{1f%1f+exp neg x}       / sigmoid function
 
@@ -434,3 +457,14 @@ google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum each A)%n:count A}
 
 / return a sorted dictionary of the ranked values
 drank:{desc til[count x]!x}
+
+/ top n svd factors
+nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
+
+/ use svd decomposition to predict missing exposures for new (u)ser
+/ (r)ecord OR (i)tem (r)ecord
+foldin:{[usv;ur;ir]
+ if[count ur;if[count ir;'`length]];
+ if[count ur;usv[0],:ur$usv[2]$inv usv 1];
+ if[count ir;usv[2],:flip ir$/:usv[0]$/:inv usv 1];
+ usv}

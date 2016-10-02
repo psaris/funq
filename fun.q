@@ -1,8 +1,9 @@
+\cd /Users/nick/q/funq 
 \l ml.q
 \l plot.q
 \l fmincg.q
 \l qml.q
-\c 20 80
+\c 20 100
 
 / box-muller (copied from qtips/stat.q) (m?-n in k6)
 bm:{
@@ -56,7 +57,7 @@ X[0]:(rho;sqrt 1f-rho*rho)$X
 / plot correlated x,y
 plt X
 
-/ NOTE: use +$+ for both dot product and matrix multiplication
+/ NOTE: use $ for both dot product and matrix multiplication
 
 / add intercept
 .ml.addint X
@@ -119,7 +120,7 @@ THETA: (1;3)#0f;
 / iterate until convergence
 /.ml.gd[.0005;.ml.loggrad[X;Y]] over enlist THETA
 
-/ we can use qml and the just the cost function to compute gradient
+/ we can use qml and just the cost function to compute gradient
 / and optimal step size
 
 opts:`iter,1000,`full`quiet /`rk`slp`tol,1e-8
@@ -263,8 +264,7 @@ plt X
 .ml.kmedians[X]\[k]             / manhattan distance (taxicab metric)
 
 / classic machine learning iris data
-iris:("FFFFS";1#",") 0: `iris.csv
-I:value 4#flip iris
+I:value 4#flip iris:("FFFFS";1#",") 0: `iris.csv
 plt I 3
 
 flip  C:.ml.kmeans[I]/[-3]       / find 3 centroids
@@ -490,4 +490,70 @@ X:.ml.full S
 .ml.drank .ml.pageranki[.85;X]
 .ml.drank .ml.pagerankr[.85;"f"$X] over r:n#1f%n:count X
 .ml.drank $[;.ml.google[.85;X]] over r:n#1f%n:count X
+
+/ collaborative filter (recommender systems)
+
+f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
+b:"http://files.grouplens.org/datasets/movielens/" / base url
+{if[()~key hsym `$y;(`$":",y) 1: .Q.hg hsym `$x,y,:".zip";system"unzip ",y]} f / download data
+/ integer movieIds, enumerate genres, link movieId, and store ratings as real to save space
+movie:1!update `u#movieId,`genre?/:`$"|" vs' genres from ("I**";1#",") 0: `$":",f,"/movies.csv"
+links:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"
+rating:update `p#userId,`movie$movieId from ("IIEP";1#",") 0: `$":",f,"/ratings.csv"
+
+/ http://webdam.inria.fr/Jorge/html/wdmch19.html
+/ support
+exec nuser:count distinct userId, nmovie:count distinct movieId, nrat:count i from rating
+/ distribution
+select nuser:count userId by nrat from select nrat:20 xbar count rating by userId from rating
+select nmovie:count movieId by nrat from select nrat:10 xbar count rating by movieId from rating
+/ quality
+select avg rating from rating
+select nmovie:count i by rating from rating
+select nuser:count i by arat from select arat:.5 xbar avg rating by userId from rating
+select nmovie:count i by arat from select arat:.5 xbar avg rating by movieId from rating
+
+rat:update 0f^.ml.demean rating by userId from rating / demeaned ratings
+/ global picks (notice small # ratings)
+select[10;>rating] "h"$avg rating, n:count i by movieId.title from rat
+/ most rated movies
+select[40;>n] "h"$avg rating, n:count i by movieId.title from rat
+
+/ full ratings matrix
+R:value exec (movieId!rating) first flip key movie by userId from rating
+
+plt:.plot.plot[150;39;.plot.c68]
+\c 50 200
+plt .plot.hmap R
+
+r:1!select movieId,rating:0Ne from movie / initial ratings
+r,:([]movieId:260 4006 1968i;rating:5 4 3e)
+r,:([]movieId:53996 69526 87520 112370 4006i;rating:5 4 3 2 5e)
+select from r,'movie where not null rating  / my ratings
+
+/ http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
+
+/ user-user collaborative filtering
+`score xdesc ,'[;movie] update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
+`score xdesc ,'[;movie] update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
+`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+
+/ compute singular value decomposition (off-line) and make fast
+/ predictions (on-line)
+usv:.qml.msvd 0f^R-a:avg'[R]
+`score xdesc ,'[;movie] update score:.ml.fdemean[last {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;;()]0f^] rating from r
+
+/ gradient descent collaborative filtering (doesn't need to be filled
+/ with default values and can use regularization)
+R,:value[r]`rating
+n:(nu:count R;nm:count R 0;nf:20)   / n users, n movies, n features
+xtheta:2 raze/ (X:-1+nm?/:nf#2f;THETA:-1+nu?/:nf#1f)
+a:avg each R                    / normalization data
+
+xtheta:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];xtheta] / learn
+XTHETA:.ml.cfcut[n] xtheta        / explode parameters
+p:flip[XTHETA 1]$XTHETA 0         / predictions
+`score xdesc ,'[;movie] update score:last a+p from r / add bias
+select from (`score xdesc ,'[;movie] update score:last a+p from r) where not null rating
 

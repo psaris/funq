@@ -16,3 +16,4 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## Naive Bayes
 ## Decision Tree (ID3,C4.5)
 ## Google PageRank
+## Collaborative Filtering (Recommender Systems)

@@ -547,13 +547,12 @@ usv:.qml.msvd 0f^R-a:avg'[R]
 / gradient descent collaborative filtering (doesn't need to be filled
 / with default values and can use regularization)
 R,:value[r]`rating
-n:(nu:count R;nm:count R 0;nf:20)   / n users, n movies, n features
-xtheta:2 raze/ (X:-1+nm?/:nf#2f;THETA:-1+nu?/:nf#1f)
+n:(nu:count R;nf:20;nm:count R 0)   / n users, n features, n movies
+thetax:2 raze/ (THETA:-1+nf?/:nu#1f;X:-1+nm?/:nf#2f)
 a:avg each R                    / normalization data
 
-xtheta:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];xtheta] / learn
-XTHETA:.ml.cfcut[n] xtheta        / explode parameters
-p:flip[XTHETA 1]$XTHETA 0         / predictions
+thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];thetax] / learn
+p:($) . THETAX:.ml.cfcut[n] thetax         / predictions
 `score xdesc ,'[;movie] update score:last a+p from r / add bias
 select from (`score xdesc ,'[;movie] update score:last a+p from r) where not null rating
 

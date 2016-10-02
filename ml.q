@@ -21,28 +21,28 @@ rlingrad:{[l;X;Y;THETA]
 lingrad:rlingrad[0f]
 
 / regularized collaborative filtering cost
-rcfcost:{[l;X;Y;THETA]
- J:.5*sum sum 0f^J*J:(flip[THETA]$X)-Y;
- if[l>0f;J+:.5*l*sum sum over/:(X*X;THETA*THETA)];
+rcfcost:{[l;Y;THETA;X]
+ J:.5*sum sum 0f^J*J:(THETA$X)-Y;
+ if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X)];
  J}
 cfcost:rcfcost:[0f]
 
 / regularized collaborative filtering gradient
-rcfgrad:{[l;X;Y;THETA]
- g:(THETA;X)$'(g;flip g:0f^(flip[THETA]$X)-Y);
- if[l>0f;g+:l*(X;THETA)];
+rcfgrad:{[l;Y;THETA;X]
+ g:(g;flip THETA)$'(flip X;g:0f^(THETA$X)-Y);
+ if[l>0f;g+:l*(THETA;X)];
  g}
 cfgrad:rcfgrad[0f]
 
 / collaborative filtering cut where n:(nu;nm;nf)
-cfcut:{[n;x](last n;0N)#/:(0;prd 1_ n)_x}
+cfcut:{[n;x](1_n) cut' (0,prd 2#n) cut x}
 
 / regularized collaborative filtering cost & gradient
-rcfcostgrad:{[l;Y;n;xtheta]
- X:first XTHETA:cfcut[n] xtheta;THETA:last XTHETA;
- J:.5*sum sum g*g:0f^(flip[THETA]$X)-Y;
- g:(THETA;X)$'(g;flip g);
- if[l>0f;J+:.5*l*sum sum over/:(X*X;THETA*THETA);g+:l*(X;THETA)];
+rcfcostgrad:{[l;Y;n;thetax]
+ X:last THETAX:cfcut[n] thetax;THETA:first THETAX;
+ J:.5*sum sum g*g:0f^(THETA$X)-Y;
+ g:(g;flip THETA)$'(flip X;g);
+ if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X);g+:l*(THETA;X)];
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
 
@@ -158,13 +158,13 @@ checknngradients:{[l;n]
  (g;ng)}
 
 checkcfgradients:{[l;n]
- nu:n 0;nm:n 1;nf:n 2;          / num users, num movies, num features
- Y:flip[nu?/:nf#1f]$nm?/:nf#1f; / random recommendations
+ nu:n 0;nf:n 1;nm:n 2;          / num users, num features, num movies
+ Y:(nf?/:nu#1f)$nm?/:nf#1f; / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
- xtheta:2 raze/ (X:nm?/:nf#1f;THETA:nu?/:nf#1f); / random initial parameters
- g:2 raze/ rcfgrad[l;X;Y] THETA;                 / analytic gradient
- f:(rcfcost[l;;Y] . cfcut[n]@);
- ng:numgrad[f;xtheta] count[xtheta]#1e-4; / numerical gradient
+ thetax:2 raze/ (THETA:nf?/:nu#1f;X:nm?/:nf#1f); / random initial parameters
+ g:2 raze/ rcfgrad[l;Y;THETA;X];                 / analytic gradient
+ f:(rcfcost[l;Y] . cfcut[n]@);
+ ng:numgrad[f;thetax] count[thetax]#1e-4; / numerical gradient
  (g;ng)}
 
 

@@ -29,7 +29,7 @@ cfcost:rcfcost:[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]
- g:(g;flip THETA)$'(flip X;g:0f^(THETA$X)-Y);
+ g:(X$/:g;flip[THETA]$g:0f^(THETA$X)-Y);
  if[l>0f;g+:l*(THETA;X)];
  g}
 cfgrad:rcfgrad[0f]
@@ -41,7 +41,7 @@ cfcut:{[n;x](1_n) cut' (0,prd 2#n) cut x}
 rcfcostgrad:{[l;Y;n;thetax]
  X:last THETAX:cfcut[n] thetax;THETA:first THETAX;
  J:.5*sum sum g*g:0f^(THETA$X)-Y;
- g:(g;flip THETA)$'(flip X;g);
+ g:(X$/:g;flip[THETA]$g);
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X);g+:l*(THETA;X)];
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]

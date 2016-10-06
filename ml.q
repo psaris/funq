@@ -1,10 +1,12 @@
 \d .ml
 
+mm:mmu
+
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
 addint:prepend[1f]              / add intercept
 
-predict:{[X;THETA]THETA$addint X} / regression predict
+predict:{[X;THETA]mm[THETA;addint X]} / regression predict
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
@@ -22,14 +24,14 @@ lingrad:rlingrad[0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]
- J:.5*sum sum 0f^J*J:(THETA$X)-Y;
+ J:.5*sum sum 0f^J*J:(mm[THETA;X])-Y;
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X)];
  J}
 cfcost:rcfcost:[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]
- g:(X$/:g;flip[THETA]$g:0f^(THETA$X)-Y);
+ g:(X$/:g;mm[flip THETA;g:0f^(mm[THETA;X])-Y]);
  if[l>0f;g+:l*(THETA;X)];
  g}
 cfgrad:rcfgrad[0f]
@@ -40,8 +42,8 @@ cfcut:{[n;x](1_n) cut' (0,prd 2#n) cut x}
 / regularized collaborative filtering cost & gradient
 rcfcostgrad:{[l;Y;n;thetax]
  X:last THETAX:cfcut[n] thetax;THETA:first THETAX;
- J:.5*sum sum g*g:0f^(THETA$X)-Y;
- g:(X$/:g;flip[THETA]$g);
+ J:.5*sum sum g*g:0f^(mm[THETA;X])-Y;
+ g:(X$/:g;mm[flip[THETA];g]);
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X);g+:l*(THETA;X)];
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
@@ -96,7 +98,7 @@ rloggrad:{[l;X;Y;THETA]
  a:lpredict\[enlist[X],THETA];
  D:last[a]-Y;
  a:addint each -1_a;
- D:{[D;THETA;a]1_(flip[THETA]$D)*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
+ D:{[D;THETA;a]1_(mm[flip THETA;D])*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
  g:(a($/:)'D)%n;
  if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
  g}
@@ -159,7 +161,7 @@ checknngradients:{[l;n]
 
 checkcfgradients:{[l;n]
  nu:n 0;nf:n 1;nm:n 2;          / num users, num features, num movies
- Y:(nf?/:nu#1f)$nm?/:nf#1f; / random recommendations
+ Y:(nf?/:nu#1f)$nm?/:nf#1f;     / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nf?/:nu#1f;X:nm?/:nf#1f); / random initial parameters
  g:2 raze/ rcfgrad[l;Y;THETA;X];                 / analytic gradient
@@ -177,7 +179,7 @@ nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  if[l>0f;J+:(l%2*n)*{x$x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  D:Y-YMAT;
  a:addint each -1_a;
- D:{[D;THETA;a]1_(flip[THETA]$D)*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
+ D:{[D;THETA;a]1_mm[flip THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
  g:(a($/:)'D)%n;
  if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
  (J;2 raze/ g)}
@@ -315,7 +317,7 @@ gauss:{[mu;s2;x]
 / gaussian multivariate
 gaussmv:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
- p:exp -.5*sum X*inv[s2]$X-:mu;
+ p:exp -.5*sum X*mm[inv s2;X-:mu];
  p*:sqrt 1f%.qml.mdet s2;
  p*:(2f*acos -1f) xexp -.5*count X;
  p}
@@ -352,7 +354,7 @@ knn:{[df;k;c;X;x]mode c k#iasc df[X;x]}
 / if (p)rune is an integer, take p largest, otherwise take everything > p
 mcl:{[e;r;p;X]
  if[8h>type X 0;X%:sum each X|:diag count[X]#1b];
- X:xexp[(e-1)$[X]/X;r];
+ X:xexp[(e-1)mm[X]/X;r];
  X*:$[-8h<type p;(p>iasc idesc@)';p<]X;
  X%:sum each X;
  X}
@@ -465,6 +467,6 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 / (r)ecord OR (i)tem (r)ecord
 foldin:{[usv;ur;ir]
  if[count ur;if[count ir;'`length]];
- if[count ur;usv[0],:ur$usv[2]$inv usv 1];
+ if[count ur;usv[0],:mm[ur;mm[usv 2;inv usv 1]]];
  if[count ir;usv[2],:flip ir$/:usv[0]$/:inv usv 1];
  usv}

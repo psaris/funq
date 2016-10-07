@@ -1,37 +1,40 @@
 \d .ml
 
-mm:mmu
+mm:mmu                          / X  * Y
+mmt:{y$/:x}                     / X  * Y'
+mtm:{flip[x]$y}                 / X' * Y
+minv:inv                        / X**-1
 
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
 addint:prepend[1f]              / add intercept
 
-predict:{[X;THETA]mm[THETA;addint X]} / regression predict
+predict:{[X;THETA]mm[THETA] addint X} / regression predict
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
- J:sum (1f%2*n:count Y 0)*sum Y$/:Y-:predict[X;THETA];
+ J:sum (1f%2*n:count Y 0)*sum mmt[Y] Y-:predict[X;THETA];
  if[l>0f;J+:(l%2*n)*x$x:raze @[;0;:;0f]'[THETA]];
  J}
 lincost:rlincost[0f]
 
 / regularized linear regression gradient
 rlingrad:{[l;X;Y;THETA]
- g:(1f%n:count Y 0)*addint[X]$/:predict[X;THETA]-Y;
+ g:(1f%n:count Y 0)*mmt[predict[X;THETA]-Y] addint X;
  if[l>0f;g+:(l%n)*@[;0;:;0f]'[THETA]];
  g}
 lingrad:rlingrad[0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]
- J:.5*sum sum 0f^J*J:(mm[THETA;X])-Y;
+ J:.5*sum sum 0f^J*J:mm[THETA;X]-Y;
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X)];
  J}
 cfcost:rcfcost:[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]
- g:(X$/:g;mm[flip THETA;g:0f^(mm[THETA;X])-Y]);
+ g:(mmt[g;X];mtm[THETA] g:0f^mm[THETA;X]-Y);
  if[l>0f;g+:l*(THETA;X)];
  g}
 cfgrad:rcfgrad[0f]
@@ -42,8 +45,8 @@ cfcut:{[n;x](1_n) cut' (0,prd 2#n) cut x}
 / regularized collaborative filtering cost & gradient
 rcfcostgrad:{[l;Y;n;thetax]
  X:last THETAX:cfcut[n] thetax;THETA:first THETAX;
- J:.5*sum sum g*g:0f^(mm[THETA;X])-Y;
- g:(X$/:g;mm[flip[THETA];g]);
+ J:.5*sum sum g*g:0f^mm[THETA;X]-Y;
+ g:(mmt[g;X];mtm[THETA;g]);
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X);g+:l*(THETA;X)];
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
@@ -51,7 +54,7 @@ cfcostgrad:rcfcostgrad[0f]
 / gf: gradient function
 gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
 
-mlsq:{flip inv[y$/:y]$x$/:y}    / normal equations
+mlsq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
 / center data
 demean:{x-$[type x;avg;avg each]x}
@@ -98,8 +101,8 @@ rloggrad:{[l;X;Y;THETA]
  a:lpredict\[enlist[X],THETA];
  D:last[a]-Y;
  a:addint each -1_a;
- D:{[D;THETA;a]1_(mm[flip THETA;D])*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
- g:(a($/:)'D)%n;
+ D:{[D;THETA;a]1_(mtm[THETA;D])*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
+ g:(D mmt' a)%n;
  if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
  g}
 loggrad:rloggrad[0f]
@@ -179,8 +182,8 @@ nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  if[l>0f;J+:(l%2*n)*{x$x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  D:Y-YMAT;
  a:addint each -1_a;
- D:{[D;THETA;a]1_mm[flip THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
- g:(a($/:)'D)%n;
+ D:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
+ g:(D mmt' a)%n;
  if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
  (J;2 raze/ g)}
 
@@ -317,7 +320,7 @@ gauss:{[mu;s2;x]
 / gaussian multivariate
 gaussmv:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
- p:exp -.5*sum X*mm[inv s2;X-:mu];
+ p:exp -.5*sum X*mm[minv s2;X-:mu];
  p*:sqrt 1f%.qml.mdet s2;
  p*:(2f*acos -1f) xexp -.5*count X;
  p}
@@ -467,6 +470,6 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 / (r)ecord OR (i)tem (r)ecord
 foldin:{[usv;ur;ir]
  if[count ur;if[count ir;'`length]];
- if[count ur;usv[0],:mm[ur;mm[usv 2;inv usv 1]]];
- if[count ir;usv[2],:flip ir$/:usv[0]$/:inv usv 1];
+ if[count ur;usv[0],:mm[ur] mm[usv 2] minv usv 1];
+ if[count ir;usv[2],:mm[ir] mm[usv 0] minv usv 1];
  usv}

@@ -1,4 +1,3 @@
-\cd /Users/nick/q/funq 
 \l ml.q
 \l plot.q
 \l fmincg.q
@@ -14,13 +13,6 @@ bm:{
  x: r*cos theta;
  x,:r*sin theta;
  x}
-
-/ copied from qtips/util.q
-pivot:{[t]
- u:`$string asc distinct last f:flip key t;
- pf:{x#(`$string y)!z};
- p:?[t;();g!g:-1_ k;(pf;`u;last k:key f;last key flip value t)];
- p}
 
 \
 / define a plotting function
@@ -71,7 +63,7 @@ show THETA:Y lsq .ml.addint X
 plt X,.ml.predict[X] THETA
 
 / fast but not numerically stable
-.ml.mlsq
+.ml.mlsq[Y;.ml.addint X]
 
 / NOTE: use 'X$/:Y' instead of 'Y mmu flip X' to avert flipping large
 / matrices
@@ -544,6 +536,9 @@ select from r,'movie where not null rating  / my ratings
 usv:.qml.msvd 0f^R-a:avg'[R]
 `score xdesc ,'[;movie] update score:.ml.fdemean[last {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;;()]0f^] rating from r
 
+/ foldin a new movie
+.ml.foldin[.ml.nsvd[30] usv ;();enlist 1f^R[;2]]
+
 / gradient descent collaborative filtering (doesn't need to be filled
 / with default values and can use regularization)
 R,:value[r]`rating
@@ -555,4 +550,3 @@ thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];thetax] / learn
 p:($) . THETAX:.ml.cfcut[n] thetax         / predictions
 `score xdesc ,'[;movie] update score:last a+p from r / add bias
 select from (`score xdesc ,'[;movie] update score:last a+p from r) where not null rating
-

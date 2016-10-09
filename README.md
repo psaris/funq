@@ -6,6 +6,7 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## Least Squares Regression
 ## Gradient Descent
 ## Logistic Regression
+## Binary Classification Evaluation Metrics
 ## One vs All Logistic Regression
 ## Neural Networks
 ## K-Means/Medians Clustering

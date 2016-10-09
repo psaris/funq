@@ -129,11 +129,22 @@ f:.ml.logcostgradf[X;Y]
 / a single function that calculates both and a better minimization
 / function makes finding the optimal parameters childs play
 / NOTE: use '\r' to show in-place updates to progress across iterations
-THETA:first .fmincg.fmincg[100;.ml.logcostgrad[X;Y];THETA 0]
+THETA:first .fmincg.fmincg[20;.ml.logcostgrad[X;Y];THETA 0]
 
 / compare plots
 plt X,Y
-plt X,.ml.lpredict[X] enlist THETA
+plt X,p:.ml.lpredict[X] enlist THETA
+
+/ binary classification evaluation metrics
+
+tptnfpfn:.ml.tptnfpfn["i"$first Y;"i"$first p]
+.ml.accuracy tptnfpfn
+.ml.precision tptnfpfn 
+.ml.recall tptnfpfn
+.ml.F1 tptnfpfn          / harmonic mean between precision and recall
+.ml.FM tptnfpfn          / geometric mean between precision and recall
+.ml.jaccard tptnfpfn     / 0 <-> 1 similarity measure
+.ml.MCC tptnfpfn         / -1 <-> 1 correlation measure
 
 / digit recognition
 
@@ -170,7 +181,7 @@ plt X[;i:rand w]
 ([]p;y) i
 
 / confusion matrix
-.ml.cm[y;"i"$p]
+.ml.totals[`TOTAL] .ml.cm[y;"i"$p]
 
 / confirm analytic gradient is equal to numeric gradient
 .ml.checknngradients[.1f;3 5 3]
@@ -236,7 +247,7 @@ plt Xt[;rw:rand w]
 ([]p;yt) rw
 
 / confusion matrix
-.ml.cm[yt;"i"$p]
+.ml.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
 / clustering
 
@@ -262,6 +273,8 @@ plt I 3
 flip  C:.ml.kmeans[I]/[-3]       / find 3 centroids
 show g:.ml.cgroup[.ml.edist;I;C] / classify
 100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
+.ml.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
+
 
 / plot errors with increasing number of centroids
 plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
@@ -542,11 +555,11 @@ usv:.qml.msvd 0f^R-a:avg'[R]
 / gradient descent collaborative filtering (doesn't need to be filled
 / with default values and can use regularization)
 R,:value[r]`rating
-n:(nu:count R;nf:20;nm:count R 0)   / n users, n features, n movies
-thetax:2 raze/ (THETA:-1+nf?/:nu#1f;X:-1+nm?/:nf#2f)
+n:(nu:count R;nm:count R 0;nf:20)   / n users, n movies, n features
+thetax:2 raze/ (THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
 a:avg each R                    / normalization data
 
-thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];thetax] / learn
-p:($) . THETAX:.ml.cfcut[n] thetax         / predictions
+\ts thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];thetax] / learn
+p:.ml.mtm . THETAX:.ml.cfcut[n] thetax               / predictions
 `score xdesc ,'[;movie] update score:last a+p from r / add bias
 select from (`score xdesc ,'[;movie] update score:last a+p from r) where not null rating

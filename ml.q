@@ -27,26 +27,26 @@ lingrad:rlingrad[0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]
- J:.5*sum sum 0f^J*J:mm[THETA;X]-Y;
+ J:.5*sum sum 0f^J*J:mtm[THETA;X]-Y;
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X)];
  J}
 cfcost:rcfcost:[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]
- g:(mmt[g;X];mtm[THETA] g:0f^mm[THETA;X]-Y);
+ g:(mmt[X;g];mm[THETA] g:0f^mtm[THETA;X]-Y);
  if[l>0f;g+:l*(THETA;X)];
  g}
 cfgrad:rcfgrad[0f]
 
 / collaborative filtering cut where n:(nu;nm;nf)
-cfcut:{[n;x](1_n) cut' (0,prd 2#n) cut x}
+cfcut:{[n;x]n[0 1] cut' (0,prd[n 0 2])_x}
 
 / regularized collaborative filtering cost & gradient
 rcfcostgrad:{[l;Y;n;thetax]
- X:last THETAX:cfcut[n] thetax;THETA:first THETAX;
- J:.5*sum sum g*g:0f^mm[THETA;X]-Y;
- g:(mmt[g;X];mtm[THETA;g]);
+ THETA:first X:cfcut[n] thetax;X@:1;
+ J:.5*sum sum g*g:0f^mtm[THETA;X]-Y;
+ g:(mmt[X;g];mm[THETA;g]);
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X);g+:l*(THETA;X)];
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
@@ -131,12 +131,49 @@ imin:{x?min x}                  / index of min element
 / predict each number and pick best
 predictonevsall:{[X;THETA]imax each flip X lpredict/ THETA}
 
+/ binary classification evaluation metrics (summary statistics)
+
+/ given expected boolean values x and observered value y, compute
+/ (tp;tn;fp;fn)
+tptnfpfn:{sum each (x;nx;x;nx:not x)*(y;ny;ny:not y;y)}
+
+/ aka rand measure (William M. Rand 1971)
+accuracy:{sum[x 0 1]%sum x}
+precision:{x[0]%sum x 0 2}
+recall:{x[0]%sum x 0 3}
+
+/ f measure: given (b)eta and x:tptnfpfn
+/ harmonic mean of precision and recall
+F:{[b;x]
+ f:(p:precision x)*(r:recall x)*1+b2:b*b;
+ f%:r+p*b2;
+ f}
+F1:F[1]
+
+/ Fowlkes–Mallows index (E. B. Fowlkes & C. L. Mallows 1983)
+/ geometric mean of precision and recall
+FM:{x[0]%sqrt sum[x 0 2]*sum x 0 3}
+
+/ returns a number between 0 and 1 which indicates the similarity
+/ between two datasets
+jaccard:{x[0]%sum x _ 1}
+
+/ Matthews Correlation Coefficient
+/ geometric mean of the regression coefficients of the problem and its dual
+/ -1 0 1 (none right, same as random prediction, all right)
+MCC:{ ((-). x[0 2]*x 1 3)%sqrt prd x[0 0 1 1]+x 2 3 2 3}
+
 / confusion matrix
 cm:{
  n:count u:asc distinct x,y;
  m:.[;;1+]/[(n;n)#0;flip (u?y;u?x)];
  t:([]x:u)!flip (`$string[u])!m;
  t}
+
+totals:{[c;t]
+ t[key[t]0N]:sum value t;
+ t:t,'flip (1#c)!enlist sum each value t;
+ t} 
 
 / load mnist dataset
 ldmnist:{
@@ -163,10 +200,10 @@ checknngradients:{[l;n]
  (g;ng)}
 
 checkcfgradients:{[l;n]
- nu:n 0;nf:n 1;nm:n 2;          / num users, num features, num movies
+ nu:n 0;nm:n 1;nf:n 2;          / n users, n movies, n features
  Y:(nf?/:nu#1f)$nm?/:nf#1f;     / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
- thetax:2 raze/ (THETA:nf?/:nu#1f;X:nm?/:nf#1f); / random initial parameters
+ thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
  g:2 raze/ rcfgrad[l;Y;THETA;X];                 / analytic gradient
  f:(rcfcost[l;Y] . cfcut[n]@);
  ng:numgrad[f;thetax] count[thetax]#1e-4; / numerical gradient

@@ -14,6 +14,8 @@ bm:{
  x,:r*sin theta;
  x}
 
+download:{[b;f;e;uf]if[()~key`$":",f;(`$":",f)1:.Q.hg`$":",0N!b,f,:e;uf f]}
+
 \
 / define a plotting function
 plt:.plot.plot[28;15;1_.plot.c16]
@@ -151,7 +153,7 @@ tptnfpfn:.ml.tptnfpfn["i"$first Y;"i"$first p]
 / download data
 f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";"t10k-images-idx3-ubyte")
 b:"http://yann.lecun.com/exdb/mnist/"
-{if[()~key hsym `$y;(`$":",y) 1: .Q.hg hsym `$x,y,:".gz";system"gunzip -v ",y]}[b] each f / download data
+download[b;;".gz";system 0N!"gunzip -v ",] each f; / download data
 
 / load training data
 Y:enlist y:"i"$.ml.ldmnist read1 `$"train-labels-idx1-ubyte"
@@ -270,7 +272,7 @@ plt X
 / classic machine learning iris data
 f:("iris.data";"bezdekIris.data") 1 / pick the corrected dataset
 b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
-{if[()~key hsym `$y;(`$":",y) 1: .Q.hg 0N! hsym `$x,y]}[b] f / download data
+download[b;;"";::] f;           / download data
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 plt I 3
 
@@ -504,7 +506,7 @@ X:.ml.full S
 
 f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
 b:"http://files.grouplens.org/datasets/movielens/" / base url
-{if[()~key hsym `$y;(`$":",y) 1: .Q.hg hsym `$x,y,:".zip";system"unzip ",y]}[b] f / download data
+download[b;;".zip";system 0N!"unzip ",] f;         / download data
 / integer movieIds, enumerate genres, link movieId, and store ratings as real to save space
 movie:1!update `u#movieId,`genre?/:`$"|" vs' genres from ("I**";1#",") 0: `$":",f,"/movies.csv"
 links:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"

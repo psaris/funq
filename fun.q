@@ -14,6 +14,7 @@ bm:{
  x,:r*sin theta;
  x}
 
+/ (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
 download:{[b;f;e;uf]if[()~key`$":",f;(`$":",f)1:.Q.hg`$":",0N!b,f,:e;uf f]}
 
 \
@@ -72,9 +73,8 @@ plt X,.ml.predict[X] THETA
 \ts Y mmu flip X
 \ts X$/:Y
 
-/ qml uses QR decomposition for a more numerically stable fit, but it
-/ makes us flip both X and Y
-\ts flip .qml.mlsq[flip .ml.addint X;flip Y]
+/ qml uses QR decomposition for a more numerically stable fit
+.qml.mlsqx[`flip;.ml.addint X;Y]
 
 / nice to have closed form solution, but what if we don't?
 
@@ -509,7 +509,7 @@ b:"http://files.grouplens.org/datasets/movielens/" / base url
 download[b;;".zip";system 0N!"unzip ",] f;         / download data
 / integer movieIds, enumerate genres, link movieId, and store ratings as real to save space
 movie:1!update `u#movieId,`genre?/:`$"|" vs' genres from ("I**";1#",") 0: `$":",f,"/movies.csv"
-links:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"
+link:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"
 rating:update `p#userId,`movie$movieId from ("IIEP";1#",") 0: `$":",f,"/ratings.csv"
 
 / http://webdam.inria.fr/Jorge/html/wdmch19.html
@@ -531,15 +531,15 @@ select[10;>rating] "h"$avg rating, n:count i by movieId.title from rat
 select[40;>n] "h"$avg rating, n:count i by movieId.title from rat
 
 / full ratings matrix
-R:value exec (movieId!rating) first flip key movie by userId from rating
+R:value exec (movieId!rating) key[movie]`movieId  by userId from rating
 
-plt:.plot.plot[150;39;.plot.c68]
+plt:.plot.plot[40;20;.plot.c10]
 \c 50 200
 plt .plot.hmap R
 
 r:1!select movieId,rating:0Ne from movie / initial ratings
-r,:([]movieId:260 4006 1968i;rating:5 4 3e)
-r,:([]movieId:53996 69526 87520 112370 4006i;rating:5 4 3 2 5e)
+r,:([]movieId:260 1197 2918 1968i;rating:4 5 5 4e)
+r,:([]movieId:4006 53996 69526 87520 112370 86898i;rating:5 4 4 3 2 0e)
 select from r,'movie where not null rating  / my ratings
 
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
@@ -549,6 +549,11 @@ select from r,'movie where not null rating  / my ratings
 `score xdesc ,'[;movie] update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
 `score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 `score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+
+/ weight by inverse user frequencies to underweight universally liked movies
+`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+
+
 
 / compute singular value decomposition (off-line) and make fast
 / predictions (on-line)

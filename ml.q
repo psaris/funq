@@ -241,6 +241,7 @@ edist:{sum x*x-:y}              / euclidian distance
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
 hmean:{1f%avg 1f%x}             / harmonic mean
 
+idf:{log count[x 0]%1+sum 0<x}           / inverse document frequency
 cossim:{(sum x*y)%sqrt(sum x*x)*sum y*y} / cosine similarity
 cosdist:(')[1f-;cossim]                  / cosine distance
 

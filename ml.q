@@ -511,10 +511,7 @@ drank:{desc til[count x]!x}
 / top n svd factors
 nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 
-/ use svd decomposition to predict missing exposures for new (u)ser
-/ (r)ecord OR (i)tem (r)ecord
-foldin:{[usv;ur;ir]
- if[count ur;if[count ir;'`length]];
- if[count ur;usv[0],:mm[enlist ur] mm[usv 2] minv usv 1];
- if[count ir;usv[2],:mm[enlist ir] mm[usv 0] minv usv 1];
- usv}
+/ use svd decomposition to predict missing exposures for new user
+/ (ui=0b) or item (ui=1b) (r)ecord
+foldin:{[usv;ui;r]@[usv;2*ui;,;mm[enlist r] mm[usv 2*not ui] minv usv 1]}
+

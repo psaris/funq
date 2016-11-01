@@ -563,10 +563,10 @@ rpt update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.n
 / compute singular value decomposition (off-line) and make fast
 / predictions (on-line)
 usv:.qml.msvd 0f^R-a:avg'[R]
-rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;;()]0f^] rating from r
+rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;0b]0f^] rating from r
 
 / foldin a new movie
-.ml.foldin[.ml.nsvd[30] usv ;();1f^R[;2]]
+.ml.foldin[.ml.nsvd[30] usv ;1b;1f^R[;2]]
 
 / gradient descent collaborative filtering (doesn't need to be filled
 / with default values and can use regularization)

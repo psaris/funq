@@ -241,7 +241,7 @@ edist:{sum x*x-:y}              / euclidian distance
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
 hmean:{1f%avg 1f%x}             / harmonic mean
 
-idf:{log count[x 0]%1+sum 0<x}           / inverse document frequency
+idf:{log (count x)%sum 0<x}     / inverse document frequency
 cossim:{(sum x*y)%sqrt(sum x*x)*sum y*y} / cosine similarity
 cosdist:(')[1f-;cossim]                  / cosine distance
 
@@ -508,6 +508,6 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 / (r)ecord OR (i)tem (r)ecord
 foldin:{[usv;ur;ir]
  if[count ur;if[count ir;'`length]];
- if[count ur;usv[0],:mm[ur] mm[usv 2] minv usv 1];
- if[count ir;usv[2],:mm[ir] mm[usv 0] minv usv 1];
+ if[count ur;usv[0],:mm[enlist ur] mm[usv 2] minv usv 1];
+ if[count ir;usv[2],:mm[enlist ir] mm[usv 0] minv usv 1];
  usv}

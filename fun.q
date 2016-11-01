@@ -15,7 +15,10 @@ bm:{
  x}
 
 / (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
-download:{[b;f;e;uf]if[()~key`$":",f;(`$":",f)1:.Q.hg`$":",0N!b,f,:e;uf f]}
+download:{[b;f;e;uf]
+ if[()~key `$":",f,e;(`$":",f,e) 1: .Q.hg`$":",0N!b,f,e];
+ if[()~key `$":",f;uf f,e];
+ }
 
 \
 / define a plotting function
@@ -276,7 +279,7 @@ download[b;;"";::] f;           / download data
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 plt I 3
 
-flip  C:.ml.kmeans[I]/[-3]       / find 3 centroids
+flip C:.ml.kmeans[I]/[-3]       / find 3 centroids
 show g:.ml.cgroup[.ml.edist;I;C] / classify
 100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 .ml.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
@@ -374,7 +377,7 @@ nn:.ml.knn[.ml.edist;3;iris.species i;I@\:i]'[flip I (_')/i:desc -100?count I 0]
 / markov clustering
 / https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pdf
 sm:.5<.ml.gaussk[I;.5] each flip I / similarity matrix based on gaussian kernel
-distinct  where each flip 0< .ml.mcl[2;1.5;10] over sm
+distinct where each flip 0< .ml.mcl[2;1.5;10] over sm
 / are there 4 species: http://www.siam.org/students/siuro/vol4/S01075.pdf
 
 / https://en.wikipedia.org/wiki/Naive_Bayes_classifier
@@ -531,37 +534,39 @@ select[10;>rating] "h"$avg rating, n:count i by movieId.title from rat
 select[40;>n] "h"$avg rating, n:count i by movieId.title from rat
 
 / full ratings matrix
-R:value exec (movieId!rating) key[movie]`movieId  by userId from rating
+um:exec distinct asc movieId from rating / unique movies
+R:value exec (movieId!rating) um by userId from rating
 
 plt:.plot.plot[40;20;.plot.c10]
 \c 50 200
 plt .plot.hmap R
 
-r:1!select movieId,rating:0Ne from movie / initial ratings
+r:([movieId:um]rating:count[um]#0Ne) / initial ratings
 r,:([]movieId:260 1197 2918 1968i;rating:4 5 5 4e)
 r,:([]movieId:4006 53996 69526 87520 112370 86898i;rating:5 4 4 3 2 0e)
-select from r,'movie where not null rating  / my ratings
+select from r lj movie where not null rating  / my ratings
 
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
 
 / user-user collaborative filtering
-`score xdesc ,'[;movie] update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
-`score xdesc ,'[;movie] update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
-`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
-`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+rpt:lj[;movie] `score xdesc 
+rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
+rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
+rpt update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+rpt update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 
 / weight by inverse user frequencies to underweight universally liked movies
-`score xdesc ,'[;movie] update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+rpt update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 
 
 
 / compute singular value decomposition (off-line) and make fast
 / predictions (on-line)
 usv:.qml.msvd 0f^R-a:avg'[R]
-`score xdesc ,'[;movie] update score:.ml.fdemean[last {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;;()]0f^] rating from r
+rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;;()]0f^] rating from r
 
 / foldin a new movie
-.ml.foldin[.ml.nsvd[30] usv ;();enlist 1f^R[;2]]
+.ml.foldin[.ml.nsvd[30] usv ;();1f^R[;2]]
 
 / gradient descent collaborative filtering (doesn't need to be filled
 / with default values and can use regularization)
@@ -572,5 +577,5 @@ a:avg each R                    / normalization data
 
 \ts thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[10f;R-a;n];thetax] / learn
 p:.ml.mtm . THETAX:.ml.cfcut[n] thetax               / predictions
-`score xdesc ,'[;movie] update score:last a+p from r / add bias
-select from (`score xdesc ,'[;movie] update score:last a+p from r) where not null rating
+rpt update score:last a+p from r / add bias
+select from (rpt update score:last a+p from r) where not null rating

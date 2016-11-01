@@ -241,7 +241,14 @@ edist:{sum x*x-:y}              / euclidian distance
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
 hmean:{1f%avg 1f%x}             / harmonic mean
 
+lntf:{1f+log x}                    / log normalized term frequency
+dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
+
 idf:{log (count x)%sum 0<x}     / inverse document frequency
+idfs:{log 1f+(count x)%sum 0<x} / inverse document frequency smooth
+idfm:{log 1f+(max x)%x:sum 0<x} / inverse document frequency max
+pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
+tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{(sum x*y)%sqrt(sum x*x)*sum y*y} / cosine similarity
 cosdist:(')[1f-;cossim]                  / cosine distance
 

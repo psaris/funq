@@ -513,5 +513,5 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 
 / use svd decomposition to predict missing exposures for new user
 / (ui=0b) or item (ui=1b) (r)ecord
-foldin:{[usv;ui;r]@[usv;2*ui;,;mm[enlist r] mm[usv 2*not ui] minv usv 1]}
+foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
 

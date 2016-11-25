@@ -1,0 +1,18 @@
+--- work/Makefile	2016-11-17 21:57:05.000000000 -0500
++++ work/Makefile.new	2016-11-17 22:00:19.000000000 -0500
+@@ -1,10 +1,10 @@
+-CXX ?= g++
+-CC ?= gcc
+-CFLAGS = -Wall -Wconversion -O3 -fPIC
+-LIBS = blas/blas.a
++#CXX ?= g++
++#CC ?= gcc
++#CFLAGS = -Wall -Wconversion -O3 -fPIC
++#LIBS = blas/blas.a
+ SHVER = 3
+ OS = $(shell uname)
+-#LIBS = -lblas
++LIBS = -lblas
+ 
+ all: train predict
+ 

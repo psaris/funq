@@ -144,7 +144,7 @@ plt X,p:.ml.lpredict[X] enlist THETA
 
 tptnfpfn:.ml.tptnfpfn["i"$first Y;"i"$first p]
 .ml.accuracy tptnfpfn
-.ml.precision tptnfpfn 
+.ml.precision tptnfpfn
 .ml.recall tptnfpfn
 .ml.F1 tptnfpfn          / harmonic mean between precision and recall
 .ml.FM tptnfpfn          / geometric mean between precision and recall
@@ -179,7 +179,7 @@ cgf:.ml.rlogcostgrad[lambda;X]          / cost gradient function
 / NOTE: peach across digits
 THETA:.ml.onevsall[mf;cgf;Y;lbls]
 
-100*avg y=p:.ml.predictonevsall[X] enlist THETA / what percent did we get correct?
+avg y=p:.ml.predictonevsall[X] enlist THETA / what percent did we get correct?
 
 / what did we get wrong?
 p w:where not y=p
@@ -230,7 +230,7 @@ theta:(1f<first .ml.nncost[0f;n;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
 first .ml.nncost[0f;n;X;YMAT;theta]
 
 / how well did we learn
-100*avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta
+avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta
 
 / visualize hidden features
 plt 1_ last first .ml.nncut[n] theta
@@ -245,7 +245,7 @@ Yt:enlist yt:"i"$.ml.ldmnist read1 `$"t10k-labels-idx1-ubyte"
 Xt:flip "f"$raze each .ml.ldmnist read1 `$"t10k-images-idx3-ubyte"
 
 / how well can we predict
-100*avg yt=p:.ml.predictonevsall[Xt] enlist THETA
+avg yt=p:.ml.predictonevsall[Xt] enlist THETA
 
 / view a few mistakes
 p w:where not yt=p
@@ -267,8 +267,11 @@ plt X
 
 / the number of centroids (k) becomes the actual centroids after the
 / initial iteration
-.ml.kmeans[X]\[k]               / euclidian distance
+.ml.kmeans[X]/[k]        / euclidian distance
+/ plot centroids
+plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 
+/ view convergence
 / NOTE: picks x and y from data (but not necessarily (x;y))
 .ml.kmedians[X]\[k]             / manhattan distance (taxicab metric)
 
@@ -279,9 +282,9 @@ download[b;;"";::] f;           / download data
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 plt I 3
 
-flip C:.ml.kmeans[I]/[-3]       / find 3 centroids
+C:.ml.kmeans[I]/[-3]             / find 3 centroids
 show g:.ml.cgroup[.ml.edist;I;C] / classify
-100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
+avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 .ml.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
 
 
@@ -291,14 +294,14 @@ plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
 / cosine similarity (distance)
 flip C:.ml.lloyd[.ml.cosdist;avg;I]/[-3] /find 3 centroids
 show g:.ml.cgroup[.ml.cosdist;I;C]       / classify
-100*avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
+avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
 
 / hierarchical (agglomerative) clustering analysis (HCA)
 l:.ml.linkage[.ml.edist;.ml.ward] I / perform clustering
 t:.ml.tree flip 2#l                 / build dendrogram
 plt 10#reverse l 2                  / determine optimal number of clusters
 g:2 1 0!(raze/) each 2 .ml.slice/ t / cut into 3 clusters
-100*avg iris.species=distinct[iris.species] .ml.ugrp g
+avg iris.species=distinct[iris.species] .ml.ugrp g
 
 
 / expectation maximization (EM)
@@ -365,19 +368,37 @@ mf:.ml.gaussmlmv
 a:.ml.em[lf;mf;I] over k          / let .ml.em initialize parameters
 / how well did it cluster the data?
 g:0 1 2!value group .ml.imax each flip lf[;;I]'[a[1];a[2]]
-100*avg iris.species=distinct[iris.species] .ml.ugrp g
+avg iris.species=distinct[iris.species] .ml.ugrp g
 
 / k nearest neighbors
 
 / pick classification that occurs most frequently
 / from 3 closest points trained on 100 observations
 nn:.ml.knn[.ml.edist;3;iris.species i;I@\:i]'[flip I (_')/i:desc -100?count I 0]
-100*avg nn=iris.species _/i
+avg nn=iris.species _/i
 
 / markov clustering
 / https://www.cs.ucsb.edu/~xyan/classes/CS595D-2009winter/MCL_Presentation2.pdf
+
+/ example from mcl man page
+/ http://micans.org/mcl/man/mcl.html
+t:flip `k1`k2`v!"ssf"$\:()
+t,:`cat`hat,0.2
+t,:`hat`bat,0.16
+t,:`bat`cat,1.0
+t,:`bat`bit,0.125
+t,:`bit`fit,0.25
+t,:`fit`hit,0.5
+t,:`hit`bit,0.16
+
+/ take max of bidirectional links, enumerate keys
+k:()
+m:.ml.inflate[1;0f] .ml.addloop m|:flip m:.ml.full enlist[2#count k],exec (`k?k1;`k?k2;v) from t
+(`hat`bat`cat;`bit`fit`hit)~(get`k!) each .ml.interpret .ml.mcl[2;1.5;0f] over m
+
+/ cluster the iris data
 sm:.5<.ml.gaussk[I;.5] each flip I / similarity matrix based on gaussian kernel
-distinct where each flip 0< .ml.mcl[2;1.5;10] over sm
+.ml.interpret .ml.mcl[2;1.5;10] over .ml.inflate[1;0f] sm
 / are there 4 species: http://www.siam.org/students/siuro/vol4/S01075.pdf
 
 / https://en.wikipedia.org/wiki/Naive_Bayes_classifier
@@ -396,8 +417,8 @@ flip .ml.probabilitynb d        / convert densities to probabilities
 clf:.ml.fitnb[.ml.gaussml;1f;I;iris.species] / build classifier
 d:.ml.densitynb[.ml.gauss;clf] I             / compute densities
 flip .ml.probabilitynb d        / convert densities to probabilities
-96f~100*avg iris.species=.ml.predictnb d / how good is classification
-96f~100*avg iris.species=.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] I / use log likelihood
+.96f~avg iris.species=.ml.predictnb d / how good is classification
+.96f~avg iris.species=.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] I / use log likelihood
 
 / inf2b-learn-note07-2up.pdf
 X:(2 0 0 1 5 0 0 1 0 0 0;       / goal
@@ -451,15 +472,15 @@ flip .ml.probabilitynb d
 
 / load weather data, remove the day column and move Play to front
 tree:.ml.id3 t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
-100*avg t.Play=.ml.dtc[tree] each t / accuracy
-71.428571428571431=100*avg t.Play=.ml.dtc[.ml.id3 (1#`Outlook) _ t] each t
+avg t.Play=.ml.dtc[tree] each t / accuracy
+.71428571428571431=avg t.Play=.ml.dtc[.ml.id3 (1#`Outlook) _ t] each t
 
 / c4.5
 / change humidity into a continuous variable
 t[`Humidity]:85 90 78 96 80 70 65 95 70 80 70 90 75 80
 show last last tree:.ml.id3 t / id3 creates bushy tree
 show last last tree:.ml.q45[2;neg .qml.nicdf .0] t / 4.5 picks a split value
-100*avg t.Play=.ml.dtc[tree] each t / accuracy
+avg t.Play=.ml.dtc[tree] each t / accuracy
 / handle nulls by using the remaining attributes
 .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
 
@@ -549,7 +570,7 @@ select from r lj movie where not null rating  / my ratings
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
 
 / user-user collaborative filtering
-rpt:lj[;movie] `score xdesc 
+rpt:lj[;movie] `score xdesc
 rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
 rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
 rpt update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
@@ -603,7 +624,7 @@ sf:(last (3#"\n") vs) each -2_3_ (4#"\n") vs / define split function
 / convert utf-8 octal escapes
 s:sf ssr[;"\342\200[\234\235]";"\""] ssr[;"\342\200[\231\230]";"'"] 3_"\n" sv lower read0 `$":",f
 / remove punctuation, plurals and -ing
-s:(" " vs except[;"_().;,:?!*'\""] ssr[;"'s ";" "] ssr[;"ing ";" "] ssr[;"[-\n]";" "]@) each s 
+s:(" " vs except[;"_().;,:?!*'\""] ssr[;"'s ";" "] ssr[;"ing ";" "] ssr[;"[-\n]";" "]@) each s
 
 w:asc distinct[raze s] except sw / distinct word list (droping stop words)
 m:((count each group@) each s)@\:w / matrix of word count per document (chapter)

@@ -65,9 +65,9 @@ zscore:{x%$[t;sdev;sdev each]x-:$[t:type x;avg;avg each]x}
 / apply f to normalized (then denormalize)
 fzscore:{[f;x]a+d*f x%d:$[t;sdev;sdev each]x-:a:$[t:type x;avg;avg each] x}
 
-/ compute the average of the top n items 
+/ compute the average of the top n items
 navg:{[n;x;y]avg y (n&count x)#idesc x}
-/ compute the weighted average of the top n items 
+/ compute the weighted average of the top n items
 nwavg:{[n;x;y](x$y i)%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
@@ -173,7 +173,7 @@ cm:{
 totals:{[c;t]
  t[key[t]0N]:sum value t;
  t:t,'flip (1#c)!enlist sum each value t;
- t} 
+ t}
 
 / load mnist dataset
 ldmnist:{
@@ -398,14 +398,22 @@ mode:{imax count each group x}
 knn:{[df;k;c;X;x]mode c k#iasc df[X;x]}
 
 / markov clusetering
-/ if type of X is not a real or float, add loops and normalize
-/ if (p)rune is an integer, take p largest, otherwise take everything > p
-mcl:{[e;r;p;X]
- if[8h>type X 0;X%:sum each X|:diag count[X]#1b];
- X:xexp[(e-1)mm[X]/X;r];
- X*:$[-8h<type p;(p>iasc idesc@)';p<]X;
- X%:sum each X;
+
+addloop:{x|diag max each x|flip x}
+
+expand:{[e;X](e-1)mm[X]/X}
+
+inflate:{[r;p;X]
+ X:X xexp r;                             / inflate
+ X*:$[-8h<type p;(p>iasc idesc@)';p<] X; / prune
+ X%:sum each X;                          / normalize
  X}
+
+/ if (p)rune is an integer, take p largest, otherwise take everything > p
+mcl:{[e;r;p;X] inflate[r;p] expand[e] X}
+
+chaos:{max {max[x]-sum x*x} each x}
+interpret:{1_asc distinct where each flip 0<x}
 
 / naive bayes
 

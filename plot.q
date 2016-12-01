@@ -15,7 +15,7 @@ plot:{[w;h;c;X]
  Z:flip key[Z],'sum each value Z:Z[2]g:group flip 2#Z; / sum overlapping z
  Z:@[Z;2;nbin;cn:count c,:()];                         / binify z
  p:h#enlist w#" ";                                     / empty canvas
- p:.[;;:;]/[p;flip Z 1 0;c Z 2];                       / plot points
+ p:./[p;flip Z 1 0;:;c Z 2];                           / plot points
  k:nrng[h-1] . (min;max)@\:X 1;                        / compute key
  p:reverse k!p;                                        / generate plot
  p}

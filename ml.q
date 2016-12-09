@@ -170,17 +170,6 @@ cm:{
  t:([]x:u)!flip (`$string[u])!m;
  t}
 
-totals:{[c;t]
- t[key[t]0N]:sum value t;
- t:t,'flip (1#c)!enlist sum each value t;
- t}
-
-/ load mnist dataset
-ldmnist:{
- d:first (1#4;1#"i") 1: 4_(h:4*1+x 3)#x;
- x:d#$[0>i:x[2]-0x0b;::;first ((2 4 4 8;"hief")@\:i,()) 1:] h _x;
- x}
-
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}
@@ -523,9 +512,3 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 / use svd decomposition to predict missing exposures for new user
 / (ui=0b) or item (ui=1b) (r)ecord
 foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
-
-/ (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
-download:{[b;f;e;uf]
- if[()~key `$":",f,e;(`$":",f,e) 1: .Q.hg`$":",0N!b,f,e];
- if[()~key `$":",f;uf f,e];
- }

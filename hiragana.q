@@ -5,22 +5,16 @@
 / dataset specification
 / http://etlcdb.db.aist.go.jp/?page_id=1711
 
-\l ml.q
-\l plot.q
-\l fmincg.q
 \c 100 300
-
--1"trying to load qml and use its matrix operations";
-@[system each;("l qml.q";"l qmlmm.q");0N!]; / use qml mm (if available)
+\l funq.q
 
 -1"[down]loading handwritten kanji dataset";
 f:"ETL9B"                                      / zip file base
 b:"http://etlcdb.db.aist.go.jp/etlcdb/data/"   / base url
-.ml.download[b;;".zip";system 0N!"unzip ",] f; / download data
+.util.download[b;;".zip";system 0N!"unzip ",] f; / download data
 
 -1"loading etl9b ('binalized' dataset)";
-etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
-x:etl9b read1 `:ETL9B/ETL9B_1
+x:.util.etl9b read1 `:ETL9B/ETL9B_1
 
 -1"extracting the X matrix and y vector";
 h:0x24,/:"x"$0x21+0x01*til 83 / hiragana

@@ -1,19 +1,5 @@
-\l ml.q
-\l plot.q
-\l fmincg.q
 \c 20 100
-
-@[system each;("l qml.q";"l qmlmm.q");::] / use qml mm (if available)
-
-/ box-muller (copied from qtips/stat.q) (m?-n in k6)
-bm:{
- if[count[x] mod 2;'`length];
- x:2 0N#x;
- r:sqrt -2f*log first x;
- theta:2f*acos[-1f]*last x;
- x: r*cos theta;
- x,:r*sin theta;
- x}
+\l fun.q
 
 \
 / define a plotting function
@@ -26,11 +12,11 @@ plt sin .01*til 1000
 plt 100000?1f
 
 / normal random variables (k6:10000?-1f)
-plt bm 10000?1f
+plt .util.bm 10000?1f
 
 / 2 sets of independant normal random variables
 / NOTE: matrix variables are uppercase
-X:(bm 10000?) each 1 1f
+X:(.util.bm 10000?) each 1 1f
 
 / TIP: suppress the desire to flip matrices
 
@@ -151,11 +137,11 @@ tptnfpfn:.ml.tptnfpfn["i"$first Y;"i"$first p]
 / download data
 f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";"t10k-images-idx3-ubyte")
 b:"http://yann.lecun.com/exdb/mnist/"
-.ml.download[b;;".gz";system 0N!"gunzip -v ",] each f; / download data
+.util.download[b;;".gz";system 0N!"gunzip -v ",] each f; / download data
 
 / load training data
-Y:enlist y:"i"$.ml.ldmnist read1 `$"train-labels-idx1-ubyte"
-X:flip "f"$raze each .ml.ldmnist read1 `$"train-images-idx3-ubyte"
+Y:enlist y:"i"$.util.ldmnist read1 `$"train-labels-idx1-ubyte"
+X:flip "f"$raze each .util.ldmnist read1 `$"train-images-idx3-ubyte"
 
 / visualize data
 / redefine plot (to include space)
@@ -236,8 +222,8 @@ plt X[;rw:rand w]
 ([]p;y) rw
 
 / load testing data
-Yt:enlist yt:"i"$.ml.ldmnist read1 `$"t10k-labels-idx1-ubyte"
-Xt:flip "f"$raze each .ml.ldmnist read1 `$"t10k-images-idx3-ubyte"
+Yt:enlist yt:"i"$.util.ldmnist read1 `$"t10k-labels-idx1-ubyte"
+Xt:flip "f"$raze each .util.ldmnist read1 `$"t10k-images-idx3-ubyte"
 
 / how well can we predict
 avg yt=p:.ml.predictonevsall[Xt] enlist THETA
@@ -257,7 +243,7 @@ plt:.plot.plot[28;15;1_.plot.c10]
 k:3 / 3 centroids
 
 show C:"f"$k?/:2#20 / initial centroids
-X:raze each C,''C+bm(2;k)#100?/:(2*k)#1f
+X:raze each C,''C+.util.bm(2;k)#100?/:(2*k)#1f
 plt X
 
 / the number of centroids (k) becomes the actual centroids after the
@@ -273,7 +259,7 @@ plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 / classic machine learning iris data
 f:("iris.data";"bezdekIris.data") 1 / pick the corrected dataset
 b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
-.ml.download[b;;"";::] f;           / download data
+.util.download[b;;"";::] f;           / download data
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 plt I 3
 
@@ -321,7 +307,7 @@ mf:.ml.binml[n]                 / parameter maximization function
 mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
-X:raze X0:mu0+s0*(bm ?[;1f]@) each m0 / build dataset
+X:raze X0:mu0+s0*(.util.bm ?[;1f]@) each m0 / build dataset
 plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
 phi:k#1f%k;                     / guess that distributions occur with equal frequency
@@ -338,7 +324,7 @@ S20:((30 -20;-20 30);(20 0; 0 50);(10 2; 5 10)) / SIGMA (covariance matrix)
 m0:1000 2000 1000
 
 R0:.qml.mchol each S20          / sqrt(SIGMA)
-X:(,') over X0:mu0+R0$'(bm (?).)''[flip each flip (m0;3 2#1f)]
+X:(,') over X0:mu0+R0$'(.util.bm (?).)''[flip each flip (m0;3 2#1f)]
 plt X
 
 k:count mu0
@@ -525,7 +511,7 @@ X:.ml.full S
 
 f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
 b:"http://files.grouplens.org/datasets/movielens/" / base url
-.ml.download[b;;".zip";system 0N!"unzip ",] f;         / download data
+.util.download[b;;".zip";system 0N!"unzip ",] f;         / download data
 / integer movieIds, enumerate genres, link movieId, and store ratings as real to save space
 movie:1!update `u#movieId,`genre?/:`$"|" vs' genres from ("I**";1#",") 0: `$":",f,"/movies.csv"
 link:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"
@@ -601,19 +587,19 @@ select from (rpt update score:last a+p from r) where not null rating
 
 f:"stop-word-list.txt"
 b:"http://xpo6.com/wp-content/uploads/2015/01/"
-.ml.download[b;;"";::] f
+.util.download[b;;"";::] f
 sw:enlist[""],read0 `$":",f
 
 / the bible
 / f:"pg10.txt"
 / b:"http://www.gutenberg.org/cache/epub/10/"
-/ .ml.download[b;;"";::] f
+/ .util.download[b;;"";::] f
 / sf:{x where x like\: "1:1*"}  (last (3#"\n") vs) each (5#"\n") vs first (13#"\n") vs last (15#"\n") vs
 
 / pride and prejudice
 f:"1342-0.txt"
 b:"http://www.gutenberg.org/files/1342/"
-.ml.download[b;;"";::] f
+.util.download[b;;"";::] f
 sf:(last (3#"\n") vs) each -2_3_ (4#"\n") vs / define split function
 
 / convert utf-8 octal escapes

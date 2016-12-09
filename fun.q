@@ -1,8 +1,9 @@
 \l ml.q
 \l plot.q
 \l fmincg.q
-\l qml.q
 \c 20 100
+
+@[system each;("l qml.q";"l qmlmm.q");::] / use qml mm (if available)
 
 / box-muller (copied from qtips/stat.q) (m?-n in k6)
 bm:{

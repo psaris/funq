@@ -14,12 +14,6 @@ bm:{
  x,:r*sin theta;
  x}
 
-/ (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
-download:{[b;f;e;uf]
- if[()~key `$":",f,e;(`$":",f,e) 1: .Q.hg`$":",0N!b,f,e];
- if[()~key `$":",f;uf f,e];
- }
-
 \
 / define a plotting function
 plt:.plot.plot[28;15;1_.plot.c16]
@@ -156,7 +150,7 @@ tptnfpfn:.ml.tptnfpfn["i"$first Y;"i"$first p]
 / download data
 f:("train-labels-idx1-ubyte";"train-images-idx3-ubyte";"t10k-labels-idx1-ubyte";"t10k-images-idx3-ubyte")
 b:"http://yann.lecun.com/exdb/mnist/"
-download[b;;".gz";system 0N!"gunzip -v ",] each f; / download data
+.ml.download[b;;".gz";system 0N!"gunzip -v ",] each f; / download data
 
 / load training data
 Y:enlist y:"i"$.ml.ldmnist read1 `$"train-labels-idx1-ubyte"
@@ -278,7 +272,7 @@ plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 / classic machine learning iris data
 f:("iris.data";"bezdekIris.data") 1 / pick the corrected dataset
 b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
-download[b;;"";::] f;           / download data
+.ml.download[b;;"";::] f;           / download data
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 plt I 3
 
@@ -530,7 +524,7 @@ X:.ml.full S
 
 f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
 b:"http://files.grouplens.org/datasets/movielens/" / base url
-download[b;;".zip";system 0N!"unzip ",] f;         / download data
+.ml.download[b;;".zip";system 0N!"unzip ",] f;         / download data
 / integer movieIds, enumerate genres, link movieId, and store ratings as real to save space
 movie:1!update `u#movieId,`genre?/:`$"|" vs' genres from ("I**";1#",") 0: `$":",f,"/movies.csv"
 link:1!update `u#`movie$movieId from ("III";1#",") 0: `$":",f,"/links.csv"
@@ -606,19 +600,19 @@ select from (rpt update score:last a+p from r) where not null rating
 
 f:"stop-word-list.txt"
 b:"http://xpo6.com/wp-content/uploads/2015/01/"
-download[b;;"";::] f
+.ml.download[b;;"";::] f
 sw:enlist[""],read0 `$":",f
 
 / the bible
 / f:"pg10.txt"
 / b:"http://www.gutenberg.org/cache/epub/10/"
-/ download[b;;"";::] f
+/ .ml.download[b;;"";::] f
 / sf:{x where x like\: "1:1*"}  (last (3#"\n") vs) each (5#"\n") vs first (13#"\n") vs last (15#"\n") vs
 
 / pride and prejudice
 f:"1342-0.txt"
 b:"http://www.gutenberg.org/files/1342/"
-download[b;;"";::] f
+.ml.download[b;;"";::] f
 sf:(last (3#"\n") vs) each -2_3_ (4#"\n") vs / define split function
 
 / convert utf-8 octal escapes

@@ -389,7 +389,8 @@ em:{[lf;mf;X;pt]
  enlist[phi],theta}
 
 / return value which occur most frequently
-mode:{imax count each group x}
+mode:{.ml.imax count each group x}
+/mode:{x -1+w .ml.imax deltas w:where differ[x:asc x],1b}
 
 / k nearest neighbors
 
@@ -523,3 +524,8 @@ nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
 / (ui=0b) or item (ui=1b) (r)ecord
 foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
 
+/ (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
+download:{[b;f;e;uf]
+ if[()~key `$":",f,e;(`$":",f,e) 1: .Q.hg`$":",0N!b,f,e];
+ if[()~key `$":",f;uf f,e];
+ }

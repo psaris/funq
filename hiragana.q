@@ -49,4 +49,4 @@ show value (,') over plt each flip X[;value ([]p;y) rw:rand w]
 show value (,') over plt each flip X[;value ([]p;y) rw:rand w]
 
 -1"view the confusion matrix";
-show .ml.totals[`TOTAL] .ml.cm[y;"j"$p]
+show .util.totals[`TOTAL] .ml.cm[y;"j"$p]

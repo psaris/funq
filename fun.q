@@ -168,7 +168,7 @@ plt X[;i:rand w]
 ([]p;y) i
 
 / confusion matrix
-.ml.totals[`TOTAL] .ml.cm[y;"i"$p]
+.util.totals[`TOTAL] .ml.cm[y;"i"$p]
 
 / confirm analytic gradient is equal to numeric gradient
 .ml.checknngradients[.1f;3 5 3]
@@ -234,7 +234,7 @@ plt Xt[;rw:rand w]
 ([]p;yt) rw
 
 / confusion matrix
-.ml.totals[`TOTAL] .ml.cm[yt;"i"$p]
+.util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
 / clustering
 
@@ -266,7 +266,7 @@ plt I 3
 C:.ml.kmeans[I]/[-3]             / find 3 centroids
 show g:.ml.cgroup[.ml.edist;I;C] / classify
 avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
-.ml.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
+.util.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
 
 
 / plot errors with increasing number of centroids

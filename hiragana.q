@@ -27,7 +27,7 @@ system "S ",string "i"$.z.T
 
 -1"view 4 random drawings of the same character";
 plt:.plot.plot[39;20;.plot.c10] .plot.hmap flip 64 cut
-show value (,') over plt each flip X[;rand[count h]+count[distinct y]*til 4]
+-1 value (,') over plt each flip X[;rand[count h]+count[distinct y]*til 4];
 
 -1"generate neural network topology with one hidden layer";
 n:0N!{(x;"j"$.5*x+y;y)}[count X;count h]
@@ -36,17 +36,17 @@ YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.ninit'[-1_n;1_n];
 
-l:1                             / lambda (regularization coeficient)
+l:1                             / lambda (regularization coefficient)
 -1"run batch gradient descent",$[l;" with regularization";""];
-theta: first .fmincg.fmincg[50;.ml.nncost[l;n;X;YMAT];theta]
+theta: first .fmincg.fmincg[10;.ml.nncost[l;n;X;YMAT];theta]
 
--1"checking accuracy of parametes";
+-1"checking accuracy of parameters";
 avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";
-show value (,') over plt each flip X[;value ([]p;y) rw:rand w]
-show value (,') over plt each flip X[;value ([]p;y) rw:rand w]
+-1 value (,') over plt each flip X[;value ([]p;y) rw:rand w];
+-1 value (,') over plt each flip X[;value ([]p;y) rw:rand w];
 
 -1"view the confusion matrix";
 show .util.totals[`TOTAL] .ml.cm[y;"j"$p]

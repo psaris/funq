@@ -89,14 +89,20 @@ lpredict:(')[sigmoid;predict]   / logistic regression predict
 lcost:{sum (-1f%count y 0)*sum each (y*log x)+(1f-y)*log 1f-x}
 
 / regularized logistic regression cost
+/ expects a list of THETA matrices
 rlogcost:{[l;X;Y;THETA]
+ if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
+ if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
  J:lcost[X lpredict/ THETA;Y];
  if[l>0f;J+:(l%2*count Y 0)*x$x:2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  J}
 logcost:rlogcost[0f]
 
 / regularized logistic regression gradient
+/ expects a list of THETA matrices
 rloggrad:{[l;X;Y;THETA]
+ if[type THETA  ;:first .z.s[l;X;Y] enlist THETA]; / vector
+ if[type THETA 0;:first .z.s[l;X;Y] enlist THETA]; / single matrix
  n:count Y 0;
  a:lpredict\[enlist[X],THETA];
  D:last[a]-Y;
@@ -108,14 +114,14 @@ rloggrad:{[l;X;Y;THETA]
 loggrad:rloggrad[0f]
 
 rlogcostgrad:{[l;X;Y;THETA]
- J:sum rlogcost[l;X;Y;2 enlist/ THETA];
- g:2 raze/ rloggrad[l;X;Y;2 enlist/ THETA];
+ J:sum rlogcost[l;X;Y;THETA];
+ g:rloggrad[l;X;Y;THETA];
  (J;g)}
 logcostgrad:rlogcostgrad[0f]
 
 rlogcostgradf:{[l;X;Y]
- Jf:(sum rlogcost[l;X;Y]enlist enlist@);
- gf:(raze rloggrad[l;X;Y]enlist enlist @);
+ Jf:(sum rlogcost[l;X;Y]@);
+ gf:(enlist rloggrad[l;X;Y]@);
  (Jf;gf)}
 logcostgradf:rlogcostgradf[0f]
 

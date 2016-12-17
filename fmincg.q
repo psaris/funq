@@ -62,8 +62,10 @@ MAX:20 / max 20 function evaluations per line search
 RATIO:100 / maximum allowed slope ratio
 REALMIN:2.2251e-308
 
+dot:$                           / override for performance
+
 wolfepowell:{[d1;d2;f1;f2;z1]$[d2>d1*neg SIG;1b;f2>f1+d1*RHO*z1]}
-polackribiere:{[df1;df2;s](s*((df2$df2)-df1$df2)%df1$df1)-df2}
+polackribiere:{[df1;df2;s](s*((dot[df2]df2)-dot[df1]df2)%dot[df1]df1)-df2}
 quadfit:{[f2;f3;d2;d3;z3]z3-(.5*d3*z3*z3)%(f2-f3)+d3*z3}
 cubicfit:{[f2;f3;d2;d3;z3]
  A:(6f*(f2-f3)%z3)+3f*d2+d3;
@@ -83,7 +85,7 @@ minimize:{[F;v]
  v[`z1]+:v[`z2];
  v[`X]+:v[`z2]*v[`s];
  v[`f2`df2]:F v[`X];
- v[`d2]:v[`df2]$v[`s];
+ v[`d2]:dot[v[`df2]]v[`s];
  v[`z3]-:v[`z2];            / z3 is now relative to the location of z2
  v}
 
@@ -98,7 +100,7 @@ extrapolate:{[F;v]
  v[`f3]:v[`f2];v[`d3]:v[`d2];v[`z3]:neg v[`z2]; / set point 3 equal to point 2
  v[`z1]+:v[`z2];v[`X]+:v[`z2]*v[`s]; / update current estimates
  v[`f2`df2]:F v[`X];
- v[`d2]:v[`df2]$v[`s];
+ v[`d2]:dot[v[`df2]]v[`s];
  v}
 
 loop:{[n;F;v]
@@ -106,7 +108,7 @@ loop:{[n;F;v]
  v[`X]+:v[`z1]*v[`s];           / begin line search
  v[`f2`df2]:F v[`X];
  v[`i]+:n<0;                    / count epochs?!
- v[`d2]:v[`df2]$v[`s];
+ v[`d2]:dot[v[`df2]]v[`s];
  v[`f3]:v[`f1];v[`d3]:v[`d1];v[`z3]:neg v[`z1]; / initialize point 3 equal to point 1
  v[`M]:$[n>0;MAX;MAX&neg n-v[`i]];
  v[`success]:0b;v[`limit]:-1;   / initialize quantities
@@ -132,9 +134,9 @@ onsuccess:{[v]
  1"Iteration ",string[v[`i]]," | cost: ", string[v[`f1]], "\r";
  v:@[v;`s;polackribiere[v[`df1];v[`df2]]]; / Polack-Ribiere direction
  v[`df2`df1]:v[`df1`df2];                  / swap derivatives
- v[`d2]:v[`df1]$v[`s];
+ v[`d2]:dot[v[`df1]]v[`s];
  / new slope must be negative, otherwise use steepest direction
- if[v[`d2]>0;v[`s]:neg v[`df1];v[`d2]:v[`s]$neg v[`s]];
+ if[v[`d2]>0;v[`s]:neg v[`df1];v[`d2]:dot[v[`s]]neg v[`s]];
  v[`z1]*:RATIO&v[`d1]%v[`d2]-REALMIN; / slope ratio but max RATIO
  v[`d1]:v[`d2];
  v}
@@ -145,7 +147,7 @@ fmincg:{[n;F;X]                 / n can default to 100
  fX:();
  v[`f1`df1]:F v[`X];            / get function value and gradient
  v[`s]:neg v[`df1];             / search direction is steepest
- v[`d1]:v[`s]$neg v[`s];        / this is the slope
+ v[`d1]:dot[v[`s]]neg v[`s];    / this is the slope
  v[`z1]:(n:n,1)[1]%1f-v[`d1];   / initial step is red/(|s|+1)
  n@:0;                          / n is first element
  v[`i]+:n<0;                    / count epochs?!
@@ -159,7 +161,7 @@ fmincg:{[n;F;X]                 / n can default to 100
    / line search failed twice in a row or we ran out of time, so we give up
    if[$[ls_failed;1b;v[`i]>abs n];-1"";:(v[`X];fX;v[`i])];
    v[`df2`df1]:v[`df1`df2];     / swap derivatives
-   v[`z1]:1f%1f-v[`d1]:v[`s]$neg v[`s]:neg v[`df1]; / try steepest
+   v[`z1]:1f%1f-v[`d1]:dot[v[`s]]neg v[`s]:neg v[`df1]; / try steepest
    ];
   ls_failed:not v[`success];    / line search failure
   ];

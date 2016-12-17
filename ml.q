@@ -168,7 +168,7 @@ jaccard:{x[0]%sum x _ 1}
 / Matthews Correlation Coefficient
 / geometric mean of the regression coefficients of the problem and its dual
 / -1 0 1 (none right, same as random prediction, all right)
-MCC:{ ((-). x[0 2]*x 1 3)%sqrt prd x[0 0 1 1]+x 2 3 2 3}
+MCC:{ ((-). x[0 2]*x 1 3)%prd sqrt x[0 0 1 1]+x 2 3 2 3}
 
 / confusion matrix
 cm:{

@@ -35,10 +35,10 @@ YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.ninit'[-1_n;1_n];
-
 l:1                             / lambda (regularization coefficient)
--1"run batch gradient descent",$[l;" with regularization";""];
-theta: first .fmincg.fmincg[10;.ml.nncost[l;n;X;YMAT];theta]
+-1"run mini-batch stochastic gradient descent",$[l;" with regularization";""];
+mf:{first .fmincg.fmincg[10;.ml.nncost[l;n;X[;y];YMAT[;y]];x]}
+theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 
 -1"checking accuracy of parameters";
 avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta

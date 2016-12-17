@@ -4,6 +4,7 @@ mm:mmu                          / X  * Y
 mmt:{y$/:x}                     / X  * Y'
 mtm:{flip[x]$y}                 / X' * Y
 minv:inv                        / X**-1
+dot:$                           / dot product
 
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
@@ -14,7 +15,7 @@ predict:{[X;THETA]mm[THETA] addint X} / regression predict
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
  J:sum (1f%2*n:count Y 0)*sum mmt[Y] Y-:predict[X;THETA];
- if[l>0f;J+:(l%2*n)*x$x:raze @[;0;:;0f]'[THETA]];
+ if[l>0f;J+:(l%2*n)*dot[x]x:raze @[;0;:;0f]'[THETA]];
  J}
 lincost:rlincost[0f]
 
@@ -68,7 +69,7 @@ fzscore:{[f;x]a+d*f x%d:$[t;sdev;sdev each]x-:a:$[t:type x;avg;avg each] x}
 / compute the average of the top n items
 navg:{[n;x;y]avg y (n&count x)#idesc x}
 / compute the weighted average of the top n items
-nwavg:{[n;x;y](x$y i)%sum abs x@:i:(n&count x)#idesc x}
+nwavg:{[n;x;y](dot[x]y i)%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
 / (s)imilarity (f)unction, (a)veraging (f)unction
@@ -94,7 +95,7 @@ rlogcost:{[l;X;Y;THETA]
  if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
  if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
  J:lcost[X lpredict/ THETA;Y];
- if[l>0f;J+:(l%2*count Y 0)*x$x:2 raze/ @[;0;:;0f]''[THETA]]; / regularization
+ if[l>0f;J+:(l%2*count Y 0)*dot[x]x:2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  J}
 logcost:rlogcost[0f]
 
@@ -196,7 +197,7 @@ checknngradients:{[l;n]
 
 checkcfgradients:{[l;n]
  nu:n 0;nm:n 1;nf:n 2;          / n users, n movies, n features
- Y:(nf?/:nu#1f)$nm?/:nf#1f;     / random recommendations
+ Y:dot[nf?/:nu#1f]nm?/:nf#1f;   / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
  g:2 raze/ rcfgrad[l;Y;THETA;X];                 / analytic gradient
@@ -211,7 +212,7 @@ nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
  J:lcost[Y;YMAT];
- if[l>0f;J+:(l%2*n)*{x$x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
+ if[l>0f;J+:(l%2*n)*{dot[x]x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  D:Y-YMAT;
  a:addint each -1_a;
  D:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;

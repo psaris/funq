@@ -30,13 +30,13 @@ plt:.plot.plot[39;20;.plot.c10] .plot.hmap flip 64 cut
 -1 value (,') over plt each flip X[;rand[count h]+count[distinct y]*til 4];
 
 -1"generate neural network topology with one hidden layer";
-n:0N!{(x;"j"$.5*x+y;y)}[count X;count h]
+n:0N!{(x;(x+y) div 2;y)}[count X;count h]
 YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.ninit'[-1_n;1_n];
-l:1                             / lambda (regularization coefficient)
--1"run mini-batch stochastic gradient descent",$[l;" with regularization";""];
+l:1                           / lambda (l2 regularization coefficient)
+-1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
 mf:{first .fmincg.fmincg[10;.ml.nncost[l;n;X[;y];YMAT[;y]];x]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 

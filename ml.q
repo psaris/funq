@@ -69,7 +69,7 @@ fzscore:{[f;x]a+d*f x%d:$[t;sdev;sdev each]x-:a:$[t:type x;avg;avg each] x}
 / compute the average of the top n items
 navg:{[n;x;y]avg y (n&count x)#idesc x}
 / compute the weighted average of the top n items
-nwavg:{[n;x;y](dot[x]y i)%sum abs x@:i:(n&count x)#idesc x}
+nwavg:{[n;x;y]mtm[y i;x]%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
 / (s)imilarity (f)unction, (a)veraging (f)unction

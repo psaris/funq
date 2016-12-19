@@ -43,8 +43,7 @@ avg y=p:.ml.predictonevsall[X] enlist theta
 
 -1"view a few confused characters";
 w:where not y=p
-show plt X[;i:rand w];
-([]p;y) i
+do[2;show value plt X[;i:rand w];show ([]p;y) i]
 
 -1"view the confusion matrix";
 .util.totals[`TOTAL] .ml.cm[y;"i"$p]

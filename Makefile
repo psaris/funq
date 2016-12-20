@@ -18,9 +18,8 @@ do_patch: make.patch
 	cat $^ | patch -p1 -d work
 
 do_configure:
-	echo CFLAGS='$(FLAGS) $(CFLAGS)' >> work/Makefile
-	echo CXX='$(XCC) -lstdc++' >> work/Makefile
-	echo CC='$(XCC)' >> work/Makefile
+	echo CFLAGS='$(FLAGS) $(CXXFLAGS)' >> work/Makefile
+	echo CXX='$(CXX)' >> work/Makefile
 
 do_build:
 	$(MAKE) -C work linear.o tron.o train

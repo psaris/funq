@@ -1,6 +1,6 @@
 --- work/Makefile	2016-11-17 21:57:05.000000000 -0500
 +++ work/Makefile.new	2016-11-17 22:00:19.000000000 -0500
-@@ -1,10 +1,10 @@
+@@ -1,14 +1,14 @@
 -CXX ?= g++
 -CC ?= gcc
 -CFLAGS = -Wall -Wconversion -O3 -fPIC
@@ -12,7 +12,25 @@
  SHVER = 3
  OS = $(shell uname)
 -#LIBS = -lblas
-+LIBS = -lblas
++LIBS = -L../../lib -lblas
  
  all: train predict
  
+-lib: linear.o tron.o blas/blas.a
++lib: linear.o tron.o
+ 	if [ "$(OS)" = "Darwin" ]; then \
+ 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,liblinear.so.$(SHVER)"; \
+ 	else \
+@@ -16,10 +16,10 @@
+ 	fi; \
+ 	$(CXX) $${SHARED_LIB_FLAG} linear.o tron.o blas/blas.a -o liblinear.so.$(SHVER)
+ 
+-train: tron.o linear.o train.c blas/blas.a
++train: tron.o linear.o train.c
+ 	$(CXX) $(CFLAGS) -o train train.c tron.o linear.o $(LIBS)
+ 
+-predict: tron.o linear.o predict.c blas/blas.a
++predict: tron.o linear.o predict.c
+ 	$(CXX) $(CFLAGS) -o predict predict.c tron.o linear.o $(LIBS)
+ 
+ tron.o: tron.cpp tron.h

@@ -385,8 +385,8 @@ em:{[lf;mf;X;pt]
  enlist[phi],theta}
 
 / return value which occur most frequently
-mode:{.ml.imax count each group x}
-/mode:{x -1+w .ml.imax deltas w:where differ[x:asc x],1b}
+/mode:{.ml.imax count each group x}
+mode:{x -1+w .ml.imax deltas w:where differ[x:asc x],1b}
 
 / k nearest neighbors
 

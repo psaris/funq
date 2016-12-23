@@ -37,7 +37,7 @@ YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 theta:2 raze/ .ml.ninit'[-1_n;1_n];
 l:1                           / lambda (l2 regularization coefficient)
 -1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
-mf:{first .fmincg.fmincg[10;.ml.nncost[l;n;X[;y];YMAT[;y]];x]}
+mf:{first .fmincg.fmincg[10;.ml.nncostgrad[l;n;X[;y];YMAT[;y]];x]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 
 -1"checking accuracy of parameters";

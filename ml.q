@@ -207,7 +207,7 @@ checkcfgradients:{[l;n]
 
 
 / n can be any network topology dimension
-nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
+nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  THETA:nncut[n] theta;
  Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
@@ -220,9 +220,9 @@ nncost:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
  (J;2 raze/ g)}
 
-nncostf:{[l;n;X;YMAT]
- Jf:(first nncost[l;n;X;YMAT]@);
- gf:(last nncost[l;n;X;YMAT]@);
+nncostgradf:{[l;n;X;YMAT]
+ Jf:(first nncostgrad[l;n;X;YMAT]@);
+ gf:(last nncostgrad[l;n;X;YMAT]@);
  (Jf;gf)}
 
 / stochastic gradient descent

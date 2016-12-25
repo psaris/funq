@@ -26,6 +26,16 @@ rlingrad:{[l;X;Y;THETA]
  g}
 lingrad:rlingrad[0f]
 
+/ regularized content-based filtering cost & gradient
+rcbfcostgrad:{[l;X;Y;theta]
+ THETA:(count Y;0N)#theta;
+ J:.5*sum sum 0f^J*J:predict[X;THETA]-Y;
+ if[l>0f;J+:(.5*l)*dot[x]x:raze @[;0;:;0f]'[THETA]];
+ g:mmt[0f^predict[X;THETA]-Y] addint X;
+ if[l>0f;g+:l*@[;0;:;0f]'[THETA]];
+ (J;raze g)}
+cbfcostgrad:rcbfcostgrad[0f]
+
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]
  J:.5*sum sum 0f^J*J:mtm[THETA;X]-Y;

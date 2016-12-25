@@ -17,5 +17,6 @@ clone this project and start q with `q fun.q`. you can then read the comments an
 ## Naive Bayes
 ## Decision Tree (ID3,C4.5)
 ## Google PageRank
+## Content-Based Filtering (Recommender Systems)
 ## Collaborative Filtering (Recommender Systems)
 ## Vector Space Model (tf-idf)

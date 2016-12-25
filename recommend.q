@@ -11,15 +11,19 @@ movie:("I**";1#",") 0:`$f,"/movies.csv"
 movie:update rtrim title from movie
 movie:update year:"I"$-1_/:-5#/:title,-7_/:title from movie where title like "*(????)"
 movie:update 0#'genres from movie where genres like "(no genres listed)"
-movie:1!update `u#movieId,`genre?/:`$"|"vs'genres from movie
+movie:1!update `u#movieId,`genre?/:`$(enlist'[string 10 xbar year],'"|"vs'genres) from movie
 -1"loading movie ratings: partitioned by userId and movieId linked to movie table";
 rating:update `p#userId,`movie$movieId from ("IIF";1#",") 0:`$f,"/ratings.csv"
 plt:.plot.plot[40;20;1_.plot.c10]
 
+-1"to ensure the ratings matrix only contains movies with ratings,";
+-1"we generate a list of all the unique movie ids listed in the ratings table";
+show um:exec distinct asc movieId from rating / unique movies
+
 -1"we now build a dataset to hold our own ratings/preferences";
-r:([movieId:um]rating:count[um]#0Nf) / initial ratings
-r,:([]movieId:260 1197 2918 1968i;rating:4 5 5 4f)
-r,:([]movieId:4006 53996 69526 87520 112370 86898i;rating:5 4 4 3 5 .5)
+r:([movieId:um]rating:count[um]#0n) / initial ratings
+r,:([]movieId:260 1197 2005 1968 2918i;rating:4 4 4 4 5f)
+r,:([]movieId:4006 53996 69526 87520 112370 86898i;rating:5 4 4 5 5 .5)
 show select from r lj movie where not null rating  / my ratings
 
 rpt:show lj[;movie] `score xdesc     / projecting to sort ratings and append movie title
@@ -31,7 +35,7 @@ rpt:show lj[;movie] `score xdesc     / projecting to sort ratings and append mov
 -1"it uses our own preferences mixed with each movie's genre";
 Y:enlist value[r]`rating
 -1"we build the X matrix based on each movie's genres"
-show X:0^X%\:sum X:flip exec genre in/: genres from ([]movieId:um)#movie
+show X:flip exec genre in/: genres from ([]movieId:um)#movie
 -1"we then randomly initialize the theta matrix";
 theta:raze -1+(1+count X)?/:count[Y]#2f
 -1"since we don't use other user's preferences, this is quick optimization";
@@ -71,9 +75,6 @@ show select[10;>rating] avg rating, n:count i by movieId.title from rating
 show select[10;>n] avg rating, n:count i by movieId.title from rating
 -1"we will therefore demean the ratings before performing our analysis";
 -1"";
--1"to ensure the ratings matrix only contains movies with ratings,";
--1"we generate a list of all the unique movie ids listed in the ratings table";
-show um:exec distinct asc movieId from rating / unique movies
 -1"by using a syntax that is similar to pivoting,";
 -1"we can generate the user/movie matrix";
 show R:value exec (movieId!rating) um by userId from rating

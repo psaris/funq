@@ -12,7 +12,7 @@ plot:{[w;h;c;X]
  if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  Z:@[X;0 1;nbin;(w;h)];               / allocate (x;y) to (w;h) bins
- Z:flip key[Z],'sum each value Z:Z[2]g:group flip 2#Z; / sum overlapping z
+ Z:flip key[Z],'avg each value Z:Z[2]g:group flip 2#Z; / avg overlapping z
  Z:@[Z;2;nbin;cn:count c,:()];                         / binify z
  p:h#enlist w#" ";                                     / empty canvas
  p:./[p;flip Z 1 0;:;c Z 2];                           / plot points

@@ -1,4 +1,4 @@
-\c 20 200
+\c 20 100
 \l funq.q
 
 f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
@@ -34,7 +34,7 @@ rpt:show lj[;movie] `score xdesc     / projecting to sort ratings and append mov
 -1"content based filtering does not user ratings from other people";
 -1"it uses our own preferences mixed with each movie's genre";
 Y:enlist value[r]`rating
--1"we build the X matrix based on each movie's genres"
+-1"we build the X matrix based on each movie's genres";
 show X:flip exec genre in/: genres from ([]movieId:um)#movie
 -1"we then randomly initialize the theta matrix";
 theta:raze -1+(1+count X)?/:count[Y]#2f
@@ -80,8 +80,9 @@ show select[10;>n] avg rating, n:count i by movieId.title from rating
 show R:value exec (movieId!rating) um by userId from rating
 -1"and visualize the data";
 plt:.plot.plot[40;20;.plot.c10]
--1 value plt .plot.hmap R;
+-1 value plt .plot.hmap 0^R;
 
+\
 -1"user-user collaborative filtering fills missing ratings";
 -1"with averaged values from users who's ratings are most similar to ours";
 -1"we have many choices to make:";
@@ -108,7 +109,7 @@ rpt update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.n
  "singular value decomposition (svd) allows us to compute latent factors (off-line)";
  "and perform simple matrix multiplication to make predictions (on-line)");
 -1"demean and compute score based on top n svd factors";
-usv:.qml.msvd 0f^R-a:avg'[R]
+usv:.qml.msvd 0f^R-\:a:.ml.frow[avg] R
 rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;0b]0f^] rating from r
 -1"we can even use svd to foldin a new movie";
 .ml.foldin[.ml.nsvd[30] usv ;1b;1f^R[;2]]
@@ -121,13 +122,19 @@ R,:value[r]`rating
 n:(nu:count R;nm:count R 0;nf:20)   / n users, n movies, n features
 thetax:2 raze/ (THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
 -1"store average rating";
-a:avg each R                    / normalization data
+a:.ml.frow[avg] R               / normalization data
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[3f;R-a;n];thetax] / learn
+
+thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[1f;R-\:a;n];thetax] / learn
 -1"predict missing ratings ";
-p:.ml.mtm . THETAX:.ml.cfcut[n] thetax               / predictions
-rpt update score:last a+p from r / add bias
+P:a+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
+rpt update score:last P from r                           / add bias
 -1"compare against existing ratings";
-rpt select from (update score:last a+p from r) where not null rating
+rpt select from (update score:last P from r) where not null rating
+
+m:exec title by movieId from movie
+m um idesc each THETAX[1]+\:a
+m um iasc each THETAX[1]+\:a
+
 

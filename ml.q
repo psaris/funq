@@ -67,14 +67,16 @@ gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
 
 mlsq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
+/ apply f to each row of x
+frow:{[f;x](f x .(::),) each til count x 0}
 / center data
-demean:{x-$[type x;avg;avg each]x}
+demean:{x-\:$[type x;avg;frow avg] x}
 / apply f to centered (then decenter)
-fdemean:{[f;x]a+f x-a:$[type x;avg;avg each]x}
+fdemean:{[f;x]a+f x-\:a:$[type x;avg;frow avg] x}
 / feature normalization (centered/unit variance)
-zscore:{x%$[t;sdev;sdev each]x-:$[t:type x;avg;avg each]x}
+zscore:{x%\:$[t;sdev;frow sdev] x:x-\:$[t:type x;avg;frow avg] x}
 / apply f to normalized (then denormalize)
-fzscore:{[f;x]a+d*f x%d:$[t;sdev;sdev each]x-:a:$[t:type x;avg;avg each] x}
+fzscore:{[f;x]a+d*f x%\:d:$[t;sdev;frow sdev]x:x-\:a:$[t:type x;avg;frow avg] x}
 
 / compute the average of the top n items
 navg:{[n;x;y]avg y (n&count x)#idesc x}

@@ -26,7 +26,7 @@ r,:([]movieId:260 1197 2005 1968 2918i;rating:4 4 4 4 5f)
 r,:([]movieId:4006 53996 69526 87520 112370 86898i;rating:5 4 4 5 5 .5)
 show select from r lj movie where not null rating  / my ratings
 
-rpt:show lj[;movie] `score xdesc     / projecting to sort ratings and append movie title
+rpt:lj[;movie] `score xdesc     / projecting to sort ratings and append movie title
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
 
 / content based filtering
@@ -82,7 +82,6 @@ show R:value exec (movieId!rating) um by userId from rating
 plt:.plot.plot[40;20;.plot.c10]
 -1 value plt .plot.hmap 0^R;
 
-\
 -1"user-user collaborative filtering fills missing ratings";
 -1"with averaged values from users who's ratings are most similar to ours";
 -1"we have many choices to make:";
@@ -91,26 +90,26 @@ plt:.plot.plot[40;20;.plot.c10]
 -1"[ ] should we use cosine similarity instead?";
 -1"[ ] once we find the top n most similar users, should we:";
 -1"z-score and equally average top n users based on correlation";
-rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
+show rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.navg[20];0f^.ml.zscore R]0f^] rating from r
 -1"zscore and weighted average top n users based on correlation";
-rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
+show rpt update score:.ml.fzscore[.ml.uucf[cor;.ml.nwavg[20];0f^.ml.zscore R]0f^] rating from r
 -1"demean and weighted average top n users based on spearman correlation";
-rpt update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+show rpt update score:.ml.fdemean[.ml.uucf[.ml.scor;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 -1"demean and weighted average top n users based on cosine similarity";
-rpt update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+show rpt update score:.ml.fdemean[.ml.uucf[.ml.cossim;.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 -1"what if we would like recommend more niche movies.";
 -1"ie: underweight movies with more ratings?";
 -1"we can use the 'idf' (inverse document frequency) calculation ";
 -1"from nlp (natural language processing)";
 -1"demean and weighted average top n users based on cosine similarity of idf-adjusted ratings";
 / weight by inverse user frequencies to underweight universally liked movies
-rpt update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
+show rpt update score:.ml.fdemean[.ml.uucf['[.ml.cossim . .ml.idf[R]*/:;enlist];.ml.nwavg[20];0f^.ml.demean R]0f^] rating from r
 -1 .util.box["**"] (
  "singular value decomposition (svd) allows us to compute latent factors (off-line)";
  "and perform simple matrix multiplication to make predictions (on-line)");
 -1"demean and compute score based on top n svd factors";
 usv:.qml.msvd 0f^R-\:a:.ml.frow[avg] R
-rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;0b]0f^] rating from r
+show rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;0b]0f^] rating from r
 -1"we can even use svd to foldin a new movie";
 .ml.foldin[.ml.nsvd[30] usv ;1b;1f^R[;2]]
 
@@ -119,22 +118,48 @@ rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;0b]0f
  "doesn't need to be filled with default values";
  "and can use regularization");
 R,:value[r]`rating
-n:(nu:count R;nm:count R 0;nf:20)   / n users, n movies, n features
+nu:count R;nm:count R 0;nf:20    / n users, n movies, n features
+n:(nu;nf)
 thetax:2 raze/ (THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
 -1"store average rating";
 a:.ml.frow[avg] R               / normalization data
 
 -1"learn latent factors that best predict existing ratings matrix";
-
 thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[1f;R-\:a;n];thetax] / learn
--1"predict missing ratings ";
-P:a+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
-rpt update score:last P from r                           / add bias
--1"compare against existing ratings";
-rpt select from (update score:last P from r) where not null rating
 
-m:exec title by movieId from movie
+/mf:{first .fmincg.fmincg[10;.ml.rcfcostgrad[1f;(R-\:a)[;y];n];x]}
+/thetax:1 .ml.sgd[mf;0N?;100;R]/ thetax
+
+\
+-1"predict missing ratings";
+P:a+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
+show rpt update score:last P from r
+-1"compare against existing ratings";
+show rpt select from (update score:last P from r) where not null rating
+
+m:exec movieId!title from movie
 m um idesc each THETAX[1]+\:a
 m um iasc each THETAX[1]+\:a
 
+/ Large-scale Parallel Collaborative Filtering for the Netflix Prize
+/ http://dl.acm.org/citation.cfm?id=1424269
 
+-1"Alterating Least Squares is used to factor the Rating matrix";
+-1"into a movie matrix (X) and user matrix (THETA)";
+-1"by alternating between keeping X constant and solving for THETA";
+-1"and vice versa.  this changes a non-convex problem";
+-1"into a quadratic problem solvable with parallel least squares";
+-1"this implementation uses a weighting scheme where";
+-1"the weights are equal to the number of ratings per user/movie";
+
+l:.06;nf:20
+-1"generate X with first row equal to the avarage movie rating";
+THETAX:(THETA:-1+nu?/:nf#1f;X:@[-.5+nm?/:nf#1f;0;:;.ml.frow[avg] R])
+THETAX:10 .ml.wrals[l;R]/ THETAX
+.ml.rcfcost[l;R] . THETAX
+
+-1"predict missing ratings";
+P:.ml.mtm . THETAX / predictions
+show rpt update score:last P from r
+-1"compare against existing ratings";
+show rpt select from (update score:last P from r) where not null rating

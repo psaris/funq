@@ -56,7 +56,7 @@ show THETA:Y lsq .ml.addint 1#X
 show plt .ml.append[0;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
 
 -1"fitting with normal equations (fast but not numerically stable)";
-.ml.mlsq[Y;.ml.addint X]
+.ml.normeq[Y;.ml.addint X]
 
 if[`qml in key `;
  -1"qml uses QR decomposition for a more numerically stable fit";

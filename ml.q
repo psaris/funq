@@ -4,6 +4,7 @@ mm:mmu                          / X  * Y
 mmt:{y$/:x}                     / X  * Y'
 mtm:{flip[x]$y}                 / X' * Y
 minv:inv                        / X**-1
+mlsq:lsq                        / least squares
 dot:$                           / dot product
 
 prepend:{((1;count y 0)#x),y}
@@ -65,7 +66,7 @@ cfcostgrad:rcfcostgrad[0f]
 / gf: gradient function
 gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
 
-mlsq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
+normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
 / apply f to each row of x
 frow:{[f;x](f x .(::),) each til count x 0}

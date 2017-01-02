@@ -39,3 +39,7 @@ totals:{[c;t]
  t[key[t]0N]:sum value t;
  t:t,'flip (1#c)!enlist sum each value t;
  t}
+
+/ return memory (used;allocated;max)
+/ returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
+mem:{(3#system"w")%x (1024*)/ 1}

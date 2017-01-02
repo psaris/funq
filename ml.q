@@ -520,8 +520,10 @@ q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
 / sparse matrix manipulation
 
 dim:{$[n:count x;n,$[0h=type x;.z.s x 0;()];n]}
+/ matrix overload of where
+mwhere:{(where count each x;raze x:where each x)}
 / sparse from matrix
-sparse:{(dim x;`p#where count each i;raze i;raze x@'i:where each not 0f=x)}
+sparse:{enlist[dim x],i,enlist (x') . i:mwhere not 0=x}
 / transpose
 sflip:@[;0 2 1 3]
 / sparse matrix multiplication

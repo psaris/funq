@@ -186,8 +186,8 @@ MCC:{ ((-). x[0 2]*x 1 3)%prd sqrt x[0 0 1 1]+x 2 3 2 3}
 / confusion matrix
 cm:{
  n:count u:asc distinct x,y;
- m:.[;;1+]/[(n;n)#0;flip (u?y;u?x)];
- t:([]x:u)!flip (`$string[u])!m;
+ m:./[(n;n)#0;flip (u?y;u?x);1+];
+ t:([]x:u)!flip (`$string u)!m;
  t}
 
 / neural network cut
@@ -345,7 +345,7 @@ lw:{[lf;dm]
 / linkage (dendrogram) statistics of data in X
 linkage:{[df;lf;X]
  dm:df[X] each flip X;                       / dissimilarity matrix
- dm:.[;;:;0w]/[dm;flip (i;i:til count X 0)]; / ignore loops
+ dm:./[dm;flip (i;i:til count X 0);:;0w]; / ignore loops
  dm,:enlist imin each dm;
  dm,:enlist til count dm 0;
  dm,:4#();

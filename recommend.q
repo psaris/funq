@@ -33,7 +33,7 @@ rpt:lj[;movie] `score xdesc     / projecting to sort ratings and append movie ti
 
 / content based filtering
 
--1"content based filtering does not user ratings from other people";
+-1"content based filtering does not use ratings from other people";
 -1"it uses our own preferences mixed with each movie's genre";
 Y:enlist value[r]`rating
 -1"we build the X matrix based on each movie's genres";

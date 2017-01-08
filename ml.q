@@ -63,8 +63,20 @@ rcfcostgrad:{[l;Y;n;thetax]
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
 
-/ gf: gradient function
-gd:{[alpha;gf;THETA] THETA-alpha*gf THETA} / gradient descent
+/ regularized collaborative filtering update one rating
+/ (a)lpha: learning rate, (xy): coordinates of Y to update
+rcfupd1:{[l;Y;a;THETAX;xy]
+ e:(Y . xy)-.ml.dot . tx:THETAX .'i:flip(::;xy);
+ THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l*tx];
+ THETAX}
+
+until:{[cn;cf;p;theta]
+ b:$[n:-1+count c:get cn upsert nc:cf theta;p<pct:neg -1f+nc%c[n-1];1b];
+ 1"Iteration ",string[n]," | cost: ",string[last c]," | pct: ",string[pct],"\n\r"b;
+ b}
+
+/ (a)lpha: learning rate, gf: gradient function
+gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 

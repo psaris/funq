@@ -1,4 +1,4 @@
-\c 20 100
+\c 22 100
 \l funq.q
 
 f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
@@ -9,12 +9,14 @@ b:"http://files.grouplens.org/datasets/movielens/" / base url
 -1"loading movie definitions: integer movieIds and enumerated genres";
 movie:("I**";1#",") 0:`$f,"/movies.csv"
 movie:update rtrim title from movie
+-1"extract the movie's year from title";
 movie:update year:"I"$-1_/:-5#/:title,-7_/:title from movie where title like "*(????)"
+-1"remove movies without genres";
 movie:update 0#'genres from movie where genres like "(no genres listed)"
+-1"use the movie's year as a genre";
 movie:1!update `u#movieId,`genre?/:`$(enlist'[string 10 xbar year],'"|"vs'genres) from movie
 -1"loading movie ratings: partitioned by userId and movieId linked to movie table";
 rating:update `p#userId,`movie$movieId from ("IIF";1#",") 0:`$f,"/ratings.csv"
-plt:.plot.plot[40;20;1_.plot.c10]
 
 -1"to ensure the ratings matrix only contains movies with ratings,";
 -1"we generate a list of all the unique movie ids listed in the ratings table";
@@ -77,10 +79,8 @@ show select[10;>n] avg rating, n:count i by movieId.title from rating
 -1"";
 -1"by using a syntax that is similar to pivoting,";
 -1"we can generate the user/movie matrix";
+
 show R:value exec (movieId!rating) um by userId from rating
--1"and visualize the data";
-plt:.plot.plot[40;20;.plot.c10]
--1 value plt .plot.hmap 0^R;
 
 -1"user-user collaborative filtering fills missing ratings";
 -1"with averaged values from users who's ratings are most similar to ours";
@@ -120,46 +120,53 @@ show rpt update score:.ml.fdemean[first {x$z$/:y} . .ml.foldin[.ml.nsvd[30] usv;
 R,:value[r]`rating
 nu:count R;nm:count R 0;nf:20    / n users, n movies, n features
 n:(nu;nf)
-thetax:2 raze/ (THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
+thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
+
 -1"store average rating";
-a:.ml.frow[avg] R               / normalization data
+Y:R-\:a:.ml.frow[avg] R               / normalization data
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[1f;R-\:a;n];thetax] / learn
+thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[1f;Y;n];thetax] / learn
+-1"use 'where' to find list of coordinates of non-null items";
+i:.ml.mwhere not null R
+l:.06                         / lambda (l2 regularization coefficient)
+-1"define cost function";
+cf:.ml.rcfcost[l;Y] .
+-1"define minimization function";
+mf:.ml.rcfupd1[l;Y;.05]
+-1"keep running mf until improvement is lower than pct limit";
+c:();THETAX: .ml.until[`c;cf;.05] {x mf/ 0N?flip i}/ THETAX
 
-/mf:{first .fmincg.fmincg[10;.ml.rcfcostgrad[1f;(R-\:a)[;y];n];x]}
-/thetax:1 .ml.sgd[mf;0N?;100;R]/ thetax
-
-\
 -1"predict missing ratings";
 P:a+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
 
-m:exec movieId!title from movie
-m um idesc each THETAX[1]+\:a
-m um iasc each THETAX[1]+\:a
-
 / Large-scale Parallel Collaborative Filtering for the Netflix Prize
 / http://dl.acm.org/citation.cfm?id=1424269
 
--1"Alterating Least Squares is used to factor the Rating matrix";
+-1"Alterating Least Squares is used to factor the rating matrix";
 -1"into a movie matrix (X) and user matrix (THETA)";
 -1"by alternating between keeping X constant and solving for THETA";
 -1"and vice versa.  this changes a non-convex problem";
--1"into a quadratic problem solvable with parallel least squares";
+-1"into a quadratic problem solvable with parallel least squares.";
 -1"this implementation uses a weighting scheme where";
 -1"the weights are equal to the number of ratings per user/movie";
 
 l:.06;nf:20
--1"generate X with first row equal to the avarage movie rating";
-THETAX:(THETA:-1+nu?/:nf#1f;X:@[-.5+nm?/:nf#1f;0;:;.ml.frow[avg] R])
-THETAX:10 .ml.wrals[l;R]/ THETAX
-.ml.rcfcost[l;R] . THETAX
+-1"reset THETA and X";
+THETAX:(THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
+-1"set minimization function to alternating least squares";
+mf:.ml.wrals[l;Y]
+-1"keep running mf until improvement is lower than pct limit";
+c:();THETAX:.ml.until[`c;cf;.001] mf/ THETAX
 
 -1"predict missing ratings";
-P:.ml.mtm . THETAX / predictions
+P:a+/:.ml.mtm . THETAX          / predictions
 show rpt update score:last P from r
+-1"limit recommendations to movies with many ratings";
+ids:exec distinct movieId from rating where 200<(count;i) fby movieId
+show rpt select from (update score:last P from r) where movieId in ids
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating

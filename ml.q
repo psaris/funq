@@ -92,9 +92,9 @@ zscore:{x%\:$[t;sdev;frow sdev] x:x-\:$[t:type x;avg;frow avg] x}
 fzscore:{[f;x]a+d*f x%\:d:$[t;sdev;frow sdev]x:x-\:a:$[t:type x;avg;frow avg] x}
 
 / compute the average of the top n items
-navg:{[n;x;y]avg y (n&count x)#idesc x}
+navg:{[n;x;y]frow[avg] y (n&count x)#idesc x}
 / compute the weighted average of the top n items
-nwavg:{[n;x;y]mtm[y i;x]%sum abs x@:i:(n&count x)#idesc x}
+nwavg:{[n;x;y]sum[0^x*y i]%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
 / (s)imilarity (f)unction, (a)veraging (f)unction
@@ -104,8 +104,10 @@ uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
 / spearman's rank (tied value get averaged rank)
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
+/ where not null
+wnn:{where all not null each x}
 / spearman's rank correlation
-scor:{srank[x] cor srank y}
+scor:{srank[x w] cor srank y w:wnn(x;y)}
 
 sigmoid:{1f%1f+exp neg x}       / sigmoid function
 
@@ -289,7 +291,7 @@ idfs:{log 1f+(count x)%sum 0<x} / inverse document frequency smooth
 idfm:{log 1f+(max x)%x:sum 0<x} / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
-cossim:{(sum x*y)%sqrt(sum x*x)*sum y*y} / cosine similarity
+cossim:{(sum x*y)%sqrt(sum x*x@:w)*sum y*y@:w:wnn (x;y)} / cosine similarity
 cosdist:(')[1f-;cossim]                  / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups

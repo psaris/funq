@@ -105,7 +105,7 @@ uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
 / where not null
-wnn:{where all not null each x}
+wnn:{where not any {$[type x;null x;(any .z.s@) each x]} each x}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnn(x;y)}
 
@@ -279,8 +279,9 @@ updx:{[l;Y;THETA;w;m]
 
 / k-means
 
-edist:{sum x*x-:y}              / euclidian distance
+edist:{sqrt sum x*x-:y}         / euclidian distance
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
+mkdist:{sum[abs[z-y] xexp x] xexp 1f%x} / minkowski distanace
 hmean:{1f%avg 1f%x}             / harmonic mean
 
 lntf:{1f+log x}                    / log normalized term frequency

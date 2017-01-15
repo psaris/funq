@@ -3,13 +3,18 @@
 clone this project and start q with any of the following:
 
 `q fun.q`
-`q plt.q`
-`q linreg.q`
-`q onevsall.q`
-`q nn.q`
-`q recommend.q`
-`q hiragana.q`
 
+`q plt.q`
+
+`q linreg.q`
+
+`q onevsall.q`
+
+`q nn.q`
+
+`q recommend.q`
+
+`q hiragana.q`
 
 you can then read the comments and run the examples one by one. topics include:
 

@@ -536,7 +536,7 @@ q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
 
 dim:{$[n:count x;n,$[0h=type x;.z.s x 0;()];n]}
 / matrix overload of where
-mwhere:{(where count each x;raze x:where each x)}
+mwhere:{$[type x;where x;(,') over til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'.z.s each x]}
 / sparse from matrix
 sparse:{enlist[dim x],i,enlist (x') . i:mwhere not 0=x}
 / transpose

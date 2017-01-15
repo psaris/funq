@@ -60,7 +60,7 @@ show .ml.nncostgrad[l;n;X;YMAT;theta]
 -1"we can now run (batch) gradient descent across the whole datatset.";
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
-theta:.fmincg.fmincg[5;.ml.nncostgrad[l;n;X;YMAT];theta];
+theta:first .fmincg.fmincg[5;.ml.nncostgrad[l;n;X;YMAT];theta];
 
 / NOTE: qml throws a `limit error (too many elements)
 /.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l;n;X;YMAT];enlist theta]

@@ -20,7 +20,7 @@ x:.util.etl9b read1 `:ETL9B/ETL9B_1
 h:0x24,/:"x"$0x21+0x01*til 83 / hiragana
 / h:0x25,/:"x"$0x21+0x01*til 83 / katakana (missing)
 y:h?y w:where (y:flip x 1 2) in h
-X:"f"$flip (raze 0b vs/:) each (1_x 4) w / extract 0 1 from bytes
+X:"f"$flip (raze $[3.5>.z.K;-8#';::] 0b vs/:) each (1_x 4) w / extract 0 1 from bytes
 
 -1"setting the prng seed";
 system "S ",string "i"$.z.T

@@ -90,7 +90,7 @@ show R:value exec (movieId!rating) m by userId from rating
 R,:value[r]`rating
 -1"demean the data and store global/movie/user bias";
 b:(2 sum/0^R)%2 sum/not null R
-Y:Y-ub:avg each Y:Y-\:mb:.ml.frow[avg] Y:R-b
+Y:Y-ub:avg each Y:Y-\:mb:.ml.f2nd[avg] Y:R-b
 y:r-'mb+b+last ub
 
 / user user collaborative filtering

@@ -80,19 +80,19 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ apply f to each row of x
-frow:{[f;x](f x .(::),) each til count x 0}
+/ apply f to the 2nd dimension of x (instead of flipping x)
+f2nd:{[f;x](f x .(::),) each til count x 0}
 / center data
-demean:{x-\:$[type x;avg;frow avg] x}
+demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)
-fdemean:{[f;x]a+f x-\:a:$[type x;avg;frow avg] x}
+fdemean:{[f;x]a+f x-\:a:$[type x;avg;f2nd avg] x}
 / feature normalization (centered/unit variance)
-zscore:{x%\:$[t;sdev;frow sdev] x:x-\:$[t:type x;avg;frow avg] x}
+zscore:{x%\:$[t;sdev;f2nd sdev] x:x-\:$[t:type x;avg;f2nd avg] x}
 / apply f to normalized (then denormalize)
-fzscore:{[f;x]a+d*f x%\:d:$[t;sdev;frow sdev]x:x-\:a:$[t:type x;avg;frow avg] x}
+fzscore:{[f;x]a+d*f x%\:d:$[t;sdev;f2nd sdev]x:x-\:a:$[t:type x;avg;f2nd avg] x}
 
 / compute the average of the top n items
-navg:{[n;x;y]frow[avg] y (n&count x)#idesc x}
+navg:{[n;x;y]f2nd[avg] y (n&count x)#idesc x}
 / compute the weighted average of the top n items
 nwavg:{[n;x;y]sum[0^x*y i]%sum abs x@:i:(n&count x)#idesc x}
 

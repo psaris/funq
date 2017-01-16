@@ -563,7 +563,7 @@ google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum each A)%n:count A}
 drank:{desc til[count x]!x}
 
 / top n svd factors
-nsvd:{[n;usv]n#''@[usv;1;(n&:count usv 0)#]}
+nsvd:{[n;usv]n#''@[usv;1;(n:min n,count each usv 0 2)#]}
 
 / use svd decomposition to predict missing exposures for new user
 / (ui=0b) or item (ui=1b) (r)ecord

@@ -267,14 +267,14 @@ wrals:{[l;Y;THETAX]
  X:flip updx[l;Y;THETA;sum not null Y] peach til count Y 0;
  (THETA;X)}
 updtheta:{[l;Y;X;w;u]
- X:X[;m:where not null Y[u]];
- vector:X$\:Y[u;m];
+ X:X[;m:wnn Y[u]];
+ vector:mm[X;Y[u;m]];
  matrix:mmt[X;X]+diag count[X]#l*w u;
  THETA:first mlsq[enlist vector; matrix];
  THETA}
 updx:{[l;Y;THETA;w;m]
- THETA:THETA[;u:where not null Y[;m]];
- vector:THETA$\:Y[u;m];
+ THETA:THETA[;u:wnn Y[;m]];
+ vector:mm[THETA;Y[u;m]];
  matrix:mmt[THETA;THETA]+diag count[THETA]#l*w m;
  X:first mlsq[enlist vector; matrix];
  X}
@@ -555,7 +555,7 @@ pageranki:{[p;A]r%sum r:first enlist[r] lsq diag[r:n#1f]-((1f-p)%n:count A)+p*A%
 / given a (p)robability of random surfing, (A)djacency matrix and
 / (r)ank vector, multiply by the google matrix to obtain a better
 / ranking
-pagerankr:{[p;A;r]((1f-p)%n)+p*((r%1f|d)$A)+(s:sum r where 0f=d:sum each A)%n:count A}
+pagerankr:{[p;A;r]((1f-p)%n)+p*mm[A;r%1f|d]+(s:sum r where 0f=d:sum each A)%n:count A}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / create the markov Google matrix

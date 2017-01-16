@@ -195,10 +195,8 @@ show rpt select from (update score:last P from r) where not null rating
 l:.06;nf:20
 -1"reset THETA and X";
 THETAX:(THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
--1"set minimization function to weighted regularized alternating least squares";
-mf:.ml.wrals[l;Y]
 -1"keep running mf until improvement is lower than pct limit";
-c:();THETAX:.ml.until[`c;cf;.001] mf/ THETAX
+c:();THETAX:.ml.until[`c;cf;.01] .ml.wrals[l;Y]/ THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX          / predictions

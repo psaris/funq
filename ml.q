@@ -66,10 +66,12 @@ cfcostgrad:rcfcostgrad[0f]
 / regularized collaborative filtering update one rating
 / (a)lpha: learning rate, (xy): coordinates of Y to update
 rcfupd1:{[l;Y;a;THETAX;xy]
- e:(Y . xy)-.ml.dot . tx:THETAX .'i:flip(::;xy);
+ e:(Y . xy)-dot . tx:THETAX .'i:flip(::;xy);
  THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l*tx];
  THETAX}
 
+/ return 1b until the improvement from the (c)ost (f)unction applied to (theta)
+/ is less than the specified (p)ercent. the costs are stored in (c)ost (n)ame
 until:{[cn;cf;p;theta]
  b:$[n:-1+count c:get cn upsert nc:cf theta;p<pct:neg -1f+nc%c[n-1];1b];
  1"Iteration ",string[n]," | cost: ",string[last c]," | pct: ",string[pct],"\n\r"b;
@@ -267,14 +269,14 @@ wrals:{[l;Y;THETAX]
 updtheta:{[l;Y;X;w;u]
  X:X[;m:where not null Y[u]];
  vector:X$\:Y[u;m];
- matrix:.ml.mmt[X;X]+diag count[X]#l*w u;
- THETA:first .ml.mlsq[enlist vector; matrix];
+ matrix:mmt[X;X]+diag count[X]#l*w u;
+ THETA:first mlsq[enlist vector; matrix];
  THETA}
 updx:{[l;Y;THETA;w;m]
  THETA:THETA[;u:where not null Y[;m]];
  vector:THETA$\:Y[u;m];
- matrix:.ml.mmt[THETA;THETA]+diag count[THETA]#l*w m;
- X:first .ml.mlsq[enlist vector; matrix];
+ matrix:mmt[THETA;THETA]+diag count[THETA]#l*w m;
+ X:first mlsq[enlist vector; matrix];
  X}
 
 / k-means
@@ -432,8 +434,8 @@ em:{[lf;mf;X;pt]
  enlist[phi],theta}
 
 / return value which occur most frequently
-/mode:{.ml.imax count each group x}
-mode:{x -1+w .ml.imax deltas w:where differ[x:asc x],1b}
+/mode:{imax count each group x}
+mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
 
 / k nearest neighbors
 

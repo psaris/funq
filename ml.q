@@ -82,10 +82,8 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ apply f (in parallel) to the 1st dimension of x
-f1st:{[f;x](f x @) peach til count x}
-/ apply f  (in parallel) to the 2nd dimension of x (instead of flipping x)
-f2nd:{[f;x](f x .(::),) peach til count x 0}
+/ apply f (in parallel) to the 2nd dimension of x (instead of flipping x)
+f2nd:{[f;x](f x .(::),) peach til count first x}
 / center data
 demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)
@@ -108,10 +106,10 @@ uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
 / spearman's rank (tied value get averaged rank)
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
-/ where not null
-wnn:{where not {$[type x;null x;any .z.s each x]} x}
+/ where not any null
+wnan:{$[any 1_differ type each x;til count x;where not any null x]}
 / spearman's rank correlation
-scor:{srank[x w] cor srank y w:wnn(x;y)}
+scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 sigmoid:{1f%1f+exp neg x}       / sigmoid function
 
@@ -167,7 +165,7 @@ imax:{x?max x}                  / index of max element
 imin:{x?min x}                  / index of min element
 
 / predict each number and pick best
-predictonevsall:{[X;THETA]imax each flip X lpredict/ THETA}
+predictonevsall:{[X;THETA]f2nd[imax] X lpredict/ THETA}
 
 / binary classification evaluation metrics (summary statistics)
 
@@ -265,11 +263,11 @@ sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 / (w)eighted (r)egularized (a)lternating (l)east (s)quares
 wrals:{[l;Y;THETAX]
  X:THETAX 1;
- THETA:flip f1st[updals[l;X]] Y;
+ THETA:flip updals[l;X] peach Y;
  X:flip f2nd[updals[l;THETA]] Y;
  (THETA;X)}
 updals:{[l;M;y]
- l:diag count[M:M[;w]]#l*count w:wnn y;
+ l:diag count[M:M[;w]]#l*count w:where not null y;
  v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
  v}
 
@@ -288,12 +286,12 @@ idfs:{log 1f+count[x]%sum 0<x}  / inverse document frequency smooth
 idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
-cossim:{(sum x*y)%sqrt(sum x*x@:w)*sum y*y@:w:wnn (x;y)} / cosine similarity
+cossim:{(sum x*y)%sqrt(sum x*x@:w)*sum y*y@:w:wnan(x;y)} / cosine similarity
 cosdist:(')[1f-;cossim]                  / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
-cgroup:{[df;X;C] group imin each flip df[X] each flip C}
+cgroup:{[df;X;C] group f2nd[imin] f2nd[df X] C}
 
 / k-(means|medians) algorithm
 
@@ -347,7 +345,7 @@ lw:{[lf;dm]
  dm[i;i]:0w;                                    / fix diagonal
  dm[j;(::)]:0w;                                 / erase j
  dm[til n+2;j]:(n#0w),i,i;    / erase j and set aux data
- dm[n]:imin each n#dm;        / find next closest element
+ dm[n]:imin peach n#dm;       / find next closest element
  dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
  dm:@[dm;n+2 3 4 5;,;(j;i;d;count where i=dm n+1)];
  dm}
@@ -355,9 +353,9 @@ lw:{[lf;dm]
 / given a (d)istance (f)unction and (l)inkage (f)unction, construct the
 / linkage (dendrogram) statistics of data in X
 linkage:{[df;lf;X]
- dm:df[X] each flip X;                       / dissimilarity matrix
+ dm:f2nd[df X] X;                         / dissimilarity matrix
  dm:./[dm;flip (i;i:til count X 0);:;0w]; / ignore loops
- dm,:enlist imin each dm;
+ dm,:enlist imin peach dm;
  dm,:enlist til count dm 0;
  dm,:4#();
  l:-4#lw[lf] over dm;
@@ -423,7 +421,7 @@ em:{[lf;mf;X;pt]
  if[0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
  l:$[1<count pt;{(x . z) y}[lf;X] peach flip 1_pt;count[$[type X;X;X 0]]?/:count[pt 0]#1f];
  W:p%\:sum p:l*phi:pt 0;         / weights (responsibilities)
- if[0h<type phi;phi:avg each W]; / new prior probabilities (if phi is a list)
+ if[0h<type phi;phi:avg peach W]; / new prior probabilities (if phi is a list)
  theta:flip mf[X] peach W;       / new coefficients
  enlist[phi],theta}
 
@@ -439,21 +437,21 @@ knn:{[df;k;c;X;x]mode c k#iasc df[X;x]}
 
 / markov clusetering
 
-addloop:{x|diag max each x|flip x}
+addloop:{x|diag max peach x|flip x}
 
 expand:{[e;X](e-1)mm[X]/X}
 
 inflate:{[r;p;X]
  X:X xexp r;                             / inflate
  X*:$[-8h<type p;(p>iasc idesc@)';p<] X; / prune
- X%:sum each X;                          / normalize
+ X%:sum peach X;                         / normalize
  X}
 
 / if (p)rune is an integer, take p largest, otherwise take everything > p
 mcl:{[e;r;p;X] inflate[r;p] expand[e] X}
 
-chaos:{max {max[x]-sum x*x} each x}
-interpret:{1_asc distinct where each flip 0<x}
+chaos:{max {max[x]-sum x*x} peach x}
+interpret:{1_asc distinct f2nd[where] 0<x}
 
 / naive bayes
 
@@ -489,7 +487,7 @@ isnom:{type[x] in 1 2 4 10 11h} / is nominal
 / Improved use of continues attributes in c4.5 (quinlan) MDL
 cgaina:{[gf;x;y] / continuous gain adapter
  if[isnom y;:gf[x;y]];          /TODO: handle null numbers
- g:(gain[0b;x] y >) each -1_u:asc distinct y; / use gain (not gf)
+ g:(gain[0b;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
  g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
  g[0]%:entropy odds g 2;           / convert to gain ratio
@@ -544,16 +542,16 @@ full:{./[x[0]#0f;flip x 1 2;:;x 3]}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / obtain the page rank by matrix inversion (inverse iteration)
-pageranki:{[p;A]r%sum r:first enlist[r] lsq diag[r:n#1f]-((1f-p)%n:count A)+p*A%1f|sum each A}
+pageranki:{[p;A]r%sum r:first mlsq[enlist r]  diag[r:n#1f]-((1f-p)%n:count A)+p*A%1f|sum peach A}
 
 / given a (p)robability of random surfing, (A)djacency matrix and
 / (r)ank vector, multiply by the google matrix to obtain a better
 / ranking
-pagerankr:{[p;A;r]((1f-p)%n)+p*mm[A;r%1f|d]+(s:sum r where 0f=d:sum each A)%n:count A}
+pagerankr:{[p;A;r]((1f-p)%n)+p*mm[A;r%1f|d]+(s:sum r where 0f=d:sum peach A)%n:count A}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / create the markov Google matrix
-google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum each A)%n:count A}
+google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum peach A)%n:count A}
 
 / return a sorted dictionary of the ranked values
 drank:{desc til[count x]!x}

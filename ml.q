@@ -82,8 +82,10 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ apply f to the 2nd dimension of x (instead of flipping x)
-f2nd:{[f;x](f x .(::),) each til count x 0}
+/ apply f (in parallel) to the 1st dimension of x
+f1st:{[f;x](f x @) peach til count x}
+/ apply f  (in parallel) to the 2nd dimension of x (instead of flipping x)
+f2nd:{[f;x](f x .(::),) peach til count x 0}
 / center data
 demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)
@@ -263,21 +265,13 @@ sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 / (w)eighted (r)egularized (a)lternating (l)east (s)quares
 wrals:{[l;Y;THETAX]
  X:THETAX 1;
- THETA:flip updtheta[l;Y;X;sum each not null Y] peach til count Y;
- X:flip updx[l;Y;THETA;sum not null Y] peach til count Y 0;
+ THETA:flip f1st[updals[l;X]] Y;
+ X:flip f2nd[updals[l;THETA]] Y;
  (THETA;X)}
-updtheta:{[l;Y;X;w;u]
- X:X[;m:wnn Y[u]];
- vector:mm[X;Y[u;m]];
- matrix:mmt[X;X]+diag count[X]#l*w u;
- THETA:first mlsq[enlist vector; matrix];
- THETA}
-updx:{[l;Y;THETA;w;m]
- THETA:THETA[;u:wnn Y[;m]];
- vector:mm[THETA;Y[u;m]];
- matrix:mmt[THETA;THETA]+diag count[THETA]#l*w m;
- X:first mlsq[enlist vector; matrix];
- X}
+updals:{[l;M;y]
+ l:diag count[M:M[;w]]#l*count w:wnn y;
+ v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
+ v}
 
 / k-means
 

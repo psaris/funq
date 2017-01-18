@@ -47,7 +47,7 @@ show X:flip exec genre in/: genres from ([]movieId:m)#movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
-theta:first .fmincg.fmincg[20;.ml.rcbfcostgrad[2f;X;Y];theta] / learn
+theta:first .fmincg.fmincg[20;.ml.rcbfcostgrad[l;X;Y];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_last THETA
@@ -143,13 +143,14 @@ show .plot.plot[40;19;1_.plot.c10] {x%sum x*:x}.qml.mdiag usv 1
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-nu:count R;nm:count R 0;nf:20    / n users, n movies, n features
+l:.5                          / lambda (l2 regularization coefficient)
+nu:count R;nm:count R 0;nf:20 / n users, n movies, n features
 n:(nu;nf)
 -1"randomly initialize THETA and X";
 thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[50;.ml.rcfcostgrad[1f;Y;n];thetax] / learn
+thetax:first .fmincg.fmincg[100;.ml.rcfcostgrad[l;Y;n];thetax] / learn
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
@@ -164,17 +165,15 @@ thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 
 -1"use 'where' to find list of coordinates of non-null items";
 i:.ml.mwhere not null R
-l:.06                         / lambda (l2 regularization coefficient)
 -1"define cost function";
 cf:.ml.rcfcost[l;Y] .
 -1"define minimization function";
-mf:.ml.rcfupd1[l;Y;.05]
+mf:.ml.rcfupd1[l;Y;.2f]
 -1"keep running mf until improvement is lower than pct limit";
-c:();THETAX: .ml.until[`c;cf;.01] {x mf/ 0N?flip i}/ THETAX
+c:();THETAX: .ml.until[`c;cf;.0001] {x mf/ 0N?flip i}/ THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX    / predictions
--1"predict missing ratings";
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -192,11 +191,10 @@ show rpt select from (update score:last P from r) where not null rating
 -1"this implementation uses a weighting scheme where";
 -1"the weights are equal to the number of ratings per user/movie";
 
-l:.06;nf:20
 -1"reset THETA and X";
 THETAX:(THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
-c:();THETAX:.ml.until[`c;cf;.01] .ml.wrals[l;Y]/ THETAX
+c:();THETAX:.ml.until[`c;cf;.0001] .ml.wrals[l;Y]/ THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX          / predictions

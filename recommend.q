@@ -47,6 +47,7 @@ show X:flip exec genre in/: genres from ([]movieId:m)#movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
+l:.05                          / lambda (l2 regularization coefficient)
 theta:first .fmincg.fmincg[20;.ml.rcbfcostgrad[l;X;Y];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
@@ -143,7 +144,6 @@ show .plot.plot[40;19;1_.plot.c10] {x%sum x*:x}.qml.mdiag usv 1
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-l:.5                          / lambda (l2 regularization coefficient)
 nu:count R;nm:count R 0;nf:20 / n users, n movies, n features
 n:(nu;nf)
 -1"randomly initialize THETA and X";

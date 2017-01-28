@@ -6,37 +6,6 @@
 
 / redefine plot (to drop space)
 plt:.plot.plot[28;15;1_.plot.c10]
-k:3 / 3 centroids
-
-show C:"f"$k?/:2#20 / initial centroids
-X:raze each C,''C+.util.bm(2;k)#100?/:(2*k)#1f
-plt X
-
-/ the number of centroids (k) becomes the actual centroids after the
-/ initial iteration
-.ml.kmeans[X]/[k]        / euclidian distance
-/ plot centroids
-plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
-
-/ view convergence
-/ NOTE: picks x and y from data (but not necessarily (x;y))
-.ml.kmedians[X]\[k]             / manhattan distance (taxicab metric)
-
-/ classic machine learning iris data
-f:("iris.data";"bezdekIris.data") 1 / pick the corrected dataset
-b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
-.util.download[b;;"";::] f;           / download data
-I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
-plt I 3
-
-C:.ml.kmeans[I]/[-3]             / find 3 centroids
-show g:.ml.cgroup[.ml.edist;I;C] / classify
-avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
-.util.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
-
-
-/ plot errors with increasing number of centroids
-plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
 
 / cosine similarity (distance)
 flip C:.ml.lloyd[.ml.cosdist;avg;I]/[-3] /find 3 centroids

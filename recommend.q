@@ -47,7 +47,7 @@ show X:flip exec genre in/: genres from ([]movieId:m)#movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
-l:.05                          / lambda (l2 regularization coefficient)
+l:.2                          / lambda (l2 regularization coefficient)
 theta:first .fmincg.fmincg[20;.ml.rcbfcostgrad[l;X;Y];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
@@ -123,8 +123,9 @@ show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlis
 / singular value decomposition
 
 usv:.qml.msvd 0^Y
+nf:100
 -1"predict missing ratings using low rank approximations";
-P:b+ub+mb+/:{x$z$/:y} . .ml.nsvd[500] usv
+P:b+ub+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -144,7 +145,7 @@ show .plot.plot[40;19;1_.plot.c10] {x%sum x*:x}.qml.mdiag usv 1
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-nu:count R;nm:count R 0;nf:20 / n users, n movies, n features
+nu:count R;nm:count R 0 / n users, n movies
 n:(nu;nf)
 -1"randomly initialize THETA and X";
 thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
@@ -168,9 +169,10 @@ i:.ml.mwhere not null R
 -1"define cost function";
 cf:.ml.rcfcost[l;Y] .
 -1"define minimization function";
-mf:.ml.rcfupd1[l;Y;.2f]
+mf:.ml.rcfupd1[l;Y;.05f]
 -1"keep running mf until improvement is lower than pct limit";
-c:();THETAX: .ml.until[`c;cf;.0001] {x mf/ 0N?flip i}/ THETAX
+
+THETAX:last(.ml.converge[.0001]first@).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX    / predictions
@@ -194,7 +196,8 @@ show rpt select from (update score:last P from r) where not null rating
 -1"reset THETA and X";
 THETAX:(THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
-c:();THETAX:.ml.until[`c;cf;.0001] .ml.wrals[l;Y]/ THETAX
+
+THETAX:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\:THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX          / predictions

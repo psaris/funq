@@ -70,10 +70,15 @@ rcfupd1:{[l;Y;a;THETAX;xy]
  THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l*tx];
  THETAX}
 
-/ return 1b until the improvement from the (c)ost (f)unction applied to (theta)
-/ is less than the specified (p)ercent. the costs are stored in (c)ost (n)ame
-until:{[cn;cf;p;theta]
- b:$[n:-1+count c:get cn upsert nc:cf theta;p<pct:neg -1f+nc%c[n-1];1b];
+/ accumulate cost by calling (c)ost (f)unction on the result of
+/ (f)unction applied to x[1].  append resulting cost to x[0] and
+/ return.
+acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
+
+/ return 1b until the improvement from the (c)ost is less than
+/ the specified (p)ercent.
+converge:{[p;c]
+ b:$[1<n:count c;p<pct:neg -1f+c[n-1]%c[n-2];1b];
  1"Iteration ",string[n]," | cost: ",string[last c]," | pct: ",string[pct],"\n\r"b;
  b}
 

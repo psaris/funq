@@ -298,18 +298,32 @@ cosdist:(')[1f-;cossim]                  / cosine distance
 / defined by the closest (C)entroid
 cgroup:{[df;X;C] group f2nd[imin] f2nd[df X] C}
 
+/ return the index of n (w)eighted samples
+iwrand:{[n;w]s binr n?last s:sums w}
+/ find n (w)eighted samples of x
+wrand:{[n;w;x]x iwrand[n] w}
+
+/ kmeans++ initialization algorithm
+/ using (d)istance (f)function and data X, append the next cluster
+/ to the pair (min cluster (d)istance;all (C)lusters)
+kmeanspp:{[df;X;dC]
+ d:dC[0]&d*d:df[X] last C:dC 1;
+ C,:enlist X@\: first iwrand[1] d;
+ (d;C)}
+
 / k-(means|medians) algorithm
 
 / stuart lloyd's algorithm. using a (d)istance (f)unction and
 / (m)ean/edian (f)unction, find (k)-centroids in the data (X) starting
 / with a (C)entroid list. if C is an atom, use it to randomly
-/ initialize C. if negative, use "Forgy" method and randomly pick k
-/ centroids.  if positive, use "Random Partition" method to randomly
-/ assign to k clusters.
+/ initialize C. if positive, use k-means++ method to pick k centroids
+/ that are purposefully distant from each other. if negative, use
+/ "Forgy" method and randomly pick k centroids.
 lloyd:{[df;mf;X;C]
- if[0h>type C;if[0>C;C:X@\:C?count X 0]];
- g:$[0h>type C;group count[X 0]?C;cgroup[df;X;C]]; / assignment step
- C:mf''[X@\:value g];                              / update step
+ if[not t:type C;C:cgroup[df;X;C];t:99h]; / assign step
+ if[99h=t;:mf''[X@\:value C]];            / update step
+ if[0>C;:X@\:C?count X 0];                / forgy
+ C:flip last (C-1) kmeanspp[df;X]/ (df[X] c;enlist c:X@\:rand count X 0);
  C}
 
 kmeans:lloyd[edist;avg]

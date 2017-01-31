@@ -14,22 +14,25 @@ show C:"f"$k?/:2#20
 X:raze each C+.util.bm(2;k)#100?/:(2*k)#1f
 show plt X
 
--1"kmeans is an implementation of lloyds algorithm,";
--1"which alternates between assigning points to a cluster";
--1"and updating the cluster's center.";
+-1 .util.box["**"] (
+ "kmeans is an implementation of lloyds algorithm,";
+ "which alternates between assigning points to a cluster";
+ "and updating the cluster's center.");
 -1"kmeans uses the *euclidean distance* to assign points to clusters";
--1"and generates clusters using the *average* of the data points";
+-1"and generates clusters using the *average* of the data points.";
 -1"each call to kmeans performs a single iteration.";
 -1"to find the centroids, we call kmeans iteratively until convergence.";
--1"thereare two ways to initialze the algorithm:";
--1" 1. assign points randomly to k clusters - Random Partition method";
--1" 2. randonly pick k clusters from the supplied data - Forgy method";
--1"the Random Partition method is used if a positive integer is passed to kmeans";
+-1"there are two ways to initialze the algorithm:";
+-1" 1. randomly pick k centroids (k-means++ and forgy method)";
+-1" 2. assign points randomly to k centroids - random partition method";
+-1"the random partition method can be done by hand";
+.ml.kmeans[X] over group count[X 0]?k
+-1"the k-means++ method is used if the argument is a positive integer";
 .ml.kmeans[X] over k
--1"the Forgy method is used if the argument is a negate integer";
+-1"the forgy method is used if the argument is a negate integer";
 .ml.kmeans[X] over neg k
--1"we can plot the data and overlay the centroids found using kmeans";
-show plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over neg k
+-1"we can plot the data and overlay the centroids found using kmeans++";
+show plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 
 -1"kmedians uses the lloyd algorithm, but uses the *manhattan distince*";
 -1"also known as the taxicab metric to assign points to clusters";
@@ -50,8 +53,8 @@ I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";","
 -1"we can see how the data set clusters in the 4th dimension";
 show plt I 3
 
--1"we iteratively call kmeans until convergence"
-C:.ml.kmeans[I] over -3
+-1"we iteratively call kmeans until convergence";
+C:.ml.kmeans[I] over 3
 -1"and can show which group each data point was assigned to.";
 show g:.ml.cgroup[.ml.edist;I;C] / classify
 -1"what percentage of the data did we classify correctly?";

@@ -547,11 +547,12 @@ q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
 
 / sparse matrix manipulation
 
-dim:{$[n:count x;n,$[0h=type x;.z.s x 0;()];n]}
+shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
+dim:count shape@
 / matrix overload of where
 mwhere:{$[type x;where x;(,') over til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'.z.s each x]}
 / sparse from matrix
-sparse:{enlist[dim x],i,enlist (x') . i:mwhere not 0=x}
+sparse:{enlist[shape x],i,enlist (x') . i:mwhere not 0=x}
 / transpose
 sflip:@[;0 2 1 3]
 / sparse matrix multiplication

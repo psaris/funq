@@ -180,26 +180,6 @@ flip .ml.probabilitynb d
 
 /2 .ml.em[.ml.multila;.ml.multiml[1];X]/  2
 
-/ decision trees
-
-/ http://www.cise.ufl.edu/~ddd/cap6635/Fall-97/Short-papers/2.htm
-/ http://www.saedsayad.com/decision_tree.htm
-/ Paper_3-A_comparative_study_of_decision_tree_ID3_and_C4.5.pdf
-
-/ load weather data, remove the day column and move Play to front
-tree:.ml.id3 t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
-avg t.Play=.ml.dtc[tree] each t / accuracy
-.71428571428571431=avg t.Play=.ml.dtc[.ml.id3 (1#`Outlook) _ t] each t
-
-/ c4.5
-/ change humidity into a continuous variable
-t[`Humidity]:85 90 78 96 80 70 65 95 70 80 70 90 75 80
-show last last tree:.ml.id3 t / id3 creates bushy tree
-show last last tree:.ml.q45[2;neg .qml.nicdf .0] t / 4.5 picks a split value
-avg t.Play=.ml.dtc[tree] each t / accuracy
-/ handle nulls by using the remaining attributes
-.ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
-
 / sparse matrix
 X:"f"$(100;100)#0 0 0 0 0 0 0 1
 / matrix -> sparse -> matrix == matrix

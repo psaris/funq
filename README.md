@@ -14,6 +14,8 @@ clone this project and start q with any of the following:
 
 `q recommend.q`
 
+`q decisiontree.q`
+
 `q hiragana.q`
 
 you can then read the comments and run the examples one by one. topics include:

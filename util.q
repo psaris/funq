@@ -43,3 +43,6 @@ totals:{[c;t]
 / return memory (used;allocated;max)
 / returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
 mem:{(3#system"w")%x (1024*)/ 1}
+
+/ throw verbose exception if x <> y
+assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}

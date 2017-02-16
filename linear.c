@@ -1,11 +1,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include <string.h>
 #include <linear.h>
 
 #include "stdio.h"
-#include "alloc.h"
-#include "util.h"
+#include "k.h"
 
 #define D(x) {if(!(x))goto done;}
 
@@ -15,10 +15,10 @@ ZV
 print_string_q(const char *s)
 {
     K r;
-    
-    if (r = k(0,print_string_function,kp((S)s),(K)0)) {
+
+    if ((r = k(0,print_string_function,kp((S)s),(K)0))) {
         if (r->t == -128)
-            O(r->s), O("\n");
+            O("%s",r->s), O("\n");
         r0(r);
     }
 }
@@ -34,7 +34,7 @@ ZK
 find(K dict, S key) {
     K k,v;
     I i;
-    
+
     P(dict->t != XD, krr("type"));
 
     k = kK(dict)[0];
@@ -97,9 +97,9 @@ k_to_node_dict(const K x, struct feature_node ** node, I n, F bias) {
 
 ZI
 k_to_node_mat(const K x, struct feature_node *** node, I l, I n, F bias) {
-    
+
     P(xt != 0, (krr("type"),0));
-    
+
     if (*node) DO(l,free((*node)[i]));
     (*node) = (struct feature_node**)realloc((*node),xn*sizeof(struct feature_node*));
     memset(*node, 0, xn*sizeof(struct feature_node*)); /* 0 init  */
@@ -157,7 +157,7 @@ max_key(const K x) {
   I n,m = 0;
 
   P(xt != 0, (krr("type"),0));
-  for (I i; i < xn; ++i) {
+  for (I i=0; i < xn; ++i) {
     d = xK[i];
     P( d->t != XD, (krr("type"),0));
     k = kK(d)[0];
@@ -255,17 +255,17 @@ k_to_model(const K d, struct model *m) {
     P(xn != m->nr_class,(krr("length"),0));
     U(x = findt(d,"bias",-KF));     m->bias = xf;
     R 1;
-}    
+}
 
 K
 qml_linear_check_parameter(K kprob, K kparam) {
-    struct problem prob; 
-    struct parameter param; 
+    struct problem prob;
+    struct parameter param;
     K r = 0;
 
     memset(&prob, 0, sizeof(struct problem));
     memset(&param, 0, sizeof(struct parameter));
-    
+
     D(k_to_problem(kprob, &prob));
     D(k_to_parameter(kparam, &param));
     r = krr((S)check_parameter(&prob,&param));
@@ -277,14 +277,14 @@ qml_linear_check_parameter(K kprob, K kparam) {
 
 K
 qml_linear_train(K kprob, K kparam) {
-    struct problem prob; 
+    struct problem prob;
     struct parameter param;
     struct model *model = 0;
     K kmodel = 0;
-    
+
     memset(&prob, 0, sizeof(struct problem));
     memset(&param, 0, sizeof(struct parameter));
-    
+
     D(k_to_problem(kprob, &prob));
     D(k_to_parameter(kparam, &param));
     model = train(&prob,&param);
@@ -301,7 +301,7 @@ qml_linear_cross_validation(K kprob, K kparam, K nr_fold) {
     struct problem prob;
     struct parameter param;
     K target = 0;
-    
+
     P(nr_fold->t != -KI, krr("type"));
 
     memset(&prob, 0, sizeof(struct problem));
@@ -316,13 +316,13 @@ qml_linear_cross_validation(K kprob, K kparam, K nr_fold) {
     destroy_param(&param);
     R target;
 }
-  
+
 K
 qml_linear_find_parameter_C(K kprob, K kparam, K nr_fold, K start_C, K max_C) {
     struct problem prob;
     struct parameter param;
-    K r;
-    
+    K r = 0;
+
     P(nr_fold->t != -KI || start_C->t != -KF || max_C->t != -KF, krr("type"));
 
     memset(&prob, 0, sizeof(struct problem));
@@ -361,7 +361,7 @@ qml_linear_save_model(K file, K kmodel) {
     D(k_to_model(kmodel, &model));
     r = ki(save_model((':' == *file->s) + file->s, &model));
  done:
-    free_model_content(&model);    
+    free_model_content(&model);
     R r;
 }
 
@@ -369,12 +369,12 @@ K
 qml_linear_check_probability_model(K kmodel) {
     struct model model;
     K r = 0;
-    
+
     memset(&model, 0, sizeof(struct model));
     D(k_to_model(kmodel,&model));
     r = ki(check_probability_model(&model));
  done:
-    free_model_content(&model);    
+    free_model_content(&model);
     R r;
 }
 
@@ -384,7 +384,7 @@ qml_linear_predict(K kmodel, K knodes) {
     struct feature_node *nodes = 0;
     K r = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct model));
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -409,7 +409,7 @@ qml_linear_predict_values(K kmodel, K knodes) {
     struct feature_node *nodes = 0;
     K r = 0, dec_values = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct model));
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -437,7 +437,7 @@ qml_linear_predict_probability(K kmodel, K knodes) {
     struct feature_node *nodes = 0;
     K r = 0, prob = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct model));
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -497,7 +497,7 @@ qml_linear_model_inout(K kmodel) {
 K
 qml_linear_set_print_string_function(K x) {
     P(xt != -KS, krr("type"));
-    
+
     print_string_function = xs;
     R 0;
 }
@@ -507,7 +507,7 @@ qml_linear_lib(K x) {
     K y;
 
     set_print_string_function(print_string_q);
-    
+
     x=ktn(KS,0);
     y=ktn(0,0);
 

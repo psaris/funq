@@ -16,6 +16,8 @@ clone this project and start q with any of the following:
 
 `q decisiontree.q`
 
+`q supportvectormachine.q`
+
 `q hiragana.q`
 
 you can then read the comments and run the examples one by one. topics include:
@@ -55,3 +57,5 @@ you can then read the comments and run the examples one by one. topics include:
 ## Collaborative Filtering (Recommender Systems)
 
 ## Vector Space Model (tf-idf)
+
+## Support Vector Machine (SVM)

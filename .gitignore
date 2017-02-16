@@ -9,3 +9,8 @@
 /train-images-idx3-ubyte
 /train-labels-idx1-ubyte
 ETL9B
+*.so
+/k.h
+*.o
+libsvm-*
+liblinear-*

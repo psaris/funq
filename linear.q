@@ -1,4 +1,4 @@
-.linear.dll:`linear^.linear.dll^:`; / optional override
+.linear.dll:`liblinear^.linear.dll^:`; / optional override
 
 .linear,:(.linear.dll 2: (`qml_linear_lib;1))`
 .linear,:`L2R_LR`L2R_L2LOSS_SVC_DUAL`L2R_L2LOSS_SVC!"i"$til 3

@@ -1,10 +1,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include <string.h>
 #include <svm.h>
 
 #include "stdio.h"
-#include "util.h"
+#include "k.h"
 
 #define D(x) {if(!(x))goto done;}
 
@@ -14,10 +15,10 @@ ZV
 print_string_q(const char *s)
 {
     K r;
-    
-    if (r = k(0,print_string_function,kp((S)s),(K)0)) {
+
+    if ((r = k(0,print_string_function,kp((S)s),(K)0))) {
         if (r->t == -128)
-            O(r->s), O("\n");
+            O("%s",r->s), O("\n");
         r0(r);
     }
 }
@@ -33,7 +34,7 @@ ZK
 find(K dict, S key) {
     K k,v;
     I i;
-    
+
     P(dict->t != XD, krr("type"));
 
     k = kK(dict)[0];
@@ -91,9 +92,9 @@ k_to_node_dict(const K x, struct svm_node ** node) {
 
 ZI
 k_to_node_mat(const K x, struct svm_node *** node, I l) {
-    
+
     P(xt != 0, (krr("type"),0));
-    
+
     if (*node) DO(l,free((*node)[i]));
     (*node) = (struct svm_node**)realloc((*node),xn*sizeof(struct svm_node*));
     memset(*node, 0, xn*sizeof(struct svm_node*)); /* 0 init  */
@@ -180,7 +181,7 @@ parameter_to_k(const struct svm_parameter *p) {
 
 ZI
 k_to_parameter(const K d, struct svm_parameter *p) {
-    K x, w;
+    K x;
     U(x = findt(d, "svm_type", -KI));    p->svm_type = xi;
     U(x = findt(d, "kernel_type", -KI)); p->kernel_type = xi;
     U(x = findt(d, "degree", -KI));      p->degree = xi;
@@ -252,17 +253,17 @@ k_to_model(const K d, struct svm_model *m) {
     U(x = findt(d,"label",KI));     k_to_vec_i(&m->label,x);
     U(x = findt(d,"nSV",KI));       k_to_vec_i(&m->nSV,x);
     R 1;
-}    
+}
 
 K
 qml_svm_check_parameter(K kprob, K kparam) {
-    struct svm_problem prob; 
-    struct svm_parameter param; 
+    struct svm_problem prob;
+    struct svm_parameter param;
     K r = 0;
 
     memset(&prob, 0, sizeof(struct svm_problem));
     memset(&param, 0, sizeof(struct svm_parameter));
-    
+
     D(k_to_problem(kprob, &prob));
     D(k_to_parameter(kparam, &param));
     r = krr((S)svm_check_parameter(&prob,&param));
@@ -274,14 +275,14 @@ qml_svm_check_parameter(K kprob, K kparam) {
 
 K
 qml_svm_train(K kprob, K kparam) {
-    struct svm_problem prob; 
+    struct svm_problem prob;
     struct svm_parameter param;
     struct svm_model *model = 0;
     K kmodel = 0;
-    
+
     memset(&prob, 0, sizeof(struct svm_problem));
     memset(&param, 0, sizeof(struct svm_parameter));
-    
+
     D(k_to_problem(kprob, &prob));
     D(k_to_parameter(kparam, &param));
     model = svm_train(&prob,&param);
@@ -298,7 +299,7 @@ qml_svm_cross_validation(K kprob, K kparam, K nr_fold) {
     struct svm_problem prob;
     struct svm_parameter param;
     K target = 0;
-    
+
     P(nr_fold->t != -KI, krr("type"));
 
     memset(&prob, 0, sizeof(struct svm_problem));
@@ -313,7 +314,7 @@ qml_svm_cross_validation(K kprob, K kparam, K nr_fold) {
     svm_destroy_param(&param);
     R target;
 }
-  
+
 K
 qml_svm_load_model(K file) {
     struct svm_model *model;
@@ -330,14 +331,14 @@ K
 qml_svm_save_model(K file, K kmodel) {
     struct svm_model model;
     K r = 0;
-    
+
     P(file->t != -KS, krr("type"));
 
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
     D(k_to_model(kmodel, &model));
     r = ki(svm_save_model((':' == *file->s) + file->s, &model));
  done:
-    svm_free_model_content(&model);    
+    svm_free_model_content(&model);
     R r;
 }
 
@@ -345,12 +346,12 @@ K
 qml_svm_check_probability_model(K kmodel) {
     struct svm_model model;
     K r = 0;
-    
+
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
     D(k_to_model(kmodel,&model));
     r = ki(svm_check_probability_model(&model));
  done:
-    svm_free_model_content(&model);    
+    svm_free_model_content(&model);
     R r;
 }
 
@@ -360,7 +361,7 @@ qml_svm_predict(K kmodel, K knodes) {
     struct svm_node *nodes = 0;
     K r = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -385,7 +386,7 @@ qml_svm_predict_values(K kmodel, K knodes) {
     struct svm_node *nodes = 0;
     K r = 0, dec_values = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -414,7 +415,7 @@ qml_svm_predict_probability(K kmodel, K knodes) {
     struct svm_node *nodes = 0;
     K r = 0, prob = 0;
     I i;
-    
+
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
     D(k_to_model(kmodel,&model));
     if (knodes->t) {
@@ -474,7 +475,7 @@ qml_svm_model_inout(K kmodel) {
 K
 qml_svm_set_print_string_function(K x) {
     P(xt != -KS, krr("type"));
-    
+
     print_string_function = xs;
     R 0;
 }
@@ -484,7 +485,7 @@ qml_svm_lib(K x) {
     K y;
 
     svm_set_print_string_function(print_string_q);
-    
+
     x=ktn(KS,0);
     y=ktn(0,0);
 

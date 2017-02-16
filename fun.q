@@ -2,6 +2,14 @@
 \l funq.q
 
 \
+
+f:("iris.data";"bezdekIris.data") 1
+b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
+-1"we first [down]load the iris dataset";
+.util.download[b;;"";::] f;
+-1"and then extract the data into a matrix of data (with 4 dimensions)";
+I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
+
 / clustering
 
 / redefine plot (to drop space)

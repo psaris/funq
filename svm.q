@@ -1,4 +1,4 @@
-.svm.dll:`svm^.svm.dll^:`; / optional override
+.svm.dll:`libsvm^.svm.dll^:`; / optional override
 
 .svm,:(.svm.dll 2: (`qml_svm_lib;1))`
 .svm,:`C_SVC`NU_SVC`ONE_CLASS`EPSILON_SVR`NU_SVR!"i"$til 5

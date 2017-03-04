@@ -117,18 +117,18 @@ wnan:{$[any 1_differ type each x;til count x;where not any null x]}
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 sigmoid:{1f%1f+exp neg x}       / sigmoid function
+softmax:{x%sum x:exp x}         / softmax function
 
 lpredict:(')[sigmoid;predict]   / logistic regression predict
-
-/ logistic regression cost
-lcost:{sum (-1f%count y 0)*sum each (y*log x)+(1f-y)*log 1f-x}
+/ cross-entropy loss
+celoss:{(-1f%count y 0)*sum sum each (y*log x)+(1f-y)*log 1f-x}
 
 / regularized logistic regression cost
 / expects a list of THETA matrices
 rlogcost:{[l;X;Y;THETA]
  if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
  if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
- J:lcost[X lpredict/ THETA;Y];
+ J:celoss[X lpredict/ THETA;Y];
  if[l>0f;J+:(l%2*count Y 0)*dot[x]x:2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  J}
 logcost:rlogcost[0f]
@@ -245,7 +245,7 @@ nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  THETA:nncut[n] theta;
  Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
- J:lcost[Y;YMAT];
+ J:celoss[Y;YMAT];
  if[l>0f;J+:(l%2*n)*{dot[x]x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
  D:Y-YMAT;
  a:addint each -1_a;
@@ -544,6 +544,7 @@ dtcr:{[t;d]                              / recursive component
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[gain[0b];1;0]
 q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
+stump:{dt[gain[0b];-1+count x;0] x}
 
 / sparse matrix manipulation
 

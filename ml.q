@@ -230,7 +230,7 @@ checknngradients:{[l;n]
  (g;ng)}
 
 checkcfgradients:{[l;n]
- nu:n 0;nm:n 1;nf:n 2;          / n users, n movies, n features
+ nu:n 0;nm:10 ;nf:n 1;          / n users, n movies, n features
  Y:dot[nf?/:nu#1f]nm?/:nf#1f;   / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters

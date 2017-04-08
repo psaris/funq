@@ -12,8 +12,8 @@ assert[m] {.linear.save_model[`model] x;m:.linear.load_model[`model];hdel`:model
 do[1000;param ~ b:.linear.param_inout param]
 assert[m] .linear.model_inout m
 do[1000;.linear.model_inout m]
-avg prob.y=.linear.cross_validation[prob;param;2i]
-.linear.find_parameter_C[prob;param;2i;1f;1e10]
+assert[1b].75<avg prob.y=.linear.cross_validation[prob;param;2i]
+assert[1b].75<last .linear.find_parameter_C[prob;param;2i;1f;1e10]
 assert[0i] .linear.check_probability_model m
 assert[.linear.predict[m;prob.x]] .linear.predict[m] each prob.x
 assert[.linear.predict_values[m;prob.x]] flip .linear.predict_values[m] each prob.x

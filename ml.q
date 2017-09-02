@@ -452,7 +452,7 @@ mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
 
 / pick k closest values to x from training data X and return the
 / (c)lassification that occurs most frequently
-knn:{[df;k;c;X;x]mode c k#iasc df[X;x]}
+knn:{[df;k;c;X;x](mode c #[;iasc df[X;x]]@) each k}
 
 / markov clusetering
 

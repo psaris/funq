@@ -14,3 +14,5 @@ ETL9B
 *.o
 libsvm-*
 liblinear-*
+/pendigits.tes
+/pendigits.tra

@@ -12,6 +12,10 @@ clone this project and start q with any of the following:
 
 `q nn.q`
 
+`q kmeans.q`
+
+`q knn.q`
+
 `q recommend.q`
 
 `q decisiontree.q`

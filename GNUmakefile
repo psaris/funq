@@ -10,15 +10,14 @@ LDFLAGS = $(if $(filter Darwin,$(OS)),-bundle -undefined dynamic_lookup -install
 all: lib
 
 k.h:
-	wget https://kx.com/q/c/c/k.h
+	wget https://raw.githubusercontent.com/KxSystems/kdb/master/c/c/k.h
 
 libsvm:
 	wget https://github.com/cjlin1/libsvm/archive/v322.tar.gz  -O - | tar -xvf - && mv libsvm-322 libsvm
-#	wget https://github.com/psaris/libsvm/archive/master.tar.gz -O - | tar -xvf -
 
 liblinear:
 #	wget https://github.com/cjlin1/liblinear/archive/v211.tar.gz  -O - | tar -xvf - && mv liblinear-211 liblinear
-	wget https://github.com/psaris/liblinear/archive/master.tar.gz -O - | tar -xvf - && mv liblinear-master liblinear
+	wget https://github.com/psaris/liblinear/archive/kdb-integration.tar.gz -O - | tar -xvf - && mv liblinear-kdb-integration liblinear
 
 libsvm/svm.o: | libsvm
 	$(MAKE) -e -C $(dir $@) $(notdir $@)

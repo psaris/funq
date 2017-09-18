@@ -42,7 +42,7 @@ rcfcost:{[l;Y;THETA;X]
  J:.5*sum sum 0f^J*J:mtm[THETA;X]-Y;
  if[l>0f;J+:.5*l*sum sum over/:(THETA*THETA;X*X)];
  J}
-cfcost:rcfcost:[0f]
+cfcost:rcfcost[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]

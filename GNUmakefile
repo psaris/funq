@@ -18,7 +18,7 @@ libsvm:
 
 liblinear:
 #	wget https://github.com/cjlin1/liblinear/archive/v211.tar.gz  -O - | tar -xvf - && mv liblinear-211 liblinear
-	wget https://github.com/psaris/liblinear/archive/master.tar.gz -O - | tar -xvf -&& mv liblinear-master liblinear
+	wget https://github.com/psaris/liblinear/archive/master.tar.gz -O - | tar -xvf - && mv liblinear-master liblinear
 
 libsvm/svm.o: | libsvm
 	$(MAKE) -e -C $(dir $@) $(notdir $@)

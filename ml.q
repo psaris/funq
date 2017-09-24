@@ -493,20 +493,26 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 
 odds:{x%sum x:count each x}
 entropy:{neg sum x*2 xlog x}
-eog:entropy odds group@
-gain:{[n;x;y] / information gain (optionally (n)ormalized by splitinfo)
- g:eog[x]-sum (o:odds gy)*(not nk:null k:key gy)*eog each x gy:group y;
+gini:{1f-sum x*x}
+/ using a (c)lassification (f)unction such as 'entropy' or 'gini',
+/ compute the information gain (optionally (n)ormalized by splitinfo)
+/ of x and y
+gain:{[n;cf;x;y]
+ g:cf odds group x;
+ g-:sum (o:odds gy)*(not nk:null k:key gy)*(cf odds group@) each x gy:group y;
  if[n;g%:entropy o]; / gain ratio
  / TODO: distribute nulls down each branch with proportionate weight
  / if[count w:where nk;gy:(k[w]_gy),\:gy k first w];
  (g;::;gy)}
+ig:gain[0b]                     / information gain
+igr:gain[1b]                    / information gain ratio
 
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / Improved use of continues attributes in c4.5 (quinlan) MDL
-cgaina:{[gf;x;y] / continuous gain adapter
+cgaina:{[cf;gf;x;y] / continuous gain adapter
  if[isnom y;:gf[x;y]];          /TODO: handle null numbers
- g:(gain[0b;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
+ g:(ig[cf;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
  g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
  g[0]%:entropy odds g 2;           / convert to gain ratio
@@ -520,14 +526,15 @@ perr:{[z;x]last wscore[$[1=count g:group x;0;min count each g]%n;z;n:count x]}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (g)ain (f)unction.
-/ pruning subtrees with minimum (n)umber of leaves and given confidence
-/ pessimistic error
-dt:{[gf;n;z;t]
- if[1=count d:flip t;:first d]; / no features to test
- if[all 1_(=':) a:first d;:a];  / all values are equal
- if[not n<count a;:a];          / don't split unless >n leaves
+/ pruning subtrees with (m)inimum number of (l)eaves, (m)ax (d)epth,
+/ and given confidence pessimistic error
+dt:{[gf;ml;md;z;t]
+ if[1=count d:flip t;:first d];  / no features to test
+ if[not md;:first d];            / don't split deeper than max depth
+ if[not ml<count a:first d;:a]; / don't split unless >min leaves
+ if[all 1_(=':) a;:a];           / all values are equal
  if[all 0>=gr:first each g:gf[a] peach 1 _d;:a]; / compute gain (ratio)
- b:@[1_g ba;1;.z.s[gf;n;z] peach ((1#ba:imax gr)_t)@]; / classify subtree
+ b:@[1_g ba;1;.z.s[gf;ml;md-1;z] peach ((1#ba:imax gr)_t)@]; / classify subtree
  if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:a]]; / prune
  (ba;b)}
 
@@ -542,9 +549,9 @@ dtcr:{[t;d]                              / recursive component
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
-id3:dt[gain[0b];1;0]
-q45:dt[cgaina[gain[1b]]] / like c4.5 (but does not train nulls or post-prune)
-stump:{dt[gain[0b];-1+count x;0] x}
+id3:dt[ig[entropy];1;0W;0]
+q45:dt[cgaina[entropy;igr[entropy]]] / like c4.5 (but does not train nulls or post-prune)
+stump:{dt[ig;-1+count x;0] x}
 
 / sparse matrix manipulation
 

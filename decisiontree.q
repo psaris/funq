@@ -33,8 +33,10 @@ show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
 -1"we can see how id3 creates a bushy tree";
 show last last .ml.id3 s
 -1"while q45 picks a single split value";
-show last last tree:.ml.q45[2;neg .qml.nicdf .0] s
+show last last tree:.ml.q45[2;0W;neg .qml.nicdf .0] s
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
 -1 .util.box["**"] "note, however, that .ml.q45 does not handle nulls in training data";
+-1 "we can use the gini impurity instead of entropy in the information gain computation";
+show tree:.ml.dt[.ml.ig[.ml.gini];1;0W;0] t

@@ -16,3 +16,6 @@ libsvm-*
 liblinear-*
 /pendigits.tes
 /pendigits.tra
+liblinear
+libsvm
+/pima-indians-diabetes.data

@@ -444,9 +444,10 @@ em:{[lf;mf;X;pt]
  theta:flip mf[X] peach W;       / new coefficients
  enlist[phi],theta}
 
-/ return value which occur most frequently
+/ return value which occurs most frequently
 /mode:{imax count each group x}
 mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
+wmode:{[w;x]imax sum each w group x}
 
 / k nearest neighbors
 
@@ -491,18 +492,17 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 
 / decision trees
 
-odds:{x%sum x:count each x}
+/ weighted odds
+odds:{[w;g]g%sum g:sum each w g}
 entropy:{neg sum x*2 xlog x}
 gini:{1f-sum x*x}
 / using a (c)lassification (f)unction such as 'entropy' or 'gini',
 / compute the information gain (optionally (n)ormalized by splitinfo)
 / of x and y
-gain:{[n;cf;x;y]
- g:cf odds group x;
- g-:sum (o:odds gy)*(not nk:null k:key gy)*(cf odds group@) each x gy:group y;
+gain:{[n;cf;w;x;y]
+ g:cf odds[w] group x;
+ g-:sum (o:odds[w] gy)*(not null k:key gy)*(cf odds[w] group@) each x gy:group y;
  if[n;g%:entropy o]; / gain ratio
- / TODO: distribute nulls down each branch with proportionate weight
- / if[count w:where nk;gy:(k[w]_gy),\:gy k first w];
  (g;::;gy)}
 ig:gain[0b]                     / information gain
 igr:gain[1b]                    / information gain ratio
@@ -510,12 +510,12 @@ igr:gain[1b]                    / information gain ratio
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / Improved use of continues attributes in c4.5 (quinlan) MDL
-cgaina:{[cf;gf;x;y] / continuous gain adapter
- if[isnom y;:gf[x;y]];          /TODO: handle null numbers
- g:(ig[cf;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
+cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
+ if[isnom y;:gf[w;x;y]];        / TODO: handle null numbers
+ g:(ig[cf;w;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
  g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
- g[0]%:entropy odds g 2;           / convert to gain ratio
+ g[0]%:entropy odds[w] g 2;        / convert to gain ratio
  g[1]:(avg u[i+0 1])<;             / split function
  g}
 
@@ -528,31 +528,47 @@ perr:{[z;x]last wscore[$[1=count g:group x;0;min count each g]%n;z;n:count x]}
 / target attribute create a decision tree using the (g)ain (f)unction.
 / pruning subtrees with (m)inimum number of (l)eaves, (m)ax (d)epth,
 / and given confidence pessimistic error
-dt:{[gf;ml;md;z;t]
- if[1=count d:flip t;:first d];  / no features to test
- if[not md;:first d];            / don't split deeper than max depth
- if[not ml<count a:first d;:a]; / don't split unless >min leaves
- if[all 1_(=':) a;:a];           / all values are equal
- if[all 0>=gr:first each g:gf[a] peach 1 _d;:a]; / compute gain (ratio)
- b:@[1_g ba;1;.z.s[gf;ml;md-1;z] peach ((1#ba:imax gr)_t)@]; / classify subtree
- if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:a]]; / prune
+dt:{[gf;ml;md;z;w;t]
+ if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
+ if[1=count d:flip t;:(w;first d)]; / no features to test
+ if[not md;:(w;first d)];           / don't split deeper than max depth
+ if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
+ if[all 1_(=':) a;:(w;a)];          / all values are equal
+ if[all 0>=gr:first each g:gf[w;a] peach 1 _d;:(w;a)]; / compute gain (ratio)
+ g:last b:1_ g ba:imax gr;                   / best attribute
+ / distribute nulls down each branch with reduced weight
+ if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
+ b[1]:.z.s[gf;ml;md-1;z]'[w g;((1#ba)_t) g]; / classify subtree
+ if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:(w;a)]]; / prune
  (ba;b)}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
-dtc:{[t;d]mode dtcr[t;d]}
+dtc:{[t;d] wmode . dtcr[t;d]}
 dtcr:{[t;d]                              / recursive component
- if[type t;:t];                          / list of values
- if[null k:d t 0;:raze t[1;1] .z.s\: d]; / dig deeper for null values
+ if[0h<type t 0;:t];                     / list of values
+ if[null k:d t 0;:(,') over t[1;1] .z.s\: d]; / dig deeper for null values
  v:.z.s[t[1;1] t[1;0] k;d];              / split on next attribute
  v}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
-id3:dt[ig[entropy];1;0W;0]
-q45:dt[cgaina[entropy;igr[entropy]]] / like c4.5 (but does not train nulls or post-prune)
-stump:{dt[ig;-1+count x;0] x}
+id3:dt[ig[entropy];1;0W;0;::]
+q45:dt[cgaina[entropy;igr[entropy]]] / like c4.5 (but does not post-prune)
+stump:dt[cgaina[entropy;igr[entropy]];1;1;0]
 
+/ (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
+/ (alpha;model;weights)
+adaboost:{[tf;cf;t;amw]
+ w:last amw;
+ m:tf[w] t;                     / train model
+ yh:cf[m] each t;               / predict
+ e:sum w*not yh=y:first flip t; / weighted error
+ a:.5*log (1f-e)%e;             / alpha
+ w*:exp neg a*y*yh;             / up/down weight
+ w%:sum w;                      / scale
+ (a;m;w)}
+ 
 / sparse matrix manipulation
 
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}

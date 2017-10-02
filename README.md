@@ -20,6 +20,8 @@ clone this project and start q with any of the following:
 
 `q decisiontree.q`
 
+`q adaboost.q`
+
 `q supportvectormachine.q`
 
 `q hiragana.q`
@@ -53,6 +55,8 @@ you can then read the comments and run the examples one by one. topics include:
 ## Naive Bayes
 
 ## Decision Tree (ID3,C4.5)
+
+## Adaboost
 
 ## Google PageRank
 

@@ -512,7 +512,7 @@ isnom:{type[x] in 1 2 4 10 11h} / is nominal
 / Improved use of continues attributes in c4.5 (quinlan) MDL
 cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
  if[isnom y;:gf[w;x;y]];        / TODO: handle null numbers
- g:(ig[cf;w;x] y >) peach -1_u:asc distinct y; / use gain (not gf)
+ g:(ig[cf;w;x] y >) peach u:asc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
  g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
  g[0]%:entropy odds[w] g 2;        / convert to gain ratio
@@ -568,7 +568,13 @@ adaboost:{[tf;cf;t;amw]
  w*:exp neg a*y*yh;             / up/down weight
  w%:sum w;                      / scale
  (a;m;w)}
- 
+
+/ Bootstrap AGgregating
+bag:{[b;f;t](f ?[;t]@) peach b#count t}
+
+/ Random FOrest
+rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]@);t]}
+
 / sparse matrix manipulation
 
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}

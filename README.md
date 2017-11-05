@@ -22,6 +22,8 @@ clone this project and start q with any of the following:
 
 `q adaboost.q`
 
+`q randomforest.q`
+
 `q supportvectormachine.q`
 
 `q hiragana.q`
@@ -58,6 +60,8 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Adaboost
 
+## Random Forest
+
 ## Google PageRank
 
 ## Content-Based Filtering (Recommender Systems)
@@ -67,3 +71,4 @@ you can then read the comments and run the examples one by one. topics include:
 ## Vector Space Model (tf-idf)
 
 ## Support Vector Machine (SVM)
+

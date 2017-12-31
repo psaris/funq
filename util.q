@@ -25,6 +25,19 @@ ldmnist:{
 / load http://etlcdb.db.aist.go.jp/etlcdb/data/ETL9B dataset
 etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
+/ remove gamma compression
+gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}
+/ add gamma compression
+gcompress:{?[x>.0031308;-.055+1.055*x xexp 1%2.4;x*12.92]}
+
+/ convert rgb to grayscale
+grayscale:.2126 .7152 .0722 wsum
+
+/ create netpbm formatted strings for bitmap, grayscale and rgb
+pbm:{("P1";" " sv string count'[(x;x 0)])," " 0: "b"$x}
+pgm:{("P2";" " sv string count'[(x;x 0)];string max/[x])," " 0: "h"$x}
+ppm:{("P3";" " sv string count'[(x;x 0)];string max/[x])," " 0: flip raze "h"$x}
+
 / surround a (s)tring or list of stings with a box of (c)haracters
 box:{[c;s]
  if[type s;s:enlist s];

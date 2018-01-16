@@ -35,8 +35,8 @@ grayscale:.2126 .7152 .0722 wsum
 
 / create netpbm formatted strings for bitmap, grayscale and rgb
 pbm:{("P1";" " sv string count'[(x;x 0)])," " 0: "b"$x}
-pgm:{("P2";" " sv string count'[(x;x 0)];string max/[x])," " 0: "h"$x}
-ppm:{("P3";" " sv string count'[(x;x 0)];string max/[x])," " 0: flip raze "h"$x}
+pgm:{("P2";" " sv string count'[(x;x 0)];string "h"$max/[x])," " 0: "h"$x}
+ppm:{("P3";" " sv string count'[(x;x 0)];string "h"$max/[x])," " 0: flip raze "h"$x}
 
 / surround a (s)tring or list of stings with a box of (c)haracters
 box:{[c;s]

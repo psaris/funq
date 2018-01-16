@@ -211,6 +211,14 @@ cm:{
  t:([]x:u)!flip (`$string u)!m;
  t}
 
+/ cross validation
+cv:{[f;ys;Xs;i]
+ X:(,'/)Xs _ i; / drop i and raze
+ y:raze ys _ i; / drop i and raze
+ e:(ys i)=.ml.f2nd[f[y;X]] Xs i; / compute equality
+ e}
+
+
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}

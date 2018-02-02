@@ -88,7 +88,7 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
 / apply f (in parallel) to the 2nd dimension of x (instead of flipping x)
-f2nd:{[f;x](f x .(::),) peach til count first x}
+f2nd:{[f;x](f x .(::),) peach til count x 0}
 / center data
 demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)
@@ -218,7 +218,6 @@ cv:{[f;ys;Xs;i]
  e:(ys i)=.ml.f2nd[f[y;X]] Xs i; / compute equality
  e}
 
-
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}
@@ -285,8 +284,10 @@ updals:{[l;M;y]
  v}
 
 / k-means
-
-edist:{sqrt sum x*x-:y}         / euclidian distance
+edist2:{sum x*x-:y}             / euclidian distance squared
+edist:(')[sqrt;edist2]          / euclidian distance
+/pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm[y;x]} / pairwise edist2
+pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
 mkdist:{sum[abs[z-y] xexp x] xexp 1f%x} / minkowski distanace
 hmean:{1f%avg 1f%x}             / harmonic mean
@@ -453,9 +454,9 @@ em:{[lf;mf;X;pt]
  enlist[phi],theta}
 
 / return value which occurs most frequently
-/mode:{imax count each group x}
+nmode:{imax count each group x} / naive mode
 mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
-wmode:{[w;x]imax sum each w group x}
+wmode:{[w;x]imax sum each w group x} / weighted mode
 
 / k nearest neighbors
 

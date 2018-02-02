@@ -1,10 +1,18 @@
 \d .plot
+
 nbin:{(til[y]%y) bin 0f^x%max x-:min x} / allocate x into y bins
-nrng:{[n;s;e]s+til[1+n]*(e-s)%n}  / divide range (s;e) into n buckets
-/ cut mxn matrix into (x;y;z) for use by plot
-hmap:{(value flip([]x:til count x)cross([]y:reverse til count first x)),enlist raze x}
+
+nrng:{[n;s;e]s+til[1+n]*(e-s)%n} / divide range (s;e) into n buckets
+
+/ cut m x n matrix X into (x;y;z) where x and y are the indices for X
+/ and z is the value stored in X[x;y] - result used to plot heatmaps
+hmap:{[X]
+ t:([]x:til count X) cross ([]y:reverse til count X 0); / cross table!
+ X:value[flip t],enlist raze X;
+ X}
+
 / plot X using (c)haracters limited to (w)idth and (h)eight
-/ X can be x, (x;y) or (x;y;z)
+/ X can be x, (x;y), (x;y;z), ([]x), ([]x;y), ([]x;y;z), x!y
 plot:{[w;h;c;X]
  if[98h=t:type X;X:value flip X];     / convert table to matrix
  if[99h=t;X:(key;value)@\:X];         / convert dictionary to matrix
@@ -20,8 +28,9 @@ plot:{[w;h;c;X]
  p:reverse k!p;                                        / generate plot
  p}
 
-c10:" .-:=+x#%@"          / 10 characters
-c16:" .-:=+*xoXO#$&%@"    / 16 characters
-c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
-c89:" `-.'_:,=^;<+!*?/cLzrs7TivJtC{3F)Il(xZfY5S2eajo14[nuyE]P6V9kXpKwGhqAUbOd8#HRDB0$mgMW&Q%N@"
-plt:plot[59;30;1_c16]               / default plot function
+c10:" .-:=+x#%@"                         / 10 characters
+c16:" .-:=+*xoXO#$&%@"                   / 16 characters
+c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxn" / 68 characters
+c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+
+plt:plot[59;30;1_c16]           / default plot function

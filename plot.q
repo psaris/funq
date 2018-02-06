@@ -1,36 +1,35 @@
-\d .plot
+\c 20 100
+\l funq.q
 
-nbin:{(til[y]%y) bin 0f^x%max x-:min x} / allocate x into y bins
+/ define a plotting function using 10 characters of gradation
+plt:.util.plot[w:40;h:20;c:.util.c10]
 
-nrng:{[n;s;e]s+til[1+n]*(e-s)%n} / divide range (s;e) into n buckets
+-1"plotting 1-dimensional dataset (sin x): x";
+-1 value plt X:sin .01*til 1000;
 
-/ cut m x n matrix X into (x;y;z) where x and y are the indices for X
-/ and z is the value stored in X[x;y] - result used to plot heatmaps
-hmap:{[X]
- t:([]x:til count X) cross ([]y:reverse til count X 0); / cross table!
- X:value[flip t],enlist raze X;
- X}
+-1"plotting 2-dimensional dataset (uniform variates): (x;y)";
+-1 value plt X:10000?/:2#1f;
 
-/ plot X using (c)haracters limited to (w)idth and (h)eight
-/ X can be x, (x;y), (x;y;z), ([]x), ([]x;y), ([]x;y;z), x!y
-plot:{[w;h;c;X]
- if[98h=t:type X;X:value flip X];     / convert table to matrix
- if[99h=t;X:(key;value)@\:X];         / convert dictionary to matrix
- if[t within 1 19h;X:enlist X];       / promote vector to matrix
- if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
- if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
- Z:@[X;0 1;nbin;(w;h)];               / allocate (x;y) to (w;h) bins
- Z:flip key[Z],'avg each value Z:Z[2]g:group flip 2#Z; / avg overlapping z
- Z:@[Z;2;nbin;cn:count c,:()];                         / binify z
- p:h#enlist w#" ";                                     / empty canvas
- p:./[p;flip Z 1 0;:;c Z 2];                           / plot points
- k:nrng[h-1] . (min;max)@\:X 1;                        / compute key
- p:reverse k!p;                                        / generate plot
- p}
+-1"plotting 2-dimensional dataset (normal variates): (x;y)";
+-1 value plt (.util.bm 10000?) each 2#1f;
 
-c10:" .-:=+x#%@"                         / 10 characters
-c16:" .-:=+*xoXO#$&%@"                   / 16 characters
-c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxn" / 68 characters
-c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+-1"plotting 3-dimensional dataset: (x;y;z)";
+-1 value plt {(x;{x*x*x}x-.5;x:til[x]%x)} 1000;
 
-plt:plot[59;30;1_c16]           / default plot function
+-1"plotting 3-dimensional grid as a heatmap: X (matrix)";
+-1 value plt .util.hmap {x*/:(x:til x)*(x;x)#1f} 1000;
+
+-1"plotting mandelbrot series black/white";
+c:.util.tcross . (.util.nrng .) each flip (-1+w:1000;-2 -1.25;.5 1.25)
+x:w cut not 2f<0w^.ml.cabs 20 .ml.mandelbrot[c]/0f
+-1 value  plt .util.hmap x;
+`mandel.pbm 0:  .util.pbm x;
+
+-1"plotting mandelbrot series gray scale";
+c:.util.tcross . (.util.nrng .) each flip (-1+w:1000;-2 -1.25;.5 1.25)
+x:w cut last 20 .ml.mbrot[x]/x:c,(1;count c 0)#0
+-1 value plt .util.hmap x;
+`mandel.pgm 0: .util.pgm x;
+
+-1"plotting mandelbrot series color";
+`mandel.ppm 0: .util.ppm (flip (0;0;desc (neg 1+max over x)?256)) x;

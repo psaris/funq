@@ -4,7 +4,7 @@ clone this project and start q with any of the following:
 
 `q fun.q`
 
-`q plt.q`
+`q plot.q`
 
 `q linreg.q`
 

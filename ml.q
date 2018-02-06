@@ -7,6 +7,13 @@ minv:inv                        / X**-1
 mlsq:lsq                        / least squares
 dot:$                           / dot product
 
+cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
+csqr:{((-/)x*x;2f*(*/)x)}       / complex square
+cabs:{sqrt sum x*x}             / complex absolute value
+mandelbrot:{[c;x]c+csqr x}           / mandelbrot
+mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
+
+
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
 addint:prepend[1f]              / add intercept

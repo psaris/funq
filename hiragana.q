@@ -26,7 +26,7 @@ X:"f"$flip (raze $[3.5>.z.K;-8#';::] 0b vs/:) each (1_x 4) w / extract 0 1 from 
 system "S ",string "i"$.z.T
 
 -1"view 4 random drawings of the same character";
-plt:.plot.plot[39;20;.plot.c10] .plot.hmap flip 64 cut
+plt:.util.plot[64;32;.util.c10] .util.hmap flip 64 cut
 -1 value (,') over plt each flip X[;rand[count h]+count[distinct y]*til 4];
 
 -1"generate neural network topology with one hidden layer";

@@ -136,7 +136,7 @@ show rpt select from (update score:last P from r) where not null rating
 -1"what does the first factor look like?";
 show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#movie;
 -1"how much variance does each factor explain?";
-show .plot.plot[40;19;1_.plot.c10] {x%sum x*:x}.qml.mdiag usv 1
+show .util.plot[40;19;.util.c10] {x%sum x*:x}.qml.mdiag usv 1
 
 / regularized gradient descent
 

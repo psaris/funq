@@ -2,7 +2,7 @@
 \l funq.q
 
 -1"the sigmoid function is used to represent a binary outcome";
-plt:.plot.plot[28;15;1_.plot.c10]
+plt:.util.plot[30;15;.util.c10]
 show plt .ml.sigmoid .1*-50+til 100
 
 -1"logistic regression can be used to discretely classify data";

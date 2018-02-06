@@ -1,7 +1,7 @@
 \c 20 100
 \l funq.q
 
-plt:.plot.plot[28;15;1_.plot.c10]
+plt:.util.plot[30;15;.util.c10]
 
 -1"generating 2 sets of independant normal random variables";
 / NOTE: matrix variables are uppercase

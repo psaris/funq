@@ -18,7 +18,7 @@ Y:enlist y:"i"$.util.ldmnist read1 `$f 0
 X:flip "f"$raze each .util.ldmnist read1 `$f 1
 
 -1"define a plot function (which includes the empty space character)";
-plt:.plot.plot[28;15;.plot.c10] .plot.hmap flip 28 cut
+plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
 -1"visualize the data";
 -1 value (,') over plt each flip  X[;-4?count X 0];
 

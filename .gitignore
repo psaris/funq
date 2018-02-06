@@ -20,3 +20,4 @@ liblinear
 libsvm
 /pima-indians-diabetes.data
 OnlineNewsPopularity
+*.p[bgp]m

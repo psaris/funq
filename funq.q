@@ -1,6 +1,5 @@
-\l ml.q
-\l plot.q
 \l util.q
+\l ml.q
 \l fmincg.q
 
 / trying to load qml and use its matrix operations

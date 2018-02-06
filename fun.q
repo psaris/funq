@@ -13,7 +13,7 @@ I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";","
 / clustering
 
 / redefine plot (to drop space)
-plt:.plot.plot[28;15;1_.plot.c10]
+plt:.util.plot[30;15;.util.c10]
 
 / cosine similarity (distance)
 flip C:.ml.lloyd[.ml.cosdist;avg;I]/[-3] /find 3 centroids

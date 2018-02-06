@@ -2,7 +2,7 @@
 \l funq.q
 
 / redefine plot (to drop space)
-plt:.plot.plot[28;15;1_.plot.c10]
+plt:.util.plot[30;15;.util.c10]
 
 -1"to demonstrate kmeans, we first generate clusters of data";
 -1"we will arbitrarily choose 3 clusters and define k=3";

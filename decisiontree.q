@@ -31,9 +31,9 @@ avg t.Play=.ml.dtc[tree] each t / accuracy
 -1"we can test this feature by changing humidity into a continuous variable";
 show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
 -1"we can see how id3 creates a bushy tree";
-show last last .ml.id3 s
+show last .ml.id3 s
 -1"while q45 picks a single split value";
-show last last tree:.ml.q45[2;0W;neg .qml.nicdf .0;::] s
+show last tree:.ml.q45[2;0W;neg .qml.nicdf .0;::] s
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)

@@ -556,15 +556,15 @@ dt:{[gf;ml;md;z;w;t]
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
  b[1]:.z.s[gf;ml;md-1;z]'[w g;((1#ba)_t) g]; / classify subtree
  if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:(w;a)]]; / prune
- (ba;b)}
+ ba,b}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
 dtc:{[t;d] wmode . dtcr[t;d]}
-dtcr:{[t;d]                              / recursive component
- if[0h<type t 0;:t];                     / list of values
- if[null k:d t 0;:(,') over t[1;1] .z.s\: d]; / dig deeper for null values
- v:.z.s[t[1;1] t[1;0] k;d];              / split on next attribute
+dtcr:{[t;d]                                 / recursive component
+ if[0h<type t 0;:t];                        / list of values
+ if[null k:d t 0;:(,') over t[2] .z.s\: d]; / dig deeper for null values
+ v:.z.s[t[2] t[1] k;d];                     / split on next attribute
  v}
 
 / given a (t)able of classifiers and labels where the first column is

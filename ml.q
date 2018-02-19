@@ -10,7 +10,7 @@ dot:$                           / dot product
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
 cabs:{sqrt sum x*x}             / complex absolute value
-mandelbrot:{[c;x]c+csqr x}           / mandelbrot
+mandelbrot:{[c;x]c+csqr x}      / mandelbrot
 mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
 
 
@@ -356,6 +356,12 @@ distortion:sum sum each
 
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}
+
+/ dimensionality reduction
+
+covm:{[X] mmt[X;X]%count X 0}     / covariance matrix
+pca:{[X] last .qml.mev covm X}    / eigen vectors of scatter matrix
+project:{[V;X] mtm[V] mm[V;X]}    / project X onto subspace V
 
 / lance-williams algorithm update functions
 single:{.5 .5 0 -.5}

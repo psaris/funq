@@ -3,7 +3,7 @@
 
 \
 
-f:("iris.data";"bezdekIris.data") 1
+f:("iris.data";"bezdekIris.data") 0
 b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
 -1"we first [down]load the iris dataset";
 .util.download[b;;"";::] f;

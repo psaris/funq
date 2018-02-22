@@ -9,7 +9,7 @@
 -1"load weather data, remove the day column and move Play to front";
 show t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
 -1"use the id3 algorithm to build a decision tree";
-show tree:.ml.id3 t
+-1 .ml.ptree[0] tree:.ml.id3 t;
 -1"the tree is build with pairs of values.";
 -1"the first value is the decision feature,";
 -1"and the second value is itself another pair:";
@@ -31,9 +31,9 @@ avg t.Play=.ml.dtc[tree] each t / accuracy
 -1"we can test this feature by changing humidity into a continuous variable";
 show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
 -1"we can see how id3 creates a bushy tree";
-show last .ml.id3 s
+-1 .ml.ptree[0] .ml.id3 s;
 -1"while q45 picks a single split value";
-show last tree:.ml.q45[2;0W;neg .qml.nicdf .0;::] s
+-1 .ml.ptree[0] tree:.ml.q45[2;0W;neg .qml.nicdf .0;::] s;
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
@@ -42,5 +42,5 @@ s:update Temperature:` from s where Humidity=70
 tree:.ml.q45[2;0W;0;::] s
 .util.assert[`No] .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
 -1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
-show tree:.ml.dt[.ml.cgaina[.ml.gini;.ml.igr[.ml.gini]];2;0W;0;::] s
+-1 .ml.ptree[1] tree:.ml.dt[.ml.cgaina[.ml.gini;.ml.igr[.ml.gini]];2;0W;0;::] s;
 .util.assert[`No] .ml.dtc[tree] `Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)

@@ -531,7 +531,7 @@ igr:gain[1b]                    / information gain ratio
 
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
-/ Improved use of continues attributes in c4.5 (quinlan) MDL
+/ improved use of continuous attributes in c4.5 (quinlan) MDL
 cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
  if[isnom y;:gf[w;x;y]];        / TODO: handle null numbers
  g:(ig[cf;w;x] y >) peach u:asc distinct y; / use gain (not gf)
@@ -556,8 +556,9 @@ dt:{[gf;ml;md;z;w;t]
  if[not md;:(w;first d)];           / don't split deeper than max depth
  if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
  if[all 1_(=':) a;:(w;a)];          / all values are equal
- if[all 0>=gr:first each g:gf[w;a] peach 1 _d;:(w;a)]; / compute gain (ratio)
- g:last b:1_ g ba:imax gr;                   / best attribute
+ d:(0N?key d)#d:1 _d;               / randomize feature order
+ if[all 0>=gr:first each g:gf[w;a] peach d;:(w;a)]; / compute gain (ratio)
+ g:last b:1_ g ba:imax gr;                          / best attribute
  / distribute nulls down each branch with reduced weight
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
  b[1]:.z.s[gf;ml;md-1;z]'[w g;((1#ba)_t) g]; / classify subtree
@@ -572,6 +573,21 @@ dtcr:{[t;d]                                 / recursive component
  if[null k:d t 0;:(,') over t[2] .z.s\: d]; / dig deeper for null values
  v:.z.s[t[2] t[1] k;d];                     / split on next attribute
  v}
+
+/ print leaf
+pleaf:{
+ e:1f-avg x[1] = m:wmode . x; / (e)rror, (m)ode
+ s:": ", string[m], " (n = ", string[count x 0]," , err = ",string[.1*"i"$1e3*e],"%)";
+ s}
+
+/ print tree
+ptree:{[l;t]
+ if[0h<type t 0;:pleaf t];
+ s:1#"\n";
+ s,:raze[l#enlist "|  "],raze string[t 0 1],\:" ";
+ s:s,/:string k:asc key t 2;
+ s:raze s,'.z.s[l+1] each t[2]k;
+ s}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm

@@ -10,6 +10,8 @@ b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
 -1"and then extract the data into a matrix of data (with 4 dimensions)";
 I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 
+-1 .ml.ptree[0] .ml.cart[1;0W;0;::] `species xcols iris;
+
 / clustering
 
 / redefine plot (to drop space)

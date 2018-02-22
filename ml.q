@@ -534,9 +534,9 @@ isnom:{type[x] in 1 2 4 10 11h} / is nominal
 / improved use of continuous attributes in c4.5 (quinlan) MDL
 cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
  if[isnom y;:gf[w;x;y]];        / TODO: handle null numbers
- g:(ig[cf;w;x] y >) peach u:asc distinct y; / use gain (not gf)
+ g:(ig[cf;w;x] y <) peach u:desc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
- g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
+/ g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
  g[0]%:entropy odds[w] g 2;        / convert to gain ratio
  g[1]:(avg u[i+0 1])<;             / split function
  g}
@@ -561,7 +561,8 @@ dt:{[gf;ml;md;z;w;t]
  g:last b:1_ g ba:imax gr;                          / best attribute
  / distribute nulls down each branch with reduced weight
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
- b[1]:.z.s[gf;ml;md-1;z]'[w g;((1#ba)_t) g]; / classify subtree
+ if[null b 0;t:(1#ba)_t];           / only reuse nominal classifiers
+ b[1]:.z.s[gf;ml;md-1;z]'[w g;t g]; / classify subtree
  if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:(w;a)]]; / prune
  ba,b}
 
@@ -593,6 +594,7 @@ ptree:{[l;t]
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[ig[entropy];1;0W;0;::]
 q45:dt[cgaina[entropy;igr[entropy]]] / like c4.5 (but does not post-prune)
+cart:dt[cgaina[gini;ig[gini]]]        / just like scikit-learn (TODO: regression)
 stump:dt[cgaina[entropy;igr[entropy]];1;1;0]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,

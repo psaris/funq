@@ -524,7 +524,7 @@ gini:{1f-sum x*x}
 gain:{[n;cf;w;x;y]
  g:cf odds[w] group x;
  g-:sum (o:odds[w] gy)*(not null k:key gy)*(cf odds[w] group@) each x gy:group y;
- if[n;g%:entropy o]; / gain ratio
+ if[n;g%:cf o];                 / gain ratio
  (g;::;gy)}
 ig:gain[0b]                     / information gain
 igr:gain[1b]                    / information gain ratio
@@ -533,12 +533,12 @@ isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / improved use of continuous attributes in c4.5 (quinlan) MDL
 cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
- if[isnom y;:gf[w;x;y]];        / TODO: handle null numbers
+ if[isnom y;:gf[cf;w;x;y]];        / TODO: handle null numbers
  g:(ig[cf;w;x] y <) peach u:desc distinct y; / use gain (not gf)
  g@:i:imax first each g;           / highest gain (not gain ratio)
 / g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
- g[0]%:entropy odds[w] g 2;        / convert to gain ratio
- g[1]:(avg u[i+0 1])<;             / split function
+ g[0]%:cf odds[w] g 2;             / convert to gain ratio
+ g[1]:(avg u[i+0 1])>;             / split function
  g}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
@@ -569,10 +569,10 @@ dt:{[gf;ml;md;z;w;t]
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
 dtc:{[t;d] wmode . dtcr[t;d]}
-dtcr:{[t;d]                                 / recursive component
- if[0h<type t 0;:t];                        / list of values
- if[null k:d t 0;:(,') over t[2] .z.s\: d]; / dig deeper for null values
- v:.z.s[t[2] t[1] k;d];                     / split on next attribute
+dtcr:{[t;d]                     / recursive component
+ if[0h<type t 0;:t];            / list of values
+ if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
+ v:(,') over t[2] .z.s\: d;     / dig deeper for null values
  v}
 
 / print leaf
@@ -593,9 +593,9 @@ ptree:{[l;t]
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[ig[entropy];1;0W;0;::]
-q45:dt[cgaina[entropy;igr[entropy]]] / like c4.5 (but does not post-prune)
-cart:dt[cgaina[gini;ig[gini]]]        / just like scikit-learn (TODO: regression)
-stump:dt[cgaina[entropy;igr[entropy]];1;1;0]
+q45:dt[cgaina[entropy;igr]] / like c4.5 (but does not post-prune)
+cart:dt[cgaina[gini;ig]]        / just like scikit-learn (TODO: regression)
+stump:dt[cgaina[entropy;igr];1;1;0]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

@@ -532,13 +532,14 @@ igr:gain[1b]                    / information gain ratio
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / improved use of continuous attributes in c4.5 (quinlan) MDL
-cgaina:{[cf;gf;w;x;y]           / continuous gain adapter
- if[isnom y;:gf[cf;w;x;y]];        / TODO: handle null numbers
- g:(ig[cf;w;x] y <) peach u:desc distinct y; / use gain (not gf)
+cgain:{[n;cf;w;x;y]
+ if[isnom y;:gain[n;cf;w;x;y]];        / TODO: handle null numbers
+ g:(gain[0b;cf;w;x] y <) peach u:desc distinct y;
  g@:i:imax first each g;           / highest gain (not gain ratio)
+ g[1]:(avg u[i+0 1])>;             / split function
+ if[not not n;:g];
 / g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
  g[0]%:cf odds[w] g 2;             / convert to gain ratio
- g[1]:(avg u[i+0 1])>;             / split function
  g}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
@@ -593,9 +594,9 @@ ptree:{[l;t]
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[ig[entropy];1;0W;0;::]
-q45:dt[cgaina[entropy;igr]] / like c4.5 (but does not post-prune)
-cart:dt[cgaina[gini;ig]]        / just like scikit-learn (TODO: regression)
-stump:dt[cgaina[entropy;igr];1;1;0]
+q45:dt[cgain[1b;entropy]] / like c4.5 (but does not post-prune)
+cart:dt[cgain[1b;gini]]   / just like scikit-learn (TODO: regression)
+stump:dt[cgain[1b;entropy];1;1;0]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

@@ -42,5 +42,5 @@ s:update Temperature:` from s where Humidity=70
 -1 .ml.ptree[1] tree:.ml.q45[2;0W;0;::] s
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
--1 .ml.ptree[1] tree:.ml.dt[.ml.cgaina[.ml.gini;.ml.igr];2;0W;0;::] s;
+-1 .ml.ptree[1] tree:.ml.dt[.ml.cgain[0b;.ml.gini];2;0W;0;::] s;
 .util.assert[`No] .ml.dtc[tree] d

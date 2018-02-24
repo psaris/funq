@@ -523,7 +523,7 @@ gini:{1f-sum x*x}
 / of x and y
 gain:{[n;cf;w;x;y]
  g:cf odds[w] group x;
- g-:sum (o:odds[w] gy)*(not null k:key gy)*(cf odds[w] group@) each x gy:group y;
+ g-:sum (o:odds[w] gy)*(not null k:key gy)*cf each w[gy] odds' group each x gy:group y;
  if[n;g%:cf o];                 / gain ratio
  (g;::;gy)}
 ig:gain[0b]                     / information gain

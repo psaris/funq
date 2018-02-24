@@ -516,15 +516,19 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 
 / weighted odds
 odds:{[w;g]g%sum g:sum each w g}
-entropy:{neg sum x*2 xlog x}
-gini:{1f-sum x*x}
+entropy:{[w;x]neg sum x*2 xlog x:odds[w] group x}
+gini:{[w;x]1f-sum x*x:odds[w] group x}
+wvar:{[w;x]w wavg x*x-:avg x}
+mad:{[x]avg x-:avg x}
+wmad:{[w;x]w wavg x-:avg x}
+
 / using a (c)lassification (f)unction such as 'entropy' or 'gini',
 / compute the information gain (optionally (n)ormalized by splitinfo)
 / of x and y
 gain:{[n;cf;w;x;y]
- g:cf odds[w] group x;
- g-:sum (o:odds[w] gy)*(not null k:key gy)*cf each w[gy] odds' group each x gy:group y;
- if[n;g%:cf o];                 / gain ratio
+ g:cf[w] x;
+ g-:sum (odds[w] gy)*(not null k:key gy)*w[gy] cf' x gy:group y;
+ if[n;g%:cf[w] y];              / gain ratio
  (g;::;gy)}
 ig:gain[0b]                     / information gain
 igr:gain[1b]                    / information gain ratio
@@ -539,7 +543,7 @@ cgain:{[n;cf;w;x;y]
  g[1]:(avg u[i+0 1])>;             / split function
  if[not not n;:g];
 / g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
- g[0]%:cf odds[w] g 2;             / convert to gain ratio
+ g[0]%:cf[w] g 2;               / convert to gain ratio
  g}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
@@ -569,7 +573,7 @@ dt:{[gf;ml;md;z;w;t]
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
-dtc:{[t;d] wmode . dtcr[t;d]}
+dtc:{[t;d] $[isnom wx 1;wmode;wavg] . wx:dtcr[t;d]}
 dtcr:{[t;d]                     / recursive component
  if[0h<type t 0;:t];            / list of values
  if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
@@ -595,7 +599,8 @@ ptree:{[l;t]
 / target attribute create a decision tree using the id3 algorithm
 id3:dt[ig[entropy];1;0W;0;::]
 q45:dt[cgain[1b;entropy]] / like c4.5 (but does not post-prune)
-cart:dt[cgain[1b;gini]]   / just like scikit-learn (TODO: regression)
+ct:dt[cgain[1b;gini]]   / classification tree
+rt:dt[cgain[0b;wvar]]   / regression tree
 stump:dt[cgain[1b;entropy];1;1;0]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,

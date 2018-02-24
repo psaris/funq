@@ -42,5 +42,8 @@ s:update Temperature:` from s where Humidity=70
 -1 .ml.ptree[0] tree:.ml.q45[2;0W;0;::] s
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
--1 .ml.ptree[0] tree:.ml.dt[.ml.cgain[0b;.ml.gini];2;0W;0;::] s;
+-1 .ml.ptree[0] tree:.ml.ct[2;0W;0;::] s; / classification tree
 .util.assert[`No] .ml.dtc[tree] d
+-1 "we also can also create a regression tree when the target is numeric";
+-1 .ml.ptree[0] tree:.ml.rt[2;0W;0;::] update "h"$`Yes=Play from t; / regression tree
+.util.assert[.6] .ml.dtc[tree] d

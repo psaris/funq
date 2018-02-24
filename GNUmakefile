@@ -16,8 +16,7 @@ libsvm:
 	wget https://github.com/cjlin1/libsvm/archive/v322.tar.gz  -O - | tar -xvf - && mv libsvm-322 libsvm
 
 liblinear:
-#	wget https://github.com/cjlin1/liblinear/archive/v211.tar.gz  -O - | tar -xvf - && mv liblinear-211 liblinear
-	wget https://github.com/psaris/liblinear/archive/kdb-integration.tar.gz -O - | tar -xvf - && mv liblinear-kdb-integration liblinear
+	wget https://github.com/cjlin1/liblinear/archive/v220.tar.gz  -O - | tar -xvf - && mv liblinear-220 liblinear
 
 libsvm/svm.o: | libsvm
 	$(MAKE) -e -C $(dir $@) $(notdir $@)

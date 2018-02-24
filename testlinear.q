@@ -1,7 +1,7 @@
 \l linear.q
 assert:{if[not x~y;'`fail]}
 .linear.set_print_string_function `
-assert[211i] .linear.version
+assert[220i] .linear.version
 assert[s] .linear.write_problem prob:.linear.read_problem s:read0 `heart_scale
 assert[::] .linear.check_parameter[prob] param:.linear.defparam[prob] .linear.param
 assert[prob] .linear.prob_inout prob

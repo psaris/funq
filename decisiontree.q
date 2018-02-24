@@ -39,8 +39,8 @@ show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
 .util.assert[`Yes] .ml.dtc[tree] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
 -1"we can even can handle nulls in the training data by propegating them down the tree";
 s:update Temperature:` from s where Humidity=70
--1 .ml.ptree[1] tree:.ml.q45[2;0W;0;::] s
+-1 .ml.ptree[0] tree:.ml.q45[2;0W;0;::] s
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
--1 .ml.ptree[1] tree:.ml.dt[.ml.cgain[0b;.ml.gini];2;0W;0;::] s;
+-1 .ml.ptree[0] tree:.ml.dt[.ml.cgain[0b;.ml.gini];2;0W;0;::] s;
 .util.assert[`No] .ml.dtc[tree] d

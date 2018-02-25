@@ -516,34 +516,31 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 
 / weighted odds
 odds:{[w;g]g%sum g:sum each w g}
+
+/ splitting functions
 entropy:{[w;x]neg sum x*2 xlog x:odds[w] group x}
 gini:{[w;x]1f-sum x*x:odds[w] group x}
-wvar:{[w;x]w wavg x*x-:avg x}
-mad:{[x]avg x-:avg x}
-wmad:{[w;x]w wavg x-:avg x}
+variance:{[w;x]w wavg x*x-:avg x}
+mad:{[w;x]w wavg abs x-:avg x} / mean absolution deviation
 
-/ using a (c)lassification (f)unction such as 'entropy' or 'gini',
-/ compute the information gain (optionally (n)ormalized by splitinfo)
-/ of x and y
-gain:{[n;cf;w;x;y]
- g:cf[w] x;
- g-:sum (odds[w] gy)*(not null k:key gy)*w[gy] cf' x gy:group y;
- if[n;g%:cf[w] y];              / gain ratio
+/ using a (s)plit (f)unction to compute the information gain
+/ (optionally (n)ormalized by splitinfo) of x and y
+gain:{[n;sf;w;x;y]
+ g:sf[w] x;
+ g-:sum odds[w;gy]*(not null k:key gy)*w[gy] sf' x gy:group y;
+ if[n;g%:sf[w] y];              / gain ratio
  (g;::;gy)}
-ig:gain[0b]                     / information gain
-igr:gain[1b]                    / information gain ratio
 
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / improved use of continuous attributes in c4.5 (quinlan) MDL
-cgain:{[n;cf;w;x;y]
- if[isnom y;:gain[n;cf;w;x;y]];        / TODO: handle null numbers
- g:(gain[0b;cf;w;x] y <) peach u:desc distinct y;
- g@:i:imax first each g;           / highest gain (not gain ratio)
- g[1]:(avg u[i+0 1])>;             / split function
- if[not not n;:g];
+cgain:{[n;sf;w;x;y]
+ if[isnom y;:gain[n;sf;w;x;y]]; / TODO: handle null numbers
+ g:(gain[0b;sf;w;x] y <) peach u:desc distinct y;
+ g@:i:imax g[;0];               / highest gain (not gain ratio)
+ g[1]:(avg u i+0 1)>;           / split function
 / g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
- g[0]%:cf[w] g 2;               / convert to gain ratio
+ if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
@@ -580,27 +577,29 @@ dtcr:{[t;d]                     / recursive component
  v:(,') over t[2] .z.s\: d;     / dig deeper for null values
  v}
 
-/ print leaf
+/ print leaf: prediciton followd by classification error% or regresssion sse
 pleaf:{
- e:1f-avg x[1] = m:wmode . x; / (e)rror, (m)ode
- s:": ", string[m], " (n = ", string[count x 0]," , err = ",string[.1*"i"$1e3*e],"%)";
+ v:$[isnom x 1;wmode;wavg] . x; / value
+ e:$[isnom x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
+ s:": ", string[v], " (n = ", string[count x 0]," , err = ",e;
  s}
 
-/ print tree
+/ print tree: indent by (l)evel
 ptree:{[l;t]
  if[0h<type t 0;:pleaf t];
  s:1#"\n";
  s,:raze[l#enlist "|  "],raze string[t 0 1],\:" ";
  s:s,/:string k:asc key t 2;
  s:raze s,'.z.s[l+1] each t[2]k;
+ if[not l;s:1_s];               / remove leading "\n"
  s}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
-id3:dt[ig[entropy];1;0W;0;::]
+id3:dt[gain[0b;entropy];1;0W;0;::]
 q45:dt[cgain[1b;entropy]] / like c4.5 (but does not post-prune)
-ct:dt[cgain[1b;gini]]   / classification tree
-rt:dt[cgain[0b;wvar]]   / regression tree
+ct:dt[cgain[1b;gini]]     / classification tree
+rt:dt[cgain[0b;variance]] / regression tree
 stump:dt[cgain[1b;entropy];1;1;0]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,

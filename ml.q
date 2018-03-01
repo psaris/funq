@@ -534,25 +534,19 @@ gain:{[n;sf;w;x;y]
 isnom:{type[x] in 1 2 4 10 11h} / is nominal
 
 / improved use of continuous attributes in c4.5 (quinlan) MDL
-cgain:{[n;sf;w;x;y]
+cgain:{[mdl;n;sf;w;x;y]
  if[isnom y;:gain[n;sf;w;x;y]]; / TODO: handle null numbers
  g:(gain[0b;sf;w;x] y <) peach u:desc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:(avg u i+0 1)>;           / split function
-/ g[0]-:xlog[2;-1+count u]%count x; / MDL adjustment
+ if[mdl;g[0]-:xlog[2;-1+count u]%count x];
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
-/ wilson score - binary confidence interval (Edwin Bidwell Wilson)
-wscore:{[f;z;n]((f+z2n%2)+-1 1*z*sqrt((z2n%4)+f-f*f)%n)%1f+z2n:z*z%n}
-/ pessimistic error
-perr:{[z;x]last wscore[$[1=count g:group x;0;min count each g]%n;z;n:count x]}
-
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (g)ain (f)unction.
-/ pruning subtrees with (m)inimum number of (l)eaves, (m)ax (d)epth,
-/ and given confidence pessimistic error
-dt:{[gf;ml;md;z;w;t]
+/ pruning subtrees with (m)inimum number of (l)eaves, and (m)ax (d)epth
+dt:{[gf;ml;md;w;t]
  if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
  if[1=count d:flip t;:(w;first d)]; / no features to test
  if[not md;:(w;first d)];           / don't split deeper than max depth
@@ -564,15 +558,29 @@ dt:{[gf;ml;md;z;w;t]
  / distribute nulls down each branch with reduced weight
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
  if[null b 0;t:(1#ba)_t];           / only reuse nominal classifiers
- b[1]:.z.s[gf;ml;md-1;z]'[w g;t g]; / classify subtree
- if[z>0;if[perr[z;a]>(count each last b) wavg perr[z] peach last b;:(w;a)]]; / prune
+ b[1]:.z.s[gf;ml;md-1]'[w g;t g]; / classify subtree
  ba,b}
+
+
+/ wilson score - binary confidence interval (Edwin Bidwell Wilson)
+wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
+/ pessimistic error
+perr:{[z;w;x]last wscore[z;(1f-avg x=wmode[w;x]);count x]}
+
+/ use (e)rror (f)unction to post-prune (t)able
+prune:{[ef;t]
+ if[2=count t;:t];               / (w;a)
+ b:value t[2]:.z.s[ef] each t 2; / prune subtree
+ if[any 3=count each b;:t];      / can't prune
+ e:ef . wa:(,') over b;          / pruned error
+ if[e<((sum first@) each b) wavg (ef .) each b;:wa];
+ t}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
 dtc:{[t;d] $[isnom wx 1;wmode;wavg] . wx:dtcr[t;d]}
 dtcr:{[t;d]                     / recursive component
- if[0h<type t 0;:t];            / list of values
+ if[2=count t;:t];              / (w;a)
  if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
  v:(,') over t[2] .z.s\: d;     / dig deeper for null values
  v}
@@ -596,11 +604,11 @@ ptree:{[l;t]
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the id3 algorithm
-id3:dt[gain[0b;entropy];1;0W;0;::]
-q45:dt[cgain[1b;entropy]] / like c4.5 (but does not post-prune)
-ct:dt[cgain[1b;gini]]     / classification tree
-rt:dt[cgain[0b;variance]] / regression tree
-stump:dt[cgain[1b;entropy];1;1;0]
+id3:dt[gain[0b;entropy];1;0W;::]
+q45:dt[cgain[1b;1b;entropy]] / like c4.5 (but does not post-prune)
+ct:dt[cgain[0b;1b;gini]]     / classification tree
+rt:dt[cgain[0b;0b;variance]] / regression tree
+stump:dt[cgain[0b;1b;entropy];1;1]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

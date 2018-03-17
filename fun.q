@@ -8,9 +8,12 @@ b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
 -1"we first [down]load the iris dataset";
 .util.download[b;;"";::] f;
 -1"and then extract the data into a matrix of data (with 4 dimensions)";
-I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
+iris:150#`species xcols flip `slength`swidth`plength`pwidth`species!("EEEES";",") 0: `$f
+I:value 1_flip iris
 
--1 .ml.ptree[0] .ml.ct[1;0W;::] `species xcols iris;
+d:`train`test!floor[.75*count iris] cut 0N?iris
+-1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train;
+avg d.test.species=p:tree .ml.dtc/: d`test
 
 / clustering
 

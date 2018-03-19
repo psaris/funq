@@ -589,7 +589,7 @@ dtcr:{[t;d]                     / recursive component
 pleaf:{
  v:$[isnom x 1;wmode;wavg] . x; / value
  e:$[isnom x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
- s:": ", string[v], " (n = ", string[count x 0]," , err = ",e;
+ s:": ", string[v], " (n = ", string[count x 0]," , err = ",e, ")";
  s}
 
 / print tree: indent by (l)evel

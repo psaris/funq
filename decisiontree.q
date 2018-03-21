@@ -33,7 +33,9 @@ show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
 -1"we can see how id3 creates a bushy tree";
 -1 .ml.ptree[0] .ml.id3 s;
 -1"while q45 picks a single split value";
--1 .ml.ptree[0] tree:.ml.prune[.ml.perr[neg .qml.nicdf .0125]] .ml.q45[2;0W;::] s;
+
+z:$[`qml in key `;neg .qml.nicdf .0125;2.241403];
+-1 .ml.ptree[0] tree:.ml.prune[.ml.perr[z]] .ml.q45[2;0W;::] s;
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tree] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)

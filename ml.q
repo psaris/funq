@@ -538,7 +538,7 @@ cgain:{[mdl;n;sf;w;x;y]
  if[isnom y;:gain[n;sf;w;x;y]]; / TODO: handle null numbers
  g:(gain[0b;sf;w;x] y <) peach u:desc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
- g[1]:(avg u i+0 1)>;           / split function
+ g[1]:<[;avg u i+0 1];          / split function
  if[mdl;g[0]-:xlog[2;-1+count u]%count x];
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}

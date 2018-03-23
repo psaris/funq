@@ -520,8 +520,7 @@ odds:{[w;g]g%sum g:sum each w g}
 / splitting functions
 entropy:{[w;x]neg sum x*2 xlog x:odds[w] group x}
 gini:{[w;x]1f-sum x*x:odds[w] group x}
-variance:{[w;x]w wavg x*x-:avg x}
-mad:{[w;x]w wavg abs x-:avg x} / mean absolution deviation
+sse:{[w;x]sum x*x-:w wavg x}
 
 / using a (s)plit (f)unction to compute the information gain
 / (optionally (n)ormalized by splitinfo) of x and y
@@ -607,7 +606,7 @@ ptree:{[l;t]
 id3:dt[gain[0b;entropy];1;0W;::]
 q45:dt[cgain[1b;1b;entropy]] / like c4.5 (but does not post-prune)
 ct:dt[cgain[0b;1b;gini]]     / classification tree
-rt:dt[cgain[0b;0b;variance]] / regression tree
+rt:dt[cgain[0b;0b;sse]]      / regression tree
 stump:dt[cgain[0b;1b;entropy];1;1]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,

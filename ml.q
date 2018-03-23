@@ -522,19 +522,30 @@ entropy:{[w;x]neg sum x*2 xlog x:odds[w] group x}
 gini:{[w;x]1f-sum x*x:odds[w] group x}
 sse:{[w;x]sum x*x-:w wavg x}
 
+/ create all combinations of length x from a list (or size of) y
+cmb:{
+ if[not 0>type y;:y .z.s[x] count y];
+ if[null x;:raze .z.s[;y] each 1+til y];
+ c:raze (flip enlist flip enlist til y-:x){(x+z){raze x,''y}'x#\:y}[1+til y]/til x-:1;
+ c}
+
 / using a (s)plit (f)unction to compute the information gain
 / (optionally (n)ormalized by splitinfo) of x and y
 gain:{[n;sf;w;x;y]
  g:sf[w] x;
- g-:sum odds[w;gy]*(not null k:key gy)*w[gy] sf' x gy:group y;
+ g-:sum odds[w;gy]*(not null key gy)*w[gy] sf' x gy:group y;
  if[n;g%:sf[w] y];              / gain ratio
  (g;::;gy)}
 
-isnom:{type[x] in 1 2 4 10 11h} / is nominal
+/ set gain
+sgain:{[sf;w;x;y]
+ g:(gain[0b;sf;w;x] y in) each u:cmb[0N] distinct y;
+ g@:i:imax g[;0];               / highest gain (not gain ratio)
+ g[1]:in[;u i];                 / split function
+ g}
 
-/ improved use of continuous attributes in c4.5 (quinlan) MDL
-cgain:{[mdl;n;sf;w;x;y]
- if[isnom y;:gain[n;sf;w;x;y]]; / TODO: handle null numbers
+/ improved use of ordered attributes in c4.5 (quinlan) MDL
+ogain:{[mdl;n;sf;w;x;y]
  g:(gain[0b;sf;w;x] y <) peach u:desc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:<[;avg u i+0 1];          / split function
@@ -542,22 +553,27 @@ cgain:{[mdl;n;sf;w;x;y]
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
+iscat:{$[(t:type x) within 20 76h;1b;t in 1 2 4 10 11h]} / is categorical
+
 / given a (t)able of classifiers and labels where the first column is
-/ target attribute create a decision tree using the (g)ain (f)unction.
-/ pruning subtrees with (m)inimum number of (l)eaves, and (m)ax (d)epth
-dt:{[gf;ml;md;w;t]
+/ target attribute create a decision tree using the (c)ategorical
+/ (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (s)plit
+/ (f)unction decides what statistic to minimize.  pruning subtrees
+/ with (m)inimum number of (l)eaves, and (m)ax (d)epth
+dt:{[cgf;ogf;sf;ml;md;w;t]
  if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
  if[1=count d:flip t;:(w;first d)]; / no features to test
  if[not md;:(w;first d)];           / don't split deeper than max depth
  if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
  if[all 1_(=':) a;:(w;a)];          / all values are equal
  d:(0N?key d)#d:1 _d;               / randomize feature order
- if[all 0>=gr:first each g:gf[w;a] peach d;:(w;a)]; / compute gain (ratio)
- g:last b:1_ g ba:imax gr;                          / best attribute
+ g:{[cgf;ogf;sf;w;x;y] $[iscat y;cgf;ogf][sf;w;x;y]}[cgf;ogf;sf;w;a] peach d;
+ if[all 0>=gr:first each g;:(w;a)]; / stop if no gain
+ g:last b:1_ g ba:imax gr;          / best attribute
  / distribute nulls down each branch with reduced weight
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
- if[null b 0;t:(1#ba)_t];           / only reuse nominal classifiers
- b[1]:.z.s[gf;ml;md-1]'[w g;t g]; / classify subtree
+ if[null b 0;t:(1#ba)_t];           / only reuse categorical classifiers
+ b[1]:.z.s[cgf;ogf;sf;ml;md-1]'[w g;t g];   / classify subtree
  ba,b}
 
 
@@ -577,7 +593,7 @@ prune:{[ef;t]
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
-dtc:{[t;d] $[isnom wx 1;wmode;wavg] . wx:dtcr[t;d]}
+dtc:{[t;d] $[iscat wx 1;wmode;wavg] . wx:dtcr[t;d]}
 dtcr:{[t;d]                     / recursive component
  if[2=count t;:t];              / (w;a)
  if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
@@ -586,8 +602,8 @@ dtcr:{[t;d]                     / recursive component
 
 / print leaf: prediciton followd by classification error% or regresssion sse
 pleaf:{
- v:$[isnom x 1;wmode;wavg] . x; / value
- e:$[isnom x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
+ v:$[iscat x 1;wmode;wavg] . x; / value
+ e:$[iscat x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
  s:": ", string[v], " (n = ", string[count x 0]," , err = ",e, ")";
  s}
 
@@ -602,12 +618,13 @@ ptree:{[l;t]
  s}
 
 / given a (t)able of classifiers and labels where the first column is
-/ target attribute create a decision tree using the id3 algorithm
-id3:dt[gain[0b;entropy];1;0W;::]
-q45:dt[cgain[1b;1b;entropy]] / like c4.5 (but does not post-prune)
-ct:dt[cgain[0b;1b;gini]]     / classification tree
-rt:dt[cgain[0b;0b;sse]]      / regression tree
-stump:dt[cgain[0b;1b;entropy];1;1]
+/ target attribute, create a decision tree
+aid:dt[sgain;ogain[0b;0b];sse] / automatic interaction detection
+id3:dt[gain[0b];gain[0b];entropy;1;0W;::] / iterative dichotomizer 3
+q45:dt[gain[1b];ogain[1b;1b];entropy] / like c4.5 (but does not post-prune)
+ct:dt[gain[0b];ogain[0b;1b];gini]     / classification tree
+rt:dt[gain[0b];ogain[0b;0b];sse]      / regression tree
+stump:dt[gain[0b];ogain[0b;1b];entropy;1;1]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

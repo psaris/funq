@@ -539,8 +539,8 @@ gain:{[n;sf;w;x;y]
 
 / set gain
 sgain:{[sf;w;x;y]
- g:(gain[0b;sf;w;x] y in) each u:cmb[0N] distinct y;
- g@:i:imax g[;0];               / highest gain (not gain ratio)
+ g:(gain[0b;sf;w;x] y in) peach u:cmb[0N] distinct y;
+ g@:i:imax g[;0];               / highest gain
  g[1]:in[;u i];                 / split function
  g}
 
@@ -572,7 +572,7 @@ dt:{[cgf;ogf;sf;ml;md;w;t]
  g:last b:1_ g ba:imax gr;          / best attribute
  / distribute nulls down each branch with reduced weight
  if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
- if[null b 0;t:(1#ba)_t];           / only reuse categorical classifiers
+ if[null b 0;t:(1#ba)_t];           / don't reuse categorical classifiers
  b[1]:.z.s[cgf;ogf;sf;ml;md-1]'[w g;t g];   / classify subtree
  ba,b}
 

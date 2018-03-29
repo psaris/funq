@@ -12,7 +12,8 @@ iris:150#`species xcols flip `slength`swidth`plength`pwidth`species!("EEEES";","
 I:value 1_flip iris
 
 d:`train`test!floor[.75*count iris] cut 0N?iris
--1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train;
+-1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train
+`:tree.dot 0: .ml.pgraph tree
 avg d.test.species=p:tree .ml.dtc/: d`test
 
 / clustering

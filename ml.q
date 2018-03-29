@@ -600,21 +600,46 @@ dtcr:{[t;d]                     / recursive component
  v:(,') over t[2] .z.s\: d;     / dig deeper for null values
  v}
 
-/ print leaf: prediciton followd by classification error% or regresssion sse
+/ print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{
  v:$[iscat x 1;wmode;wavg] . x; / value
  e:$[iscat x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
- s:": ", string[v], " (n = ", string[count x 0]," , err = ",e, ")";
+ s:string[v], " (n = ", string[count x 0],", err = ",e, ")";
  s}
 
 / print tree: indent by (l)evel
 ptree:{[l;t]
- if[0h<type t 0;:pleaf t];
+ if[not l;:"root: ",pleaf[first xs],last xs:.z.s[l+1;t]];
+ if[0h<type t 0;:(t;"")];
  s:1#"\n";
- s,:raze[l#enlist "|  "],raze string[t 0 1],\:" ";
+ s,:raze[(l)#enlist "|  "],raze string[t 0 1],\:" ";
  s:s,/:string k:asc key t 2;
- s:raze s,'.z.s[l+1] each t[2]k;
- if[not l;s:1_s];               / remove leading "\n"
+ c:.z.s[l+1] each t[2]k;        / child
+ x:first each c;
+ s:s,'": ",/:pleaf each x;
+ s:raze s,'last each c;
+ x:(,') over x;
+ (x;s)}
+
+/ print a single node for graphviz
+pnode:{[p;l;t]
+ s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
+ if[0h>type t 0;s,:raze string[t 0 1],\: " "];
+ c:$[0h<type t 0;enlist (t;());.z.s'[i;key t 2;value t 2]];
+ x:(,') over first each c;
+ s,:"\\n",pleaf x;
+ s:enlist s,"\"] ;";
+ if[i>0;s,:enlist string[p]," -> ",string[i]," [label=\"",string[l],"\"] ;"];
+ s,:raze last each c;
+ (x;s)}
+
+/ print graph text for use with the 'dot' graphviz command, graph-easy
+/ or http://webgraphviz.com
+pgraph:{[t]
+ s:enlist "digraph Tree {";
+ s,:enlist "node [shape=box] ;";
+ s,:last pnode[I::-1;`;t]; / reset global variable used by pnode
+ s,:1#"}";
  s}
 
 / given a (t)able of classifiers and labels where the first column is

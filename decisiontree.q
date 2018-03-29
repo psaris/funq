@@ -50,5 +50,5 @@ s:update Temperature:` from s where Humidity=70
 -1 .ml.ptree[0] tree:.ml.rt[2;0W;::] update "h"$`Yes=Play from s; / regression tree
 .util.assert[0f] .ml.dtc[tree] d
 -1 "we also can also create an aid tree when the target is numeric";
--1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "h"$`Yes=Play from s; / regression tree
-.util.assert[1f] .ml.dtc[tree] d
+-1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "h"$`Yes=Play from t; / regression tree
+/.util.assert[1f] .ml.dtc[tree] d

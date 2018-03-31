@@ -624,10 +624,10 @@ ptree:{[l;t]
 / print a single node for graphviz
 pnode:{[p;l;t]
  s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
- if[0h>type t 0;s,:raze string[t 0 1],\: " "];
  c:$[0h<type t 0;enlist (t;());.z.s'[i;key t 2;value t 2]];
  x:(,') over first each c;
- s,:"\\n",pleaf x;
+ s,:pleaf x;
+ if[0h>type t 0;s,:"\\n",raze string[t 0 1],\: " "];
  s:enlist s,"\"] ;";
  if[i>0;s,:enlist string[p]," -> ",string[i]," [label=\"",string[l],"\"] ;"];
  s,:raze last each c;

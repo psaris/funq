@@ -553,7 +553,7 @@ ogain:{[mdl;n;sf;w;x;y]
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
-iscat:{$[(t:type x) within 20 76h;1b;t in 1 2 4 10 11h]} / is categorical
+iscat:{not type[x] in 8 9 15h} / is categorical
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (c)ategorical

@@ -10,6 +10,7 @@
 show t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
 -1"use the id3 algorithm to build a decision tree";
 -1 .ml.ptree[0] tree:.ml.id3 t;
+`:tree.dot 0: .ml.pgraph tree
 -1"the tree is build with pairs of values.";
 -1"the first value is the decision feature,";
 -1"and the second value is itself another pair:";
@@ -29,7 +30,7 @@ avg t.Play=.ml.dtc[tree] each t / accuracy
 -1"* pre-prunes branches that create branches with too few leaves";
 -1"* post-prunes branches that overfit by given confidence value";
 -1"we can test this feature by changing humidity into a continuous variable";
-show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80]
+show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80f]
 -1"we can see how id3 creates a bushy tree";
 -1 .ml.ptree[0] .ml.id3 s;
 -1"while q45 picks a single split value";
@@ -38,17 +39,17 @@ z:$[`qml in key `;neg .qml.nicdf .0125;2.241403];
 -1 .ml.ptree[0] tree:.ml.prune[.ml.perr[z]] .ml.q45[2;0W;::] s;
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";
-.util.assert[`Yes] .ml.dtc[tree] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85;`)
+.util.assert[`Yes] .ml.dtc[tree] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85f;`)
 -1"we can even can handle nulls in the training data by propegating them down the tree";
-s:update Temperature:` from s where Humidity=70
+s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tree:.ml.q45[2;0W;::] s;
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
 -1 .ml.ptree[0] tree:.ml.ct[2;0W;::] s; / classification tree
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we also can also create a regression tree when the target is numeric";
--1 .ml.ptree[0] tree:.ml.rt[2;0W;::] update "h"$`Yes=Play from s; / regression tree
+-1 .ml.ptree[0] tree:.ml.rt[2;0W;::] update "e"$`Yes=Play from s; / regression tree
 .util.assert[0f] .ml.dtc[tree] d
 -1 "we also can also create an aid tree when the target is numeric";
--1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "h"$`Yes=Play from t; / regression tree
-/.util.assert[1f] .ml.dtc[tree] d
+-1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "e"$`Yes=Play from s; / regression tree
+.util.assert[0.7142857142857143] .ml.dtc[tree] d

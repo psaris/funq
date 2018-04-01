@@ -553,7 +553,7 @@ ogain:{[mdl;n;sf;w;x;y]
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
-iscat:{not type[x] in 8 9 15h} / is categorical
+isord:{type[x] in 8 9 15h} / is ordered
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (c)ategorical
@@ -567,7 +567,7 @@ dt:{[cgf;ogf;sf;ml;md;w;t]
  if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
  if[all 1_(=':) a;:(w;a)];          / all values are equal
  d:(0N?key d)#d:1 _d;               / randomize feature order
- g:{[cgf;ogf;sf;w;x;y] $[iscat y;cgf;ogf][sf;w;x;y]}[cgf;ogf;sf;w;a] peach d;
+ g:{[cgf;ogf;sf;w;x;y] $[isord y;ogf;cgf][sf;w;x;y]}[cgf;ogf;sf;w;a] peach d;
  if[all 0>=gr:first each g;:(w;a)]; / stop if no gain
  g:last b:1_ g ba:imax gr;          / best attribute
  / distribute nulls down each branch with reduced weight
@@ -591,9 +591,12 @@ prune:{[ef;t]
  if[e<((sum first@) each b) wavg (ef .) each b;:wa];
  t}
 
+/ decision tree mode
+dtmode:{[w;x]$[isord x;wavg;wmode][w;x]}
+
 / decision tree classifier: classify the (d)ictionary based on
 / decision (t)ree
-dtc:{[t;d] $[iscat wx 1;wmode;wavg] . wx:dtcr[t;d]}
+dtc:{[t;d] dtmode . wx:dtcr[t;d]}
 dtcr:{[t;d]                     / recursive component
  if[2=count t;:t];              / (w;a)
  if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
@@ -602,8 +605,8 @@ dtcr:{[t;d]                     / recursive component
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{
- v:$[iscat x 1;wmode;wavg] . x; / value
- e:$[iscat x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%";string sum e*e:v-x 1];
+ v:dtmode . x;                  / value
+ e:$[isord x 1;string sum e*e:v-x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%"];
  s:string[v], " (n = ", string[count x 0],", err = ",e, ")";
  s}
 

@@ -86,7 +86,8 @@ acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
 / the specified (p)ercent.
 converge:{[p;c]
  b:$[1<n:count c;p<pct:neg -1f+c[n-1]%c[n-2];1b];
- 1"Iteration ",string[n]," | cost: ",string[last c]," | pct: ",string[pct],"\n\r"b;
+ s:"Iteration ",string[n]," | cost: ",string last c;
+ 1 s," | pct: ",string[pct],"\n\r"b;
  b}
 
 / (a)lpha: learning rate, gf: gradient function
@@ -101,9 +102,16 @@ demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)
 fdemean:{[f;x]a+f x-\:a:$[type x;avg;f2nd avg] x}
 / feature normalization (centered/unit variance)
-zscore:{x%\:$[t;sdev;f2nd sdev] x:x-\:$[t:type x;avg;f2nd avg] x}
+zscore:{
+ x:x-\:$[t:type x;avg;f2nd avg] x;
+ x:x%\:$[t;sdev;f2nd sdev] x;
+ x}
 / apply f to normalized (then denormalize)
-fzscore:{[f;x]a+d*f x%\:d:$[t;sdev;f2nd sdev]x:x-\:a:$[t:type x;avg;f2nd avg] x}
+fzscore:{[f;x]
+ x:x-\:a:$[t:type x;avg;f2nd avg] x;
+ x:x%\:d:$[t;sdev;f2nd sdev] x;
+ x:a+d*f x;
+ x}
 
 / compute the average of the top n items
 navg:{[n;x;y]f2nd[avg] y (n&count x)#idesc x}
@@ -136,9 +144,16 @@ rlogcost:{[l;X;Y;THETA]
  if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
  if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
  J:celoss[X lpredict/ THETA;Y];
- if[l>0f;J+:(l%2*count Y 0)*dot[x]x:2 raze/ @[;0;:;0f]''[THETA]]; / regularization
+ if[l>0f;J+:(l%2*count Y 0)*dot[x]x:2 raze/@[;0;:;0f]''[THETA]]; / regularize
  J}
 logcost:rlogcost[0f]
+
+bpg:{[THETA;a;D] / back prop gradient
+ a:addint each -1_a;
+ G:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a];
+ G,:enlist D;
+ g:(G mmt' a)%count D 0;
+ g}
 
 / regularized logistic regression gradient
 / expects a list of THETA matrices
@@ -147,11 +162,8 @@ rloggrad:{[l;X;Y;THETA]
  if[type THETA 0;:first .z.s[l;X;Y] enlist THETA]; / single matrix
  n:count Y 0;
  a:lpredict\[enlist[X],THETA];
- D:last[a]-Y;
- a:addint each -1_a;
- D:{[D;THETA;a]1_(mtm[THETA;D])*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
- g:(D mmt' a)%n;
- if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
+ g:bpg[THETA;a] last[a]-Y;            / back prop
+ if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularize
  g}
 loggrad:rloggrad[0f]
 
@@ -260,12 +272,9 @@ nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  Y:last a:lpredict\[enlist[X],THETA];
  n:count YMAT 0;
  J:celoss[Y;YMAT];
- if[l>0f;J+:(l%2*n)*{dot[x]x}2 raze/ @[;0;:;0f]''[THETA]]; / regularization
- D:Y-YMAT;
- a:addint each -1_a;
- D:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a],enlist D;
- g:(D mmt' a)%n;
- if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularization
+ if[l>0f;J+:(l%2*n)*{dot[x]x}2 raze/ @[;0;:;0f]''[THETA]]; / regularize
+ g:bpg[THETA;a] Y-YMAT;
+ if[l>0f;g+:(l%n)*@[;0;:;0f]''[THETA]]; / regularize
  (J;2 raze/ g)}
 
 nncostgradf:{[l;n;X;YMAT]
@@ -409,7 +418,12 @@ graft:{@[x;y;:;(::;x y)]}
 tree:{1#(til[1+count x],(::)) graft/ x}
 
 / cut a single layer off tree
-slice:{$[type x;x;type f:first x;(1_x),f;type ff:first f;(1_f),(1_x),ff;f,1_x]}
+slice:{
+ if[type x;:x];
+ if[type f:first x;:(1_x),f];
+ if[type ff:first f;:(1_f),(1_x),ff]
+ f,:1_x;
+ f}
 
 / binomial pdf (not atomic because of factorial)
 binpdf:{[n;p;k]
@@ -458,12 +472,12 @@ gaussll:{[mu;s2;X] -.5*sum (log 2f*acos -1f;log s2;(X*X-:mu)%s2)}
 
 / (l)ikelhood (f)unction, (m)aximization (f)unction
 / with prior probabilities (p)hi and distribution parameters (t)heta
-em:{[lf;mf;X;pt]
- if[0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
- l:$[1<count pt;{(x . z) y}[lf;X] peach flip 1_pt;count[$[type X;X;X 0]]?/:count[pt 0]#1f];
- W:p%\:sum p:l*phi:pt 0;         / weights (responsibilities)
- if[0h<type phi;phi:avg peach W]; / new prior probabilities (if phi is a list)
- theta:flip mf[X] peach W;       / new coefficients
+em:{[lf;mf;X;pt]                      / expectation maximization
+ if[a:0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
+ l:$[a;count[$[type X;X;X 0]]?/:count[pt 0]#1f;(@[;X]lf .)peach flip 1_pt];
+ W:p%\:sum p:l*phi:pt 0;          / weights (responsibilities)
+ if[0h<type phi;phi:avg peach W]; / new prior probabilities
+ theta:flip mf[X] peach W;        / new coefficients
  enlist[phi],theta}
 
 / return value which occurs most frequently
@@ -499,7 +513,10 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 
 / fit parameters given (m)aximization (f)unction
 / returns a dictionary with prior and conditional likelihoods
-fitnb:{[mf;w;X;y]count'[g],'{x[1_y;first y]}[mf] peach prepend[w;X]@\:/:g:group y}
+fitnb:{[mf;w;X;y]
+ g:prepend[w;X]@\:/:group y;
+ g:{count[y],x[1_y;first y]}[mf] peach g;
+ g}
 / using a [log]likelihood (f)unction and (cl)assi(f)ication compute
 / densities for X
 densitynb:{[f;clf;X]clf[;0],'(1_'clf) {(x . y) z}[f]'\: X}
@@ -526,7 +543,8 @@ sse:{[w;x]sum x*x-:w wavg x}
 cmb:{
  if[not 0>type y;:y .z.s[x] count y];
  if[null x;:raze .z.s[;y] each 1+til y];
- c:raze (flip enlist flip enlist til y-:x){(x+z){raze x,''y}'x#\:y}[1+til y]/til x-:1;
+ c:flip enlist flip enlist til y-:x-:1;
+ c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
 / using a (s)plit (f)unction to compute the information gain
@@ -571,7 +589,7 @@ dt:{[cgf;ogf;sf;ml;md;w;t]
  if[all 0>=gr:first each g;:(w;a)]; / stop if no gain
  g:last b:1_ g ba:imax gr;          / best attribute
  / distribute nulls down each branch with reduced weight
- if[count[k]>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;-1+count k];g:(nk _g),\:n];
+ if[(c:count k)>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
  if[null b 0;t:(1#ba)_t];           / don't reuse categorical classifiers
  b[1]:.z.s[cgf;ogf;sf;ml;md-1]'[w g;t g];   / classify subtree
  ba,b}
@@ -677,28 +695,46 @@ rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]@);t]}
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
 dim:count shape@
 / matrix overload of where
-mwhere:{$[type x;where x;(,') over til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'.z.s each x]}
+mwhere:{
+ if[type x;:where x];
+ x:.z.s each x;
+ x:til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'x;
+ x:(,') over x;
+ x}
 / sparse from matrix
 sparse:{enlist[shape x],i,enlist (x') . i:mwhere not 0=x}
 / transpose
 sflip:@[;0 2 1 3]
 / sparse matrix multiplication
-smm:{enlist[(x[0;0];y[0;1])],value flip 0!select sum w*v by r,c from ej[`;flip ``c`v!1_y;flip`r``w!1_x]}
+smm:{
+ t:ej[`;flip ``c`v!1_y;flip`r``w!1_x];
+ t:0!select sum w*v by r,c from t;
+ m:enlist[(x[0;0];y[0;1])],value flip t;
+ m}
 / matrix from sparse
 full:{./[x[0]#0f;flip x 1 2;:;x 3]}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / obtain the page rank by matrix inversion (inverse iteration)
-pageranki:{[p;A]r%sum r:first mlsq[enlist r]  diag[r:n#1f]-((1f-p)%n:count A)+p*A%1f|sum peach A}
+pageranki:{[p;A]
+ A:((1f-p)%n:count A)+p*A%1f|sum peach A;
+ r%:sum r:first mlsq[enlist r] diag[r:n#1f]-A;
+ r}
 
 / given a (p)robability of random surfing, (A)djacency matrix and
 / (r)ank vector, multiply by the google matrix to obtain a better
 / ranking
-pagerankr:{[p;A;r]((1f-p)%n)+p*mm[A;r%1f|d]+(s:sum r where 0f=d:sum peach A)%n:count A}
+pagerankr:{[p;A;r]
+ s:sum r*0f=d:sum peach A;
+ r:((1f-p)%n)+p*mm[A;r%1f|d]+s%n:count A;
+ r}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / create the markov Google matrix
-google:{[p;A]((1f-p)%n)+p*(A%1|d)+(0=d:sum peach A)%n:count A}
+google:{[p;A]
+ e:0=d:sum peach A;
+ r:((1f-p)%n)+p*(A%1f|d)+e%n:count A;
+ r}
 
 / return a sorted dictionary of the ranked values
 drank:{desc til[count x]!x}

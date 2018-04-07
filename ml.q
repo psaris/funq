@@ -613,42 +613,42 @@ prune:{[ef;t]
 dtmode:{[w;x]$[isord x;wavg;wmode][w;x]}
 
 / decision tree classifier: classify the (d)ictionary based on
-/ decision (t)ree
-dtc:{[t;d] dtmode . wx:dtcr[t;d]}
-dtcr:{[t;d]                     / recursive component
- if[2=count t;:t];              / (w;a)
- if[not null k:d t 0;if[(a:t[1][k]) in key t[2];:.z.s[t[2] a;d]]]; / split
- v:(,') over t[2] .z.s\: d;     / dig deeper for null values
+/ decision (tr)ee
+dtc:{[tr;d] dtmode . wx:dtcr[tr;d]}
+dtcr:{[tr;d]                    / recursive component
+ if[2=count tr;:tr];            / (w;a)
+ if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
+ v:(,') over tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
 / print leaf: prediction followd by classification error% or regresssion sse
-pleaf:{
- v:dtmode . x;                  / value
- e:$[isord x 1;string sum e*e:v-x 1;string[.1*"i"$1e3*1f-avg x[1] = v],"%"];
- s:string[v], " (n = ", string[count x 0],", err = ",e, ")";
+pleaf:{[w;x]
+ v:dtmode[w;x];                 / value
+ e:$[isord x;string sum e*e:v-x;string[.1*"i"$1e3*1f-avg x = v],"%"];
+ s:string[v], " (n = ", string[count x],", err = ",e, ")";
  s}
 
-/ print tree: indent by (l)evel
-ptree:{[l;t]
- if[not l;:"root: ",pleaf[first xs],last xs:.z.s[l+1;t]];
- if[0h<type t 0;:(t;"")];
+/ print (tr)ee with i(n)dent
+ptree:{[n;tr]
+ if[not n;:"root: ",(pleaf . first xs),last xs:.z.s[n+1;tr]];
+ if[0h<type tr 0;:(tr;"")];
  s:1#"\n";
- s,:raze[(l)#enlist "|  "],raze string[t 0 1],\:" ";
- s:s,/:string k:asc key t 2;
- c:.z.s[l+1] each t[2]k;        / child
+ s,:raze[(n)#enlist "|  "],raze string[tr 0 1],\:" ";
+ s:s,/:string k:asc key tr 2;
+ c:.z.s[n+1] each tr[2]k;        / child
  x:first each c;
- s:s,'": ",/:pleaf each x;
+ s:s,'": ",/:(pleaf .) each x;
  s:raze s,'last each c;
  x:(,') over x;
  (x;s)}
 
 / print a single node for graphviz
-pnode:{[p;l;t]
+pnode:{[p;l;tr]
  s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
- c:$[0h<type t 0;enlist (t;());.z.s'[i;key t 2;value t 2]];
+ c:$[0h<type tr 0;enlist (tr;());.z.s'[i;key tr 2;value tr 2]];
  x:(,') over first each c;
- s,:pleaf x;
- if[0h>type t 0;s,:"\\n",raze string[t 0 1],\: " "];
+ s,:pleaf . x;
+ if[0h>type tr 0;s,:"\\n",raze string[tr 0 1],\: " "];
  s:enlist s,"\"] ;";
  if[i>0;s,:enlist string[p]," -> ",string[i]," [label=\"",string[l],"\"] ;"];
  s,:raze last each c;
@@ -656,10 +656,10 @@ pnode:{[p;l;t]
 
 / print graph text for use with the 'dot' graphviz command, graph-easy
 / or http://webgraphviz.com
-pgraph:{[t]
+pgraph:{[tr]
  s:enlist "digraph Tree {";
  s,:enlist "node [shape=box] ;";
- s,:last pnode[I::-1;`;t]; / reset global variable used by pnode
+ s,:last pnode[I::-1;`;tr]; / reset global variable used by pnode
  s,:1#"}";
  s}
 

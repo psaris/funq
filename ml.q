@@ -715,25 +715,25 @@ smm:{
 full:{./[x[0]#0f;flip x 1 2;:;x 3]}
 
 / given a (p)robability of random surfing and (A)djacency matrix
-/ obtain the page rank by matrix inversion (inverse iteration)
-pageranki:{[p;A]
- A:((1f-p)%n:count A)+p*A%1f|sum peach A;
+/ obtain the page rank algebraically by matrix inversion
+pageranka:{[p;A]
+ A:((1f-p)%n:count A)+p*A%1|sum each A;
  r%:sum r:first mlsq[enlist r] diag[r:n#1f]-A;
  r}
 
 / given a (p)robability of random surfing, (A)djacency matrix and
 / (r)ank vector, multiply by the google matrix to obtain a better
-/ ranking
-pagerankr:{[p;A;r]
- s:sum r*0f=d:sum peach A;
- r:((1f-p)%n)+p*mm[A;r%1f|d]+s%n:count A;
+/ ranking (iterative model)
+pageranki:{[p;A;r]
+ s:sum r*0=d:sum each A;
+ r:((1f-p)%n)+p*mtm[A;r%1|d]+s%n:count A;
  r}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / create the markov Google matrix
 google:{[p;A]
- e:0=d:sum peach A;
- r:((1f-p)%n)+p*(A%1f|d)+e%n:count A;
+ e:0=d:sum each A;
+ r:((1f-p)%n)+p*(A%1|d)+e%n:count A;
  r}
 
 / return a sorted dictionary of the ranked values

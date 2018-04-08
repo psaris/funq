@@ -1,15 +1,10 @@
 \l funq.q
+\l iris.q
 
-f:("iris.data";"bezdekIris.data") 1
-b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
--1"we first [down]load the iris dataset";
-.util.download[b;;"";::] f;
--1"and then extract the data into a matrix of data (with 4 dimensions)";
-I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
 -1"enumerate species so we can use the integer value for svm";
-iris:update `species?species from iris
+y:`species?iris.y
 -1"svm parameter x is a sparse matrix: - list of dictionaries";
-prob:`x`y!(0 1 2 3i!/:flip I;"f"$"i"$iris`species)
+prob:`x`y!(0 1 2 3i!/:flip iris.X;"f"$"i"$y)
 -1"define and check svm parameters";
 .svm.check_parameter[prob] param:.svm.defparam[prob] .svm.param
 -1"build model by training svm on full dataset";

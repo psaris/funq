@@ -44,24 +44,19 @@ show plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 show .ml.kmedians[X] scan k
 
 -1"we can apply kmeans to the classic machine learning iris data";
-f:("iris.data";"bezdekIris.data") 1
-b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
--1"we first [down]load the iris dataset";
-.util.download[b;;"";::] f;
--1"and then extract the data into a matrix of data (with 4 dimensions)";
-I:value 4#flip iris:150#flip `slength`swidth`plength`pwidth`species!("FFFFS";",") 0: `$f
+\l iris.q
 -1"we can see how the data set clusters in the 4th dimension";
-show plt I 3
+show plt iris.X 3
 
 -1"we iteratively call kmeans until convergence";
-C:.ml.kmeans[I] over 3
+C:.ml.kmeans[iris.X] over 3
 -1"and can show which group each data point was assigned to.";
-show g:.ml.cgroup[.ml.edist;I;C] / classify
+show g:.ml.cgroup[.ml.edist;iris.X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg iris.species=distinct[iris.species] .ml.ugrp g / accuracy
+avg iris.y=distinct[iris.y] .ml.ugrp g / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[iris.species;distinct[iris.species] .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[iris.y;distinct[iris.y] .ml.ugrp g]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids
-show plt (.ml.distortion .ml.ecdist[I] .ml.kmeans[I]@) each neg 1+til 10
+show plt (.ml.distortion .ml.ecdist[iris.X] .ml.kmeans[iris.X]@) each neg 1+til 10

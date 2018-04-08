@@ -1,5 +1,6 @@
 \c 20 100
 \l funq.q
+\l iris.q
 
 / http://www.cise.ufl.edu/~ddd/cap6635/Fall-97/Short-papers/2.htm
 / http://www.saedsayad.com/decision_tree.htm
@@ -52,4 +53,14 @@ s:update Temperature:` from s where Humidity=70f
 .util.assert[0f] .ml.dtc[tree] d
 -1 "we also can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "e"$`Yes=Play from s; / regression tree
-.util.assert[0.7142857142857143] .ml.dtc[tree] d
+.util.assert[1] "j"$.ml.dtc[tree] d
+
+
+-1 "we can now split the iris data into training and test batches";
+show d:`train`test!floor[.75*count iris.t] cut 0N?iris.t
+-1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train;
+-1 "testing the tree on the test set produces an accuracy of:";
+avg d.test.species=p:tree .ml.dtc/: d`test
+-1 "we can save the decision tree into graphviz compatible format";
+`:tree.dot 0: .ml.pgraph tree
+

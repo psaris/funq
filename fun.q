@@ -8,8 +8,8 @@ b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
 -1"we first [down]load the iris dataset";
 .util.download[b;;"";::] f;
 -1"and then extract the data into a matrix of data (with 4 dimensions)";
-iris:150#`species xcols flip `slength`swidth`plength`pwidth`species!("EEEES";",") 0: `$f
-I:value 1_flip iris
+iris:flip `slength`swidth`plength`pwidth`species!("EEEES";",") 0: `$f
+I:value 1_flip iris:150#`species xcols iris
 
 d:`train`test!floor[.75*count iris] cut 0N?iris
 -1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train
@@ -59,11 +59,11 @@ m0:100 200 150                  / number of points per distribution
 X:raze X0:mu0+s0*(.util.bm ?[;1f]@) each m0 / build dataset
 plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
-phi:k#1f%k;                     / guess that distributions occur with equal frequency
-mu:neg[k]?X;                    / pick k random points as centers
-s2:k#var X;                     / use the whole datasets variance
-lf:.ml.gauss                    / likelihood function
-mf:.ml.gaussml                  / maximum function
+phi:k#1f%k;      / guess that distributions occur with equal frequency
+mu:neg[k]?X;     / pick k random points as centers
+s2:k#var X;      / use the whole datasets variance
+lf:.ml.gauss     / likelihood function
+mf:.ml.gaussml   / maximum function
 .ml.em[lf;mf;X] over pt:(phi;mu;s2) / returns best guess for (phi;mu;s)
 .ml.em[lf;mf;X] over k
 
@@ -193,15 +193,6 @@ flip .ml.probabilitynb d
 (1#`c)~.ml.predictnb d
 
 /2 .ml.em[.ml.multila;.ml.multiml[1];X]/  2
-
-/ sparse matrix
-X:"f"$(100;100)#0 0 0 0 0 0 0 1
-/ matrix -> sparse -> matrix == matrix
-X~.ml.full S:.ml.sparse X
-/ sparse matrix multiplication == mmu
-(X$X)~.ml.full .ml.smm[S;S]
-/ transposition works too
-(X$flip X)~.ml.full .ml.smm[S;.ml.sflip S]
 
 / pagerank
 / http://www.cs.princeton.edu/~chazelle/courses/BIB/pagerank.htm

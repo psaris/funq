@@ -10,19 +10,36 @@
 -1 "given a list of page links,";
 i:1 1 2 2 3 3 3 4 6
 j:2 6 3 4 4 5 6 1 1
-show i!j
+show l:(i;j)
+link:asc distinct raze l
+l:link?l
 -1 "we can transform the sparse connectivity matrix";
-show S:(1 2#max i,j), .ml.append[1f] (i;j)-1
+show S:(1 2#1+max over l), .ml.append[1f] l
 -1 "into a full matrix";
 show X:.ml.full S
 -1 "using matrix inversion, we can algebraically compute the pagerank";
 -1 "it is commonly understood that the odds of clicking on a link are 85%";
 -1 "while the odds of randomly going to another page are 15%";
 p:.85
-show .ml.drank .ml.pageranka[p;X]
+show link[i]!r i:idesc r:.ml.pageranka[p;X]
 -1 "ranks don't change drastically over time";
 -1 "so perhaps an iterative approach is better";
-show .ml.drank .ml.pageranki[p;X] over r:n#1f%n:count X
+show link[i]!r i:idesc r:.ml.pageranki[p;X] over r:n#1f%n:count X
 -1 "this can be optimized by using the power method";
 -1 "first compute the google matrix, then iteratively multiply until convergence";
-show .ml.drank $[;.ml.google[p;X]] over r:n#1f%n:count X / TODO: implement sparse version
+show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X / TODO: implement sparse version
+
+
+f:("sample-small.txt";"sample-medium.txt";"sample-large.txt") 2
+b:"http://lintool.github.io/Cloud9/docs/exercises/"
+-1"downloading network graph";
+.util.download[b;;"";::] f
+l:flip raze {x[0],/:1_ x} each "J"$"\t" vs/: read0 `$f
+link:asc distinct raze l
+l:link?l
+show S:(1 2#1+max over l), .ml.append[1f] l
+-1 "into a full matrix";
+show X:.ml.full S
+show link[i]!r i:idesc r:.ml.pageranka[p;X]
+show link[i]!r i:idesc r:.ml.pageranki[p;X] over r:n#1f%n:count X
+show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X

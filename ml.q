@@ -736,9 +736,6 @@ google:{[p;A]
  r:((1f-p)%n)+p*(A%1|d)+e%n:count A;
  r}
 
-/ return a sorted dictionary of the ranked values
-drank:{desc til[count x]!x}
-
 / top n svd factors
 nsvd:{[n;usv]n#''@[usv;1;(n:min n,count each usv 0 2)#]}
 

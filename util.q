@@ -12,8 +12,9 @@ bm:{
 
 / (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
 download:{[b;f;e;uf]
- if[()~key `$":",f,e;(`$":",f,e) 1: .Q.hg`$":",0N!b,f,e];
- if[()~key `$":",f;uf f,e];
+ if[l~key l:`$":",f;:(::)];                       / local file exists
+ if[()~key l:`$":",f,e;l 1: .Q.hg`$":",0N!b,f,e]; / download
+ uf f,e;                                          / unzip
  }
 
 / load mnist dataset

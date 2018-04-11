@@ -12,5 +12,5 @@ show S:.ml.sparse X
 -1 "we can even perform sparse matrix multiplication";
 .util.assert[X$X] .ml.full .ml.smm[S;S]
 -1 "and sparse matrix transposition";
-.util.assert[X$flip X] .ml.full .ml.smm[S;.ml.sflip S]
+.util.assert[X$flip X] .ml.full .ml.smm[S;.ml.smt S]
 

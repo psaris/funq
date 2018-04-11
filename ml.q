@@ -703,16 +703,22 @@ mwhere:{
  x}
 / sparse from matrix
 sparse:{enlist[shape x],i,enlist (x') . i:mwhere not 0=x}
-/ transpose
-sflip:@[;0 2 1 3]
+/ matrix from sparse
+full:{./[x[0]#0f;flip x 1 2;:;x 3]}
+/ sparse matrix transpose
+smt:{(reverse x 0;x 2;x 1;x 3)}
 / sparse matrix multiplication
 smm:{
  t:ej[`;flip ``c`v!1_y;flip`r``w!1_x];
  t:0!select sum w*v by r,c from t;
  m:enlist[(x[0;0];y[0;1])],value flip t;
  m}
-/ matrix from sparse
-full:{./[x[0]#0f;flip x 1 2;:;x 3]}
+/ sparse matrix addition
+sma:{
+ t:flip[`r`c`v!1_y],flip`r`c`v!1_x;
+ t:0!select sum v by r,c from t;
+ m:enlist[x 0],value flip t;
+ m}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / obtain the page rank algebraically by matrix inversion

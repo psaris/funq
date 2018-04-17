@@ -25,9 +25,11 @@ show link[i]!r i:idesc r:.ml.pageranka[p;X]
 -1 "ranks don't change drastically over time";
 -1 "so perhaps an iterative approach is better";
 show link[i]!r i:idesc r:.ml.pageranki[p;X] over r:n#1f%n:count X
+S:.ml.sparse X                  / sparse matrix
+show link[i]!r i:idesc r:.ml.pageranks[p;S] over r:n#1f%n:S[0;0]
 -1 "this can be optimized by using the power method";
 -1 "first compute the google matrix, then iteratively multiply until convergence";
-show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X / TODO: implement sparse version
+show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X
 
 
 f:("sample-small.txt";"sample-medium.txt";"sample-large.txt") 2
@@ -38,8 +40,22 @@ l:flip raze {x[0],/:1_ x} each "J"$"\t" vs/: read0 `$f
 link:asc distinct raze l
 l:link?l
 show S:(1 2#1+max over l), .ml.append[1f] l
+show link[i]!r i:idesc r:.ml.pageranks[p;S] over r:n#1f%n:S[0;0]
 -1 "into a full matrix";
 show X:.ml.full S
 show link[i]!r i:idesc r:.ml.pageranka[p;X]
 show link[i]!r i:idesc r:.ml.pageranki[p;X] over r:n#1f%n:count X
 show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X
+
+f:"web-BerkStan.txt"
+b:"http://snap.stanford.edu/data/"
+-1"downloading network graph";
+.util.download[b;;".gz";system 0N!"gunzip -v ",] f
+l:("II";"\t") 0:  4_read0 `$f
+link:asc distinct raze l
+l:link?l
+show S:(1 2#1+max over l), .ml.append[1f] l
+-1"not enough memory to convert Sparse -> full matriX";
+-1"just perform a few sparse iterations";
+show link[i]!r i:idesc r:10 .ml.pageranks[p;S]/ r:n#1f%n:S[0;0]
+

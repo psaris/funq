@@ -728,11 +728,17 @@ pageranka:{[p;A]
  r}
 
 / given a (p)robability of random surfing, (A)djacency matrix and
-/ (r)ank vector, multiply by the google matrix to obtain a better
-/ ranking (iterative model)
+/ (r)ank vector, obtain a better ranking (iterative model)
 pageranki:{[p;A;r]
  s:sum r*0=d:sum each A;
  r:((1f-p)%n)+p*mtm[A;r%1|d]+s%n:count A;
+ r}
+
+/ given a (p)robability of random surfing, (S)parse adjacency matrix
+/ and (r)ank vector, obtain a better ranking (iterative model)
+pageranks:{[p;S;r]
+ s:sum r*e:0=d:0^sum'[S[3] group S 1]til first S 0;
+ r:((1f-p)%n)+p*first .ml.full[.ml.smm[.ml.sparse enlist r%1|d;S]]+s%n:S[0;0];
  r}
 
 / given a (p)robability of random surfing and (A)djacency matrix

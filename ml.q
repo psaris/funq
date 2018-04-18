@@ -614,7 +614,7 @@ dtmode:{[w;x]$[isord x;wavg;wmode][w;x]}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
-dtc:{[tr;d] dtmode . wx:dtcr[tr;d]}
+dtc:{[tr;d] dtmode . dtcr[tr;d]}
 dtcr:{[tr;d]                    / recursive component
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];

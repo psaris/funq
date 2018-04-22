@@ -11,7 +11,7 @@
 -1"[down]loading handwritten kanji dataset";
 f:"ETL9B"                                      / zip file base
 b:"http://etlcdb.db.aist.go.jp/etlcdb/data/"   / base url
-.util.download[b;;".zip";system 0N!"unzip ",] f; / download data
+.util.download[b;;".zip";system 0N!"unzip -n ",] f; / download data
 
 -1"loading etl9b ('binalized' dataset)";
 x:.util.etl9b read1 `:ETL9B/ETL9B_1

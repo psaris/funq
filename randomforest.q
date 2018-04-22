@@ -4,7 +4,7 @@
 f:"OnlineNewsPopularity"
 b:"http://archive.ics.uci.edu/ml/machine-learning-databases/00332/"
 -1"downloading handwritten online news popularity data set";
-.util.download[b;;".zip";system 0N!"unzip ",] f;
+.util.download[b;;".zip";system 0N!"unzip -n ",] f;
 
 t:(" efefebebfi" where 2 2 3 4 1 1 6 12 8 21 1;1#",") 0: `$f,"/",f,".csv"
 t:`popular xcols delete shares from update popular:shares>=1400 from t;

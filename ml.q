@@ -7,6 +7,14 @@ minv:inv                        / X**-1
 mlsq:lsq                        / least squares
 dot:$                           / dot product
 
+identical:all 1_~':
+
+ismatrix:{
+ if[type x;:0b];
+ if[not all 9h=type each x;:0b];
+ b:identical count each x;
+ b}
+
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
 cabs:{sqrt sum x*x}             / complex absolute value
@@ -127,7 +135,7 @@ uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
 / where not any null
-wnan:{$[any 1_differ type each x;til count x;where not any null x]}
+wnan:{$[identical type each x;where not any null x;til count x]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
@@ -583,7 +591,7 @@ dt:{[cgf;ogf;sf;ml;md;w;t]
  if[1=count d:flip t;:(w;first d)]; / no features to test
  if[not md;:(w;first d)];           / don't split deeper than max depth
  if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
- if[all 1_(=':) a;:(w;a)];          / all values are equal
+ if[identical a;:(w;a)];            / all values are equal
  d:(0N?key d)#d:1 _d;               / randomize feature order
  g:{[cgf;ogf;sf;w;x;y] $[isord y;ogf;cgf][sf;w;x;y]}[cgf;ogf;sf;w;a] peach d;
  if[all 0>=gr:first each g;:(w;a)]; / stop if no gain

@@ -1,15 +1,9 @@
 \c 20 100
 \l funq.q
-
+\l pima.q
 
 / https://cseweb.ucsd.edu/~yfreund/papers/adaboost.ps
 
-f:"pima-indians-diabetes.data"
-b:"http://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/"
--1"downloading handwritten pima indians diabetes data set";
-.util.download[b;;"";::] f
-
-t:`class xcols flip `preg`plas`pres`skin`test`mass`pedi`age`class!("EEEEEEEEB";",")0:`$f
 -1 .ml.ptree[0] tree:.ml.q45[2;3;::] t;
 avg t.class=.ml.dtc[tree] each t / accuracy
 -1 "a stump is a single branch tree";

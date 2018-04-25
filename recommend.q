@@ -1,29 +1,10 @@
 \c 22 100
 \l funq.q
-
-/ import data
-
-f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
-b:"http://files.grouplens.org/datasets/movielens/" / base url
--1"[down]loading latest grouplens movie lense (small) dataset";
-.util.download[b;;".zip";system 0N!"unzip -n ",] f;         / download data
--1"loading movie definitions: integer movieIds and enumerated genres";
-movie:("I**";1#",") 0:`$f,"/movies.csv"
--1"remove movies without genres";
-movie:update 0#'genres from movie where genres like "(no genres listed)"
--1"extract the movie's year from title";
-movie:update rtrim title from movie
-movie:update year:"I"$-1_/:-5#/:title,-7_/:title from movie where title like "*(????)"
--1"enumerate genres, fixed width titles";
-movie:1!update `u#movieId,25$'title,`genre?/:`$("|"vs'genres) from movie
--1"add the decade as a genre";
-movie:update genres:(genres,'`$string 10 xbar year) from movie
--1"loading movie ratings: partitioned by userId and movieId linked to movie table";
-rating:update `p#userId,`movie$movieId from ("IIF";1#",") 0:`$f,"/ratings.csv"
+\l mlense.q
 
 -1"to ensure the ratings matrix only contains movies with relevant movies,";
 -1"we generate a list of unique movie ids that meet our threshold.";
-show m:exec distinct asc movieId from rating where 10<(count;i) fby movieId
+show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
 
 / personal ratings
 
@@ -31,9 +12,10 @@ show m:exec distinct asc movieId from rating where 10<(count;i) fby movieId
 r:([movieId:m]rating:count[m]#0n) / initial ratings
 r:r lj ([movieId:173 208 260 435 1197 2005 1968 2918i]rating:.5 .5 4 .5 4 4 4 5f)
 r:r lj ([movieId:4006 53996 69526 87520 112370i]rating:5 4 4 5 5f)
-show select from r lj movie where not null rating  / my ratings
+show select from r lj mlense.movie where not null rating  / my ratings
 
-rpt:lj[;movie] `score xdesc / projection to sort ratings and append movie title
+/ projection to sort ratings and append movie title
+rpt:lj[;mlense.movie] `score xdesc
 
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
 
@@ -43,7 +25,7 @@ rpt:lj[;movie] `score xdesc / projection to sort ratings and append movie title
 -1"it uses our own preferences mixed with each movie's genre";
 Y:enlist value[r]`rating
 -1"we build the X matrix based on each movie's genres";
-show X:flip exec genre in/: genres from ([]movieId:m)#movie
+show X:flip exec genre in/: genres from ([]movieId:m)#mlense.movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
@@ -63,30 +45,30 @@ show rpt update score:last .ml.predict[X;THETA] from r
 -1"we begin be reporting summary statistics about the ratings dataset";
 -1"support";
 -1"reporting the number of users, movies and ratings";
-show exec nu:count distinct userId, nm:count distinct movieId, nr:count i from rating
+show exec nu:count distinct userId, nm:count distinct movieId, nr:count i from mlense.rating
 -1"distribution:";
 -1"we can see that only users with >20 ratings are included";
-show select nu:count userId by nr from select nr:10 xbar count rating by userId from rating
+show select nu:count userId by nr from select nr:10 xbar count rating by userId from mlense.rating
 -1"we can also see that a large majority of movies have less than 10 ratings";
-show select nm:count movieId by nr from select nr:10 xbar count rating by movieId from rating
+show select nm:count movieId by nr from select nr:10 xbar count rating by movieId from mlense.rating
 -1"quality:";
 -1"we can see that there is a positive bias to the ratings";
-show exec `min`med`avg`mode`max!(min;med;avg;.ml.mode;max)@\:rating from rating
+show exec `min`med`avg`mode`max!(min;med;avg;.ml.mode;max)@\:rating from mlense.rating
 /rating:select from rating where 19<(count;i) fby userId,9<(count;i) fby movieId
 -1"the average rating per user (and movie) is distributed around 3.5";
-t:select nm:count i by rating from select .5 xbar avg rating by movieId from rating
-show t lj select nu:count i by rating from select .5 xbar avg rating by userId from rating
+t:select nm:count i by rating from select .5 xbar avg rating by movieId from mlense.rating
+show t lj select nu:count i by rating from select .5 xbar avg rating by userId from mlense.rating
 -1"movies with a small number of ratings can distort the rankings";
 -1"the top rankings are dominated by movies with a single rating";
-show select[10;>rating] avg rating, n:count i by movieId.title from rating
+show select[10;>rating] avg rating, n:count i by movieId.title from mlense.rating
 -1"while the most rated movies have averages centered around 4";
-show select[10;>n] avg rating, n:count i by movieId.title from rating
+show select[10;>n] avg rating, n:count i by movieId.title from mlense.rating
 -1"we will therefore demean the ratings before performing our analysis";
 -1"";
 -1"by using a syntax that is similar to pivoting,";
 -1"we can generate the user/movie matrix";
 
-show R:value exec (movieId!rating) m by userId from rating
+show R:value exec (movieId!rating) m by userId from mlense.rating
 -1"then add our own ratings";
 R,:value[r]`rating
 -1"demean the data and store global/movie/user bias";
@@ -134,7 +116,7 @@ show rpt select from (update score:last P from r) where not null rating
 -1"or even a new movie";
 .ml.foldin[.ml.nsvd[500] usv;1b;0^Y[;2]];
 -1"what does the first factor look like?";
-show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#movie;
+show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#mlense.movie;
 -1"how much variance does each factor explain?";
 show .util.plot[40;19;.util.c10] {x%sum x*:x}.qml.mdiag usv 1
 

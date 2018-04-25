@@ -1,5 +1,7 @@
 \c 20 100
 \l funq.q
+\l cloud9.q
+\l berkstan.q
 
 / https://en.wikipedia.org/wiki/Google_matrix
 / https://en.wikipedia.org/wiki/PageRank
@@ -32,13 +34,9 @@ show link[i]!r i:idesc r:.ml.pageranks[p;S] over r:n#1f%n:S[0;0]
 show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X
 
 
-f:("sample-small.txt";"sample-medium.txt";"sample-large.txt") 2
-b:"http://lintool.github.io/Cloud9/docs/exercises/"
--1"downloading network graph";
-.util.download[b;;"";::] f
-l:flip raze {x[0],/:1_ x} each "J"$"\t" vs/: read0 `$f
-link:asc distinct raze l
-l:link?l
+/ https://lintool.github.io/Cloud9/docs/exercises/pagerank.html
+link:asc distinct raze cloud9.l
+l:link?cloud9.l
 show S:(1 2#1+max over l), .ml.append[1f] l
 show link[i]!r i:idesc r:.ml.pageranks[p;S] over r:n#1f%n:S[0;0]
 -1 "into a full matrix";
@@ -47,15 +45,9 @@ show link[i]!r i:idesc r:.ml.pageranka[p;X]
 show link[i]!r i:idesc r:.ml.pageranki[p;X] over r:n#1f%n:count X
 show link[i]!r i:idesc r:$[;.ml.google[p;X]] over r:n#1f%n:count X
 
-f:"web-BerkStan.txt"
-b:"http://snap.stanford.edu/data/"
--1"downloading network graph";
-.util.download[b;;".gz";system 0N!"gunzip -v ",] f
-l:("II";"\t") 0:  4_read0 `$f
-link:asc distinct raze l
-l:link?l
+link:asc distinct raze berkstan.l
+l:link?berkstan.l
 show S:(1 2#1+max over l), .ml.append[1f] l
 -1"not enough memory to convert Sparse -> full matriX";
 -1"just perform a few sparse iterations";
 show link[i]!r i:idesc r:10 .ml.pageranks[p;S]/ r:n#1f%n:S[0;0]
-

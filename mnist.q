@@ -8,7 +8,11 @@ mnist.b:"http://yann.lecun.com/exdb/mnist/"
 -1"downloading handwritten numbers dataset";
 .util.download[mnist.b;;".gz";system 0N!"gunzip -v ",] each mnist.f; / download data
 
--1"loading training data";
+-1"loading mnist training data";
 mnist.Y:enlist mnist.y:"i"$.util.ldmnist read1 `$mnist.f 0
 mnist.X:flip "f"$raze each .util.ldmnist read1 `$mnist.f 1
+
+-1"loading mnist testing data";
+mnist.Yt:enlist mnist.yt:"i"$.util.ldmnist read1 `$mnist.f 2
+mnist.Xt:flip "f"$raze each .util.ldmnist read1 `$mnist.f 3
 

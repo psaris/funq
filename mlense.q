@@ -1,7 +1,7 @@
 mlense.f:("ml-latest";"ml-latest-small") 1 / pick the smaller dataset
 mlense.b:"http://files.grouplens.org/datasets/movielens/" / base url
 -1"downloading latest grouplens movie lense dataset";
-.util.download[mlense.b;;".zip";system 0N!"unzip -n ",] mlense.f;
+.util.download[mlense.b;;".zip";"unzip -n "] mlense.f;
 -1"loading movie definitions: integer movieIds and enumerated genres";
 mlense.movie:("I**";1#",") 0:`$mlense.f,"/movies.csv"
 -1"remove movies without genres";

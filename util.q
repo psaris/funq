@@ -12,10 +12,11 @@ bm:{
 
 / (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
 download:{[b;f;e;uf]
- if[l~key l:`$":",f;:(::)];                       / local file exists
- if[()~key l:`$":",f,e;l 1: .Q.hg`$":",0N!b,f,e]; / download
- uf f,e;                                          / unzip
- }
+ if[0h=type f;:.z.s[b;;e;uf] each f];
+ if[l~key l:`$":",f;:l];                          / local file exists
+ if[()~key z:`$":",f,e;z 1: .Q.hg`$":",0N!b,f,e]; / download
+ if[count uf;system 0N!uf," ", f,e];              / unzip
+ l}
 
 / load mnist dataset
 ldmnist:{

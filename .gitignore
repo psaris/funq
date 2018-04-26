@@ -8,7 +8,8 @@
 /t10k-labels-idx1-ubyte
 /train-images-idx3-ubyte
 /train-labels-idx1-ubyte
-ETL9B
+/cifar-10-batches-bin
+/ETL9B
 *.so
 /k.h
 *.o
@@ -19,5 +20,11 @@ liblinear-*
 liblinear
 libsvm
 /pima-indians-diabetes.data
-OnlineNewsPopularity
+/OnlineNewsPopularity
 *.p[bgp]m
+/wdbc.data
+/web-BerkStan.txt
+/*-citibike-tripdata.csv
+/citibike
+/sample-*.txt
+

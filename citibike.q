@@ -1,7 +1,7 @@
 \l util.q
 .z.zd:17 2 6
 sd:2017.01m                     / start date
-ed:2017.10m                     / end date
+ed:2017.12m                     / end date
 
 -1"downloading citibike data";
 b:"http://s3.amazonaws.com/tripdata/"
@@ -23,20 +23,8 @@ f2:,[;"-citibike-tripdata"] each string[m2] except\: "."
 
 process:{[month;f]
  -1"parsing ", string f;
- t:.Q.id ("IPPH*EEH*EEISII";1#",") 0: f;
- -1"building stationid table";
+ t:.Q.id ("IPPH*EEH*EEISHC";1#",") 0: f;
  t:lower[cols t] xcol t;
- c:`stationid`latitude`longitude`name;
- s:c xcol `startstationid`startstationlatitude`startstationlongitude`startstationname#t;
- s,:c xcol `endstationid`endstationlatitude`endstationlongitude`endstationname#t;
- -1"splaying stationid";
- .Q.dpft[`:citibike;month;`stationid] `station set 0!select by stationid from s;
- -1"building tripdata table";
- t:update `station!station.stationid?startstationid from t;
- t:update `station!station.stationid?endstationid from t;
- t:delete startstationlongitude,startstationlatitude,startstationname from t;
- t:delete endstationlongitude,endstationlatitude,endstationname from t;
- t:update `gender!gender from t;
  -1"splaying tripdata";
  .Q.dpft[`:citibike;month;`bikeid] `tripdata set t;
  }
@@ -56,7 +44,6 @@ months:m1,m2
 files:f1,f2
 w:til count files
 if[not ()~key `:citibike;system"l citibike";w:where not months in month;system"cd ../"]
-if[()~key `:citibike;`:citibike/gender set get `gender set `unknown`male`female]
 months[w] process' `$(f1,f2)[w],\:".csv";
 -1"loading citibike database";
 \l citibike

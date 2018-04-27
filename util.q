@@ -10,6 +10,9 @@ bm:{
  x,:r*sin theta;
  x}
 
+/ generate a range of values between y and z with step-size x
+rng:{y+x*til 1+floor (z-y)%x}
+
 / (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
 download:{[b;f;e;uf]
  if[0h=type f;:.z.s[b;;e;uf] each f];

@@ -13,12 +13,12 @@ bm:{
 / generate a range of values between y and z with step-size x
 rng:{y+x*til 1+floor (z-y)%x}
 
-/ (b)ase url, (f)ile, (e)xtension, (u)nzip (f)unction
+/ (b)ase url, (f)ile, (e)xtension, (u)compress (f)unction
 download:{[b;f;e;uf]
  if[0h=type f;:.z.s[b;;e;uf] each f];
  if[l~key l:`$":",f;:l];                          / local file exists
  if[()~key z:`$":",f,e;z 1: .Q.hg`$":",0N!b,f,e]; / download
- if[count uf;system 0N!uf," ", f,e];              / unzip
+ if[count uf;system 0N!uf," ", f,e];              / uncompress
  l}
 
 / load mnist dataset

@@ -24,9 +24,8 @@ mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
 
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
-addint:prepend[1f]              / add intercept
 
-predict:{[X;THETA]mm[THETA] addint X} / regression predict
+predict:{[X;THETA]mm[THETA] prepend[1f] X} / regression predict
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
@@ -37,7 +36,7 @@ lincost:rlincost[0f]
 
 / regularized linear regression gradient
 rlingrad:{[l;X;Y;THETA]
- g:(1f%n:count Y 0)*mmt[predict[X;THETA]-Y] addint X;
+ g:(1f%n:count Y 0)*mmt[predict[X;THETA]-Y] prepend[1f] X;
  if[l>0f;g+:(l%n)*@[;0;:;0f]'[THETA]];
  g}
 lingrad:rlingrad[0f]
@@ -47,7 +46,7 @@ rcbfcostgrad:{[l;X;Y;theta]
  THETA:(count Y;0N)#theta;
  J:.5*sum sum 0f^J*J:predict[X;THETA]-Y;
  if[l>0f;J+:(.5*l)*dot[x]x:raze @[;0;:;0f]'[THETA]];
- g:mmt[0f^predict[X;THETA]-Y] addint X;
+ g:mmt[0f^predict[X;THETA]-Y] prepend[1f] X;
  if[l>0f;g+:l*@[;0;:;0f]'[THETA]];
  (J;raze g)}
 cbfcostgrad:rcbfcostgrad[0f]
@@ -157,7 +156,7 @@ rlogcost:{[l;X;Y;THETA]
 logcost:rlogcost[0f]
 
 bpg:{[THETA;a;D] / back prop gradient
- a:addint each -1_a;
+ a:prepend[1f] each -1_a;
  G:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a];
  G,:enlist D;
  g:(G mmt' a)%count D 0;
@@ -354,19 +353,19 @@ kmeanspp:{[df;X;dC]
 / "Forgy" method and randomly pick k centroids.
 lloyd:{[df;mf;X;C]
  if[not t:type C;C:cgroup[df;X;C];t:99h]; / assign step
- if[99h=t;:mf''[X@\:value C]];            / update step
+ if[99h=t;:(mf'') X@\:value C];            / update step
  if[0>C;:X@\:C?count X 0];                / forgy
  C:flip last (C-1) kmeanspp[df;X]/ (df[X] c;enlist c:X@\:rand count X 0);
  C}
 
-kmeans:lloyd[edist;avg]
+kmeans:lloyd[edist2;avg]
 kmedians:lloyd[mdist;med]
-khmeans:lloyd[edist;hmean]
+khmeans:lloyd[edist2;hmean]
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid and return the distance
 cdist:{[df;X;C] k!df[X@\:value g] C@\:k:key g:cgroup[df;X;C]}
-ecdist:cdist[edist]
+ecdist:cdist[edist2]
 mcdist:cdist[mdist]
 
 distortion:sum sum each

@@ -59,4 +59,4 @@ show .util.totals[`TOTAL] .ml.cm[iris.y;distinct[iris.y] .ml.ugrp g]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids
-show plt (.ml.distortion .ml.ecdist[iris.X] .ml.kmeans[iris.X]@) each neg 1+til 10
+show plt (sum sum each .ml.ecdist[iris.X] .ml.kmeans[iris.X]@) each neg 1+til 10

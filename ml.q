@@ -353,7 +353,7 @@ kmeanspp:{[df;X;dC]
 / "Forgy" method and randomly pick k centroids.
 lloyd:{[df;mf;X;C]
  if[not t:type C;C:cgroup[df;X;C];t:99h]; / assign step
- if[99h=t;:(mf'') X@\:value C];            / update step
+ if[99h=t;:(mf'') X@\:value C];           / update step
  if[0>C;:X@\:C?count X 0];                / forgy
  C:flip last (C-1) kmeanspp[df;X]/ (df[X] c;enlist c:X@\:rand count X 0);
  C}
@@ -367,8 +367,6 @@ khmeans:lloyd[edist2;hmean]
 cdist:{[df;X;C] k!df[X@\:value g] C@\:k:key g:cgroup[df;X;C]}
 ecdist:cdist[edist2]
 mcdist:cdist[mdist]
-
-distortion:sum sum each
 
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}

@@ -26,6 +26,9 @@ defparam:{[prob;param]
  if[0f>param`gamma;param[`gamma]:1f%max(last key@)each prob`x];
  param}
 
+sparse:{{("i"$1+i)!x i:where not 0f=x} each flip x}
+prob:{`x`y!(sparse x;y)}
+
 read_problem:{[s]
  i:s?\:" ";
  y:i#'s;

@@ -34,6 +34,9 @@ defparam:{[prob;param]
  if[0f>=param`eps;param[`eps]:defeps param`solver_type];
  param}
 
+sparse:{{("i"$1+i)!x i:where not 0f=x} each flip x}
+prob:{`x`y!(sparse x;y)}
+
 read_problem:{[s]
  i:s?\:" ";
  y:i#'s;

@@ -337,26 +337,22 @@ wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
 / using (d)istance (f)function and data X, append the next cluster
-/ to the pair (min cluster (d)istance;all (C)lusters)
-kmeanspp:{[df;X;dC]
- d:dC[0]&d*d:df[X] last C:dC 1;
- C,:enlist X@\: first iwrand[1] d;
- (d;C)}
+/ to the pair (min cluster (d)istance^2;all (C)lusters)
+kpp:{[df;X;d2C]
+ if[not count C:d2C 1;:(0w;X@\:1?count X 0)];
+ d2:d2C[0]&d*d:df[X] last each C;
+ C:C,'X@\: first iwrand[1] d2;
+ (d2;C)}
+kmeanspp:kpp[edist]
+kmedianspp:kpp[mdist]
+khmeanspp:kpp[hmean]
 
 / k-(means|medians) algorithm
 
-/ stuart lloyd's algorithm. using a (d)istance (f)unction and
-/ (m)ean/edian (f)unction, find (k)-centroids in the data (X) starting
-/ with a (C)entroid list. if C is an atom, use it to randomly
-/ initialize C. if positive, use k-means++ method to pick k centroids
-/ that are purposefully distant from each other. if negative, use
-/ "Forgy" method and randomly pick k centroids.
-lloyd:{[df;mf;X;C]
- if[not t:type C;C:cgroup[df;X;C];t:99h]; / assign step
- if[99h=t;:(mf'') X@\:value C];           / update step
- if[0>C;:X@\:C?count X 0];                / forgy
- C:flip last (C-1) kmeanspp[df;X]/ (df[X] c;enlist c:X@\:rand count X 0);
- C}
+/ stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
+/ data in (X) to the nearest (C)luster and then uses the (m)ean/edian
+/ (f)unction to update the cluster location.
+lloyd:{[df;mf;X;C](mf'') X@\:value cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg]
 kmedians:lloyd[mdist;med]
@@ -365,7 +361,7 @@ khmeans:lloyd[edist2;hmean]
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid and return the distance
 cdist:{[df;X;C] k!df[X@\:value g] C@\:k:key g:cgroup[df;X;C]}
-ecdist:cdist[edist2]
+ecdist:cdist[edist]
 mcdist:cdist[mdist]
 
 / ungroup (inverse of group)

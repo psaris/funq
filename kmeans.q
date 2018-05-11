@@ -25,14 +25,14 @@ show plt X
 -1"there are two ways to initialze the algorithm:";
 -1" 1. randomly pick k centroids (k-means++ and forgy method)";
 -1" 2. assign points randomly to k centroids - random partition method";
--1"the random partition method can be done by hand";
-.ml.kmeans[X] over group count[X 0]?k
--1"the k-means++ method is used if the argument is a positive integer";
-.ml.kmeans[X] over k
--1"the forgy method is used if the argument is a negate integer";
-.ml.kmeans[X] over neg k
+-1"the forgy method is the simplest to implement"
+.ml.kmeans[X] over neg[k]?/:X
+-1"the k-means++ method is supplied as an alternate initialization method";
+.ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()
+-1"the random partition method can also be done by hand";
+.ml.kmeans[X] over (avg'') X@\:value group count[X 0]?k
 -1"we can plot the data and overlay the centroids found using kmeans++";
-show plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
+show plt .ml.append[0;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 
 -1"kmedians uses the lloyd algorithm, but uses the *manhattan distince*";
 -1"also known as the taxicab metric to assign points to clusters";
@@ -41,22 +41,22 @@ show plt .ml.append[0f;X],' .ml.append[1f].ml.kmeans[X] over k
 -1"it does not, however, force the centroid to be an actual point in the data";
 -1"the centroid can be (x1;y2;z3), and not necessarily (x3;y3;z3)";
 -1"we can see the progress by using scan instead of over";
-show .ml.kmedians[X] scan k
+show .ml.kmedians[X] scan neg[k]?/:X
 
 -1"we can apply kmeans to the classic machine learning iris data";
 \l iris.q
--1"we can see how the data set clusters in the 4th dimension";
-show plt iris.X 3
+-1"we can see how the data set clusters the petal width";
+show plt iris.t.pwidth
 
 -1"we iteratively call kmeans until convergence";
-C:.ml.kmeans[iris.X] over 3
+C:.ml.kmeans[iris.X] over last 3 .ml.kmeanspp[iris.X]/ ()
 -1"and can show which group each data point was assigned to.";
-show g:.ml.cgroup[.ml.edist;iris.X;C] / classify
+show m:.ml.mode each iris.y g:.ml.cgroup[.ml.edist;iris.X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg iris.y=distinct[iris.y] .ml.ugrp g / accuracy
+avg iris.y=m .ml.ugrp g / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[iris.y;distinct[iris.y] .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[iris.y;m .ml.ugrp g]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids
-show plt (sum sum each .ml.ecdist[iris.X] .ml.kmeans[iris.X]@) each neg 1+til 10
+show plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[iris.X] each neg 1+til 10

@@ -15,9 +15,15 @@ ismatrix:{
  b:identical count each x;
  b}
 
+mnorm:sum abs@                  / manhattan (taxicab) norm
+enorm2:{sum x*x}                / euclidean norm squared
+enorm:(')[sqrt;enorm2]          / euclidean norm
+mknorm:{sum[abs[y] xexp x] xexp 1f%x} / minkowski norm
+normalize:{x%\:enorm x}         / normalize
+
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
-cabs:{sqrt sum x*x}             / complex absolute value
+cabs:enorm                      / complex absolute value
 mandelbrot:{[c;x]c+csqr x}      / mandelbrot
 mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
 
@@ -307,13 +313,13 @@ updals:{[l;M;y]
  v}
 
 / k-means
-edist2:{sum x*x-:y}             / euclidian distance squared
-edist:(')[sqrt;edist2]          / euclidian distance
+mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
+edist2:(')[enorm2;-]            / euclidean distance squared
+edist:(')[enorm;-]              / euclidean distance
 /pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm[y;x]} / pairwise edist2
 pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mdist:{sum abs x-y}             / manhattan distance (taxicab metric)
-mkdist:{sum[abs[z-y] xexp x] xexp 1f%x} / minkowski distanace
-hmean:{1f%avg 1f%x}             / harmonic mean
+mkdist:{mknorm[x] y-z}                           / minkowski distanace
+hmean:{1f%avg 1f%x}                              / harmonic mean
 
 lntf:{1f+log x}                    / log normalized term frequency
 dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
@@ -324,7 +330,7 @@ idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{(sum x*y)%sqrt(sum x*x@:w)*sum y*y@:w:wnan(x;y)} / cosine similarity
-cosdist:(')[1f-;cossim]                  / cosine distance
+cosdist:(')[1f-;cossim]         / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
@@ -352,11 +358,12 @@ khmeanspp:kpp[hmean]
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
 / data in (X) to the nearest (C)luster and then uses the (m)ean/edian
 / (f)unction to update the cluster location.
-lloyd:{[df;mf;X;C](mf'') X@\:value cgroup[df;X;C]}
+lloyd:{[df;mf;X;C]mf X@\:value cgroup[df;X;C]}
 
-kmeans:lloyd[edist2;avg]
-kmedians:lloyd[mdist;med]
-khmeans:lloyd[edist2;hmean]
+kmeans:lloyd[edist2;avg'']      / k means
+kmedians:lloyd[mdist;med'']     / k median
+khmeans:lloyd[edist2;hmean'']   / k harmonic means
+skmeans:lloyd[cosdist;normalize (avg'')@] / spherical k-means
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid and return the distance

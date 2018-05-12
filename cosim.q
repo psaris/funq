@@ -3,6 +3,7 @@
 \l iris.q
 
 / cosine similarity (distance)
-flip C:.ml.lloyd[.ml.cosdist;avg;iris.X]/[-3] /find 3 centroids
-show g:.ml.cgroup[.ml.cosdist;iris.X;C]       / classify
-avg iris.y=distinct[iris.y] .ml.ugrp g / accuracy
+X:.ml.normalize iris.X
+flip C:.ml.skmeans[X] over -3?/:X      / spherical k-means
+show m:.ml.mode each iris.y g:.ml.cgroup[.ml.cosdist;X;C] / classify
+avg iris.y=m .ml.ugrp g / accuracy

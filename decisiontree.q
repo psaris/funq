@@ -45,13 +45,13 @@ z:$[`qml in key `;neg .qml.nicdf .0125;2.241403];
 s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tree:.ml.q45[2;0W;::] s;
 .util.assert[`No] .ml.dtc[tree] d
--1 "we also can use the gini impurity instead of entropy (faster with similar behavior)";
+-1 "we can also use the gini impurity instead of entropy (faster with similar behavior)";
 -1 .ml.ptree[0] tree:.ml.ct[2;0W;::] s; / classification tree
 .util.assert[`No] .ml.dtc[tree] d
--1 "we also can also create a regression tree when the target is numeric";
+-1 "we can also create a regression tree when the target is numeric";
 -1 .ml.ptree[0] tree:.ml.rt[2;0W;::] update "e"$`Yes=Play from s; / regression tree
 .util.assert[0f] .ml.dtc[tree] d
--1 "we also can also create an aid tree when the target is numeric";
+-1 "we can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "e"$`Yes=Play from s; / regression tree
 .util.assert[1] "j"$.ml.dtc[tree] d
 

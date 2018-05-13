@@ -4,9 +4,10 @@
 \l bible.q
 
 -1 "converting utf-8 octal escapes";
-s:bible.sf ssr[;"\342\200[\234\235]";"\""] ssr[;"\342\200[\231\230]";"'"] 3_"\n" sv lower bible.txt
--1 "removing punctuation, plurals and -ing";
-s:(" " vs except[;"_().;,:?!*'\""] ssr[;"'s ";" "] ssr[;"ing ";" "] ssr[;"[-\n]";" "]@) each s
+s:bible.sf 3_"\n" sv lower bible.txt
+/s:pandp.sf 3_"\n" sv lower pandp.txt
+-1 "cleaning text";
+s:(" " vs .util.cleantxt@) each s
 
 -1 "computing distinct word list (droping stop words)";
 w:asc distinct[raze s] except stopwords.sw
@@ -23,3 +24,10 @@ vsm:0f^.ml.tfidf[.ml.dntf[.5];.ml.pidf] m
 show vsm@'idesc each vsm
 -1 "display top words based on tf-idf";
 show w 5#/:idesc each vsm
+
+vsm:0f^.ml.tfidf[::;.ml.idf] m
+X:.ml.normalize vsm
+C:.ml.skmeans[X] -30?/:X
+g:.ml.cgroup[.ml.cosdist;X;C] / classify
+/ plot errors with increasing number of centroids
+show plt {sum sum each .ml.ccdist[x] .ml.skmeans[x] y?/:x}[X] each neg 1+til 30

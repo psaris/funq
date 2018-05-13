@@ -100,3 +100,12 @@ mem:{(3#system"w")%x (1024*)/ 1}
 
 / throw verbose exception if x <> y
 assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
+
+cleantxt:{[s]
+ s:ssr[s;"\342\200[\234\235]";"\""]; / replace double quotes
+ s:ssr[s;"\342\200[\231\230]";"'"];  / replace single quotes
+ s:except[s;"_().;,:?!*'\""];        / remove punctuation
+ s:ssr[s;"'s ";" "];                 / remove plural
+ s:ssr[s;"ing ";" "];                / remove -ing
+ s:ssr[s;"[-\n]";" "];               / remove hyphen and newline
+ s}

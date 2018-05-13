@@ -368,8 +368,9 @@ skmeans:lloyd[cosdist;normalize (avg'')@] / spherical k-means
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid and return the distance
 cdist:{[df;X;C] k!df[X@\:value g] C@\:k:key g:cgroup[df;X;C]}
-ecdist:cdist[edist]
 mcdist:cdist[mdist]
+ecdist:cdist[edist]
+ccdist:cdist[cosdist]
 
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}

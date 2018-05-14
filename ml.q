@@ -140,7 +140,7 @@ uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
 / where not any null
-wnan:{$[all type each x;where not any null x;til count x]}
+wnan:{$[all type each x;where not any null x;::]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 

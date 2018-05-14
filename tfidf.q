@@ -29,5 +29,3 @@ vsm:0f^.ml.tfidf[::;.ml.idf] m
 X:.ml.normalize vsm
 C:.ml.skmeans[X] -30?/:X
 g:.ml.cgroup[.ml.cosdist;X;C] / classify
-/ plot errors with increasing number of centroids
-show plt {sum sum each .ml.ccdist[x] .ml.skmeans[x] y?/:x}[X] each neg 1+til 30

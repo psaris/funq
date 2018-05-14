@@ -312,7 +312,7 @@ updals:{[l;M;y]
  v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
  v}
 
-/ k-means
+hdist:{sum not x=y}             / hamming distance
 mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
 edist2:(')[enorm2;-]            / euclidean distance squared
 edist:(')[enorm;-]              / euclidean distance

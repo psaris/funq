@@ -2,8 +2,6 @@
 \l funq.q
 \l pendigits.q
 
-/ http://archive.ics.uci.edu/ml/datasets/Pen-Based+Recognition+of+Handwritten+Digits
-
 k:4
 df:`.ml.edist
 -1"checking accuracy of using ",string[k], " nearest neigbors and df=", string df;

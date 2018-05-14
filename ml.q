@@ -494,11 +494,16 @@ nmode:{imax count each group x} / naive mode
 mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
 wmode:{[w;x]imax sum each w group x} / weighted mode
 
+isord:{type[x] in 8 9h}                / is ordered
+aom:{[x]$[isord x;avg;mode]x}          / average or mode
+waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
+
 / k nearest neighbors
 
-/ pick k closest values to x from training data X and return the
-/ (c)lassification that occurs most frequently
-knn:{[df;k;c;X;x](mode c #[;iasc df[X;x]]@) each k}
+/ using the (d)istance (f)unction, pick k closest values to x from
+/ training data X and apply the (c)lassification or (r)egression
+/ (f)unction
+knn:{[df;k;c;X;x](aom c #[;iasc df[X;x]]@) each k}
 
 / markov clusetering
 
@@ -580,8 +585,6 @@ ogain:{[mdl;n;sf;w;x;y]
  if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
  g}
 
-isord:{type[x] in 8 9 15h} / is ordered
-
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (c)ategorical
 / (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (s)plit
@@ -618,12 +621,9 @@ prune:{[ef;t]
  if[e<((sum first@) each b) wavg (ef .) each b;:wa];
  t}
 
-/ decision tree mode
-dtmode:{[w;x]$[isord x;wavg;wmode][w;x]}
-
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
-dtc:{[tr;d] dtmode . dtcr[tr;d]}
+dtc:{[tr;d] waom . dtcr[tr;d]}
 dtcr:{[tr;d]                    / recursive component
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
@@ -632,7 +632,7 @@ dtcr:{[tr;d]                    / recursive component
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]
- v:dtmode[w;x];                 / value
+ v:waom[w;x];                   / value
  e:$[isord x;string sum e*e:v-x;string[.1*"i"$1e3*1f-avg x = v],"%"];
  s:string[v], " (n = ", string[count x],", err = ",e, ")";
  s}

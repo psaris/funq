@@ -5,5 +5,6 @@ iris.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
 iris.XY:150#/:("FFFFS";",") 0: `$iris.f
 iris.X:-1_iris.XY
 iris.y:first iris.Y:-1#iris.XY
-iris.t:`species xcols flip `slength`swidth`plength`pwidth`species!iris.XY
+iris.c:`slength`swidth`plength`pwidth`species
+iris.t:`species xcols flip iris.c!iris.XY
 

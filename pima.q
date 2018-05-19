@@ -5,4 +5,5 @@ pima.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-di
 pima.XY:("EEEEEEEEB";",")0:`$pima.f
 pima.X:-1_pima.XY
 pima.y:first pima.Y:-1#pima.XY
-pima.t:`class xcols flip `preg`plas`pres`skin`test`mass`pedi`age`class!pima.XY
+pima.c:`preg`plas`pres`skin`test`mass`pedi`age`class
+pima.t:`class xcols flip pima.c!pima.XY

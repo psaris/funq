@@ -1,7 +1,6 @@
 *.gz
 *.zip
-/bezdekIris.data
-/iris.data
+*.data
 /ml-latest
 /ml-latest-small
 /t10k-images-idx3-ubyte
@@ -19,10 +18,8 @@ liblinear-*
 /pendigits.tra
 liblinear
 libsvm
-/pima-indians-diabetes.data
 /OnlineNewsPopularity
 *.p[bgp]m
-/wdbc.data
 /web-BerkStan.txt
 /*-citibike-tripdata.csv
 /citibike

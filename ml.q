@@ -245,9 +245,9 @@ cm:{
 
 / cross validation
 cv:{[f;ys;Xs;i]
- X:(,'/)Xs _ i; / drop i and raze
- y:raze ys _ i; / drop i and raze
- e:(ys i)=.ml.f2nd[f[y;X]] Xs i; / compute equality
+ X:(,'/)Xs _ i;                 / drop i and raze
+ y:raze ys _ i;                 / drop i and raze
+ e:(ys i)=f[y;X] Xs i;          / compute equality
  e}
 
 / neural network cut
@@ -495,15 +495,18 @@ mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
 wmode:{[w;x]imax sum each w group x} / weighted mode
 
 isord:{type[x] in 8 9h}                / is ordered
-aom:{[x]$[isord x;avg;mode]x}          / average or mode
+aom:{$[isord x;avg;mode]x}             / average or mode
 waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
 
 / k nearest neighbors
 
-/ using the (d)istance (f)unction, pick k closest values to x from
-/ training data X and apply the (c)lassification or (r)egression
+/ using the (d)istance (f)unction, pick k closest values to (x) from
+/ training data (X) and classify/regress the data using (w)eighting
 / (f)unction
-knn:{[df;k;c;X;x](aom c #[;iasc df[X;x]]@) each k}
+knn:{[wf;k;y;d]
+ if[not type d;:.z.s[wf;k;y] peach d];
+ n:(waom . (wf d@;y)@\:#[;iasc d]@) each k;
+ n}
 
 / markov clusetering
 

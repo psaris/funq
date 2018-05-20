@@ -546,12 +546,16 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 / decision trees
 
 / weighted odds
-odds:{[w;g]g%sum g:sum each w g}
+wodds:{[w;g]g%sum g:sum each w g}
+odds:{[g]g%sum g:count each g}
 
 / splitting functions
-entropy:{[w;x]neg sum x*2 xlog x:odds[w] group x}
-gini:{[w;x]1f-sum x*x:odds[w] group x}
-sse:{[w;x]sum x*x-:w wavg x}
+entropy:{neg sum x*2 xlog x:odds group x}
+wentropy:{[w;x]neg sum x*2 xlog x:wodds[w] group x}
+gini:{1f-sum x*x:odds group x}
+wgini:{[w;x]1f-sum x*x:wodds[w] group x}
+sse:{sum x*x-:avg x}
+wsse:{[w;x]sum x*x-:w wavg x}
 
 / create all combinations of length x from a list (or size of) y
 cmb:{
@@ -565,7 +569,7 @@ cmb:{
 / (optionally (n)ormalized by splitinfo) of x and y
 gain:{[n;sf;w;x;y]
  g:sf[w] x;
- g-:sum odds[w;gy]*(not null key gy)*w[gy] sf' x gy:group y;
+ g-:sum wodds[w;gy]*(not null key gy)*w[gy] sf' x gy:group y;
  if[n;g%:sf[w] y];              / gain ratio
  (g;::;gy)}
 
@@ -674,12 +678,12 @@ pgraph:{[tr]
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
-aid:dt[sgain;ogain[0b;0b];sse] / automatic interaction detection
-id3:dt[gain[0b];gain[0b];entropy;1;0W;::] / iterative dichotomizer 3
-q45:dt[gain[1b];ogain[1b;1b];entropy] / like c4.5 (but does not post-prune)
-ct:dt[gain[0b];ogain[0b;1b];gini]     / classification tree
-rt:dt[gain[0b];ogain[0b;0b];sse]      / regression tree
-stump:dt[gain[0b];ogain[0b;1b];entropy;1;1]
+aid:dt[sgain;ogain[0b;0b];wsse] / automatic interaction detection
+id3:dt[gain[0b];gain[0b];wentropy;1;0W;::] / iterative dichotomizer 3
+q45:dt[gain[1b];ogain[1b;1b];wentropy] / like c4.5 (but does not post-prune)
+ct:dt[gain[0b];ogain[0b;1b];wgini]     / classification tree
+rt:dt[gain[0b];ogain[0b;0b];wsse]      / regression tree
+stump:dt[gain[0b];ogain[0b;1b];wentropy;1;1]
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

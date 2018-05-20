@@ -559,6 +559,8 @@ gini:{1f-sum x*x:odds group x}
 wgini:{[w;x]1f-sum x*x:wodds[w] group x}
 sse:{sum x*x-:avg x}
 wsse:{[w;x]sum x*x-:w wavg x}
+theta:{1f-sum[x=mode x]%count x}
+wtheta:{[w;x]1f-sum[x=wmode[w;x]]%count x}
 
 / create all combinations of length x from a list (or size of) y
 cmb:{
@@ -682,6 +684,7 @@ pgraph:{[tr]
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
 aid:dt[sgain;ogain[0b;0b];wsse] / automatic interaction detection
+thaid:dt[sgain;ogain[0b;0b];wtheta] / theta automatic interaction detection
 id3:dt[gain[0b];gain[0b];wentropy;1;0W;::] / iterative dichotomizer 3
 q45:dt[gain[1b];ogain[1b;1b];wentropy] / like c4.5 (but does not post-prune)
 ct:dt[gain[0b];ogain[0b;1b];wgini]     / classification tree

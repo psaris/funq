@@ -18,7 +18,7 @@ ismatrix:{
 mnorm:sum abs@                  / manhattan (taxicab) norm
 enorm2:{sum x*x}                / euclidean norm squared
 enorm:(')[sqrt;enorm2]          / euclidean norm
-mknorm:{sum[abs[y] xexp x] xexp 1f%x} / minkowski norm
+mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
 normalize:{x%\:enorm x}         / normalize
 
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
@@ -318,7 +318,7 @@ edist2:(')[enorm2;-]            / euclidean distance squared
 edist:(')[enorm;-]              / euclidean distance
 /pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm[y;x]} / pairwise edist2
 pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{mknorm[x] y-z}                           / minkowski distanace
+mkdist:{[p;x;y]mknorm[p] x-y}                    / minkowski distanace
 hmean:{1f%avg 1f%x}                              / harmonic mean
 
 lntf:{1f+log x}                    / log normalized term frequency

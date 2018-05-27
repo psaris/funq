@@ -329,8 +329,8 @@ idfs:{log 1f+count[x]%sum 0<x}  / inverse document frequency smooth
 idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
-cossim:{(sum x*y)%sqrt(sum x*x@:w)*sum y*y@:w:wnan(x;y)} / cosine similarity
-cosdist:(')[1f-;cossim]         / cosine distance
+cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
+cosdist:(')[1f-;cossim]                          / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid

@@ -316,8 +316,8 @@ hdist:{sum not x=y}             / hamming distance
 mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
 edist2:(')[enorm2;-]            / euclidean distance squared
 edist:(')[enorm;-]              / euclidean distance
-/pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm[y;x]} / pairwise edist2
-pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
+pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
+/pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mkdist:{[p;x;y]mknorm[p] x-y}                    / minkowski distanace
 hmean:{1f%avg 1f%x}                              / harmonic mean
 
@@ -500,9 +500,9 @@ waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
 
 / k nearest neighbors
 
-/ using the (d)istance (f)unction, pick k closest values to (x) from
-/ training data (X) and classify/regress the data using (w)eighting
-/ (f)unction
+/ pick (k) indices corresponding to the smallest values from
+/ (d)istance vector (or matrix) and use (w)eighting (f)unction to
+/ return the best estimate of the (y)-values
 knn:{[wf;k;y;d]
  if[not type d;:.z.s[wf;k;y] peach d];
  n:(waom . (wf d@;y)@\:#[;iasc d]@) each k;

@@ -27,6 +27,8 @@ cabs:enorm                      / complex absolute value
 mandelbrot:{[c;x]c+csqr x}      / mandelbrot
 mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
 
+/ use (w)eights to randomly partition (x)
+part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
 
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}

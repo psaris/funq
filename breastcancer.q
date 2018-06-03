@@ -11,7 +11,7 @@
 
 
 -1 "splitting train/test";
-d:`train`test!(floor .75*count wdbc.t) cut 0N?wdbc.t
+d:`train`test!.ml.part[3 1] wdbc.t
 -1 "growing a random forest";
 m:.ml.rfo[10;floor sqrt count cols t;.ml.ct[2;0W;::]] d`train
 -1 "generating predictions";

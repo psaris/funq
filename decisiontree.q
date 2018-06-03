@@ -61,7 +61,7 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 
 
 -1 "we can now split the iris data into training and test batches";
-show d:`train`test!floor[.75*count iris.t] cut 0N?iris.t
+show d:`train`test!.ml.part[3 1] iris.t
 -1 .ml.ptree[0] tree:.ml.ct[1;0W;::] `species xcols d`train;
 -1 "testing the tree on the test set produces an accuracy of:";
 avg d.test.species=p:tree .ml.dtc/: d`test

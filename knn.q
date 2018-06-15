@@ -2,7 +2,7 @@
 \l funq.q
 \l pendigits.q
 
--1"pulling pendigits data into global namespace";
+-1"referencing pendigits data from global namespace";
 `X`Xt`y`yt set' pendigits`X`Xt`y`yt;
 k:4
 df:`.ml.edist

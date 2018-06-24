@@ -485,11 +485,11 @@ gaussll:{[mu;s2;X] -.5*sum (log 2f*acos -1f;log s2;(X*X-:mu)%s2)}
 / with prior probabilities (p)hi and distribution parameters (t)heta
 em:{[lf;mf;X;pt]                      / expectation maximization
  if[a:0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
- l:$[a;count[$[type X;X;X 0]]?/:count[pt 0]#1f;(@[;X]lf .)peach flip 1_pt];
+ l:$[a;count[$[type X;X;X 0]]?/:count[pt 0]#1f;(@[;X]lf .) peach pt 1];
  W:p%\:sum p:l*phi:pt 0;          / weights (responsibilities)
  if[0h<type phi;phi:avg peach W]; / new prior probabilities
- theta:flip mf[X] peach W;        / new coefficients
- enlist[phi],theta}
+ theta:mf[X] peach W;        / new coefficients
+ (phi;theta)}
 
 / return value which occurs most frequently
 nmode:{imax count each group x} / naive mode

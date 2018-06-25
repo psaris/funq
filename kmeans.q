@@ -45,18 +45,19 @@ show .ml.kmedians[X] scan neg[k]?/:X
 
 -1"we can apply kmeans to the classic machine learning iris data";
 \l iris.q
+`X`y`t set' iris`X`y`t;
 -1"we can see how the data set clusters the petal width";
-show plt iris.t.pwidth
+show plt t.pwidth
 
 -1"we iteratively call kmeans until convergence";
-C:.ml.kmeans[iris.X] over last 3 .ml.kmeanspp[iris.X]/ ()
+C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
 -1"and can show which group each data point was assigned to.";
-show m:.ml.mode each iris.y g:.ml.cgroup[.ml.edist;iris.X;C] / classify
+show m:.ml.mode each y g:.ml.cgroup[.ml.edist;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg iris.y=m .ml.ugrp g / accuracy
+avg y=m .ml.ugrp g / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[iris.y;m .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids
-show plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[iris.X] each neg 1+til 10
+show plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[X] each neg 1+til 10

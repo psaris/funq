@@ -56,16 +56,18 @@ mf:.ml.gaussmlmv
 / lets try the iris data again for >2d
 
 \l iris.q
-
-k:count distinct iris.y
-phi:k#1f%k                           / equal prior probability
-mu:iris.X@\:/:neg[k]?count iris.y    / random initialization
-S:k#enlist iris.X cov\:/: iris.X     / sample covariance
+`X`y set' iris`X`y;
+k:count distinct y              / 3 clusters
+phi:k#1f%k                      / equal prior probability
+mu:X@\:/:neg[k]?count y         / pick k random points for mu
+S:k#enlist X cov\:/: X          / sample covariance
 lf:.ml.gaussmv
 mf:.ml.gaussmlmv
-.ml.em[lf;mf;iris.X] over (phi;flip (mu;S))
-a:.ml.em[lf;mf;iris.X] over k   / let .ml.em initialize parameters
+.ml.em[lf;mf;X] over (phi;flip (mu;S))
+a:.ml.em[lf;mf;X] over k        / let .ml.em initialize parameters
 / how well did it cluster the data?
-g:0 1 2!value group .ml.f2nd[.ml.imax] (@[;iris.X]lf .) peach a 1
-show m:.ml.mode each iris.y g
-avg iris.y=m .ml.ugrp g
+g:0 1 2!value group .ml.f2nd[.ml.imax] (@[;X]lf .) peach a 1
+show m:.ml.mode each y g
+avg y=m .ml.ugrp g
+-1"what does the confusion matrix look like?";
+show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]

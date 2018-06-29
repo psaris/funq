@@ -452,48 +452,56 @@ binpdf:{[n;p;k]
 binll:{[n;p;k](k*log p)+$[n;(n-k)*log 1f-p;0f]}
 / binomial likelihood approximation (without the coefficient)
 binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
-/ binomial maximum likelihood
-binml:{[n;x;w]$[type x;1#w wavg x%n;x .z.s[n]\: w]}
+/ binomial maximum likelihood estimator
+binmle:{[n;x;w]$[type x;1#w wavg x%n;x .z.s[n]\: w]}
 
 / multinomial log likelhood
 multill:binll[0]
 / multinomial likelihood approximation
 multila:binla[0]
-/ multinomial maximum likelihood (where n is for add n smoothing)
-multiml:{[n;x;w]$[type x;1#w wsum x%n;(x:x,'n) .z.s[sum/[x]]\: w,1f]}
+/ multinomial maximum likelihood estimator (where n is for add n smoothing)
+multimle:{[n;x;w]$[type x;1#w wsum x%n;(x:x,'n) .z.s[sum/[x]]\: w,1f]}
+
+pi:acos -1f
+
 / gaussian kernel
 gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}
 
 / gaussian
 gauss:{[mu;s2;x]
  p:exp (x*x-:mu)%-2*s2;
- p%:sqrt 2f*s2*acos -1f;
+ p%:sqrt 2f*s2*pi;
  p}
+/ guassian log likelihood
+gaussll:{[mu;s2;X] -.5*sum (log 2f*pi;log s2;(X*X-:mu)%s2)}
+/ gaussian maximum likelihood estimator
+gaussmle:{[x;w]$[type x;(mu;w wavg x*x-:mu:w wavg x);x .z.s\: w]}
 
 / gaussian multivariate
 gaussmv:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
  p:exp -.5*sum X*mm[minv s2;X-:mu];
- p*:sqrt 1f%.qml.mdet s2;
- p*:(2f*acos -1f) xexp -.5*count X;
+ p*:sqrt 1f%mdet s2;
+ p*:(2f*pi) xexp -.5*count X;
  p}
+/ gaussian multivariate log likelihood
+gaussmvll:{[mu;s2;X]
+ if[type s2;s2:diag count[X]#s2];
+ p:sum X*mm[minv s2;X-:mu];
+ p+:log mdet s2;
+ p+:count[X]*log 2f*pi;
+ p*:-.5;
+ p}
+/ gaussian maximum likelihood estimator multi variate
+gaussmvmle:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
-/ gaussian maximum likelihood
-gaussml:{[x;w]$[type x;(mu;w wavg x*x-:mu:w wavg x);x .z.s\: w]}
-/ gaussian maximum likelihood multi variate
-gaussmlmv:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
-
-/ guassian log likelihood
-gaussll:{[mu;s2;X] -.5*sum (log 2f*acos -1f;log s2;(X*X-:mu)%s2)}
-
-/ (l)ikelhood (f)unction, (m)aximization (f)unction
+/ (l)ikelhood (f)unction, (m)aximum likelihood estimator (f)unction
 / with prior probabilities (p)hi and distribution parameters (t)heta
-em:{[lf;mf;X;pt]                      / expectation maximization
- if[a:0h>type pt;pt:enlist pt#1f%pt]; / default to equal prior probabilities
- l:$[a;count[$[type X;X;X 0]]?/:count[pt 0]#1f;(@[;X]lf .) peach pt 1];
- W:p%\:sum p:l*phi:pt 0;          / weights (responsibilities)
- if[0h<type phi;phi:avg peach W]; / new prior probabilities
- theta:mf[X] peach W;        / new coefficients
+em:{[lf;mf;X;pt]                / expectation maximization
+ l:(@[;X]lf .) peach pt 1;
+ W:p%\:sum p:l*phi:pt 0;        / weights (responsibilities)
+ phi:avg peach W;               / new prior probabilities
+ theta:mf[X] peach W;           / new coefficients
  (phi;theta)}
 
 / return value which occurs most frequently

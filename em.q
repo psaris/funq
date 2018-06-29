@@ -6,16 +6,16 @@
 / binomial example
 / http://www.nature.com/nbt/journal/v26/n8/full/nbt1406.html
 n:10
-x:sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
-theta: flip enlist .6 .5        / initial coefficients
-lf:.ml.binla[n]                 / likelihood function
-mf:.ml.binml[n]                 / parameter maximization function
-/ pass phi as 1 because coins are picked with equal probability
-.ml.em[lf;mf;x] (1;theta)
-.ml.em[lf;mf;x] over (1;theta)  / call until convergence
-.ml.em[lf;mf;x] over 2          / let .ml.em initialize parameters
+x:"f"$sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
+theta:.6 .5        / initial coefficients
+lf:.ml.binla[n]    / likelihood function
+mf:.ml.binmle[n]   / parameter maximization function
+phi:2#1f%2f        / coins are picked with equal probability
+.ml.em[lf;mf;x] pt:(phi;flip enlist theta)
+.ml.em[lf;mf;x] over pt  / call until convergence
+/.ml.em[lf;mf;x] over 2   / let .ml.em initialize parameters
 / which flips came from which theta? pick maximum log likelkhood
-.ml.f2nd[.ml.imax] (@[;x] .ml.binll[n] .) peach last .ml.em[lf;mf;x] over (1;theta)
+.ml.f2nd[.ml.imax] (@[;x] .ml.binll[n] .) peach last .ml.em[lf;mf;x] over pt
 
 / gaussian mixtures
 / http://mccormickml.com/2014/08/04/gaussian-mixture-models-tutorial-and-matlab-code/
@@ -30,9 +30,10 @@ phi:k#1f%k;      / guess that distributions occur with equal frequency
 mu:neg[k]?X;     / pick k random points as centers
 s2:k#var X;      / use the whole datasets variance
 lf:.ml.gauss     / likelihood function
-mf:.ml.gaussml   / maximum function
+mf:.ml.gaussmle  / maximum likelihood estimator function
 .ml.em[lf;mf;X] over pt:(phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
-.ml.em[lf;mf;X] over k
+/.ml.em[lf;mf;X] over k
+group .ml.f2nd[.ml.imax] (@[;X] .ml.gaussll .) peach last .ml.em[lf;mf;X] over pt
 
 / 2d gauss
 mu0:(10 20;-10 -20;0 0)
@@ -49,9 +50,9 @@ mu:X@\:/:neg[k]?count X 0       / pick k random points for mu
 S:k#enlist X cov\:/: X          / full covariance matrix
 
 lf:.ml.gaussmv
-mf:.ml.gaussmlmv
+mf:.ml.gaussmvmle
 .ml.em[lf;mf;X] over (phi;flip (mu;S))
-.ml.em[lf;mf;X] over k          / let .ml.em initialize parameters
+/.ml.em[lf;mf;X] over k          / let .ml.em initialize parameters
 
 / lets try the iris data again for >2d
 
@@ -62,11 +63,11 @@ phi:k#1f%k                      / equal prior probability
 mu:X@\:/:neg[k]?count y         / pick k random points for mu
 S:k#enlist X cov\:/: X          / sample covariance
 lf:.ml.gaussmv
-mf:.ml.gaussmlmv
-.ml.em[lf;mf;X] over (phi;flip (mu;S))
-a:.ml.em[lf;mf;X] over k        / let .ml.em initialize parameters
+mf:.ml.gaussmvmle
+a:.ml.em[lf;mf;X] over (phi;flip (mu;S))
+/a:.ml.em[lf;mf;X] over k        / let .ml.em initialize parameters
 / how well did it cluster the data?
-g:0 1 2!value group .ml.f2nd[.ml.imax] (@[;X]lf .) peach a 1
+g:0 1 2!value group .ml.f2nd[.ml.imax] (@[;X].ml.gaussmvll .) peach a 1
 show m:.ml.mode each y g
 avg y=m .ml.ugrp g
 -1"what does the confusion matrix look like?";

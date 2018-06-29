@@ -7,15 +7,15 @@ X:(6 5.92 5.58 5.92 5 5.5 5.42 5.75;
  12 11 12 10 6 8 7 9f)
 y:`male`male`male`male`female`female`female`female / classes
 Xt:(6 7f;130 190f;8 12f)                           / test data
-show flip clf:.ml.fitnb[.ml.gaussml;1f;X;y]        / build classifier
+show flip clf:.ml.fitnb[.ml.gaussmle;1f;X;y]       / build classifier
 show flip d:.ml.densitynb[.ml.gauss;clf] Xt        / compute densities
 show flip .ml.probabilitynb d   / convert densities to probabilities
 .util.assert[`female`male] .ml.predictnb d    / make classification predictions
 .util.assert[`female`male] .ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] Xt / use log likelihood
 
 / iris
-clf:.ml.fitnb[.ml.gaussml;1f;iris.X;iris.y] / build classifier
-d:.ml.densitynb[.ml.gauss;clf] iris.X             / compute densities
+clf:.ml.fitnb[.ml.gaussmle;1f;iris.X;iris.y] / build classifier
+d:.ml.densitynb[.ml.gauss;clf] iris.X        / compute densities
 flip .ml.probabilitynb d        / convert densities to probabilities
 .util.assert[.96f] avg iris.y=.ml.predictnb d / how good is classification
 .util.assert[.96f] avg iris.y=.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] iris.X / use log likelihood
@@ -32,17 +32,17 @@ X:(2 0 0 1 5 0 0 1 0 0 0;       / goal
 Xt:flip(8 0 0 1 7 1 0 1;0 1 3 0 3 0 1 0)
 y:(6#`sport),5#`informatics
 / bernoulli
-show flip clf:.ml.fitnb[.ml.binml[1];1f;0<X;y] / build classifier
-show flip d:.ml.densitynb[.ml.binla[1];clf] Xt / compute densities
+show flip clf:.ml.fitnb[.ml.binmle[1];1f;0<X;y] / build classifier
+show flip d:.ml.densitynb[.ml.binla[1];clf] Xt  / compute densities
 .util.assert[`sport`informatics] .ml.predictnb d / make classification prediction
 
 / bernoulli - add one smoothing
-show flip clf:.ml.fitnb[.ml.binml[2];1f;1+0<X;y]
+show flip clf:.ml.fitnb[.ml.binmle[2];1f;1+0<X;y]
 .util.assert[`sport`informatics] .ml.predictnb .ml.densitynb[.ml.binla[2];clf] Xt
 .util.assert[`sport`informatics] .ml.lpredictnb .ml.densitynb[.ml.binll[2];clf] Xt / use log likelihood
 
 / multinomial - add one smoothing
-show flip clf:.ml.fitnb[.ml.multiml[1];1f;X;y]
+show flip clf:.ml.fitnb[.ml.multimle[1];1f;X;y]
 .util.assert[`sport`informatics] .ml.predictnb .ml.densitynb[.ml.multila;clf] Xt
 .util.assert[`sport`informatics] .ml.lpredictnb .ml.densitynb[.ml.multill;clf] Xt / use log likelihood
 
@@ -57,8 +57,8 @@ y:`c`c`c`j
 Xt:flip enlist 3 0 0 0 1 1
 
 / multinomial - add one smoothing
-show flip clf:.ml.fitnb[.ml.multiml[1];1f;X;y]
+show flip clf:.ml.fitnb[.ml.multimle[1];1f;X;y]
 show flip d:.ml.densitynb[.ml.multila;clf] Xt
 show flip .ml.probabilitynb d
-.util.assert[1#`c] .ml.predictnb d
+.util.assert[1#`j] .ml.predictnb d
 

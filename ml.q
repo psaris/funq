@@ -6,6 +6,11 @@ mtm:{flip[x]$y}                 / X' * Y
 minv:inv                        / X**-1
 mlsq:lsq                        / least squares
 dot:$                           / dot product
+mdet:{[X]                       / determinant
+ if[2>n:count X;:X];
+ if[2=n;:(X[0;0]*X[1;1])-X[0;1]*X[1;0]];
+ d:sum X[0]*(n#1 -1)*(.z.s (X _ 0)_\:) each til n;
+ d}
 
 identical:all 1_~':
 

@@ -506,11 +506,9 @@ gaussmvmle:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 / (l)ikelhood (f)unction, (m)aximum likelihood estimator (f)unction
 / with prior probabilities (p)hi and distribution parameters (t)heta
 em:{[lf;mf;X;pt]                / expectation maximization
- l:(@[;X]lf .) peach pt 1;
- W:p%\:sum p:l*phi:pt 0;        / weights (responsibilities)
- phi:avg peach W;               / new prior probabilities
- theta:mf[X] peach W;           / new coefficients
- (phi;theta)}
+ W:p%\:sum p:pt[0]*(@[;X]lf .) peach pt 1; / weights (responsibilities)
+ pt:(avg each W;mf[X] peach W); / new phi and theta estimates
+ pt}
 
 / return value which occurs most frequently
 nmode:{imax count each group x} / naive mode

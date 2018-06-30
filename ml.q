@@ -461,14 +461,16 @@ binll:{[n;p;k](k*log p)+$[n;(n-k)*log 1f-p;0f]}
 / binomial likelihood approximation (without the coefficient)
 binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
 / binomial maximum likelihood estimator
-binmle:{[n;x;w]$[type x;1#w wavg x%n;x .z.s[n]\: w]}
+binmle:{[n;x]$[type x;1#avg x%n;.z.s[n] each x]}
+wbinmle:{[n;w;x]$[type x;1#w wavg x%n;.z.s[n;w] each x]}
 
 / multinomial log likelhood
 multill:binll[0]
 / multinomial likelihood approximation
 multila:binla[0]
 / multinomial maximum likelihood estimator (where n is for add n smoothing)
-multimle:{[n;x;w]$[type x;1#w wsum x%n;(x:x,'n) .z.s[sum/[x]]\: w,1f]}
+multimle:{[n;x]$[type x;1#sum x%n;.z.s[sum/[x]] each x,'n]}
+wmultimle:{[n;w;x]$[type x;1#w wsum x%n;.z.s[sum/[x];w,1f] each x:x,'n]}
 
 pi:acos -1f
 
@@ -483,7 +485,8 @@ gauss:{[mu;s2;x]
 / guassian log likelihood
 gaussll:{[mu;s2;X] -.5*sum (log 2f*pi;log s2;(X*X-:mu)%s2)}
 / gaussian maximum likelihood estimator
-gaussmle:{[x;w]$[type x;(mu;w wavg x*x-:mu:w wavg x);x .z.s\: w]}
+gaussmle:{[x]$[type x;(mu;avg x*x-:mu:avg x);.z.s each x]}
+wgaussmle:{[w;x]$[type x;(mu;w wavg x*x-:mu:w wavg x);.z.s[w] each x]}
 
 / gaussian multivariate
 gaussmv:{[mu;s2;X]
@@ -501,13 +504,15 @@ gaussmvll:{[mu;s2;X]
  p*:-.5;
  p}
 / gaussian maximum likelihood estimator multi variate
-gaussmvmle:{[X;w](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
+gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
+wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
-/ (l)ikelhood (f)unction, (m)aximum likelihood estimator (f)unction
-/ with prior probabilities (p)hi and distribution parameters (t)heta
-em:{[lf;mf;X;pt]                / expectation maximization
+/ (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
+/ (f)unction with prior probabilities (p)hi and distribution
+/ parameters (t)heta
+em:{[lf;wmf;X;pt]                / expectation maximization
  W:p%\:sum p:pt[0]*(@[;X]lf .) peach pt 1; / weights (responsibilities)
- pt:(avg each W;mf[X] peach W); / new phi and theta estimates
+ pt:(avg each W;wmf[;X] peach W); / new phi and theta estimates
  pt}
 
 / return value which occurs most frequently
@@ -549,11 +554,11 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 
 / naive bayes
 
-/ fit parameters given (m)aximization (f)unction
+/ fit parameters given (w)eighted (m)aximization (f)unction
 / returns a dictionary with prior and conditional likelihoods
-fitnb:{[mf;w;X;y]
+fitnb:{[wmf;w;X;y]
  g:prepend[w;X]@\:/:group y;
- g:{count[y],x[1_y;first y]}[mf] peach g;
+ g:{count[y],x[first y;1_y]}[wmf] peach g;
  g}
 / using a [log]likelihood (f)unction and (cl)assi(f)ication compute
 / densities for X

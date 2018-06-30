@@ -10,7 +10,7 @@ Xt:(6 7f;130 190f;8 12f)                           / test data
 -1"assuming gaussian distribution";
 -1"analyzing mock dataset";
 -1"building classifier";
-show flip clf:.ml.fitnb[.ml.gaussmle;1f;X;y]       / build classifier
+show flip clf:.ml.fitnb[.ml.wgaussmle;1f;X;y]      / build classifier
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.gauss;clf] Xt        / compute densities
 -1"computing probabilities";
@@ -22,7 +22,7 @@ show flip .ml.probabilitynb d   / convert densities to probabilities
 / iris
 -1"analyzing iris data set";
 -1"building classifier";
-clf:.ml.fitnb[.ml.gaussmle;1f;iris.X;iris.y] / build classifier
+clf:.ml.fitnb[.ml.wgaussmle;1f;iris.X;iris.y] / build classifier
 -1"computing densities"
 d:.ml.densitynb[.ml.gauss;clf] iris.X        / compute densities
 -1"computing probabilities";
@@ -46,7 +46,7 @@ y:(6#`sport),5#`informatics
 -1"analyzing mock dataset";
 / bernoulli
 -1"building classifier";
-show flip clf:.ml.fitnb[.ml.binmle[1];1f;0<X;y] / build classifier
+show flip clf:.ml.fitnb[.ml.wbinmle[1];1f;0<X;y] / build classifier
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.binla[1];clf] Xt  / compute densities
 -1"computing probabilities";
@@ -56,13 +56,13 @@ show flip .ml.probabilitynb d   / convert densities to probabilities
 
 / bernoulli - add one smoothing
 -1"testing bernoulli add one smoothing";
-show flip clf:.ml.fitnb[.ml.binmle[2];1f;1+0<X;y]
+show flip clf:.ml.fitnb[.ml.wbinmle[2];1f;1+0<X;y]
 .util.assert[`sport`informatics] .ml.predictnb .ml.densitynb[.ml.binla[2];clf] Xt
 .util.assert[`sport`informatics] .ml.lpredictnb .ml.densitynb[.ml.binll[2];clf] Xt / use log likelihood
 
 / multinomial - add one smoothing
 -1"testing multinomial add one smoothing";
-show flip clf:.ml.fitnb[.ml.multimle[1];1f;X;y]
+show flip clf:.ml.fitnb[.ml.wmultimle[1];1f;X;y]
 .util.assert[`sport`informatics] .ml.predictnb .ml.densitynb[.ml.multila;clf] Xt
 .util.assert[`sport`informatics] .ml.lpredictnb .ml.densitynb[.ml.multill;clf] Xt / use log likelihood
 
@@ -80,7 +80,7 @@ Xt:flip enlist 3 0 0 0 1 1
 
 / multinomial - add one smoothing
 -1"building classifier";
-show flip clf:.ml.fitnb[.ml.multimle[1];1f;X;y]
+show flip clf:.ml.fitnb[.ml.wmultimle[1];1f;X;y]
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.multila;clf] Xt
 -1"computing probabilities";

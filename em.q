@@ -9,7 +9,7 @@ n:10
 x:"f"$sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
 theta:.6 .5        / initial coefficients
 lf:.ml.binla[n]    / likelihood function
-mf:.ml.binmle[n]   / parameter maximization function
+mf:.ml.wbinmle[n]  / parameter maximization function
 phi:2#1f%2f        / coins are picked with equal probability
 .ml.em[lf;mf;x] pt:(phi;flip enlist theta)
 .ml.em[lf;mf;x] over pt  / call until convergence
@@ -30,7 +30,7 @@ phi:k#1f%k;      / guess that distributions occur with equal frequency
 mu:neg[k]?X;     / pick k random points as centers
 s2:k#var X;      / use the whole datasets variance
 lf:.ml.gauss     / likelihood function
-mf:.ml.gaussmle  / maximum likelihood estimator function
+mf:.ml.wgaussmle / maximum likelihood estimator function
 .ml.em[lf;mf;X] over pt:(phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
 /.ml.em[lf;mf;X] over k
 group .ml.f2nd[.ml.imax] (@[;X] .ml.gaussll .) peach last .ml.em[lf;mf;X] over pt
@@ -50,7 +50,7 @@ mu:X@\:/:neg[k]?count X 0       / pick k random points for mu
 S:k#enlist X cov\:/: X          / full covariance matrix
 
 lf:.ml.gaussmv
-mf:.ml.gaussmvmle
+mf:.ml.wgaussmvmle
 .ml.em[lf;mf;X] over (phi;flip (mu;S))
 /.ml.em[lf;mf;X] over k          / let .ml.em initialize parameters
 
@@ -63,7 +63,7 @@ phi:k#1f%k                      / equal prior probability
 mu:X@\:/:neg[k]?count y         / pick k random points for mu
 S:k#enlist X cov\:/: X          / sample covariance
 lf:.ml.gaussmv
-mf:.ml.gaussmvmle
+mf:.ml.wgaussmvmle
 a:.ml.em[lf;mf;X] over (phi;flip (mu;S))
 /a:.ml.em[lf;mf;X] over k        / let .ml.em initialize parameters
 / how well did it cluster the data?

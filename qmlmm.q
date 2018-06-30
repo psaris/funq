@@ -5,5 +5,6 @@
 .ml.mlsq:{.qml.mlsqx[`flip;y;x]}
 .ml.dot:.qml.dot
 .ml.mdet:.qml.mdet
+.ml.mchol:.qml.mchol
 
 .fmincg.dot:.qml.dot

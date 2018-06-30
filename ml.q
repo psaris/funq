@@ -9,8 +9,16 @@ dot:$                           / dot product
 mdet:{[X]                       / determinant
  if[2>n:count X;:X];
  if[2=n;:(X[0;0]*X[1;1])-X[0;1]*X[1;0]];
- d:sum X[0]*(n#1 -1)*(.z.s (X _ 0)_\:) each til n;
+ d:dot[X 0;(n#1 -1)*(.z.s (X _ 0)_\:) each til n];
  d}
+mchol:{[X]                      / cholesky decomposition
+ L:{[X;L;i]
+  L[i;i]:sqrt X[i;i]-dot[L i;L i];
+  L:{[X;i;L;j]
+   L[j;i]:(X[j;i]-dot[L i;L j])%L[i;i];
+   L}[X;i]/[L;n+til count[X]-n:i+1];
+  L}[X]/[(n;n)#0f;til n:count X];
+ L}
 
 identical:all 1_~':
 

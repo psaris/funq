@@ -476,6 +476,8 @@ multimle:{[n;x]$[type x;1#sum x%n;.z.s[sum/[x]] each x,'n]}
 wmultimle:{[n;w;x]$[type x;1#w wsum x%n;.z.s[sum/[x];w,1f] each x:x,'n]}
 
 pi:acos -1f
+twopi:2f*pi
+logtwopi:log twopi
 
 / gaussian kernel
 gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}
@@ -483,10 +485,10 @@ gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}
 / gaussian
 gauss:{[mu;s2;x]
  p:exp (x*x-:mu)%-2*s2;
- p%:sqrt 2f*s2*pi;
+ p%:sqrt s2*twopi;
  p}
 / guassian log likelihood
-gaussll:{[mu;s2;X] -.5*sum (log 2f*pi;log s2;(X*X-:mu)%s2)}
+gaussll:{[mu;s2;X] -.5*sum (logtwopi;log s2;(X*X-:mu)%s2)}
 / gaussian maximum likelihood estimator
 gaussmle:{[x]$[type x;(mu;avg x*x-:mu:avg x);.z.s each x]}
 wgaussmle:{[w;x]$[type x;(mu;w wavg x*x-:mu:w wavg x);.z.s[w] each x]}
@@ -496,14 +498,14 @@ gaussmv:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
  p:exp -.5*sum X*mm[minv s2;X-:mu];
  p*:sqrt 1f%mdet s2;
- p*:(2f*pi) xexp -.5*count X;
+ p*:twopi xexp -.5*count X;
  p}
 / gaussian multivariate log likelihood
 gaussmvll:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
  p:sum X*mm[minv s2;X-:mu];
  p+:log mdet s2;
- p+:count[X]*log 2f*pi;
+ p+:count[X]*logtwopi;
  p*:-.5;
  p}
 / gaussian maximum likelihood estimator multi variate

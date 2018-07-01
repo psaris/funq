@@ -159,8 +159,11 @@ wnan:{$[all type each x;where not any null x;::]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
-sigmoid:{1f%1f+exp neg x}       / sigmoid function
-softmax:{x%sum x:exp x}         / softmax function
+/ convert densities into probabiliites
+prb:{$[0h>type first x;x%sum x;x%\:sum x]}
+
+sigmoid:1f%1f+exp neg@          / sigmoid function
+softmax:prb exp@                / softmax function
 
 lpredict:(')[sigmoid;predict]   / logistic regression predict
 / cross-entropy loss
@@ -510,9 +513,9 @@ wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 / (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
 / (f)unction with prior probabilities (p)hi and distribution
 / parameters (t)heta
-em:{[lf;wmf;X;pt]                / expectation maximization
- W:p%\:sum p:pt[0]*(@[;X]lf .) peach pt 1; / weights (responsibilities)
- pt:(avg each W;wmf[;X] peach W); / new phi and theta estimates
+em:{[lf;wmf;X;pt]                    / expectation maximization
+ W:prb pt[0]*(@[;X]lf .) peach pt 1; / weights (responsibilities)
+ pt:(avg each W;wmf[;X] peach W);    / new phi and theta estimates
  pt}
 
 / return value which occurs most frequently
@@ -563,8 +566,6 @@ fitnb:{[wmf;w;X;y]
 / using a [log]likelihood (f)unction and (cl)assi(f)ication compute
 / densities for X
 densitynb:{[f;clf;X]clf[;0],'(1_'clf) {(x . y) z}[f]'\: X}
-/ given dictionary of sample densities, compute posterior probabilities
-probabilitynb:{[d]d%\:sum d}
 / given prior (p)robabilities and a dictionary of sample densities,
 / predict class
 predictnb:{[d] imax each flip prd flip d}
@@ -575,8 +576,8 @@ lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
 / decision trees
 
 / weighted odds
-wodds:{[w;g]g%sum g:sum each w g}
-odds:{[g]g%sum g:count each g}
+wodds:{[w;g]prb sum each w g}
+odds:{[g]prb count each g}
 
 / splitting functions
 entropy:{neg sum x*2 xlog x:odds group x}

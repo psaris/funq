@@ -14,7 +14,7 @@ show flip clf:.ml.fitnb[.ml.wgaussmle;1f;X;y]      / build classifier
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.gauss;clf] Xt        / compute densities
 -1"computing probabilities";
-show flip .ml.probabilitynb d   / convert densities to probabilities
+show flip .ml.prb d             / convert densities to probabilities
 -1"confirming accuracy";
 .util.assert[`female`male] .ml.predictnb d    / make classification predictions
 .util.assert[`female`male] .ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] Xt / use log likelihood
@@ -26,7 +26,7 @@ clf:.ml.fitnb[.ml.wgaussmle;1f;iris.X;iris.y] / build classifier
 -1"computing densities"
 d:.ml.densitynb[.ml.gauss;clf] iris.X        / compute densities
 -1"computing probabilities";
-flip .ml.probabilitynb d        / convert densities to probabilities
+flip .ml.prb d                  / convert densities to probabilities
 .util.assert[.96f] avg iris.y=.ml.predictnb d / how good is classification
 -1"confirming accuracy";
 .util.assert[.96f] avg iris.y=.ml.lpredictnb .ml.densitynb[.ml.gaussll;clf] iris.X / use log likelihood
@@ -50,7 +50,7 @@ show flip clf:.ml.fitnb[.ml.wbinmle[1];1f;0<X;y] / build classifier
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.binla[1];clf] Xt  / compute densities
 -1"computing probabilities";
-show flip .ml.probabilitynb d   / convert densities to probabilities
+show flip .ml.prb d             / convert densities to probabilities
 -1"confirming accuracy";
 .util.assert[`sport`informatics] .ml.predictnb d / make classification prediction
 
@@ -84,7 +84,7 @@ show flip clf:.ml.fitnb[.ml.wmultimle[1];1f;X;y]
 -1"computing densities"
 show flip d:.ml.densitynb[.ml.multila;clf] Xt
 -1"computing probabilities";
-show flip .ml.probabilitynb d
+show flip .ml.prb d
 -1"confirming accuracy";
 .util.assert[1#`j] .ml.predictnb d
 

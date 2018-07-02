@@ -5,7 +5,7 @@ cifar.b:"http://www.cs.toronto.edu/~kriz/"
 .util.download[cifar.b;;".tar.gz";"tar -xzvf"] cifar.f;
 cifar.d:"cifar-10-batches-bin/"
 -1"reading labels";
-labels:`$10#read0`$cifar.d,"batches.meta.txt"
+cifar.labels:`$10#read0`$cifar.d,"batches.meta.txt"
 cifar.n:1 / how many batches of pictures to load (1-5)
 cifar.c:"data_batch_",/:(cifar.n#1_.Q.n),\:".bin"
 cifar.parse:(3073#"x";3073#1) 1:

@@ -467,13 +467,23 @@ binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
 binmle:{[n;x]$[type x;1#avg x%n;.z.s[n] each x]}
 wbinmle:{[n;w;x]$[type x;1#w wavg x%n;.z.s[n;w] each x]}
 
-/ multinomial log likelhood
+/ multinomial log likelihood
 multill:binll[0]
 / multinomial likelihood approximation
 multila:binla[0]
 / multinomial maximum likelihood estimator (where n is for add n smoothing)
 multimle:{[n;x]$[type x;1#sum x%n;.z.s[sum/[x]] each x,'n]}
 wmultimle:{[n;w;x]$[type x;1#w wsum x%n;.z.s[sum/[x];w,1f] each x:x,'n]}
+
+/ bernoulli mixture model likelihood
+bmml:{[mu;x]prd (mu xexp x)*(1f-mu) xexp 1f-x}
+/ bernoulli log likelihood
+bmmll:{[mu;x]sum (x*log mu)+(1f-x)*log 1f-mu}
+bmml:(')[exp;bmmll]             / more numerically stable
+/ bernoulli mixture model maximum likelihood estimator (where a is
+/ the dirichlet smoothing parameter)
+bmmmle:{[a;w;x]enlist avg each x+a}
+wbmmmle:{[a;w;x]enlist w wavg/: x+a}
 
 pi:acos -1f
 twopi:2f*pi

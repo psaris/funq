@@ -16,6 +16,8 @@ clone this project and start q with any of the following:
 
 `q knn.q`
 
+`q em.q`
+
 `q recommend.q`
 
 `q decisiontree.q`

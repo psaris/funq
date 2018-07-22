@@ -22,7 +22,7 @@ phi:2#1f%2f        / coins are picked with equal probability
 mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
-X:raze X0:mu0+s0*(.util.bm ?[;1f]@) each m0 / build dataset
+X:raze X0:mu0+s0*(.ml.bm ?[;1f]@) each m0 / build dataset
 show .util.plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
 phi:k#1f%k;      / guess that distributions occur with equal frequency
@@ -39,7 +39,7 @@ S20:((30 -20;-20 30);(20 0; 0 50);(10 2; 5 10)) / SIGMA (covariance matrix)
 m0:1000 2000 1000
 
 R0:.qml.mchol each S20          / sqrt(SIGMA)
-X:(,') over X0:mu0+R0$'(.util.bm (?).)''[flip each flip (m0;3 2#1f)]
+X:(,') over X0:mu0+R0$'(.ml.bm (?).)''[flip each flip (m0;3 2#1f)]
 show .util.plt X
 
 k:count mu0

@@ -452,6 +452,36 @@ slice:{
  f,:1_x;
  f}
 
+pi:acos -1f
+twopi:2f*pi
+logtwopi:log twopi
+
+/ box-muller (copied from qtips/stat.q) (m?-n in k6)
+bm:{
+ if[count[x] mod 2;'`length];
+ x:2 0N#x;
+ r:sqrt -2f*log first x;
+ theta:twopi*last x;
+ x: r*cos theta;
+ x,:r*sin theta;
+ x}
+
+/ random number generators
+/ generate (n) variates from a uniform distribution
+runif:{[n]n?1f}
+/ generate (n) variates from a bernoulli distribution with
+/ (p)robability of success
+rbern:{[n;p]p>runif n}
+/ generate (n) variates from a binomial distribution (sum of
+/ bernoulli) with (k) trials and (p)robability
+rbinom:{[n;k;p]sum rbern[n] each k#p}
+/ generate (n) variate-vectors from a multinomial distribution with
+/ (k) trials and (p)robability vector defined for each class
+rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif@) each n#k}
+/ generate (n) variates from a normal distribution with mean (mu) and
+/ standard deviation (sigma)
+rnorm:{[n;mu;sigma]mu+sigma*bm runif n}
+
 / binomial pdf (not atomic because of factorial)
 binpdf:{[n;p;k]
  if[0<max type each (n;p;k);:.z.s'[n;p;k]];
@@ -484,10 +514,6 @@ bmml:(')[exp;bmmll]             / more numerically stable
 / the dirichlet smoothing parameter)
 bmmmle:{[a;w;x]enlist avg each x+a}
 wbmmmle:{[a;w;x]enlist w wavg/: x+a}
-
-pi:acos -1f
-twopi:2f*pi
-logtwopi:log twopi
 
 / gaussian kernel
 gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}

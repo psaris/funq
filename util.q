@@ -1,15 +1,5 @@
 \d .util
 
-/ box-muller (copied from qtips/stat.q) (m?-n in k6)
-bm:{
- if[count[x] mod 2;'`length];
- x:2 0N#x;
- r:sqrt -2f*log first x;
- theta:2f*acos[-1f]*last x;
- x: r*cos theta;
- x,:r*sin theta;
- x}
-
 / generate a range of values between y and z with step-size x
 rng:{y+x*til 1+floor (z-y)%x}
 

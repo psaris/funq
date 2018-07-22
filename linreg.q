@@ -9,7 +9,7 @@ plt:.util.plot[30;15;.util.c10]
  "suppress the desire to flip matrices";
  "matlab/octave/r all store data in columns";
  "the following matrix *is* a two column matrix in q");
-show X:(.util.bm 10000?) each 1 1f
+show X:(.ml.bm 10000?) each 1 1f
 
 / perhaps q needs the ability to tag matrices so they can be displayed
 / (not stored) flipped

@@ -11,7 +11,7 @@ plt:.util.plot[w:40;h:20;c:.util.c10]
 -1 value plt X:10000?/:2#1f;
 
 -1"plotting 2-dimensional dataset (normal variates): (x;y)";
--1 value plt (.util.bm 10000?) each 2#1f;
+-1 value plt (.ml.bm 10000?) each 2#1f;
 
 -1"plotting 3-dimensional dataset: (x;y;z)";
 -1 value plt {(x;{x*x*x}x-.5;x:til[x]%x)} 1000;

@@ -11,7 +11,7 @@ k:3
 -1"we then generate k centroids,";
 show C:"f"$k?/:2#20
 -1"and scatter points around the centroids with normally distributed errors";
-X:raze each C+.util.bm(2;k)#100?/:(2*k)#1f
+X:raze each C+.ml.bm(2;k)#100?/:(2*k)#1f
 show plt X
 
 -1 .util.box["**"] (

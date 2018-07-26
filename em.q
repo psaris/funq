@@ -7,10 +7,10 @@
 / http://www.nature.com/nbt/journal/v26/n8/full/nbt1406.html
 n:10
 x:"f"$sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
-theta:.6 .5        / initial coefficients
-lf:.ml.binla[n]    / likelihood function
-mf:.ml.wbinmle[n]  / parameter maximization function
-phi:2#1f%2f        / coins are picked with equal probability
+theta:.6 .5                  / initial coefficients
+lf:.ml.binla[n]              / likelihood function
+mf:.ml.wbinmle[n;0]          / parameter maximization function
+phi:2#1f%2f                  / coins are picked with equal probability
 .ml.em[lf;mf;x] pt:(phi;flip enlist theta)
 .ml.em[lf;mf;x] over pt  / call until convergence
 / which flips came from which theta? pick maximum log likelkhood
@@ -23,12 +23,12 @@ mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
 X:raze X0:mu0+s0*(.ml.bm ?[;1f]@) each m0 / build dataset
-show .util.plt raze each (X0;0f*X0),'(X0;.ml.gauss'[mu0;s20;X0]) / plot 1d data and guassian curves
+show .util.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
 phi:k#1f%k;      / guess that distributions occur with equal frequency
 mu:neg[k]?X;     / pick k random points as centers
 s2:k#var X;      / use the whole datasets variance
-lf:.ml.gauss     / likelihood function
+lf:.ml.gaussl    / likelihood function
 mf:.ml.wgaussmle / maximum likelihood estimator function
 .ml.em[lf;mf;X] over pt:(phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
 group .ml.f2nd[.ml.imax] (@[;X] .ml.gaussll .) peach last .ml.em[lf;mf;X] over pt
@@ -47,7 +47,7 @@ phi:k#1f%k                      / equal probability
 mu:X@\:/:neg[k]?count X 0       / pick k random points for mu
 S:k#enlist X cov\:/: X          / full covariance matrix
 
-lf:.ml.gaussmv
+lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
 .ml.em[lf;mf;X] over (phi;flip (mu;S))
 
@@ -59,7 +59,7 @@ k:count distinct y              / 3 clusters
 phi:k#1f%k                      / equal prior probability
 mu:X@\:/:neg[k]?count y         / pick k random points for mu
 S:k#enlist X cov\:/: X          / sample covariance
-lf:.ml.gaussmv
+lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
 pt:.ml.em[lf;mf;X] over (phi;flip (mu;S))
 / how well did it cluster the data?

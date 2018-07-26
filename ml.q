@@ -492,18 +492,19 @@ binpdf:{[n;p;k]
 / binomial log likelihood (for multinomial set n=0)
 binll:{[n;p;k](k*log p)+$[n;(n-k)*log 1f-p;0f]}
 / binomial likelihood approximation (without the coefficient)
+binl:(')[exp;binll]
 binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
 / binomial maximum likelihood estimator
-binmle:{[n;x]$[type x;1#avg x%n;.z.s[n] each x]}
-wbinmle:{[n;w;x]$[type x;1#w wavg x%n;.z.s[n;w] each x]}
+binmle:{[n;a;x]1#avg a+x%n}
+wbinmle:{[n;a;w;x]1#w wavg a+x%n}
 
 / multinomial log likelihood
 multill:binll[0]
 / multinomial likelihood approximation
 multila:binla[0]
 / multinomial maximum likelihood estimator (where n is for add n smoothing)
-multimle:{[n;x]$[type x;1#sum x%n;.z.s[sum/[x]] each x,'n]}
-wmultimle:{[n;w;x]$[type x;1#w wsum x%n;.z.s[sum/[x];w,1f] each x:x,'n]}
+multimle:{[n;x]enlist each x%sum x:n+sum each x}
+wmultimle:{[n;w;x]enlist each x%sum x:n+w wsum/: x}
 
 / bernoulli mixture model likelihood
 bmml:{[mu;x]prd (mu xexp x)*(1f-mu) xexp 1f-x}
@@ -512,25 +513,25 @@ bmmll:{[mu;x]sum (x*log mu)+(1f-x)*log 1f-mu}
 bmml:(')[exp;bmmll]             / more numerically stable
 / bernoulli mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
-bmmmle:{[a;w;x]enlist avg each x+a}
-wbmmmle:{[a;w;x]enlist w wavg/: x+a}
+bmmmle:{[a;w;x]enlist avg each a+x}
+wbmmmle:{[a;w;x]enlist w wavg/: a+x}
 
 / gaussian kernel
 gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}
 
-/ gaussian
-gauss:{[mu;s2;x]
+/ gaussian likelihood
+gaussl:{[mu;s2;x]
  p:exp (x*x-:mu)%-2*s2;
  p%:sqrt s2*twopi;
  p}
 / guassian log likelihood
 gaussll:{[mu;s2;X] -.5*sum (logtwopi;log s2;(X*X-:mu)%s2)}
 / gaussian maximum likelihood estimator
-gaussmle:{[x]$[type x;(mu;avg x*x-:mu:avg x);.z.s each x]}
-wgaussmle:{[w;x]$[type x;(mu;w wavg x*x-:mu:w wavg x);.z.s[w] each x]}
+gaussmle:{[x](mu;avg x*x-:mu:avg x)}
+wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
 
 / gaussian multivariate
-gaussmv:{[mu;s2;X]
+gaussmvl:{[mu;s2;X]
  if[type s2;s2:diag count[X]#s2];
  p:exp -.5*sum X*mm[minv s2;X-:mu];
  p*:sqrt 1f%mdet s2;
@@ -544,7 +545,7 @@ gaussmvll:{[mu;s2;X]
  p+:count[X]*logtwopi;
  p*:-.5;
  p}
-/ gaussian maximum likelihood estimator multi variate
+/ gaussian multi variate maximum likelihood estimator
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
@@ -598,18 +599,15 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 / fit parameters given (w)eighted (m)aximization (f)unction
 / returns a dictionary with prior and conditional likelihoods
 fitnb:{[wmf;w;X;y]
- g:prepend[w;X]@\:/:group y;
- g:{count[y],x[first y;1_y]}[wmf] peach g;
- g}
-/ using a [log]likelihood (f)unction and (cl)assi(f)ication compute
-/ densities for X
-densitynb:{[f;clf;X]clf[;0],'(1_'clf) {(x . y) z}[f]'\: X}
-/ given prior (p)robabilities and a dictionary of sample densities,
-/ predict class
-predictnb:{[d] imax each flip prd flip d}
-/ given prior (p)robabilities and a dictionary of sample log
-/ densities, predict class
-lpredictnb:{[d] imax each flip sum @[flip d;0;log]}
+ if[(::)~w;w:count[y]#1f];      / handle unassigned weight
+ pt:(odds g; w[value g] wmf' X@\:/:g:group y);
+ pt}
+/ using a [log]likelihood (f)unction and (cl)assi(f)ication perform
+/ naive bayes classification
+clfnb:{[l;f;clf;X]
+ d:clf[1] {(x . y) z}[f]'\: X;  / compute probability densities
+ c:imax each flip $[l;log[clf 0]+sum flip d;clf[0]*prd flip d];
+ c}
 
 / decision trees
 

@@ -549,13 +549,19 @@ gaussmvll:{[mu;s2;X]
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
+likelihood:{[l;lf;X;phi;THETA]
+ p:(@[;X]lf .) peach THETA;    / compute [log] probability densitities
+ p:$[l;p+log phi;p*phi];       / apply prior probabiliites
+ p}
+
 / (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
 / (f)unction with prior probabilities (p)hi and distribution
-/ parameters (t)heta
-em:{[lf;wmf;X;pt]                    / expectation maximization
- W:prb pt[0]*(@[;X]lf .) peach pt 1; / weights (responsibilities)
- pt:(avg each W;wmf[;X] peach W);    / new phi and theta estimates
- pt}
+/ parameters (t)heta (with optional (f)itting of (p)hi)
+em:{[fp;lf;wmf;X;pT]                / expectation maximization
+ W:prb likelihood[0b;lf;X] . pT;    / weights (responsibilities)
+ if[fp;pT[0]:avg each W];           / new phi estimates
+ pT[1]:wmf[;X] peach W;             / new THETA estimates
+ pT}
 
 / return value which occurs most frequently
 nmode:{imax count each group x} / naive mode
@@ -600,13 +606,13 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 / returns a dictionary with prior and conditional likelihoods
 fitnb:{[wmf;w;X;y]
  if[(::)~w;w:count[y]#1f];      / handle unassigned weight
- pt:(odds g; w[value g] wmf' X@\:/:g:group y);
- pt}
-/ using a [log]likelihood (f)unction and (cl)assi(f)ication perform
+ pT:(odds g; w[value g] wmf' X@\:/:g:group y);
+ pT}
+/ using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform
 / naive bayes classification
-clfnb:{[l;f;clf;X]
- d:clf[1] {(x . y) z}[f]'\: X;  / compute probability densities
- c:imax each flip $[l;log[clf 0]+sum flip d;clf[0]*prd flip d];
+clfnb:{[l;lf;pT;X]
+ d:pT[1] {(x . y) z}[lf]'\: X; / compute probability densities
+ c:imax each flip $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
  c}
 
 / decision trees

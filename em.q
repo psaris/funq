@@ -8,7 +8,7 @@
 n:10
 x:"f"$sum each (1000110101b;1111011111b;1011111011b;1010001100b;0111011101b)
 THETA:.6 .5                  / initial coefficients
-lf:.ml.binla[n]              / likelihood function
+lf:.ml.binl[n]               / likelihood function
 mf:.ml.wbinmle[n;0]          / parameter maximization function
 phi:2#1f%2f                  / coins are picked with equal probability
 .ml.em[1b;lf;mf;x] pT:(phi;flip enlist THETA)

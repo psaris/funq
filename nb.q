@@ -40,19 +40,19 @@ y:(6#`sport),5#`informatics
 -1"building classifier";
 show pT:.ml.fitnb[.ml.wbinmle[1;0]/:;::;0<X;y] / build classifier
 -1"confirming accuracy";
-.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.binla[1];pT] Xt  / make classification prediction
-.util.assert[`sport`informatics] .ml.clfnb[1b;.ml.binll[1];pT] Xt  / make classification prediction
+.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.binl[1];pT] Xt / make classification prediction
+.util.assert[`sport`informatics] .ml.clfnb[1b;.ml.binll[1];pT] Xt / make classification prediction
 
 / bernoulli - add one smoothing
 -1"testing bernoulli add one smoothing";
 show pT:.ml.fitnb[.ml.wbinmle[2;0]/:;::;1+0<X;y]
-.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.binla[2];pT] Xt
+.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.binl[2];pT] Xt
 .util.assert[`sport`informatics] .ml.clfnb[1b;.ml.binll[2];pT] Xt / use log likelihood
 
 / multinomial - add one smoothing
 -1"testing multinomial add one smoothing";
 show pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
-.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.multila;pT] Xt
+.util.assert[`sport`informatics] .ml.clfnb[0b;.ml.multil;pT] Xt
 .util.assert[`sport`informatics] .ml.clfnb[1b;.ml.multill;pT] Xt / use log likelihood
 
 / https://www.youtube.com/watch?v=km2LoOpdB3A
@@ -72,6 +72,6 @@ Xt:flip enlist 3 0 0 0 1 1
 -1"building classifier";
 show flip pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 -1"confirming accuracy";
-.util.assert[1#`c] .ml.clfnb[0b;.ml.multila;pT] Xt
+.util.assert[1#`c] .ml.clfnb[0b;.ml.multil;pT] Xt
 .util.assert[1#`c] .ml.clfnb[1b;.ml.multill;pT] Xt
 

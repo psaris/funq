@@ -489,19 +489,19 @@ binpdf:{[n;p;k]
  r*:prd (p;1f-p) xexp (k;n);
  r}
 
-/ binomial log likelihood (for multinomial set n=0)
-binll:{[n;p;k](k*log p)+$[n;(n-k)*log 1f-p;0f]}
+/ binomial log likelihood
+binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
 / binomial likelihood approximation (without the coefficient)
-binl:(')[exp;binll]
-binla:{[n;p;k](p xexp k)*$[n;(1f-p) xexp n-k;1f]}
+binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}
+/binl:(')[exp;binll]
 / binomial maximum likelihood estimator
 binmle:{[n;a;x]1#avg a+x%n}
 wbinmle:{[n;a;w;x]1#w wavg a+x%n}
 
 / multinomial log likelihood
-multill:binll[0]
+multill:{[p;k]k*log p}
 / multinomial likelihood approximation
-multila:binla[0]
+multil:{[p;k]p xexp k}
 / multinomial maximum likelihood estimator (where n is for add n smoothing)
 multimle:{[n;x]enlist each x%sum x:n+sum each x}
 wmultimle:{[n;w;x]enlist each x%sum x:n+w wsum/: x}

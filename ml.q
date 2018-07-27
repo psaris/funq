@@ -489,10 +489,10 @@ binpdf:{[n;p;k]
  r*:prd (p;1f-p) xexp (k;n);
  r}
 
-/ binomial log likelihood
-binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
 / binomial likelihood approximation (without the coefficient)
 binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}
+/ binomial log likelihood
+binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
 /binl:(')[exp;binll]
 / binomial maximum likelihood estimator
 binmle:{[n;a;x]1#avg a+x%n}
@@ -506,15 +506,15 @@ multil:{[p;k]p xexp k}
 multimle:{[n;x]enlist each x%sum x:n+sum each x}
 wmultimle:{[n;w;x]enlist each x%sum x:n+w wsum/: x}
 
-/ bernoulli mixture model likelihood
-bmml:{[mu;x]prd (mu xexp x)*(1f-mu) xexp 1f-x}
-/ bernoulli log likelihood
-bmmll:{[mu;x]sum (x*log mu)+(1f-x)*log 1f-mu}
+/ binomial mixture model likelihood
+bmml:(')[prd;binl]
+/ binomial mixture model log likelihood
+bmmll:(')[sum;binll]
 bmml:(')[exp;bmmll]             / more numerically stable
-/ bernoulli mixture model maximum likelihood estimator (where a is
+/ binomial mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
-bmmmle:{[a;w;x]enlist avg each a+x}
-wbmmmle:{[a;w;x]enlist w wavg/: a+x}
+bmmmle:{[n;a;w;x]enlist avg each a+x%n}
+wbmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 / gaussian kernel
 gaussk:{[mu;s2;x] exp (sum x*x-:mu)%-2*s2}

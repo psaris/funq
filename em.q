@@ -90,8 +90,8 @@ mu:flip last k .ml.kpp[.ml.hdist;X]/ () / pick k distant proto
 mu:.5*mu+.15+count[X]?/:k#.7            / randomly disturb around .5
 -1"display a few initial prototypes";
 -1 (,'/) plt each 4#mu;
-lf:.ml.bmml
-mf:.ml.wbmmmle[1e-8]
+lf:.ml.bmml[1]
+mf:.ml.wbmmmle[1;1e-8]
 pT:(phi;flip enlist mu)
 \s 0 / prevent wsfull in peach
 -1"0-values in phi or mu will create null values.";
@@ -102,7 +102,7 @@ pT:.ml.em[1b;lf;mf;X] pT
 -1"lets run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]/ pT
 -1"grouping the data and finding the mode identifies the clusters";
-g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll;X] . pT
+g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll[1];X] . pT
 show m:.ml.mode each y g
 avg y=m .ml.ugrp g
 -1"what does the confusion matrix look like?";

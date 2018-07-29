@@ -19,6 +19,24 @@ pT:.ml.em[1b;lf;mf;x] over pT
 .util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[0b;lf;x] . pT
 .util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.binll[n];x] . pT
 
+
+/ multinomial example
+n:100000
+k:30
+X:flip raze .ml.rmultinom[1;k] each  (6#1f%6;.5,5#.1;(2#.1),4#.2)y:n?3
+lf:.ml.mmml
+mf:.ml.wmmmmle[k;1e-8]
+mu:.ml.prb each flip 3?/:X
+phi:3#1f%3
+.ml.em[1b;lf;mf;X] pT:(phi;flip enlist mu)
+show pT:.ml.em[0b;lf;mf;X] over pT
+g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.mmmll;X] . pT
+show m:.ml.mode each y g
+avg y=m .ml.ugrp g
+-1"what does the confusion matrix look like?";
+show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+
+
 / gaussian mixtures
 / http://mccormickml.com/2014/08/04/gaussian-mixture-models-tutorial-and-matlab-code/
 / 1d gauss
@@ -36,25 +54,7 @@ mf:.ml.wgaussmle / maximum likelihood estimator function
 pT:.ml.em[1b;lf;mf;X] over (phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
 group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussll;X] . pT
 
-/ 2d gauss
-mu0:(10 20;-10 -20;0 0)
-S20:((30 -20;-20 30);(20 0; 0 50);(10 2; 5 10)) / SIGMA (covariance matrix)
-m0:1000 2000 1000
-
-R0:.qml.mchol each S20          / sqrt(SIGMA)
-X:(,') over X0:mu0+R0$'(.ml.bm (?).)''[flip each flip (m0;3 2#1f)]
-show .util.plt X
-
-k:count mu0
-phi:k#1f%k                      / equal probability
-mu:X@\:/:neg[k]?count X 0       / pick k random points for mu
-S:k#enlist X cov\:/: X          / full covariance matrix
-
-lf:.ml.gaussmvl
-mf:.ml.wgaussmvmle
-.ml.em[1b;lf;mf;X] over (phi;flip (mu;S))
-
-/ lets try the iris data again for >2d
+/ let's use the iris data for multivariate gauss
 
 \l iris.q
 `X`y set' iris`X`y;
@@ -66,11 +66,13 @@ lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
 pT:.ml.em[1b;lf;mf;X] over (phi;flip (mu;S))
 / how well did it cluster the data?
-g:0 1 2!value group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
+g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y g
 avg y=m .ml.ugrp g
 -1"what does the confusion matrix look like?";
 show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+plt:.util.plot[60;30;".@"]
+-1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
 -1"let's cluster hand written numbers into groups";
 -1"assuming each pixel of a black/white image is a bernoulli distribution,";
@@ -81,7 +83,7 @@ show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
 X>:128
 plt:value .util.plot[28;14;.util.c10] .util.hmap flip 28 cut
 k:10
--1"lets use ",string[k]," clusters";
+-1"let's use ",string[k]," clusters";
 -1"we first initialize phi to be equal weight across all clusters";
 phi:k#1f%k                      / equal prior probability
 -1"then we use the hamming distance to pick different prototypes";
@@ -99,7 +101,7 @@ pT:(phi;flip enlist mu)
 pT:.ml.em[1b;lf;mf;X] pT
 -1"after the first em round, the numbers are prototypes are much clearer";
 -1 (,'/) (plt first @) each  pT 1;
--1"lets run 10 more em steps";
+-1"let's run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]/ pT
 -1"grouping the data and finding the mode identifies the clusters";
 g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll[1];X] . pT

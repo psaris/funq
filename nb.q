@@ -64,7 +64,7 @@ X:(2 2 1 1; / chinese
  0 0 0 1)   / japan
 
 y:`c`c`c`j
--1"analyzing another mock dataset"
+-1"analyzing another mock dataset";
 -1"testing multinomial add one smoothing";
 Xt:flip enlist 3 0 0 0 1 1
 

@@ -622,7 +622,7 @@ fitnb:{[wmf;w;X;y]
 / using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform
 / naive bayes classification
 clfnb:{[l;lf;pT;X]
- d:pT[1] {(x . y) z}[lf]'\: X; / compute probability densities
+ d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
  c:imax each flip $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
  c}
 

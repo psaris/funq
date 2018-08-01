@@ -13,10 +13,13 @@ k.h:
 	wget https://raw.githubusercontent.com/KxSystems/kdb/master/c/c/k.h
 
 libsvm:
-	wget https://github.com/cjlin1/libsvm/archive/v322.tar.gz  -O - | tar -xvf - && mv libsvm-322 libsvm
+	git clone --depth 1 -b v322 https://github.com/cjlin1/libsvm.git
 
 liblinear:
-	wget https://github.com/cjlin1/liblinear/archive/v220.tar.gz  -O - | tar -xvf - && mv liblinear-220 liblinear
+	git clone --depth 1 -b v220 https://github.com/cjlin1/liblinear.git
+
+xgboost:
+	git clone --depth 1 -b release_0.72 --recurse-submodules -j8 https://github.com/dmlc/xgboost.git
 
 libsvm/svm.o: | libsvm
 	$(MAKE) -e -C $(dir $@) $(notdir $@)
@@ -30,6 +33,8 @@ liblinear/blas/blas.a: | liblinear
 	$(MAKE) -e -C $(dir $@) blas
 liblinear/train: liblinear/blas/blas.a
 	$(MAKE) -e -C $(dir $@) $(notdir $@)
+xgboost/lib/libxgboost.dylib: | xgboost
+	$(MAKE) -C xgboost lib/libxgboost.dylib
 
 
 
@@ -45,7 +50,8 @@ libsvm.so: svm.o libsvm/svm.o
 liblinear.so: linear.o liblinear/linear.o liblinear/tron.o liblinear/blas/blas.a
 	$(CC) $(CFLAGS) $(LDFLAGS),$@ $^ -o $@
 
-lib: libsvm.so liblinear.so
+lib: libsvm.so liblinear.so xgboost #/lib/libxgboost.dylib
+
 
 install: lib
 	install libsvm.so liblinear.so $(QHOME)/$(QARCH)
@@ -62,10 +68,22 @@ test-linear: install liblinear/heart_scale.model
 	cd liblinear && q ../testlinear.q < /dev/null
 test: test-svm test-linear
 
-clean:
+clean-libsvm: | libsvm
 	$(MAKE) -C libsvm clean
+clean-liblinear: | liblinear
 	$(MAKE) -C liblinear clean
-	rm -f *.so *.o
+clean-xgboost: | xgboost
+	$(MAKE) -C xgboost clean
 
-nuke: clean
-	rm -rf k.h libsvm liblinear
+clean: clean-libsvm clean-liblinear clean-xgboost
+	$(RM) *.so *.o
+
+nuke-libsvm:
+	$(RM) -r libsvm
+nuke-liblinear:
+	$(RM) -r liblinear
+nuke-xgboost:
+	$(RM) -r xgboost
+
+nuke: nuke-libsvm nuke-liblinear nuke-xgboost
+	$(RM) *.so *.o k.h

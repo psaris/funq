@@ -12,12 +12,11 @@
 *.so
 /k.h
 *.o
-libsvm-*
-liblinear-*
 /pendigits.tes
 /pendigits.tra
 liblinear
 libsvm
+xgboost
 /OnlineNewsPopularity
 *.p[bgp]m
 /web-BerkStan.txt

@@ -30,11 +30,11 @@ mu:.ml.prb each flip 3?/:X
 phi:3#1f%3
 .ml.em[1b;lf;mf;X] pT:(phi;flip enlist mu)
 show pT:.ml.em[0b;lf;mf;X] over pT
-g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.mmmll;X] . pT
-show m:.ml.mode each y g
-avg y=m .ml.ugrp g
+p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.mmmll;X] . pT
+show m:.ml.mode each y group p
+avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[y;m p]
 
 
 / gaussian mixtures
@@ -66,11 +66,11 @@ lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
 pT:.ml.em[1b;lf;mf;X] over (phi;flip (mu;S))
 / how well did it cluster the data?
-g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
-show m:.ml.mode each y g
-avg y=m .ml.ugrp g
+p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
+show m:.ml.mode each y group p
+avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[y;m p]
 plt:.util.plot[60;30;".@"]
 -1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
@@ -104,8 +104,8 @@ pT:.ml.em[1b;lf;mf;X] pT
 -1"let's run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]/ pT
 -1"grouping the data and finding the mode identifies the clusters";
-g:group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll[1];X] . pT
-show m:.ml.mode each y g
-avg y=m .ml.ugrp g
+p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll[1];X] . pT
+show m:.ml.mode each y group p
+avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[y;m p]

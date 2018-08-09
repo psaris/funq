@@ -61,10 +61,10 @@ group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussll;X] . pT
 k:count distinct y              / 3 clusters
 phi:k#1f%k                      / equal prior probability
 mu:X@\:/:neg[k]?count y         / pick k random points for mu
-S:k#enlist X cov\:/: X          / sample covariance
+SIGMA:k#enlist X cov\:/: X      / sample covariance
 lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
-pT:.ml.em[1b;lf;mf;X] over (phi;flip (mu;S))
+pT:.ml.em[1b;lf;mf;X] over (phi;flip (mu;SIGMA))
 / how well did it cluster the data?
 p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y group p

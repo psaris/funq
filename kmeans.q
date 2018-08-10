@@ -54,9 +54,9 @@ C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
 -1"and can show which group each data point was assigned to.";
 show m:.ml.mode each y g:.ml.cgroup[.ml.edist;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg y=m .ml.ugrp g / accuracy
+avg y=p:m .ml.ugrp g            / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m .ml.ugrp g]
+show .util.totals[`TOTAL] .ml.cm[y;p]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids

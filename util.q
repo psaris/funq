@@ -54,7 +54,7 @@ c16:" .-:=+*xoXO#$&%@"                   / 16 characters
 c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxn" / 68 characters
 c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
-plt:plot[60;30;c16]             / default plot function
+plt:plot[60;30;c10]             / default plot function
 
 / remove gamma compression
 gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}

@@ -91,7 +91,11 @@ mem:{(3#system"w")%x (1024*)/ 1}
 / throw verbose exception if x <> y
 assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
 
-cleantxt:{[s]
+/ remove byte order mark if it exists
+rbom:{$["\357\273\277"~3#x[0];@[x;0;3_];x]}
+
+/ clean (s)string for nlp
+cleanstr:{[s]
  s:ssr[s;"\342\200[\234\235]";"\""]; / replace double quotes
  s:ssr[s;"\342\200[\231\230]";"'"];  / replace single quotes
  s:except[s;"_().;,:?!*'\""];        / remove punctuation

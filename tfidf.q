@@ -3,11 +3,10 @@
 \l pandp.q
 \l bible.q
 
--1 "converting utf-8 octal escapes";
-s:bible.sf 3_"\n" sv lower bible.txt
-/s:pandp.sf 3_"\n" sv lower pandp.txt
+s:bible.sf "\n" sv lower bible.txt
+/s:pandp.sf "\n" sv lower pandp.txt
 -1 "cleaning text";
-s:(" " vs .util.cleantxt@) each s
+s:(" " vs .util.cleanstr@) each s
 
 -1 "computing distinct word list (droping stop words)";
 w:asc distinct[raze s] except stopwords.sw

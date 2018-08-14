@@ -1,6 +1,7 @@
 \l util.q
 \l ml.q
 \l fmincg.q
+\l porter.q
 
 / trying to load qml and use its matrix operations
 @[system each;("l qml.q";"l qmlmm.q");0N!]; / use qml mm (if available)

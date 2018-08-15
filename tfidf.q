@@ -9,7 +9,7 @@ s:pandp.sf "\n" sv lower pandp.txt
 s:(.porter.stem each " " vs .util.cleanstr@) peach s
 
 -1 "computing distinct word list (droping stop words)";
-w:asc distinct[raze s] except stopwords.sw
+w:asc distinct[raze s] except stopwords.xpo6
 -1 "building a matrix of word count per document (chapter)";
 m:((count each group@) each s)@\:w
 -1 "building a vector space model (with different examples of tf-idf)";

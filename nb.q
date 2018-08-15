@@ -1,5 +1,7 @@
 \l funq.q
 \l iris.q
+\l stopwords.q
+\l smsspam.q
 
 / https://en.wikipedia.org/wiki/Naive_Bayes_classifier
 X:(6 5.92 5.58 5.92 5 5.5 5.42 5.75; / height (feet)
@@ -75,3 +77,18 @@ show flip pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 .util.assert[1#`c] .ml.clfnb[0b;.ml.multil;pT] Xt
 .util.assert[1#`c] .ml.clfnb[1b;.ml.multill;pT] Xt
 
+t:update lower .util.cleanstr peach text from smsspam.t
+t:update (.porter.stem each " " vs .util.stripstr@) peach text from t
+d:`train`test!.ml.part[3 1] t
+s:d.train.text
+y:d.train.class
+w:asc distinct[raze s] except stopwords.xpo6
+X:flip 0^((count each group@) each s)@\:w
+st:d.test.text
+yt:d.test.class
+Xt:flip 0^((count each group@) each st)@\:w
+-1 "building a matrix of word count per document (chapter)";
+pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
+-1"confirming accuracy";
+avg yt=.ml.clfnb[0b;.ml.multil;pT] Xt
+show select[>spam%ham] from ([]word:w)!flip last pT

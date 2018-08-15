@@ -2,12 +2,10 @@
 \l stopwords.q
 \l pandp.q
 \l bible.q
+\l moby.q
 
-/s:bible.sf "\n" sv lower bible.txt
-s:pandp.sf "\n" sv lower pandp.txt
 -1 "cleaning and stemming text";
-s:(.porter.stem each " " vs .util.cleanstr@) peach s
-
+s:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
 -1 "computing distinct word list (droping stop words)";
 w:asc distinct[raze s] except stopwords.xpo6
 -1 "building a matrix of word count per document (chapter)";

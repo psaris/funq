@@ -94,10 +94,29 @@ assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
 / remove byte order mark if it exists
 rbom:{$["\357\273\277"~3#x[0];@[x;0;3_];x]}
 
-/ clean (s)tring for nlp
+/ clean (s)tring of non ascii characters
 cleanstr:{[s]
  s:ssr[s;"\342\200[\234\235]";"\""]; / replace double quotes
  s:ssr[s;"\342\200[\231\230]";"'"];  / replace single quotes
- s:except[s;"_().;,:?!*'\""];        / remove punctuation
- s:ssr[s;"[-\n]";" "];               / remove hyphen and newline
+ s:ssr[s;"\342\200\246";"..."];      / replace ellipses
+ s:ssr[s;"\342\200\223";"--"];       / replace endash
+ s:ssr[s;"\342\200\224";"---"];      / replace emdash
+ s:ssr[s;"\302\222";"'"];            / replace single quotes
+ s:ssr[s;"\302\243";"$"];            / replace pound symbol with $
+ s:ssr[s;"\302\241";"!"];            / replace !
+ s:ssr[s;"\303\206";"AE"];              / replace AE
+ s:ssr[s;"\303[\210\211\212\213]";"E"]; / replace E
+ s:ssr[s;"\303[\231\232\233\234]";"U"]; / replace U
+ s:ssr[s;"\303\246";"ae"];              / replace ae
+ s:ssr[s;"\303[\250\251\252\253]";"e"]; / replace e
+ s:ssr[s;"\303[\271\272\273\274]";"u"]; / replace u
+ s:ssr[s;"&lt;";"<"];                / replace <
+ s:ssr[s;"&gt;";">"];                / replace >
+ s:ssr[s;"&amp;";"&"];               / replace &
+ s}
+
+/ strip (s)tring of puntuation marks
+stripstr:{[s]
+ s:ssr[s;"[][\n\\/()<>*&%=_+-]";" "]; / replace with white space
+ s:ssr[s;"[.,;:!?'\"0-9]";""];        / delete altogether
  s}

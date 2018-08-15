@@ -24,3 +24,8 @@ xgboost
 /citibike
 /sample-*.txt
 /stop-word-list.txt
+/1342-0.txt
+/2701-0.txt
+/pg10.txt
+/stop.txt
+/SMSSpamCollection

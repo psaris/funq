@@ -5,11 +5,9 @@
 \l moby.q
 
 -1 "cleaning and stemming text";
-s:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
--1 "computing vocabulary (droping stop words)";
-v:asc distinct[raze s] except stopwords.xpo6
--1 "building a matrix of word count per document (chapter)";
-m:((count each group@) each s)@\:v
+c:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
+-1 "building a term document matrix from corpus and vocabulary (minus stopwords)";
+m:.ml.tdm[c] v:asc distinct[raze c] except stopwords.xpo6
 -1 "building a vector space model (with different examples of tf-idf)";
 -1 "vanilla tf-idf";
 vsm:0f^.ml.tfidf[::;.ml.idf] m
@@ -20,7 +18,7 @@ vsm:0f^.ml.tfidf[.ml.dntf[.5];.ml.pidf] m
 -1 "display values of top words based on tf-idf";
 show vsm@'idesc each vsm
 -1 "display top words based on tf-idf";
-show w 5#/:idesc each vsm
+show v 5#/:idesc each vsm
 
 vsm:0f^.ml.tfidf[::;.ml.idf] m
 X:.ml.normalize vsm

@@ -77,18 +77,23 @@ show flip pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 .util.assert[1#`c] .ml.clfnb[0b;.ml.multil;pT] Xt
 .util.assert[1#`c] .ml.clfnb[1b;.ml.multill;pT] Xt
 
-t:update lower .util.cleanstr peach text from smsspam.t
-t:update (.porter.stem each " " vs .util.stripstr@) peach text from t
+-1"modeling spam/ham classifier";
+-1"cleaning and stripping sms text";
+t:update (.util.stripstr lower .util.cleanstr@) peach text from smsspam.t
+-1"tokenizng and stemming sms text";
+t:update (.porter.stem each " " vs) peach text from t
+-1"partitioning sms messages between training and test";
 d:`train`test!.ml.part[3 1] t
-s:d . `train`text
+c:d . `train`text
 y:d . `train`class
-v:asc distinct[raze s] except stopwords.xpo6
-X:flip 0^((count each group@) each s)@\:v
-st:d.test.text
-yt:d.test.class
-Xt:flip 0^((count each group@) each st)@\:v
--1 "building a matrix of word count per document (chapter)";
+-1"generating vocabulary and term document matrix";
+X:flip .ml.tdm[c] v:asc distinct[raze c] except stopwords.xpo6
+ct:d . `test`text
+yt:d . `test`class
+Xt:flip .ml.tdm[ct] v
+-1 "fitting multinomial naive bayes classifier";
 pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 -1"confirming accuracy";
 avg yt=.ml.clfnb[0b;.ml.multil;pT] Xt
-show select[>spam%ham] from ([]word:w)!flip last pT
+-1 "sorting model by strong spam signal";
+show select[>spam%ham] from ([]word:v)!flip last pT

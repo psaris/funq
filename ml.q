@@ -339,6 +339,9 @@ pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 mkdist:{[p;x;y]mknorm[p] x-y}                    / minkowski distanace
 hmean:{1f%avg 1f%x}                              / harmonic mean
 
+/ term document matrix built from (c)orpus and (v)ocabulary
+tdm:{[c;v](0^@[;v]count each group@) each c}
+
 lntf:{1f+log x}                    / log normalized term frequency
 dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
 

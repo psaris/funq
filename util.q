@@ -117,6 +117,6 @@ cleanstr:{[s]
 
 / strip (s)tring of puntuation marks
 stripstr:{[s]
- s:ssr[s;"[][\n\\/()<>*&%=_+-]";" "]; / replace with white space
- s:ssr[s;"[.,;:!?'\"0-9]";""];        / delete altogether
+ s:ssr[s;"[][\n\\/()<>@#$%^&*=_+.,;:!?-]";" "]; / replace with white space
+ s:ssr[s;"['\"0-9]";""];            / delete altogether
  s}

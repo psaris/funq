@@ -80,13 +80,13 @@ show flip pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 t:update lower .util.cleanstr peach text from smsspam.t
 t:update (.porter.stem each " " vs .util.stripstr@) peach text from t
 d:`train`test!.ml.part[3 1] t
-s:d.train.text
-y:d.train.class
-w:asc distinct[raze s] except stopwords.xpo6
-X:flip 0^((count each group@) each s)@\:w
+s:d . `train`text
+y:d . `train`class
+v:asc distinct[raze s] except stopwords.xpo6
+X:flip 0^((count each group@) each s)@\:v
 st:d.test.text
 yt:d.test.class
-Xt:flip 0^((count each group@) each st)@\:w
+Xt:flip 0^((count each group@) each st)@\:v
 -1 "building a matrix of word count per document (chapter)";
 pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 -1"confirming accuracy";

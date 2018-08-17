@@ -6,10 +6,10 @@
 
 -1 "cleaning and stemming text";
 s:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
--1 "computing distinct word list (droping stop words)";
-w:asc distinct[raze s] except stopwords.xpo6
+-1 "computing vocabulary (droping stop words)";
+v:asc distinct[raze s] except stopwords.xpo6
 -1 "building a matrix of word count per document (chapter)";
-m:((count each group@) each s)@\:w
+m:((count each group@) each s)@\:v
 -1 "building a vector space model (with different examples of tf-idf)";
 -1 "vanilla tf-idf";
 vsm:0f^.ml.tfidf[::;.ml.idf] m

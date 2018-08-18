@@ -36,12 +36,12 @@ do[2;show value plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"demonstrate a few binary classification evaluation metrics";
 -1"how well did we predict the number 8";
-tptnfpfn:.ml.tptnfpfn[8=first Yt;8=p]
--1"accuracy: ",                                         string .ml.accuracy tptnfpfn;
--1"precision: ",                                        string .ml.precision tptnfpfn;
--1"recall: ",                                           string .ml.recall tptnfpfn;
--1"F1 (harmonic mean between precision and recall): ",  string .ml.F1 tptnfpfn;
--1"FM (geometric mean between precision and recall): ", string .ml.FM tptnfpfn;
--1"jaccard (0 <-> 1 similarity measure): ",             string .ml.jaccard tptnfpfn;
--1"MCC (-1 <-> 1 correlation measure): ",               string .ml.MCC tptnfpfn;
+tptnfpfn:.ml.tptnfpfn . 8=(yt;p)
+-1"accuracy: ",                                         string .ml.accuracy . tptnfpfn;
+-1"precision: ",                                        string .ml.precision . tptnfpfn;
+-1"recall: ",                                           string .ml.recall . tptnfpfn;
+-1"F1 (harmonic mean between precision and recall): ",  string .ml.F1 . tptnfpfn;
+-1"FM (geometric mean between precision and recall): ", string .ml.FM . tptnfpfn;
+-1"jaccard (0 <-> 1 similarity measure): ",             string .ml.jaccard . tptnfpfn;
+-1"MCC (-1 <-> 1 correlation measure): ",               string .ml.MCC . tptnfpfn;
 

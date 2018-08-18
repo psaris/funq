@@ -229,30 +229,32 @@ predictonevsall:{[X;THETA]f2nd[imax] X lpredict/ THETA}
 tptnfpfn:{sum each (x;nx;x;nx:not x)*(y;ny;ny:not y;y)}
 
 / aka rand measure (William M. Rand 1971)
-accuracy:{sum[x 0 1]%sum x}
-precision:{x[0]%sum x 0 2}
-recall:{x[0]%sum x 0 3}
+accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}
+precision:{[tp;tn;fp;fn]tp%tp+fp}
+recall:{[tp;tn;fp;fn]tp%tp+fn}
 
-/ f measure: given (b)eta and x:tptnfpfn
+/ f measure: given (b)eta and tp,tn,fp,fn
 / harmonic mean of precision and recall
-F:{[b;x]
- f:(p:precision x)*(r:recall x)*1+b2:b*b;
+F:{[b;tp;tn;fp;fn]
+ f:1+b2:b*b;
+ f*:r:recall[tp;tn;fp;fn];
+ f*:p:precision[tp;tn;fp;fn];
  f%:r+p*b2;
  f}
 F1:F[1]
 
 / Fowlkes–Mallows index (E. B. Fowlkes & C. L. Mallows 1983)
 / geometric mean of precision and recall
-FM:{x[0]%sqrt sum[x 0 2]*sum x 0 3}
+FM:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
 
 / returns a number between 0 and 1 which indicates the similarity
 / between two datasets
-jaccard:{x[0]%sum x _ 1}
+jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}
 
 / Matthews Correlation Coefficient
-/ geometric mean of the regression coefficients of the problem and its dual
+/ correlation coefficient between the observed and predicted
 / -1 0 1 (none right, same as random prediction, all right)
-MCC:{ ((-). x[0 2]*x 1 3)%prd sqrt x[0 0 1 1]+x 2 3 2 3}
+MCC:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
 
 / confusion matrix
 cm:{

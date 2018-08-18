@@ -94,6 +94,8 @@ Xt:flip .ml.tdm[ct] v
 -1 "fitting multinomial naive bayes classifier";
 pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 -1"confirming accuracy";
-avg yt=.ml.clfnb[0b;.ml.multil;pT] Xt
+avg yt=p:.ml.clfnb[0b;.ml.multil;pT] Xt
 -1 "sorting model by strong spam signal";
+show select[>spam] from ([]word:v)!flip last pT
+-1 "sorting model by strong spam relative signal";
 show select[>spam%ham] from ([]word:v)!flip last pT

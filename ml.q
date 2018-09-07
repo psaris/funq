@@ -126,8 +126,8 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ apply f (in parallel) to the 2nd dimension of x (instead of flipping x)
-f2nd:{[f;x](f x .(::),) peach til count x 0}
+/ apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
+f2nd:{[f;x]$[system"g";(f x .(::),) peach til count x 0;f peach flip x]}
 / center data
 demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)

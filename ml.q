@@ -28,9 +28,9 @@ ismatrix:{
  b:identical count each x;
  b}
 
-mnorm:sum abs@                  / manhattan (taxicab) norm
-enorm2:{sum x*x}                / euclidean norm squared
-enorm:(')[sqrt;enorm2]          / euclidean norm
+mnorm:(')[sum;abs]                         / manhattan (taxicab) norm
+enorm2:{sum x*x}                           / euclidean norm squared
+enorm:(')[sqrt;enorm2]                     / euclidean norm
 mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
 / apply (d)yadic function to the result of (a)ggregating
 / vector/matrix/dictionary/table x
@@ -166,7 +166,7 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 prb:norm[%;sum]                 / convert densities into probabilities
 
 sigmoid:1f%1f+exp neg@          / sigmoid function
-softmax:prb exp@                / softmax function
+softmax:(')[prb;exp]            / softmax function
 
 lpredict:(')[sigmoid;predict]   / logistic regression predict
 / cross-entropy loss
@@ -335,14 +335,14 @@ updals:{[l;M;y]
  v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
  v}
 
-hdist:{sum not x=y}             / hamming distance
+hdist:(')[sum;<>]               / hamming distance
 mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
 edist2:(')[enorm2;-]            / euclidean distance squared
 edist:(')[enorm;-]              / euclidean distance
 pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]mknorm[p] x-y}                    / minkowski distanace
-hmean:{1f%avg 1f%x}                              / harmonic mean
+mkdist:{[p;x;y]mknorm[p] x-y}   / minkowski distanace
+hmean:1f%avg 1f%                / harmonic mean
 
 / term document matrix built from (c)orpus and (v)ocabulary
 tdm:{[c;v](0^@[;v]count each group@) each c}

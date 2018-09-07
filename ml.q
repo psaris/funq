@@ -601,7 +601,7 @@ knn:{[wf;k;y;d]
  n:(waom . (wf d@;y)@\:#[;iasc d]@) each k;
  n}
 
-/ markov clusetering
+/ markov clustering
 
 addloop:{x|diag max peach x|flip x}
 

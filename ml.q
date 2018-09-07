@@ -32,7 +32,10 @@ mnorm:sum abs@                  / manhattan (taxicab) norm
 enorm2:{sum x*x}                / euclidean norm squared
 enorm:(')[sqrt;enorm2]          / euclidean norm
 mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
-normalize:{x%\:enorm x}         / normalize
+/ apply (d)yadic function to the result of (a)ggregating
+/ vector/matrix/dictionary/table x
+norm:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
+normalize:norm[%;enorm]         / normalize each vector to unit length
 
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
@@ -159,8 +162,8 @@ wnan:{$[all type each x;where not any null x;::]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
-/ convert densities into probabiliites
-prb:{$[0h>type first x;x%sum x;x%\:sum x]}
+
+prb:norm[%;sum]                 / convert densities into probabilities
 
 sigmoid:1f%1f+exp neg@          / sigmoid function
 softmax:prb exp@                / softmax function

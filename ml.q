@@ -275,7 +275,7 @@ cv:{[f;ys;Xs;i]
 
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
-diag:{$[0h>t:type x;x;@[n#abs[t]$0;;:;]'[til n:count x;x]]}
+diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
 
 / (f)unction, x, (e)psilon
 / compute partial derivatives if e is a list

@@ -1,8 +1,11 @@
 \d .ml
 
+/ apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
+f2nd:{[f;x]$[system"g";(f (::)x') peach til count x 0;f peach flip x]}
+
 mm:mmu                          / X  * Y
-mmt:{y$/:x}                     / X  * Y'
-mtm:{flip[x]$y}                 / X' * Y
+mmt:{(y$) peach x}              / X  * Y'
+mtm:{f2nd[$[;y];x]}             / X' * Y
 minv:inv                        / X**-1
 mlsq:lsq                        / least squares
 dot:$                           / dot product
@@ -126,8 +129,6 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
-f2nd:{[f;x]$[system"g";(f (::)x') peach til count x 0;f peach flip x]}
 / center data
 demean:{x-\:$[type x;avg;f2nd avg] x}
 / apply f to centered (then decenter)

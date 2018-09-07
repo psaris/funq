@@ -230,7 +230,7 @@ predictonevsall:{[X;THETA]f2nd[imax] X lpredict/ THETA}
 
 / given expected boolean values x and observered value y, compute
 / (tp;tn;fp;fn)
-tptnfpfn:{(x;nx;x;nx:not x)(sum@&)'(y;ny;ny:not y;y)}
+tptnfpfn:{tp,(("i"$count x)-tp+sum f),f:(sum x;sum y)-tp:sum x&y}
 
 / aka rand measure (William M. Rand 1971)
 accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}

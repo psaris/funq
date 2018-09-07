@@ -20,7 +20,7 @@ mchol:{[X]                      / cholesky decomposition
   L}[X]/[(n;n)#0f;til n:count X];
  L}
 
-identical:all 1_~':
+identical:{min first[x]~':x}
 
 ismatrix:{
  if[type x;:0b];

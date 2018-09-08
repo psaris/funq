@@ -25,7 +25,7 @@ rpt:lj[;mlense.movie] `score xdesc
 -1"it uses our own preferences mixed with each movie's genre";
 Y:enlist value[r]`rating
 -1"we build the X matrix based on each movie's genres";
-show X:flip exec genre in/: genres from ([]movieId:m)#mlense.movie
+show X:"f"$flip exec genre in/: genres from ([]movieId:m)#mlense.movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
@@ -72,8 +72,9 @@ show R:value exec (movieId!rating) m by userId from mlense.rating
 -1"then add our own ratings";
 R,:value[r]`rating
 -1"demean the data and store global/movie/user bias";
-b:(2 sum/0^R)%2 sum/not null R
-Y:Y-ub:avg each Y:Y-\:mb:.ml.f2nd[avg] Y:R-b
+\
+b:avg 2 raze/ R
+Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b
 y:r-'mb+b+last ub
 
 / user user collaborative filtering
@@ -85,18 +86,18 @@ y:r-'mb+b+last ub
 -1"[ ] should we use cosine similarity instead?";
 
 -1"average top n users based on correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[cor;.ml.navg 20;0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf[cor;.ml.tnavg 20;0^Y] rating from y
 -1"weighted average top n users based on spearman correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.scor;.ml.nwavg 20;0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.scor;.ml.tnwavg 20;0^Y] rating from y
 -1"weighted average top n users based on cosine similarity";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.nwavg 20;0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg 20;0^Y] rating from y
 -1"what if we would like recommend more niche movies.";
 -1"ie: underweight movies with more ratings?";
 -1"we can use the 'idf' (inverse document frequency) calculation ";
 -1"from nlp (natural language processing)";
 -1"weighted average top n users based on cosine similarity of idf-adjusted ratings";
 / weight by inverse user frequencies to underweight universally liked movies
-show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.nwavg[20];0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[20];0^Y] rating from y
 -1 .util.box["**"] (
  "singular value decomposition (svd) allows us to compute latent factors (off-line)";
  "and perform simple matrix multiplication to make predictions (on-line)");

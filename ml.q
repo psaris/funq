@@ -129,26 +129,21 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
-/ center data
-demean:{x-\:$[type x;avg;f2nd avg] x}
-/ apply f to centered (then decenter)
-fdemean:{[f;x]a+f x-\:a:$[type x;avg;f2nd avg] x}
+/ null aware operators account for nulls in matrices
+nsum:{$[type x;sum x;sum 0^x]}
+navg:{$[type x;avg x;sum[0^x]%count[x]-sum null x]}
+nsvar:{$[type x;svar x;sum[x*x:0^x-\:sum[0^x]%n]%-1+n:count[x]-sum null x]}
+nsdev:(')[sqrt;nsvar]
+
+/ centered
+demean:norm[-;navg]
 / feature normalization (centered/unit variance)
-zscore:{
- x:x-\:$[t:type x;avg;f2nd avg] x;
- x:x%\:$[t;sdev;f2nd sdev] x;
- x}
-/ apply f to normalized (then denormalize)
-fzscore:{[f;x]
- x:x-\:a:$[t:type x;avg;f2nd avg] x;
- x:x%\:d:$[t;sdev;f2nd sdev] x;
- x:a+d*f x;
- x}
+zscore:(')[norm[%;nsdev];demean]
 
 / compute the average of the top n items
-navg:{[n;x;y]f2nd[avg] y (n&count x)#idesc x}
+tnavg:{[n;x;y]navg y (n&count x)#idesc x}
 / compute the weighted average of the top n items
-nwavg:{[n;x;y]sum[0^x*y i]%sum abs x@:i:(n&count x)#idesc x}
+tnwavg:{[n;x;y]sum[0^x*y i]%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
 / (s)imilarity (f)unction, (a)veraging (f)unction

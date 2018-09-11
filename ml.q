@@ -3,7 +3,7 @@
 / apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
 f2nd:{[f;x]$[system"g";(f (::)x') peach til count x 0;f peach flip x]}
 
-mm:mmu                          / X  * Y
+mm:{$[;y] peach x}              / X  * Y
 mmt:{(y$) peach x}              / X  * Y'
 mtm:{f2nd[$[;y];x]}             / X' * Y
 minv:inv                        / X**-1

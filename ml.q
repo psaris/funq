@@ -130,9 +130,12 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
 / null aware operators account for nulls in matrices
-nsum:{$[type x;sum x;sum 0^x]}
-navg:{$[type x;avg x;sum[0^x]%count[x]-sum null x]}
-nsvar:{$[type x;svar x;sum[x*x:0^x-\:sum[0^x]%n]%-1+n:count[x]-sum null x]}
+ncount:{$[type x;sum not null x;count[x] - 0i {x+null y}/ x]}
+nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
+navg:{$[type x;avg x;nsum[x]%ncount x]}
+nvar:{$[type x;var x;navg[x*x]-m*m:navg x]}
+ndev:(')[sqrt;nvar]
+nsvar:{$[type x;svar x;(n*nvar x)%-1+n:ncount x]}
 nsdev:(')[sqrt;nsvar]
 
 / centered
@@ -143,7 +146,7 @@ zscore:(')[norm[%;nsdev];demean]
 / compute the average of the top n items
 tnavg:{[n;x;y]navg y (n&count x)#idesc x}
 / compute the weighted average of the top n items
-tnwavg:{[n;x;y]sum[0^x*y i]%sum abs x@:i:(n&count x)#idesc x}
+tnwavg:{[n;x;y]nsum[x*y i]%sum abs x@:i:(n&count x)#idesc x}
 
 / user-user collaborative filtering
 / (s)imilarity (f)unction, (a)veraging (f)unction

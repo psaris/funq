@@ -72,7 +72,6 @@ show R:value exec (movieId!rating) m by userId from mlense.rating
 -1"then add our own ratings";
 R,:value[r]`rating
 -1"demean the data and store global/movie/user bias";
-\
 b:avg 2 raze/ R
 Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b
 y:r-'mb+b+last ub

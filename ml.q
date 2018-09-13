@@ -130,7 +130,7 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
 
 / null aware operators account for nulls in matrices
-ncount:{$[type x;sum not null x;count[x] - 0i {x+null y}/ x]}
+ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
 navg:{$[type x;avg x;nsum[x]%ncount x]}
 nvar:{$[type x;var x;navg[x*x]-m*m:navg x]}

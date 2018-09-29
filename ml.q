@@ -583,7 +583,7 @@ em:{[fp;lf;wmf;X;pT]                / expectation maximization
 
 / return value which occurs most frequently
 nmode:{imax count each group x} / naive mode
-mode:{x -1+w imax deltas w:where differ[x:asc x],1b}
+mode:{x first iasc x:where x=max x:@[x!(count x:distinct x)#0;x;+;1]}
 wmode:{[w;x]imax sum each w group x} / weighted mode
 
 isord:{type[x] in 8 9h}                / is ordered

@@ -338,8 +338,8 @@ hdist:(')[sum;<>]               / hamming distance
 mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
 edist2:(')[enorm2;-]            / euclidean distance squared
 edist:(')[enorm;-]              / euclidean distance
-pedist2:{sum[x*x]+/:sum[y*y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
-/pedist2:{sum[x*x]+/:sum[y*y]+-2f*f2nd[sum x*;y]} / pairwise edist2
+pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
+/pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mkdist:{[p;x;y]mknorm[p] x-y}   / minkowski distanace
 hmean:1f%avg 1f%                / harmonic mean
 
@@ -535,7 +535,7 @@ wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 
 / gaussian kernel
-gaussk:{[mu;sigma;x] exp (sum x*x-:mu)%-2*sigma}
+gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2*sigma}
 
 / gaussian likelihood
 gaussl:{[mu;sigma;x]
@@ -615,7 +615,7 @@ inflate:{[r;p;X]
 / if (p)rune is an integer, take p largest, otherwise take everything > p
 mcl:{[e;r;p;X] inflate[r;p] expand[e] X}
 
-chaos:{max {max[x]-sum x*x} peach x}
+chaos:{max {max[x]-enorm2 x} peach x}
 interpret:{1_asc distinct f2nd[where] 0<x}
 
 / naive bayes
@@ -642,10 +642,10 @@ odds:{[g]prb count each g}
 / splitting functions
 entropy:{neg sum x*2 xlog x:odds group x}
 wentropy:{[w;x]neg sum x*2 xlog x:wodds[w] group x}
-gini:{1f-sum x*x:odds group x}
-wgini:{[w;x]1f-sum x*x:wodds[w] group x}
-sse:{sum x*x-:avg x}
-wsse:{[w;x]sum x*x-:w wavg x}
+gini:{1f-enorm2 odds group x}
+wgini:{[w;x]1f-enorm2 wodds[w] group x}
+sse:{enorm2 x-avg x}
+wsse:{[w;x]enorm2 x-w wavg x}
 theta:{1f-sum[x=mode x]%count x}
 wtheta:{[w;x]1f-sum[x=wmode[w;x]]%count x}
 

@@ -32,7 +32,9 @@ ismatrix:{
  b}
 
 mnorm:(')[sum;abs]                         / manhattan (taxicab) norm
-enorm2:{sum x*x}                           / euclidean norm squared
+/ euclidean norm squared
+/ NOTE: wavg converts all types to float
+enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
 enorm:(')[sqrt;enorm2]                     / euclidean norm
 mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
 / apply (d)yadic function to the result of (a)ggregating

@@ -348,7 +348,7 @@ hmean:1f%avg 1f%                / harmonic mean
 / term document matrix built from (c)orpus and (v)ocabulary
 tdm:{[c;v](0^@[;v]count each group@) each c}
 
-lntf:{1f+log x}                    / log normalized term frequency
+lntf:{log 1f+x}                    / log normalized term frequency
 dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
 
 idf: {log count[x]%sum 0<x}     / inverse document frequency

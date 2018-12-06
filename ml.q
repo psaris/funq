@@ -31,11 +31,11 @@ ismatrix:{
  b:identical count each x;
  b}
 
-mnorm:(')[sum;abs]                         / manhattan (taxicab) norm
+mnorm:sum abs::               / manhattan (taxicab) norm
 / euclidean norm squared
 / NOTE: wavg converts all types to float
 enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
-enorm:(')[sqrt;enorm2]                     / euclidean norm
+enorm:sqrt enorm2::                        / euclidean norm
 mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
 / apply (d)yadic function to the result of (a)ggregating
 / vector/matrix/dictionary/table x
@@ -136,14 +136,14 @@ ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
 navg:{$[type x;avg x;nsum[x]%ncount x]}
 nvar:{$[type x;var x;navg[x*x]-m*m:navg x]}
-ndev:(')[sqrt;nvar]
+ndev:sqrt nvar::
 nsvar:{$[type x;svar x;(n*nvar x)%-1+n:ncount x]}
-nsdev:(')[sqrt;nsvar]
+nsdev:sqrt nsvar::
 
 / centered
 demean:norm[-;navg]
 / feature normalization (centered/unit variance)
-zscore:(')[norm[%;nsdev];demean]
+zscore:norm[%;nsdev] demean::
 
 / compute the average of the top n items
 tnavg:{[n;x;y]navg y (n&count x)#idesc x}
@@ -167,9 +167,9 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 prb:norm[%;sum]                 / convert densities into probabilities
 
 sigmoid:1f%1f+exp neg@          / sigmoid function
-softmax:(')[prb;exp]            / softmax function
+softmax:prb exp::               / softmax function
 
-lpredict:(')[sigmoid;predict]   / logistic regression predict
+lpredict:sigmoid predict::      / logistic regression predict
 / cross-entropy loss
 celoss:{(-1f%count y 0)*sum sum each (y*log x)+(1f-y)*log 1f-x}
 
@@ -336,10 +336,10 @@ updals:{[l;M;y]
  v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
  v}
 
-hdist:(')[sum;<>]               / hamming distance
-mdist:(')[mnorm;-]              / manhattan distance (taxicab metric)
-edist2:(')[enorm2;-]            / euclidean distance squared
-edist:(')[enorm;-]              / euclidean distance
+hdist:sum (<>)::               / hamming distance
+mdist:mnorm (-)::              / manhattan distance (taxicab metric)
+edist2:enorm2 (-)::            / euclidean distance squared
+edist:enorm (-)::              / euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mkdist:{[p;x;y]mknorm[p] x-y}   / minkowski distanace
@@ -357,7 +357,7 @@ idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
-cosdist:(')[1f-;cossim]                          / cosine distance
+cosdist:(1f-) cossim::                           / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
@@ -502,16 +502,16 @@ binpdf:{[n;p;k]
 binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}
 / binomial log likelihood
 binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
-/binl:(')[exp;binll]
+/binl:exp binll::
 / binomial maximum likelihood estimator
 binmle:{[n;a;x]1#avg a+x%n}
 wbinmle:{[n;a;w;x]1#w wavg a+x%n}
 
 / binomial mixture model likelihood
-bmml:(')[prd;binl]
+bmml:prd binl::
 / binomial mixture model log likelihood
-bmmll:(')[sum;binll]
-bmml:(')[exp;bmmll]             / more numerically stable
+bmmll:sum binll::
+bmml:exp bmmll::             / more numerically stable
 / binomial mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
 bmmmle:{[n;a;w;x]enlist avg each a+x%n}
@@ -526,10 +526,10 @@ multimle:{[n;x]enlist each x%sum x:n+sum each x}
 wmultimle:{[n;w;x]enlist each x%sum x:n+w wsum/: x}
 
 / multinomial mixture model likelihood
-mmml:(')[prd;multil]
+mmml:prd multil::
 / multinomial mixture model log likelihood
-mmmll:(')[sum;multill]
-/mmml:(')[exp;mmmll]             / more numerically stable
+mmmll:sum multill::
+/mmml:exp mmmll::             / more numerically stable
 / multinomial mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
 mmmmle:{[n;a;w;x]enlist avg each a+x%n}

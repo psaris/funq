@@ -7,7 +7,8 @@
 -1 "cleaning and stemming text";
 c:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
 -1 "building a term document matrix from corpus and vocabulary (minus stopwords)";
-m:.ml.tdm[c] v:asc distinct[raze c] except stopwords.xpo6
+sw:.porter.stem peach stopwords.xpo6
+m:.ml.tdm[c] v:asc distinct[raze c] except sw
 -1 "building a vector space model (with different examples of tf-idf)";
 -1 "vanilla tf-idf";
 vsm:0f^.ml.tfidf[::;.ml.idf] m

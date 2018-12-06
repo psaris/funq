@@ -87,14 +87,15 @@ d:`train`test!.ml.part[3 1] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";
-X:flip .ml.tdm[c] v:asc distinct[raze c] except stopwords.xpo6
+sw:.porter.stem peach stopwords.xpo6
+X:.ml.tdm[c] v:asc distinct[raze c] except sw
 ct:d . `test`text
 yt:d . `test`class
-Xt:flip .ml.tdm[ct] v
+Xt:.ml.tdm[ct] v
 -1 "fitting multinomial naive bayes classifier";
-pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
+pT:.ml.fitnb[.ml.wmultimle[1];::;flip X;y]
 -1"confirming accuracy";
-avg yt=p:.ml.clfnb[0b;.ml.multil;pT] Xt
+avg yt=p:.ml.clfnb[0b;.ml.multil;pT] flip Xt
 -1 "sorting model by strong spam signal";
 show select[>spam] from ([]word:v)!flip last pT
 -1 "sorting model by strong spam relative signal";

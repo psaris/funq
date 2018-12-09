@@ -21,7 +21,7 @@ ldmnist:{
 etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
 / allocate x into y bins
-nbin:{(til[y]%y) bin .5^x%max x-:min x}
+nbin:{(y-1)&floor y*.5^x%max x-:min x}
 
 / divide range (s;e) into n buckets
 nrng:{[n;s;e]s+til[1+n]*(e-s)%n}

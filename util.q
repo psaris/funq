@@ -56,6 +56,8 @@ c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 plt:plot[60;30;c10]             / default plot function
 
+spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[;8]::
+
 / remove gamma compression
 gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}
 / add gamma compression

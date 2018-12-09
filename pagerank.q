@@ -22,7 +22,7 @@ show X:.ml.full S
 -1 "using matrix inversion, we can algebraically compute the pagerank";
 -1 "it is commonly understood that the odds of clicking on a link are 85%";
 -1 "while the odds of randomly going to another page are 15%";
-p:.85
+p:.15
 show link[i]!r i:idesc r:.ml.pageranka[p;X]
 -1 "ranks don't change drastically over time";
 -1 "so perhaps an iterative approach is better";

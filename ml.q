@@ -831,7 +831,7 @@ sma:{
 / given a (p)robability of random surfing and (A)djacency matrix
 / obtain the page rank algebraically by matrix inversion
 pageranka:{[p;A]
- A:((1f-p)%n:count A)+p*A%1|sum each A;
+ A:(p%n:count A)+(1f-p)*A%1|sum each A;
  r%:sum r:first mlsq[enlist r] diag[r:n#1f]-A;
  r}
 
@@ -839,21 +839,21 @@ pageranka:{[p;A]
 / (r)ank vector, obtain a better ranking (iterative model)
 pageranki:{[p;A;r]
  s:sum r*0=d:sum each A;
- r:((1f-p)%n)+p*mtm[A;r%1|d]+s%n:count A;
+ r:(p%n)+(1f-p)*mtm[A;r%1|d]+s%n:count A;
  r}
 
 / given a (p)robability of random surfing, (S)parse adjacency matrix
 / and (r)ank vector, obtain a better ranking (iterative model)
 pageranks:{[p;S;r]
  s:sum r*e:0=d:0^sum'[S[3] group S 1]til first S 0;
- r:((1f-p)%n)+p*first full[smm[sparse enlist r%1|d;S]]+s%n:S[0;0];
+ r:(p%n)+(1f-p)*first full[smm[sparse enlist r%1|d;S]]+s%n:S[0;0];
  r}
 
 / given a (p)robability of random surfing and (A)djacency matrix
 / create the markov Google matrix
 google:{[p;A]
  e:0=d:sum each A;
- r:((1f-p)%n)+p*(A%1|d)+e%n:count A;
+ r:(p%n)+(1f-p)*(A%1|d)+e%n:count A;
  r}
 
 / top n svd factors

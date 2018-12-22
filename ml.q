@@ -828,32 +828,39 @@ sma:{
  m:enlist[x 0],value flip t;
  m}
 
-/ given a (p)robability of random surfing and (A)djacency matrix
-/ obtain the page rank algebraically by matrix inversion
-pageranka:{[p;A]
- A:(p%n:count A)+(1f-p)*A%1|sum each A;
- r%:sum r:first mlsq[enlist r] diag[r:n#1f]-A;
+/ given a (d)amping factor (1 - the probability of random surfing) and
+/ the (A)djacency matrix, create the markov Google matrix
+google:{[d;A]
+ A%:1f|s:sum each A;            / convert to markov matrix
+ A+:(0f=s)%n:count A;           / redistribute dangling weight
+ A:(d*A)+(1f-d)%n;              / dampen
+ A}
+
+/ given a (d)amping factor (1 - the probability of random surfing) and
+/ the (A)djacency matrix, obtain the page rank algebraically by least
+/ squares
+pageranka:{[d;A]
+ A%:1f|sum each A;                          / convert to markov matrix
+ A:(d*A)+(1f-d)%n:count A;                  / dampen
+ r:prb first mlsq[enlist r] diag[r:n#1f]-A; / compute rankings
  r}
 
-/ given a (p)robability of random surfing, (A)djacency matrix and
-/ (r)ank vector, obtain a better ranking (iterative model)
-pageranki:{[p;A;r]
- s:sum r*0=d:sum each A;
- r:(p%n)+(1f-p)*mtm[A;r%1|d]+s%n:count A;
+/ given a (d)amping factor (1 - the probability of random surfing),
+/ the (A)djacency matrix and an initial (r)ank vector, obtain a better
+/ ranking (iterative model)
+pageranki:{[d;A;r]
+ w:sum r*0f=s:sum each A;       / compute dangling weight
+ r:sum[A*r%1f|s]+w%n:count A;   / compute rankings
+ r:(d*r)+(1f-d)%n;              / dampen
  r}
 
-/ given a (p)robability of random surfing, (S)parse adjacency matrix
-/ and (r)ank vector, obtain a better ranking (iterative model)
-pageranks:{[p;S;r]
- s:sum r*e:0=d:0^sum'[S[3] group S 1]til first S 0;
- r:(p%n)+(1f-p)*first full[smm[sparse enlist r%1|d;S]]+s%n:S[0;0];
- r}
-
-/ given a (p)robability of random surfing and (A)djacency matrix
-/ create the markov Google matrix
-google:{[p;A]
- e:0=d:sum each A;
- r:(p%n)+(1f-p)*(A%1|d)+e%n:count A;
+/ given a (d)amping factor (1 - the probability of random surfing),
+/ the (S)parse adjacency matrix and an initial (r)ank vector, obtain a
+/ better ranking (iterative model)
+pageranks:{[d;S;r]
+ w:sum r*0f=s:0f^sum'[S[3] group S 1]til n:S[0;0]; / compute dangling weight
+ r:first full[smm[sparse enlist r%1f|s;S]]+w%n;    / compute rankings
+ r:(d*r)+(1f-d)%n;                                 / dampen
  r}
 
 / top n svd factors

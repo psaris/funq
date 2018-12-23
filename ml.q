@@ -277,6 +277,7 @@ cv:{[f;ys;Xs;i]
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
+eye:{diag x#1f}
 
 / (f)unction, x, (e)psilon
 / compute partial derivatives if e is a list
@@ -286,7 +287,7 @@ checknngradients:{[l;n]
  theta:2 raze/ THETA:ninit'[-1_n;1_n];
  X:flip ninit[-1+n 0;n 1];
  y:1+(1+til n 1) mod last n;
- YMAT:flip diag[last[n]#1f]"i"$y-1;
+ YMAT:flip eye[last n]"i"$y-1;
  g:2 raze/ rloggrad[l;X;YMAT] THETA; / analytic gradient
  f:(rlogcost[l;X;YMAT]nncut[n]@);
  ng:numgrad[f;theta] count[theta]#1e-4; / numerical gradient
@@ -831,18 +832,17 @@ sma:{
 / given a (d)amping factor (1 - the probability of random surfing) and
 / the (A)djacency matrix, create the markov Google matrix
 google:{[d;A]
- A%:1f|s:sum each A;            / convert to markov matrix
- A+:(0f=s)%n:count A;           / redistribute dangling weight
- A:(d*A)+(1f-d)%n;              / dampen
- A}
+ M:A%1f|s:sum each A;           / convert to markov matrix
+ M+:(0f=s)%n:count M;           / add links to dangling pages
+ M:(d*M)+(1f-d)%n;              / dampen
+ M}
 
 / given a (d)amping factor (1 - the probability of random surfing) and
-/ the (A)djacency matrix, obtain the page rank algebraically by least
-/ squares
+/ the (A)djacency matrix, obtain the page rank algebraically
 pageranka:{[d;A]
- A%:1f|sum each A;                          / convert to markov matrix
- A:(d*A)+(1f-d)%n:count A;                  / dampen
- r:prb first mlsq[enlist r] diag[r:n#1f]-A; / compute rankings
+ M:A%1f|s:sum each A;           / convert to markov matrix
+ M+:(0f=s)%n:count M;           / add links to dangling pages
+ r:prb first mlsq[(1;n)#(1f-d)%n] eye[n]-d*M; / compute rankings
  r}
 
 / given a (d)amping factor (1 - the probability of random surfing),

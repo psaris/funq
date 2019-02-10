@@ -1,6 +1,7 @@
 \c 20 100
 \l funq.q
 \l iris.q
+\l weather.q
 
 / http://www.cise.ufl.edu/~ddd/cap6635/Fall-97/Short-papers/2.htm
 / http://www.saedsayad.com/decision_tree.htm
@@ -8,7 +9,7 @@
 / https://www.jair.org/media/279/live-279-1538-jair.pdf
 
 -1"load weather data, remove the day column and move Play to front";
-show t:`Play xcols (" SSSSS";1#",") 0: `:weather.csv
+show t:weather.t
 -1"use the id3 algorithm to build a decision tree";
 -1 .ml.ptree[0] tree:.ml.id3 t;
 `:tree.dot 0: .ml.pgraph tree
@@ -36,7 +37,7 @@ show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80f]
 -1 .ml.ptree[0] .ml.id3 s;
 -1"while q45 picks a single split value";
 
-z:$[`qml in key `;neg .qml.nicdf .0125;2.241403];
+z:@[{.qml.nicdf x};.0125;2.241403];
 -1 .ml.ptree[0] tree:.ml.prune[.ml.perr[z]] .ml.q45[2;0W;::] s;
 .util.assert[1f] avg s.Play=.ml.dtc[tree] each s / accuracy
 -1"we can still handle null values by using the remaining features";

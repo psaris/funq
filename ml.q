@@ -801,7 +801,9 @@ rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]@);t]}
 
 / sparse matrix manipulation
 
+/ shape of a tensor (atom, vector, matrix, etc)
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
+/ rank of a tensor (atom, vector, matrix, etc)
 dim:count shape@
 / matrix overload of where
 mwhere:{
@@ -811,7 +813,7 @@ mwhere:{
  x:(,') over x;
  x}
 / sparse from matrix
-sparse:{enlist[shape x],i,enlist (x') . i:mwhere not 0=x}
+sparse:{enlist[shape x],i,enlist (x') . i:mwhere "b"$x}
 / matrix from sparse
 full:{./[x[0]#0f;flip x 1 2;:;x 3]}
 / sparse matrix transpose

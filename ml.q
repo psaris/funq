@@ -642,7 +642,7 @@ clfnb:{[l;lf;pT;X]
 wodds:{[w;g]prb sum each w g}
 odds:{[g]prb count each g}
 
-/ splitting functions
+/ impurity functions
 entropy:{neg sum x*2 xlog x:odds group x}
 wentropy:{[w;x]neg sum x*2 xlog x:wodds[w] group x}
 gini:{1f-enorm2 odds group x}
@@ -660,49 +660,50 @@ cmb:{
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
-/ using a (s)plit (f)unction to compute the information gain
+/ use (i)mpurity (f)unction to compute the (w)eighted information gain
 / (optionally (n)ormalized by splitinfo) of x and y
-gain:{[n;sf;w;x;y]
- g:sf[w] x;
- g-:sum wodds[w;gy]*(not null key gy)*w[gy] sf' x gy:group y;
- if[n;g%:sf[w] y];              / gain ratio
+gain:{[n;impf;w;x;y]
+ g:impf[w] x;
+ g-:sum wodds[w;gy]*(not null key gy)*w[gy] impf' x gy:group y;
+ if[n;g%:impf[w] y];              / gain ratio
  (g;::;gy)}
 
 / set gain
-sgain:{[sf;w;x;y]
- g:(gain[0b;sf;w;x] y in) peach u:cmb[0N] distinct y;
+sgain:{[impf;w;x;y]
+ g:(gain[0b;impf;w;x] y in) peach u:cmb[0N] distinct y;
  g@:i:imax g[;0];               / highest gain
  g[1]:in[;u i];                 / split function
  g}
 
-/ improved use of ordered attributes in c4.5 (quinlan) MDL
-ogain:{[mdl;n;sf;w;x;y]
- g:(gain[0b;sf;w;x] y <) peach u:desc distinct y;
+/ improved use of ordered attributes in c4.5 (quinlan) optionally
+/ adjusted using minimum descripiton length (MDL)
+ogain:{[mdl;n;impf;w;x;y]
+ g:(gain[0b;impf;w;x] y <) peach u:desc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:<[;avg u i+0 1];          / split function
  if[mdl;g[0]-:xlog[2;-1+count u]%count x];
- if[n;g[0]%:sf[w] ugrp g 2];    / convert to gain ratio
+ if[n;g[0]%:impf[w] ugrp g 2];  / convert to gain ratio
  g}
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute create a decision tree using the (c)ategorical
-/ (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (s)plit
-/ (f)unction decides what statistic to minimize.  pruning subtrees
-/ with (m)inimum number of (l)eaves, and (m)ax (d)epth
-dt:{[cgf;ogf;sf;ml;md;w;t]
- if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
- if[1=count d:flip t;:(w;first d)]; / no features to test
- if[not md;:(w;first d)];           / don't split deeper than max depth
- if[not ml<count a:first d;:(w;a)]; / don't split unless >min leaves
- if[identical a;:(w;a)];            / all values are equal
- d:(0N?key d)#d:1 _d;               / randomize feature order
- g:{[cgf;ogf;sf;w;x;y] $[isord y;ogf;cgf][sf;w;x;y]}[cgf;ogf;sf;w;a] peach d;
- if[all 0>=gr:first each g;:(w;a)]; / stop if no gain
- g:last b:1_ g ba:imax gr;          / best attribute
+/ (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (imp)urity
+/ (f)unction determines which statistic to minimize.  pruning subtrees
+/ with (min)imum number of (l)eaves, and (max) (d)epth
+dt:{[cgf;ogf;impf;minl;maxd;w;t]
+ if[(::)~w;w:n#1f%n:count t];         / handle unassigned weight
+ if[1=count d:flip t;:(w;first d)];   / no features to test
+ if[not maxd;:(w;first d)];           / don't split deeper than maxd
+ if[not minl<count a:first d;:(w;a)]; / don't split unless # leaves > minl
+ if[identical a;:(w;a)];              / all values are equal
+ d:(0N?key d)#d:1 _d;                 / randomize feature order
+ g:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d;
+ if[all 0>=gr:first each g;:(w;a)];   / stop if no gain
+ g:last b:1_ g ba:imax gr;            / best attribute
  / distribute nulls down each branch with reduced weight
  if[(c:count k)>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
- if[null b 0;t:(1#ba)_t];           / don't reuse categorical classifiers
- b[1]:.z.s[cgf;ogf;sf;ml;md-1]'[w g;t g];   / classify subtree
+ if[null b 0;t:(1#ba)_t];       / don't reuse categorical classifiers
+ b[1]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
  ba,b}
 
 

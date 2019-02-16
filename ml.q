@@ -670,9 +670,10 @@ gain:{[n;impf;w;x;y]
 
 / set gain
 sgain:{[impf;w;x;y]
- g:(gain[0b;impf;w;x] y in) peach u:cmb[0N] distinct y;
+ c:cmb[1|count[u] div 2] u:distinct y;
+ g:(gain[0b;impf;w;x] y in) peach c;
  g@:i:imax g[;0];               / highest gain
- g[1]:in[;u i];                 / split function
+ g[1]:in[;c i];                 / split function
  g}
 
 / improved use of ordered attributes in c4.5 (quinlan) optionally

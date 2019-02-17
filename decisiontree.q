@@ -47,17 +47,17 @@ s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tree:.ml.q45[2;0W;::] s;
 .util.assert[`No] .ml.dtc[tree] d
 -1 "we can also use the gini impurity instead of entropy (faster with similar behavior)";
--1 .ml.ptree[0] tree:.ml.ct[2;0W;::] t; / classification tree
+-1 .ml.ptree[0] tree:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;2;0W;::] t;
 d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`Yes] .ml.dtc[tree] d
 -1 "we can also create a regression tree when the target is numeric";
--1 .ml.ptree[0] tree:.ml.rt[2;0W;::] update "e"$`Yes=Play from t; / regression tree
+-1 .ml.ptree[0] tree:.ml.rt[3;0W;::] update "e"$`Yes=Play from t; / regression tree
 .util.assert[0.6] .ml.dtc[tree] d
 -1 "we can also create an aid tree when the target is numeric";
--1 .ml.ptree[0] tree:.ml.aid[2;0W;::] update "e"$`Yes=Play from t; / regression tree
+-1 .ml.ptree[0] tree:.ml.aid[3;0W;::] update "e"$`Yes=Play from t; / regression tree
 .util.assert[.75] .ml.dtc[tree] d
 -1 "we can also create a thaid tree for classifiction";
--1 .ml.ptree[0] tree:.ml.thaid[2;0W;::] t; / classification tree
+-1 .ml.ptree[0] tree:.ml.thaid[3;0W;::] t; / classification tree
 .util.assert[`Yes] .ml.dtc[tree] d
 
 

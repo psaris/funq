@@ -699,25 +699,26 @@ ogr:{[impf;w;x;y] / ordered gain ratio
  g}
 
 / given a (t)able of classifiers and labels where the first column is
-/ target attribute create a decision tree using the (c)ategorical
+/ the target attribute, create a decision tree using the (c)ategorical
 / (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (imp)urity
-/ (f)unction determines which statistic to minimize.  pruning subtrees
-/ with (min)imum number of (l)eaves, and (max) (d)epth
+/ (f)unction determines which statistic to minimize.  the tree is
+/ pre-pruned to have (min)imum number of (l)eaves, and (max) (d)epth
 dt:{[cgf;ogf;impf;minl;maxd;w;t]
- if[(::)~w;w:n#1f%n:count t];         / handle unassigned weight
- if[1=count d:flip t;:(w;first d)];   / no features to test
- if[not maxd;:(w;first d)];           / don't split deeper than maxd
- if[not minl<count a:first d;:(w;a)]; / don't split unless # leaves > minl
- if[identical a;:(w;a)];              / all values are equal
- d:(0N?key d)#d:1 _d;                 / randomize feature order
- g:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d;
- if[all 0>=gr:first each g;:(w;a)];   / stop if no gain
- g:last b:1_ g ba:imax gr;            / best attribute
+ if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
+ if[1=count d:flip t;:(w;first d)]; / no features to test
+ if[not maxd;:(w;first d)];         / don't split deeper than maxd
+ if[identical a:first d;:(w;a)];    / all values are equal
+ d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach 1 _d; / compute gains
+ d:(where (any minl>count each last@) each d) _ d; / drop < minl
+ if[not count d;:(w;a)];                           / nothing left
+ bc:imax first each (0N?key d)#d; / best classifier (after shuffle)
+ if[0>=first b:d bc;:(w;a)];      / stop if no gain
+ c:count k:key g:last b;          / grab subtree grouped indices
  / distribute nulls down each branch with reduced weight
- if[(c:count k)>ni:null[k:key g]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
- if[null b 0;t:(1#ba)_t];       / don't reuse categorical classifiers
- b[1]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
- ba,b}
+ if[c>ni:null[k]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
+ if[null b 1;t:(1#bc)_t];       / don't reuse categorical classifiers
+ b[2]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
+ bc,1_b}
 
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)

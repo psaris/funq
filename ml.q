@@ -740,7 +740,7 @@ pleaf:{[w;x]
 
 / print (tr)ee with i(n)dent
 ptree:{[n;tr]
- if[not n;:"root: ",(pleaf . first xs),last xs:.z.s[n+1;tr]];
+ if[not n;:(pleaf . first xs),last xs:.z.s[n+1;tr]];
  if[0h<type tr 0;:(tr;"")];
  s:1#"\n";
  s,:raze[(n)#enlist "|  "],raze string[tr 0 1],\:" ";

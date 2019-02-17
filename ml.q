@@ -660,30 +660,42 @@ cmb:{
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
-/ use (i)mpurity (f)unction to compute the (w)eighted information gain
-/ (optionally (n)ormalized by splitinfo) of x and y
-gain:{[n;impf;w;x;y]
+/ use (imp)urity (f)unction to compute the (w)eighted information gain
+/ of x after splitting on y
+ig:{[impf;w;x;y]                / information gain
  g:impf[w] x;
  g-:sum wodds[w;gy]*(not null key gy)*w[gy] impf' x gy:group y;
- if[n;g%:impf[w] y];              / gain ratio
  (g;::;gy)}
 
-/ set gain
-sgain:{[impf;w;x;y]
- c:cmb[1|count[u] div 2] u:distinct y;
- g:(gain[0b;impf;w;x] y in) peach c;
- g@:i:imax g[;0];               / highest gain
- g[1]:in[;c i];                 / split function
+/ use (imp)urity (f)unction to compute the (w)eighted gain ratio of x
+/ after splitting on y
+gr:{[impf;w;x;y]                / gain ratio
+ g:ig[impf;w;x;y];
+ g:@[g;0;%[;impf[w;y]]];        / divide by splitinfo
  g}
 
-/ improved use of ordered attributes in c4.5 (quinlan) optionally
-/ adjusted using minimum descripiton length (MDL)
-ogain:{[mdl;n;impf;w;x;y]
- g:(gain[0b;impf;w;x] y <) peach u:desc distinct y;
+/ use (imp)urity (f)unction to pick the maximum (w)eighted information
+/ gain of x after splitting across all sets of distinct y
+sig:{[impf;w;x;y]               / set information gain
+ c:raze cmb[;u] each 1|count[u:distinct y] div 2;
+ g:(ig[impf;w;x] y in) peach c;
+ g@:i:imax g[;0];               / highest gain
+ g[1]:in[;c i];                 / replace split function
+ g}
+
+/ use (imp)urity (f)unction to pick the maximum (w)eighted information
+/ gain of x after splitting across all values of y
+oig:{[impf;w;x;y] / ordered information gain
+ g:(ig[impf;w;x] y <) peach u:desc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:<[;avg u i+0 1];          / split function
- if[mdl;g[0]-:xlog[2;-1+count u]%count x];
- if[n;g[0]%:impf[w] ugrp g 2];  / convert to gain ratio
+ g}
+
+/ use (imp)urity (f)unction to pick the maximum (w)eighted gain ratio
+/ of x after splitting across all values of y
+ogr:{[impf;w;x;y] / ordered gain ratio
+ g:oig[impf;w;x;y];
+ g:@[g;0;%[;impf[w;g[1] y]]]; / divide by splitinfo
  g}
 
 / given a (t)able of classifiers and labels where the first column is
@@ -775,13 +787,13 @@ pgraph:{[tr]
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
-aid:dt[sgain;ogain[0b;0b];wsse] / automatic interaction detection
-thaid:dt[sgain;ogain[0b;0b];wtheta] / theta automatic interaction detection
-id3:dt[gain[0b];gain[0b];wentropy;1;0W;::] / iterative dichotomizer 3
-q45:dt[gain[1b];ogain[1b;1b];wentropy] / like c4.5 (but does not post-prune)
-ct:dt[gain[0b];ogain[0b;1b];wgini]     / classification tree
-rt:dt[gain[0b];ogain[0b;0b];wsse]      / regression tree
-stump:dt[gain[0b];ogain[0b;1b];wentropy;1;1]
+aid:dt[sig;oig;wsse]           / automatic interaction detection
+thaid:dt[sig;oig;wtheta]       / theta automatic interaction detection
+id3:dt[ig;ig;wentropy;1;0W;::] / iterative dichotomizer 3
+q45:dt[gr;ogr;wentropy]        / like c4.5
+ct:dt[ig;oig;wgini]            / classification tree
+rt:dt[ig;oig;wsse]             / regression tree
+stump:dt[gr;ogr;wentropy;1;1]  / decision stump (one split)
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
 / (alpha;model;weights)

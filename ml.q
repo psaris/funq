@@ -720,6 +720,14 @@ dt:{[cgf;ogf;impf;minl;maxd;w;t]
  b[2]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
  bc,1_b}
 
+/ one-hot encode vector, (symbol columns of) table or (non-key symbol
+/ columns of) keyed table x.
+onehot:{
+ if[98h>t:type x;:u!x=/:u:distinct x]; / vector
+ if[99h=t;:key[x]!.z.s value x];       / keyed table
+ c:where 11h=type each flip x;         / table
+ x:c _ x,' flip raze .z.s each x c;
+ x}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}

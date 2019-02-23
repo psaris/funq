@@ -792,8 +792,8 @@ aid:dt[sig;oig;wsse]           / automatic interaction detection
 thaid:dt[sig;oig;wtheta]       / theta automatic interaction detection
 id3:dt[ig;ig;wentropy;1;0W;::] / iterative dichotomizer 3
 q45:dt[gr;ogr;wentropy]        / like c4.5
-ct:dt[ig;oig;wgini]            / classification tree
-rt:dt[ig;oig;wsse]             / regression tree
+ct:dt[oig;oig;wgini]           / classification tree
+rt:dt[oig;oig;wsse]            / regression tree
 stump:dt[gr;ogr;wentropy;1;1]  / decision stump (one split)
 
 / (t)rain (f)unction, (c)lassifier (f)unction, (t)able,

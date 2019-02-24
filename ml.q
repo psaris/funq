@@ -743,6 +743,9 @@ prune:{[ef;t]
  if[e<((sum first@) each b) wavg (ef .) each b;:wa];
  t}
 
+/ count number of leaves in (tr)ee
+leaves:{[tr]$[2=count tr;1;sum .z.s each last tr]}
+ 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
 dtc:{[tr;d] waom . dtcr[tr;d]}

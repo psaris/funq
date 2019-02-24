@@ -638,19 +638,19 @@ clfnb:{[l;lf;pT;X]
 
 / decision trees
 
-/ weighted odds
-wodds:{[w;g]prb sum each w g}
+/ odds & weighted odds
 odds:{[g]prb count each g}
+wodds:{[w;g]prb sum each w g}
 
 / impurity functions
-entropy:{neg sum x*2 xlog x:odds group x}
-wentropy:{[w;x]neg sum x*2 xlog x:wodds[w] group x}
-gini:{1f-enorm2 odds group x}
-wgini:{[w;x]1f-enorm2 wodds[w] group x}
-sse:{enorm2 x-avg x}
-wsse:{[w;x]enorm2 x-w wavg x}
-theta:{1f-avg x=mode x}
-wtheta:{[w;x]1f-avg x=wmode[w;x]}
+entropy:{neg sum x*2 xlog x:odds group x}           / entropy
+wentropy:{[w;x]neg sum x*2 xlog x:wodds[w] group x} / weighted entropy
+gini:{1f-enorm2 odds group x}                       / gini
+wgini:{[w;x]1f-enorm2 wodds[w] group x}             / weighted gini
+sse:{enorm2 x-avg x}             / sum of squared errors
+wsse:{[w;x]enorm2 x-w wavg x}    / weighted sum of squared errors
+misc:{1f-avg x=mode x}           / misclassification
+wmisc:{[w;x]1f-avg x=wmode[w;x]} / weighted misclassification
 
 / create all combinations of length x from a list (or size of) y
 cmb:{
@@ -732,7 +732,7 @@ onehot:{
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
 / pessimistic error
-perr:{[z;w;x]last wscore[z;wtheta[w;x];count x]}
+perr:{[z;w;x]last wscore[z;wmisc[w;x];count x]}
 
 / use (e)rror (f)unction to post-prune (t)able
 prune:{[ef;t]
@@ -797,7 +797,7 @@ pgraph:{[tr]
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
 aid:dt[sig;oig;wsse]           / automatic interaction detection
-thaid:dt[sig;oig;wtheta]       / theta automatic interaction detection
+thaid:dt[sig;oig;wmisc]        / theta automatic interaction detection
 id3:dt[ig;ig;wentropy;1;0W;::] / iterative dichotomizer 3
 q45:dt[gr;ogr;wentropy]        / like c4.5
 ct:dt[oig;oig;wgini]           / classification tree

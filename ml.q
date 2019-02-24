@@ -732,7 +732,7 @@ onehot:{
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
 / pessimistic error
-perr:{[z;w;x]last wscore[z;(1f-avg x=wmode[w;x]);count x]}
+perr:{[z;w;x]last wscore[z;wtheta[w;x];count x]}
 
 / use (e)rror (f)unction to post-prune (t)able
 prune:{[ef;t]

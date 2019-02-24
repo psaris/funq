@@ -734,14 +734,14 @@ wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
 / pessimistic error
 perr:{[z;w;x]last wscore[z;wmisc[w;x];count x]}
 
-/ use (e)rror (f)unction to post-prune (t)able
-prune:{[ef;t]
- if[2=count t;:t];               / (w;a)
- b:value t[2]:.z.s[ef] each t 2; / prune subtree
- if[any 3=count each b;:t];      / can't prune
- e:ef . wa:(,') over b;          / pruned error
+/ use (e)rror (f)unction to post-prune (tr)ee
+prune:{[ef;tr]
+ if[2=count tr;:tr];               / (w;a)
+ b:value tr[2]:.z.s[ef] each tr 2; / prune subtree
+ if[any 3=count each b;:tr];       / can't prune
+ e:ef . wa:(,') over b;            / pruned error
  if[e<((sum first@) each b) wavg (ef .) each b;:wa];
- t}
+ tr}
 
 / count number of leaves in (tr)ee
 leaves:{[tr]$[2=count tr;1;sum .z.s each last tr]}

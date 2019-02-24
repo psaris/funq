@@ -649,8 +649,8 @@ gini:{1f-enorm2 odds group x}
 wgini:{[w;x]1f-enorm2 wodds[w] group x}
 sse:{enorm2 x-avg x}
 wsse:{[w;x]enorm2 x-w wavg x}
-theta:{1f-sum[x=mode x]%count x}
-wtheta:{[w;x]1f-sum[x=wmode[w;x]]%count x}
+theta:{1f-avg x=mode x}
+wtheta:{[w;x]1f-avg x=wmode[w;x]}
 
 / create all combinations of length x from a list (or size of) y
 cmb:{

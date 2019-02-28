@@ -52,7 +52,7 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`Yes] .ml.dtc[tr] d
 -1 "we can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tr:.ml.aid[3;0W;::] update "e"$`Yes=Play from t; / regression tree
-.util.assert[.75] .ml.dtc[tr] d
+.util.assert[.2] .ml.dtc[tr] d
 -1 "we can also create a thaid tree for classifiction";
 -1 .ml.ptree[0] tr:.ml.thaid[3;0W;::] t; / classification tree
 .util.assert[`Yes] .ml.dtc[tr] d

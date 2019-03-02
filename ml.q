@@ -743,7 +743,7 @@ prune:{[ef;tr]
  if[2=count tr;:tr];               / (w;a)
  b:value tr[2]:.z.s[ef] each tr 2; / prune subtree
  if[any 3=count each b;:tr];       / can't prune
- e:ef . wa:(,') over b;            / pruned error
+ e:ef . wa:(,'/) b;            / pruned error
  if[e<((sum first@) each b) wavg (ef .) each b;:wa];
  tr}
 
@@ -752,7 +752,7 @@ leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
 / using (imp)urity (f)unction and regularization coefficient a,
 / compute cost complexity for (tr)ee
-cc:{[impf;a;tr](impf . (,') over l) - a*count l:leaves tr} 
+cc:{[impf;a;tr](impf . (,'/) l) - a*count l:leaves tr} 
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
@@ -760,7 +760,7 @@ dtc:{[tr;d] waom . dtcr[tr;d]}
 dtcr:{[tr;d]                    / recursive component
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
- v:(,') over tr[2] .z.s\: d;    / dig deeper for null values
+ v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
 / print leaf: prediction followd by classification error% or regresssion sse
@@ -781,14 +781,14 @@ ptree:{[n;tr]
  x:first each c;
  s:s,'": ",/:(pleaf .) each x;
  s:raze s,'last each c;
- x:(,') over x;
+ x:(,'/) x;
  (x;s)}
 
 / print a single node for graphviz
 pnode:{[p;l;tr]
  s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
  c:$[0h<type tr 0;enlist (tr;());.z.s'[i;key tr 2;value tr 2]];
- x:(,') over first each c;
+ x:(,'/) first each c;
  s,:pleaf . x;
  if[0h>type tr 0;s,:"\\n",raze string[tr 0 1],\: " "];
  s:enlist s,"\"] ;";
@@ -844,7 +844,7 @@ mwhere:{
  if[type x;:where x];
  x:.z.s each x;
  x:til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'x;
- x:(,') over x;
+ x:(,'/) x;
  x}
 / sparse from matrix
 sparse:{enlist[shape x],i,enlist (x') . i:mwhere "b"$x}

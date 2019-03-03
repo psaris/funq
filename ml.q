@@ -752,7 +752,7 @@ leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
 / using (imp)urity (f)unction and regularization coefficient a,
 / compute cost complexity for (tr)ee
-cc:{[impf;a;tr](impf . (,'/) l) - a*count l:leaves tr} 
+cc:{[impf;a;tr](sum impf ./: l)+a*count l:leaves tr}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee

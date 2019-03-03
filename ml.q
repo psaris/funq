@@ -750,9 +750,34 @@ prune:{[ef;tr]
 / return the leaves of (tr)ee
 leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
+/ using (imp)urity (f)unction, return the decision (tr)ee's risk R(T) and
+/ number of terminal nodes |T|
+dtriskn:{[impf;tr](sum'[l[;0]] wsum impf ./: l;count l:leaves tr)}
+
 / using (imp)urity (f)unction and regularization coefficient a,
 / compute cost complexity for (tr)ee
-cc:{[impf;a;tr](sum impf ./: l)+a*count l:leaves tr}
+dtcc:{[impf;a;tr](1f;a) wsum dtriskn[impf;tr]}
+
+/ given a decision (tr)ee, return all the subtrees with one node
+/ pruned
+prune1:{[tr]
+ if[2=count tr;:enlist tr];
+ str:tr 2; / subtree
+ if[all l:2=count each str;:enlist (,'/) str]; / prune
+ strs:(@[str;;:;].) each raze flip each flip (i;.z.s each str i:where not l);
+ trs:@[tr;2;:;] each strs;
+ trs,:enlist (,'/) leaves tr; / collapse this node too
+ trs}
+
+/ given an (imp)urity function and the pair of values (g;tr), return
+/ the minimum g and its associated sub(tr)ee.
+dtming:{[impf;gtr]
+ if[2=count tr:last gtr;:gtr];
+ en:dtriskn[impf;tr];
+ ens:dtriskn[impf] each trs:prune1 tr;
+ g:neg (%) . en - flip ens;
+ gtr:(g;trs)@\:i imin g i:idesc ens[;1]; / sort descending # nodes
+ gtr}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee

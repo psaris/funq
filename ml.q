@@ -773,7 +773,7 @@ pleaf:{[w;x]
 / print (tr)ee with i(n)dent
 ptree:{[n;tr]
  if[not n;:(pleaf . first xs),last xs:.z.s[n+1;tr]];
- if[0h<type tr 0;:(tr;"")];
+ if[2=count tr;:(tr;"")];
  s:1#"\n";
  s,:raze[(n)#enlist "|  "],raze string[tr 0 1],\:" ";
  s:s,/:string k:asc key tr 2;
@@ -787,10 +787,10 @@ ptree:{[n;tr]
 / print a single node for graphviz
 pnode:{[p;l;tr]
  s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
- c:$[0h<type tr 0;enlist (tr;());.z.s'[i;key tr 2;value tr 2]];
+ c:$[b:2=count tr;enlist (tr;());.z.s'[i;key tr 2;value tr 2]];
  x:(,'/) first each c;
  s,:pleaf . x;
- if[0h>type tr 0;s,:"\\n",raze string[tr 0 1],\: " "];
+ if[not b;s,:"\\n",raze string[tr 0 1],\: " "];
  s:enlist s,"\"] ;";
  if[i>0;s,:enlist string[p]," -> ",string[i]," [label=\"",string[l],"\"] ;"];
  s,:raze last each c;

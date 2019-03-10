@@ -656,6 +656,8 @@ wmse:{[w;x]enorm2[x-w wavg x]%count x} / weighted mean squared error
 mae:{avg abs x-avg x}                  / mean absolute error
 wmae:{[w;x]avg abs x-w wavg x}         / weighted mean absolute error
 
+rms:{sqrt avg x*x}              / root mean square error
+
 / create all combinations of length x from a list (or size of) y
 cmb:{
  if[not 0>type y;:y .z.s[x] count y];

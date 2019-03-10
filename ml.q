@@ -795,6 +795,14 @@ dtcr:{[tr;d]                    / recursive component
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
+/ cross validate (i)th tree in decision (tr)ee(s) using (d)ecision
+/ (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
+dtcv:{[dtf;ef;a;trs;i]          / decision tree cross validation
+ tr:dtf raze trs _ i;           / build tree from training data
+ strs:tr dtmincc[ef]\ a;        / iteratively prune tree based on a
+ p:strs dtc\:/: trs i;          / predict based on test data
+ p}
+
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]
  v:waom[w;x];                   / value

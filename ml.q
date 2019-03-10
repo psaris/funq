@@ -773,7 +773,7 @@ subtrees:{[tr]
 dtmina:{[impf;atr]
  if[2=count tr:last atr;:atr];
  en:dtriskn[impf;tr];
- ens:dtriskn[impf] each trs:subtrees tr;
+ ens:dtriskn[impf] peach trs:subtrees tr;
  a:neg (%) . en - flip ens;
  atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
  atr}

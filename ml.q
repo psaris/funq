@@ -758,9 +758,8 @@ dtriskn:{[impf;tr](sum'[l[;0]] wsum impf ./: l;count l:leaves tr)}
 / compute cost complexity for (tr)ee
 dtcc:{[impf;a;tr](1f;a) wsum dtriskn[impf;tr]}
 
-/ given a decision (tr)ee, return all the subtrees with one node
-/ pruned
-prune1:{[tr]
+/ given a decision (tr)ee, return all the subtrees sharing the same root
+subtrees:{[tr]
  if[2=count tr;:enlist tr];
  str:tr 2; / subtree
  if[all l:2=count each str;:enlist (,'/) str]; / prune
@@ -769,15 +768,15 @@ prune1:{[tr]
  trs,:enlist (,'/) leaves tr; / collapse this node too
  trs}
 
-/ given an (imp)urity function and the pair of values (g;tr), return
-/ the minimum g and its associated sub(tr)ee.
-dtming:{[impf;gtr]
- if[2=count tr:last gtr;:gtr];
+/ given an (imp)urity function and the pair of values (a;tr), return
+/ the minimum (a)lpha and its associated sub(tr)ee.
+dtmina:{[impf;atr]
+ if[2=count tr:last atr;:atr];
  en:dtriskn[impf;tr];
- ens:dtriskn[impf] each trs:prune1 tr;
- g:neg (%) . en - flip ens;
- gtr:(g;trs)@\:i imin g i:idesc ens[;1]; / sort descending # nodes
- gtr}
+ ens:dtriskn[impf] each trs:subtrees tr;
+ a:neg (%) . en - flip ens;
+ atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
+ atr}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee

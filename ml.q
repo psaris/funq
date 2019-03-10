@@ -271,8 +271,8 @@ cm:{
 cv:{[f;ys;Xs;i]
  X:(,'/)Xs _ i;                 / drop i and raze
  y:raze ys _ i;                 / drop i and raze
- e:(ys i)=f[y;X] Xs i;          / compute equality
- e}
+ p:f[y;X] Xs i;                 / compute predictions
+ p}
 
 / neural network cut
 nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}

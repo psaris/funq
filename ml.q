@@ -750,13 +750,13 @@ prune:{[ef;tr]
 / return the leaves of (tr)ee
 leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
-/ using (imp)urity (f)unction, return the decision (tr)ee's risk R(T) and
+/ using (e)rror (f)unction, return the decision (tr)ee's risk R(T) and
 / number of terminal nodes |T|
-dtriskn:{[impf;tr](sum'[l[;0]] wsum impf ./: l;count l:leaves tr)}
+dtriskn:{[ef;tr](sum'[l[;0]] wsum ef ./: l;count l:leaves tr)}
 
-/ using (imp)urity (f)unction and regularization coefficient a,
-/ compute cost complexity for (tr)ee
-dtcc:{[impf;a;tr](1f;a) wsum dtriskn[impf;tr]}
+/ using (e)rror (f)unction and regularization coefficient a, compute
+/ cost complexity for (tr)ee
+dtcc:{[ef;a;tr](1f;a) wsum dtriskn[ef;tr]}
 
 / given a decision (tr)ee, return all the subtrees sharing the same root
 subtrees:{[tr]
@@ -778,12 +778,12 @@ dtmina:{[impf;atr]
  atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
  atr}
 
-/ given an (imp)urity function, a cost parameter (a)lpha and decision
+/ given an (e)rror function, a cost parameter (a)lpha and decision
 / (tr)ee, return the subtree that minimizes the cost complexity
-dtmincc:{[impf;a;tr]
+dtmincc:{[ef;tr;a]
  if[2=count tr;:tr];
  strs:subtrees tr;
- str:strs imin dtcc[impf;a] each strs;
+ str:strs imin dtcc[ef;a] each strs;
  str}
 
 / decision tree classifier: classify the (d)ictionary based on

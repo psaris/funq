@@ -778,6 +778,14 @@ dtmina:{[impf;atr]
  atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
  atr}
 
+/ given an (imp)urity function, a cost parameter (a)lpha and decision
+/ (tr)ee, return the subtree that minimizes the cost complexity
+dtmincc:{[impf;a;tr]
+ if[2=count tr;:tr];
+ strs:subtrees tr;
+ str:strs imin dtcc[impf;a] each strs;
+ str}
+
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
 dtc:{[tr;d] waom . dtcr[tr;d]}

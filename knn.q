@@ -34,7 +34,8 @@ n:5
 -1"cross validate with ", string[n], " buckets";
 Xs:flip (n;0N)#/:X
 ys:(n;0N)#y
-e:ys=p:(.ml.cv[{.ml.knn[sqrt 1%;ks;x] .ml.pedist2[y;z]};ys;Xs]0N!) peach til n
+ff:{[y;X].ml.knn[sqrt 1%;ks;y] .ml.pedist2[X]::}
+e:ys=p:(.ml.cvyx[ff;(::);ys;Xs]0N!) each til n
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

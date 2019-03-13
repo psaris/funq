@@ -267,11 +267,23 @@ cm:{
  t:([]x:u)!flip (`$string u)!m;
  t}
 
-/ cross validation
-cv:{[f;ys;Xs;i]
+/ use all data from ys and Xs except the (i)th element to fit a model
+/ using the (f)itting (f)unction and then make a use (p)rediction
+/ (f)unction on Xs[i]
+cvyx:{[ff;pf;ys;Xs;i]           / cross validate y vector and X matrix
  X:(,'/)Xs _ i;                 / drop i and raze
  y:raze ys _ i;                 / drop i and raze
- p:f[y;X] Xs i;                 / compute predictions
+ m:ff[y;X];                     / fit model
+ p:pf[m] Xs i;                  / use model to make predictions
+ p}
+
+/ use all data from (t)able(s) except the (i)th element to fit a model
+/ using the (f)itting (f)unction and then use (p)rediction (f)unction
+/ on ts[i]
+cvt:{[ff;pf;ts;i]               / cross validate table
+ t:raze ts _ i;                 / drop i and raze
+ m:ff[t];                       / fit model
+ p:pf[m] ts i;                  / use model to make predictions
  p}
 
 / neural network cut
@@ -797,13 +809,9 @@ dtcr:{[tr;d]                    / recursive component
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
-/ cross validate (i)th tree in decision (tr)ee(s) using (d)ecision
-/ (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
-dtcv:{[dtf;ef;a;trs;i]          / decision tree cross validation
- tr:dtf raze trs _ i;           / build tree from training data
- strs:tr dtmincc[ef]\ a;        / iteratively prune tree based on a
- p:strs dtc\:/: trs i;          / predict based on test data
- p}
+/ cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
+/ (f)unction, (a)lphas and misclassification (e)rror (f)unction
+dtcv:{[dtf;ef;a;ts]cvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]

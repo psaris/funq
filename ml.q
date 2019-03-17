@@ -270,17 +270,17 @@ cm:{
 / use all data from ys and Xs except the (i)th element to fit a model
 / using the (f)itting (f)unction and then make a use (p)rediction
 / (f)unction on Xs[i]
-cvyx:{[ff;pf;ys;Xs;i]           / cross validate y vector and X matrix
- X:(,'/)Xs _ i;                 / drop i and raze
- y:raze ys _ i;                 / drop i and raze
- m:ff[y;X];                     / fit model
- p:pf[m] Xs i;                  / use model to make predictions
+kfxvyx:{[ff;pf;ys;Xs;i]     / k-fold cross validate vec y and matrix X
+ X:(,'/)Xs _ i;             / drop i and raze
+ y:raze ys _ i;             / drop i and raze
+ m:ff[y;X];                 / fit model
+ p:pf[m] Xs i;              / use model to make predictions:
  p}
 
 / use all data from (t)able(s) except the (i)th element to fit a model
 / using the (f)itting (f)unction and then use (p)rediction (f)unction
 / on ts[i]
-cvt:{[ff;pf;ts;i]               / cross validate table
+kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  t:raze ts _ i;                 / drop i and raze
  m:ff[t];                       / fit model
  p:pf[m] ts i;                  / use model to make predictions
@@ -811,7 +811,7 @@ dtcr:{[tr;d]                    / recursive component
 
 / cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
 / (f)unction, (a)lphas and misclassification (e)rror (f)unction
-dtcv:{[dtf;ef;a;ts]cvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
+dtxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]

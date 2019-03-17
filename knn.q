@@ -14,7 +14,7 @@ avg yt=p:.ml.knn[0<=;k;y] d:.ml.f2nd[df X] Xt
 avg yt=p:.ml.f2nd[.ml.knn[0<=;k;y] df[X]@] Xt
 -1"we can also change the weighting function to be 1/distance";
 avg yt=p:.ml.f2nd[.ml.knn[sqrt 1%;k;y] df[X]@] Xt
--1"using pairwise distance (squared) function uses matrix algebra for performance"
+-1"using pairwise distance (squared) function uses matrix algebra for performance";
 avg yt=p:.ml.knn[sqrt 1%;k;y] d:.ml.pedist2[X;Xt]
 
 
@@ -35,7 +35,7 @@ n:5
 Xs:flip (n;0N)#/:X
 ys:(n;0N)#y
 ff:{[y;X].ml.knn[sqrt 1%;ks;y] .ml.pedist2[X]::}
-e:ys=p:(.ml.cvyx[ff;(::);ys;Xs]0N!) each til n
+e:ys=p:(.ml.kfxvyx[ff;(::);ys;Xs]0N!) each til n
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

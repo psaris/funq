@@ -93,7 +93,7 @@ t:t,'([]y:1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 )
 -1 "we then pick the alpha (and therefore subtree) with cross validation";
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
 ts:(n:10;0N)#0N?t
-show e:avg each ts[;`z]=p:.ml.dtcv[dtf;ef;b;ts] peach til n
+show e:avg each ts[;`z]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
 -1 "returning to the iris data, we can grow and prune that too";
@@ -101,21 +101,24 @@ show e:avg each ts[;`z]=p:.ml.dtcv[dtf;ef;b;ts] peach til n
 .util.assert[0 .01 .02 .02 .04 .88 1f] 3*first atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
 ts:(n:10;0N)#0N?iris.t
-show e:avg each ts[;`species]=p:.ml.dtcv[dtf;ef;b;ts] peach til n
+show e:avg each ts[;`species]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
 -1 "or even grow and prune a regression tree with wine quality data";
 dtf:.ml.rt[1;0W;(::)]
 ef:.ml.wmse
--1 "the fully grown tree has more than 400 leaves!"
+-1 "the fully grown tree has more than 400 leaves!";
 .util.assert[1b] 400<count .ml.leaves tr:dtf winequality.red.t
+-1 "we can improve this by performing k-fold cross validation";
+-1 "first we find the list of critical alphas";
 atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
 ts:(n:10;0N)#0N?winequality.red.t
--1 "the fully grown tree has more than 400 leaves!"
-show e:avg each e*e:ts[;`quality]-p:.ml.dtcv[dtf;ef;b;ts] peach til n
--1 "the pruned tree has less than 20 leaves";
+-1 "then we compute the accuracy of each of these alphas with kfxv";
+show e:avg each e*e:ts[;`quality]-p:.ml.dtxv[dtf;ef;b;ts] peach til n
+-1 "finally, we use pick the tree whose alpha had the min error";
 -1 .ml.ptree[0] btr:atr[1] 0N!.ml.imin 0N!avg e;
+-1 "the pruned tree has less than 20 leaves";
 .util.assert[1b] 20>count .ml.leaves btr
 -1 "and an rms less than .75";
 .ml.rms winequality.red.t[`quality] - btr .ml.dtc/: winequality.red.t

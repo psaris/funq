@@ -797,6 +797,7 @@ dtmina:{[impf;atr]
 dtmincc:{[ef;tr;a]
  if[2=count tr;:tr];
  strs:subtrees tr;
+ strs@:iasc (count leaves@) each strs; / prefer smaller trees
  str:strs imin dtcc[ef;a] each strs;
  str}
 

@@ -105,20 +105,21 @@ show e:avg each ts[;`species]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
 -1 "or even grow and prune a regression tree with wine quality data";
+d:`train`test!.ml.part[3 1] winequality.red.t
 dtf:.ml.rt[1;0W;(::)]
 ef:.ml.wmse
--1 "the fully grown tree has more than 400 leaves!";
-.util.assert[1b] 400<count .ml.leaves tr:dtf winequality.red.t
+-1 "the fully grown tree has more than 300 leaves!";
+.util.assert[1b] 300<count .ml.leaves tr:dtf d`train
 -1 "we can improve this by performing k-fold cross validation";
 -1 "first we find the list of critical alphas";
 atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:(n:10;0N)#0N?winequality.red.t
+ts:(n:10;0N)#0N?d`train
 -1 "then we compute the accuracy of each of these alphas with kfxv";
-show e:avg each e*e:ts[;`quality]-p:.ml.dtxv[dtf;ef;b;ts] peach til n
+show e:avg each e*e:ts[;`quality]-p:(.ml.dtxv[dtf;ef;b;ts]0N!) peach til n
 -1 "finally, we use pick the tree whose alpha had the min error";
 -1 .ml.ptree[0] btr:atr[1] 0N!.ml.imin 0N!avg e;
--1 "the pruned tree has less than 20 leaves";
-.util.assert[1b] 20>count .ml.leaves btr
+-1 "the pruned tree has less than 15 leaves";
+.util.assert[1b] 15>count .ml.leaves btr
 -1 "and an rms less than .75";
-.ml.rms winequality.red.t[`quality] - btr .ml.dtc/: winequality.red.t
+.util.assert[1b] .75>.ml.rms d.test.quality - btr .ml.dtc/: d`test

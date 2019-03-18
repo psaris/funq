@@ -92,7 +92,7 @@ t:t,'([]y:1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 )
 
 -1 "we then pick the alpha (and therefore subtree) with cross validation";
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:(n:10;0N)#0N?t
+ts:.ml.part[(n:10)#1] t
 show e:avg each ts[;`z]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
@@ -100,7 +100,7 @@ show e:avg each ts[;`z]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] tr:dtf iris.t;
 .util.assert[0 .01 .02 .02 .04 .88 1f] 3*first atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:(n:10;0N)#0N?iris.t
+ts:.ml.part[(n:10)#1]iris.t
 show e:avg each ts[;`species]=p:.ml.dtxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
@@ -114,7 +114,7 @@ ef:.ml.wmse
 -1 "first we find the list of critical alphas";
 atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:(n:10;0N)#0N?d`train
+ts:.ml.part[(n:10)#1]d`train
 -1 "then we compute the accuracy of each of these alphas with kfxv";
 show e:avg each e*e:ts[;`quality]-p:(.ml.dtxv[dtf;ef;b;ts]0N!) peach til n
 -1 "finally, we use pick the tree whose alpha had the min error";

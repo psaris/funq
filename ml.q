@@ -810,9 +810,9 @@ dtcr:{[tr;d]                    / recursive component
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
-/ cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
-/ (f)unction, (a)lphas and misclassification (e)rror (f)unction
-dtxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
+/ k-fold cross validate (i)th table in (t)able(s) using (d)ecision
+/ (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
+dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]

@@ -23,8 +23,10 @@ mchol:{[X]                      / cholesky decomposition
   L}[X]/[(n;n)#0f;til n:count X];
  L}
 
+/ returns true if all values are exactly equal
 identical:{min first[x]~':x}
 
+/ returns true if x is a matrix as defined by q
 ismatrix:{
  if[type x;:0b];
  if[not all 9h=type each x;:0b];

@@ -20,7 +20,7 @@ theta: 4#4?0f;
 -1"compute cost of initial theta estimate";
 .ml.logcost[X;Y;theta]
 
-if[`qml in key`;
+if[2<count key `.qml;
  -1"qml comes with a minimizer that can be called";
  -1"with just this cost function:";
  opts:`iter,1000,`full`quiet; /`rk`slp`tol,1e-8
@@ -30,7 +30,7 @@ if[`qml in key`;
 -1"we can also define a gradient function to make this proces faster";
 .ml.loggrad[X;Y;theta]
 
-if[`qml in key `;
+if[2<count key `.qml;
  -1"qml can also use both the cost and gradient to improve performance";
  0N!first 1_.qml.minx[opts;.ml.logcostgradf[X;Y];enlist theta];
  ];

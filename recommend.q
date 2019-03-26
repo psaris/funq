@@ -97,28 +97,31 @@ show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg 20;0^Y] rati
 -1"weighted average top n users based on cosine similarity of idf-adjusted ratings";
 / weight by inverse user frequencies to underweight universally liked movies
 show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[20];0^Y] rating from y
--1 .util.box["**"] (
- "singular value decomposition (svd) allows us to compute latent factors (off-line)";
- "and perform simple matrix multiplication to make predictions (on-line)");
--1"compute score based on top n svd factors";
+nf:100;
 
-/ singular value decomposition
+if[2<count key `.qml;
+ -1 .util.box["**"] (
+  "singular value decomposition (svd) allows us to compute latent factors (off-line)";
+  "and perform simple matrix multiplication to make predictions (on-line)");
+ -1"compute score based on top n svd factors";
+ 
+ / singular value decomposition
 
-usv:.qml.msvd 0^Y
-nf:100
--1"predict missing ratings using low rank approximations";
-P:b+ub+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv
-show rpt update score:last P from r
--1"compare against existing ratings";
-show rpt select from (update score:last P from r) where not null rating
--1"we can use svd to foldin a new user";
-.ml.foldin[.ml.nsvd[500] usv;0b] 0^Y[2];
--1"or even a new movie";
-.ml.foldin[.ml.nsvd[500] usv;1b;0^Y[;2]];
--1"what does the first factor look like?";
-show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#mlense.movie;
--1"how much variance does each factor explain?";
-show .util.plot[40;19;.util.c10] {x%sum x*:x}.qml.mdiag usv 1
+ usv:.qml.msvd 0^Y;
+ -1"predict missing ratings using low rank approximations";
+ P:b+ub+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv;
+ show rpt update score:last P from r;
+ -1"compare against existing ratings";
+ show rpt select from (update score:last P from r) where not null rating;
+ -1"we can use svd to foldin a new user";
+ .ml.foldin[.ml.nsvd[500] usv;0b] 0^Y[2];
+ -1"or even a new movie";
+ .ml.foldin[.ml.nsvd[500] usv;1b;0^Y[;2]];
+ -1"what does the first factor look like?";
+ show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#mlense.movie;
+ -1"how much variance does each factor explain?";
+ show .util.plot[40;19;.util.c10] {x%sum x*:x}.qml.mdiag usv 1;
+ ];
 
 / regularized gradient descent
 

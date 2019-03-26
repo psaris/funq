@@ -58,7 +58,7 @@ show plt .ml.append[0;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
 -1"fitting with normal equations (fast but not numerically stable)";
 .ml.normeq[Y;.ml.prepend[1f] X]
 
-if[`qml in key `;
+if[2<count key `.qml;
  -1"qml uses QR decomposition for a more numerically stable fit";
  0N!.qml.mlsqx[`flip;.ml.prepend[1f] X;Y];
  ];

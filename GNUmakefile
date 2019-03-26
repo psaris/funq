@@ -63,9 +63,9 @@ liblinear/heart_scale.model: liblinear/train
 	cd liblinear && ./train heart_scale
 
 test-svm: install libsvm/heart_scale.model
-	cd libsvm && q ../testsvm.q < /dev/null
+	cd libsvm && $(QHOME)/$(QARCH)/q ../testsvm.q < /dev/null
 test-linear: install liblinear/heart_scale.model
-	cd liblinear && q ../testlinear.q < /dev/null
+	cd liblinear && $(QHOME)/$(QARCH)/q ../testlinear.q < /dev/null
 test: test-svm test-linear
 
 clean-libsvm: | libsvm

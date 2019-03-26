@@ -4,6 +4,7 @@ endif
 
 OS := $(shell uname)
 QARCH ?= $(if $(filter Darwin,$(OS)),m32,l32)
+Q ?= $(QHOME)/$(QARCH)/q
 export CFLAGS = -Wall -O3 -fPIC -DKXVER=3 $(if $(filter %32,$(QARCH)),-m32)
 LDFLAGS = $(if $(filter Darwin,$(OS)),-bundle -undefined dynamic_lookup -install_name,-shared -Wl,-soname)
 
@@ -62,11 +63,19 @@ libsvm/heart_scale.model: libsvm/svm-train
 liblinear/heart_scale.model: liblinear/train
 	cd liblinear && ./train heart_scale
 
+FUNQFILES += plot.q knn.q kmeans.q em.q pagerank.q sparse.q 
+FUNQFILES += decisiontree.q randomforest.q markov.q hca.q cosim.q 
+FUNQFILES += adaboost.q linreg.q logreg.q recommend.q nn.q onevsall 
+
+test-funq:
+	for f in $(FUNQFILES); do $(Q) $$f -s 4 </dev/null; done
+
 test-svm: install libsvm/heart_scale.model
-	cd libsvm && $(QHOME)/$(QARCH)/q ../testsvm.q < /dev/null
+	cd libsvm && $(Q) ../testsvm.q < /dev/null
 test-linear: install liblinear/heart_scale.model
-	cd liblinear && $(QHOME)/$(QARCH)/q ../testlinear.q < /dev/null
-test: test-svm test-linear
+	cd liblinear && $(Q) ../testlinear.q < /dev/null
+
+test: test-funq test-svm test-linear
 
 clean-libsvm: | libsvm
 	$(MAKE) -C libsvm clean

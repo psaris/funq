@@ -47,20 +47,20 @@ X:1#X
 show THETA:Y lsq 1#X
 
 -1"to fit intercept, prepend a vector of 1s";
-show .ml.addint X
+show .ml.prepend[1f] X
 
 -1"fitting a line with intercept";
-show THETA:Y lsq .ml.addint 1#X
+show THETA:Y lsq .ml.prepend[1f] 1#X
 
 -1"plotting data with fitted line";
 show plt .ml.append[0;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
 
 -1"fitting with normal equations (fast but not numerically stable)";
-.ml.normeq[Y;.ml.addint X]
+.ml.normeq[Y;.ml.prepend[1f] X]
 
 if[`qml in key `;
  -1"qml uses QR decomposition for a more numerically stable fit";
- 0N!.qml.mlsqx[`flip;.ml.addint X;Y];
+ 0N!.qml.mlsqx[`flip;.ml.prepend[1f] X;Y];
  ];
 
 -1"its nice to have closed form solution, but what if we don't?";

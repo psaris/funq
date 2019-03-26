@@ -56,7 +56,9 @@ part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
 
-predict:{[X;THETA]mm[THETA] prepend[1f] X} / regression predict
+/ linear predict Y values by prepending matrix (X) with a vector of 1s
+/ and multiplying the result to (THETA) coefficients
+predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]

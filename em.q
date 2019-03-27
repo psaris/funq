@@ -79,6 +79,8 @@ plt:.util.plot[60;30;".@"]
 -1"we can model each picture as a bernoulli mixture model";
 \l mnist.q
 `X`y set' mnist`X`y;
+-1"shrinking training set";
+X:6000#'X;y:6000#y;
 -1"convert the grayscale image into black/white";
 X>:128
 plt:value .util.plot[28;14;.util.c10] .util.hmap flip 28 cut
@@ -95,7 +97,6 @@ mu:.5*mu+.15+count[X]?/:k#.7            / randomly disturb around .5
 lf:.ml.bmml[1]
 mf:.ml.wbmmmle[1;1e-8]
 pT:(phi;flip enlist mu)
-\s 0 / prevent wsfull in peach
 -1"0-values in phi or mu will create null values.";
 -1"to prevent this, we need to use dirichlet smoothing";
 pT:.ml.em[1b;lf;mf;X] pT

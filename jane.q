@@ -1,5 +1,6 @@
 \c 20 100
 \l funq.q
+\l stopwords.q
 \l emma.q
 \l pandp.q
 \l sands.q

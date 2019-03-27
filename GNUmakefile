@@ -77,7 +77,15 @@ test-svm: install libsvm/heart_scale.model
 test-linear: install liblinear/heart_scale.model
 	cd liblinear && $(Q) ../testlinear.q < /dev/null
 
-test: test-funq test-svm test-linear
+test: test-funq
+
+ifneq (,$(wildcard $(QHOME)/$(QARCH)/libsvm.so))
+test: test-svm
+endif
+
+ifneq (,$(wildcard $(QHOME)/$(QARCH)/liblinear.so))
+test: test-linear
+endif
 
 clean-libsvm: | libsvm
 	$(MAKE) -C libsvm clean

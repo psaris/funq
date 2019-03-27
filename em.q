@@ -80,7 +80,7 @@ plt:.util.plot[60;30;".@"]
 \l mnist.q
 `X`y set' mnist`X`y;
 -1"shrinking training set";
-X:6000#'X;y:6000#y;
+X:1000#'X;y:1000#y;
 -1"convert the grayscale image into black/white";
 X>:128
 plt:value .util.plot[28;14;.util.c10] .util.hmap flip 28 cut

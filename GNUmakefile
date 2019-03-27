@@ -72,9 +72,9 @@ FUNQFILES += jane.q nb.q tfidf.q
 test-funq:
 	set -ex; for f in $(FUNQFILES); do $(Q) $$f -s 4 >/dev/null </dev/null; done
 
-test-svm: install libsvm/heart_scale.model
+test-svm: libsvm/heart_scale.model
 	cd libsvm && $(Q) ../testsvm.q < /dev/null
-test-linear: install liblinear/heart_scale.model
+test-linear: liblinear/heart_scale.model
 	cd liblinear && $(Q) ../testlinear.q < /dev/null
 
 test: test-funq

@@ -127,9 +127,3 @@ stem:{
  x:step4 x;
  x:step5 x;
  x}
-
-\
-`SSL_VERIFY_SERVER setenv "NO" / disable server verification
-pin:"\n" vs .Q.hg `:https://tartarus.org/martin/PorterStemmer/voc.txt
-pout:"\n" vs .Q.hg `:https://tartarus.org/martin/PorterStemmer/output.txt
-flip (pin;pout;out)@\: where not pout ~'out:.porter.stem peach pin

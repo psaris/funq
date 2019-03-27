@@ -63,14 +63,17 @@ libsvm/heart_scale.model: libsvm/svm-train
 liblinear/heart_scale.model: liblinear/train
 	cd liblinear && ./train heart_scale
 
-FUNQFILES += plot.q knn.q kmeans.q em.q pagerank.q sparse.q 
+FUNQFILES += testporter.q plot.q knn.q kmeans.q em.q pagerank.q sparse.q 
 FUNQFILES += decisiontree.q randomforest.q markov.q hca.q cosim.q 
 FUNQFILES += adaboost.q linreg.q logreg.q recommend.q nn.q onevsall.q
 FUNQFILES += nb.q tfidf.q
 #FUNQFILES += supportvectormachine.q
 
 test-funq:
-	set -ex; for f in $(FUNQFILES); do $(Q) $$f -s 4 >/dev/null </dev/null; done
+	set -ex; SSL_VERIFY_SERVER=NO;\
+	for f in $(FUNQFILES);\
+		do $(Q) $$f -s 4 >/dev/null </dev/null;\
+  done
 
 test-svm: libsvm/heart_scale.model
 	cd libsvm && $(Q) ../testsvm.q < /dev/null

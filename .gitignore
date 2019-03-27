@@ -34,3 +34,5 @@ xgboost
 /pg161.txt
 /121-0.txt
 /winequality-*.csv
+/voc.txt
+/output.txt

@@ -66,7 +66,7 @@ liblinear/heart_scale.model: liblinear/train
 FUNQFILES += plot.q knn.q kmeans.q em.q pagerank.q sparse.q 
 FUNQFILES += decisiontree.q randomforest.q markov.q hca.q cosim.q 
 FUNQFILES += adaboost.q linreg.q logreg.q recommend.q nn.q onevsall.q
-FUNQFILES += jane.q nb.q tfidf.q
+FUNQFILES += nb.q tfidf.q
 #FUNQFILES += supportvectormachine.q
 
 test-funq:

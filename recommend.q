@@ -4,7 +4,7 @@
 
 -1"to ensure the ratings matrix only contains movies with relevant movies,";
 -1"we generate a list of unique movie ids that meet our threshold.";
-show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
+show m:exec distinct asc movieId from mlense.rating where 100<(count;i) fby movieId
 
 / personal ratings
 
@@ -68,7 +68,7 @@ show select[10;>n] avg rating, n:count i by movieId.title from mlense.rating
 -1"by using a syntax that is similar to pivoting,";
 -1"we can generate the user/movie matrix";
 
-show R:value exec (movieId!rating) m by userId from mlense.rating
+show R:value exec (movieId!rating) m by userId from mlense.rating where ([]movieId) in key r
 -1"then add our own ratings";
 R,:value[r]`rating
 -1"demean the data and store global/movie/user bias";
@@ -97,7 +97,7 @@ show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg 20;0^Y] rati
 -1"weighted average top n users based on cosine similarity of idf-adjusted ratings";
 / weight by inverse user frequencies to underweight universally liked movies
 show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[20];0^Y] rating from y
-nf:100;
+nf:10;
 
 if[2<count key `.qml;
  -1 .util.box["**"] (

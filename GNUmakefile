@@ -17,7 +17,7 @@ libsvm:
 	git clone --depth 1 -b v322 https://github.com/cjlin1/libsvm.git
 
 liblinear:
-	git clone --depth 1 -b v220 https://github.com/cjlin1/liblinear.git
+	git clone --depth 1 -b v221 https://github.com/cjlin1/liblinear.git
 
 xgboost:
 	git clone --depth 1 -b release_0.72 --recurse-submodules -j8 https://github.com/dmlc/xgboost.git

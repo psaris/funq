@@ -38,3 +38,5 @@ xgboost
 /output.txt
 /binary.csv
 /readme
+/tree.dot
+/tree.png

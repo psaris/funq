@@ -67,7 +67,9 @@ show d:`train`test!.ml.part[3 1] iris.t
 -1 "testing the tree on the test set produces an accuracy of:";
 avg d.test.species=p:tr .ml.dtc/: d`test
 -1 "we can save the decision tree into graphviz compatible format";
-`:tree.dot 0: .ml.pgraph tr
+`:tree.dot 0: .ml.pgraph tr;
+-1 "using graphviz to convert the .dot file into a png";
+@[system;"dot -Tpng -o tree.png tree.dot";0N!];
 
 -1 "we can predict iris petal lengths with a regression tree";
 -1 "first we need to one-hot encode the species";

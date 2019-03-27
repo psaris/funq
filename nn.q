@@ -5,6 +5,8 @@
 / digit recognition
 -1"referencing mnist data from global namespace";
 `X`Xt`Y`y`yt set' mnist`X`Xt`Y`y`yt;
+-1"shrinking training set";
+X:1000#'X;y:1000#y;
 
 -1"define a plot function (which includes the empty space character)";
 plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
@@ -101,5 +103,5 @@ p w:where not yt=p
 do[2;-1 value plt Xt[;i:rand w];show ([]p;yt) i]
 
 / confusion matrix
-.util.totals[`TOTAL] .ml.cm[yt;"i"$p]
+show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 

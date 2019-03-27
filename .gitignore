@@ -36,3 +36,4 @@ xgboost
 /winequality-*.csv
 /voc.txt
 /output.txt
+/binary.csv

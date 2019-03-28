@@ -1,6 +1,6 @@
 wine.f:"wine.data"
 wine.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/wine/"
--1"downloading wine data set";
+-1"[down]loading wine data set";
 .util.download[wine.b;;"";""] wine.f;
 wine.XY:("H",13#"E";",")0:`$wine.f
 wine.X:1_wine.XY

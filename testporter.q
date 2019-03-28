@@ -2,9 +2,9 @@
 
 b:"https://tartarus.org/martin/PorterStemmer/"
 
--1"downloading porter stemmer vocabulary";
+-1"[down]loading porter stemmer vocabulary";
 pin:read0 .util.download[b;;"";""] "voc.txt"
--1"downloading stemmed vocabulary";
+-1"[down]loading stemmed vocabulary";
 pout:read0 .util.download[b;;"";""] "output.txt"
 -1"stemming vocabulary";
 out:.porter.stem peach pin

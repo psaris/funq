@@ -5,7 +5,7 @@ mnist.f:(
  "t10k-labels-idx1-ubyte";
  "t10k-images-idx3-ubyte")
 mnist.b:"http://yann.lecun.com/exdb/mnist/"
--1"downloading handwritten numbers dataset";
+-1"[down]loading handwritten numbers dataset";
 .util.download[mnist.b;;".gz";"gunzip -v"] mnist.f; / download data
 
 -1"loading mnist training data";

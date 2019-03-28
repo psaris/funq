@@ -1,6 +1,6 @@
 winequality.f:`red`white!("winequality-red.csv";"winequality-white.csv")
 winequality.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/"
--1"downloading wine quality data set";
+-1"[down]loading wine quality data set";
 .util.download[winequality.b;;"";""] each winequality.f;
 .winequality.load:{[f]
  YX:value flip t:`quality xcols .Q.id (12#"F";1#";")0:f;

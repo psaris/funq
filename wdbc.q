@@ -1,6 +1,6 @@
 wdbc.f:"wdbc.data"
 wdbc.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/"
--1"downloading wisconsin diagnostic breast cancer data set";
+-1"[down]loading wisconsin diagnostic breast cancer data set";
 .util.download[wdbc.b;;"";""] wdbc.f;
 wdbc.XY:(" C",30#"E";",") 0: `$wdbc.f
 wdbc.X:1_wdbc.XY

@@ -15,12 +15,16 @@ mdet:{[X]                       / determinant
  d:dot[X 0;(n#1 -1)*(.z.s (X _ 0)_\:) each til n];
  d}
 mchol:{[X]                      / cholesky decomposition
- L:{[X;L;i]
+ m:count X;
+ L:(m;m)#0f;
+ i:-1;
+ while[m>i+:1;
   L[i;i]:sqrt X[i;i]-dot[L i;L i];
-  L:{[X;i;L;j]
+  j:i;
+  while[m>j+:1;
    L[j;i]:(X[j;i]-dot[L i;L j])%L[i;i];
-   L}[X;i]/[L;n+til count[X]-n:i+1];
-  L}[X]/[(n;n)#0f;til n:count X];
+   ];
+  ];
  L}
 
 / returns true if all values are exactly equal

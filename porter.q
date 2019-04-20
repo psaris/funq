@@ -51,7 +51,8 @@ m:{sum[x] - first x:x where differ x:cons x}
 
 / remove plurals and -ed or -ing
 step1ab:{
- x:$[not x like "*s";x;x like "*sses";-2_x;x like "*ies";-2_x;x like "*ss";x;-1_x];
+ x:$[not x like "*s";x;x like "*sses";-2_x;
+  x like "*ies";-2_x;x like "*ss";x;-1_x];
  if[x like "*eed";:$[0<m -3_x;-1_x;x]];
  if[not x like o:"*ed";if[not x like o:"*ing";:x]];
  if[not hasvowel n:(1+neg count o)_x;:x];x:n;
@@ -68,16 +69,19 @@ step1c:{if[x like "*y";if[hasvowel -1_x;x[-1+count x]:"i"]];x}
 / map double suffices to single ones
 step2:{
  c:x -2+count x;
- if[c="a";:$[x like "*ational";r[0;-7;"ate";x];x like "*tional";r[0;-6;"tion";x];x]];
- if[c="c";:$[x like "*enci";r[0;-4;"ence";x];x like "*anci";r[0;-4;"ance";x];x]];
+ if[c="a";:$[x like "*ational";r[0;-7;"ate";x];
+   x like "*tional";r[0;-6;"tion";x];x]];
+ if[c="c";:$[x like "*enci";r[0;-4;"ence";x];
+   x like "*anci";r[0;-4;"ance";x];x]];
  if[c="e";:$[x like "*izer";r[0;-4;"ize";x];x]];
  if[c="l";:$[x like "*bli";r[0;-3;"ble";x];x like "*alli";r[0;-4;"al";x];
    x like "*entli";r[0;-5;"ent";x];x like "*eli";r[0;-3;"e";x];
    x like "*ousli";r[0;-5;"ous";x];x]];
- if[c="o";:$[x like "*ization";r[0;-7;"ize";x];x like "*ation";r[0;-5;"ate";x];
-   x like "*ator";r[0;-4;"ate";x];x]];
- if[c="s";:$[x like "*alism";r[0;-5;"al";x];x like "*iveness";r[0;-7;"ive";x];
-   x like "*fulness";r[0;-7;"ful";x];x like "*ousness";r[0;-7;"ous";x];x]];
+ if[c="o";:$[x like "*ization";r[0;-7;"ize";x];
+   x like "*ation";r[0;-5;"ate";x];x like "*ator";r[0;-4;"ate";x];x]];
+ if[c="s";:$[x like "*alism";r[0;-5;"al";x];
+   x like "*iveness";r[0;-7;"ive";x];x like "*fulness";r[0;-7;"ful";x];
+   x like "*ousness";r[0;-7;"ous";x];x]];
  if[c="t";:$[x like "*aliti";r[0;-5;"al";x];x like "*iviti";r[0;-5;"ive";x];
    x like "*biliti";r[0;-6;"ble";x];x]];
  if[c="g";:$[x like "*logi";r[0;-4;"log";x];x]];

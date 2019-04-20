@@ -186,7 +186,7 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 prb:norm[%;sum]                 / convert densities into probabilities
 
-sigmoid:1f%1f+exp neg@          / sigmoid function
+sigmoid:1f%1f+exp neg::         / sigmoid function
 softmax:prb exp::               / softmax function
 
 lpredict:sigmoid predict::      / logistic regression predict
@@ -229,8 +229,8 @@ rlogcostgrad:{[l;X;Y;THETA]
 logcostgrad:rlogcostgrad[0f]
 
 rlogcostgradf:{[l;X;Y]
- Jf:(sum rlogcost[l;X;Y]@);
- gf:(enlist rloggrad[l;X;Y]@);
+ Jf:sum rlogcost[l;X;Y]::;
+ gf:enlist rloggrad[l;X;Y]::;
  (Jf;gf)}
 logcostgradf:rlogcostgradf[0f]
 
@@ -348,8 +348,8 @@ nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  (J;2 raze/ g)}
 
 nncostgradf:{[l;n;X;YMAT]
- Jf:(first nncostgrad[l;n;X;YMAT]@);
- gf:(last nncostgrad[l;n;X;YMAT]@);
+ Jf:first nncostgrad[l;n;X;YMAT]::;
+ gf:last nncostgrad[l;n;X;YMAT]::;
  (Jf;gf)}
 
 / stochastic gradient descent
@@ -909,7 +909,7 @@ rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]@);t]}
 / shape of a tensor (atom, vector, matrix, etc)
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
-dim:count shape@
+dim:count shape::
 / matrix overload of where
 mwhere:{
  if[type x;:where x];

@@ -152,6 +152,8 @@ nsdev:sqrt nsvar::
 demean:norm[-;navg]
 / feature normalization (centered/unit variance)
 zscore:norm[%;nsdev] demean::
+/ feature normalization (scale values to [0,1])
+minmax:{(x-mm 1)%(-/)mm:(max;min)@\:x where not null x}
 
 / compute the average of the top n items
 tnavg:{[n;x;y]navg y (n&count x)#idesc x}

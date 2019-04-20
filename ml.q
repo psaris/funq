@@ -64,6 +64,16 @@ append:{y,((1;count y 0)#x)}
 / and multiplying the result to (THETA) coefficients
 predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
+/ regularized linear cost & gradient
+rlincostgrad:{[l;X;Y;theta]
+ THETA:(count Y;0N)#theta;
+ J:sum (1f%2*n:count Y 0)*sum mmt[J] J:predict[X;THETA]-Y;
+ if[l>0f;J+:(l%2*n)*dot[x]x:raze @[;0;:;0f]'[THETA]];
+ g:(1f%n)*mmt[predict[X;THETA]-Y] prepend[1f] X;
+ if[l>0f;g+:(l%n)*@[;0;:;0f]'[THETA]];
+ (J;raze g)}
+lincostgrad:rlincostgrad[0f]
+
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
  J:sum (1f%2*n:count Y 0)*sum mmt[Y] Y-:predict[X;THETA];

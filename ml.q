@@ -66,34 +66,34 @@ predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
 / regularized linear cost & gradient
 rlincostgrad:{[l;X;Y;theta]
- THETA:(count Y;0N)#theta;
- J:sum (1f%2*n:count Y 0)*sum mmt[E] E:predict[X;THETA]-Y;
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:sum (1f%2*n:count Y 0)*sum mmt[E] E:mm[THETA;X]-Y;
  if[l>0f;J+:(l%2*n)*dot[x]x:raze @[;0;:;0f]'[THETA]];
- g:(1f%n)*mmt[E] prepend[1f] X;
+ g:(1f%n)*mmt[E] X;
  if[l>0f;g+:(l%n)*@[;0;:;0f]'[THETA]];
  (J;raze g)}
 lincostgrad:rlincostgrad[0f]
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
- J:sum (1f%2*n:count Y 0)*sum mmt[E] E:predict[X;THETA]-Y;
+ J:sum (1f%2*n:count Y 0)*sum mmt[E] E:mm[THETA;prepend[1f] X]-Y;
  if[l>0f;J+:(l%2*n)*dot[x]x:raze @[;0;:;0f]'[THETA]];
  J}
 lincost:rlincost[0f]
 
 / regularized linear regression gradient
 rlingrad:{[l;X;Y;THETA]
- g:(1f%n:count Y 0)*mmt[predict[X;THETA]-Y] prepend[1f] X;
+ g:(1f%n:count Y 0)*mmt[mm[THETA;X]-Y] X:prepend[1f] X;
  if[l>0f;g+:(l%n)*@[;0;:;0f]'[THETA]];
  g}
 lingrad:rlingrad[0f]
 
 / regularized content-based filtering cost & gradient
 rcbfcostgrad:{[l;X;Y;theta]
- THETA:(count Y;0N)#theta;
- J:.5*sum sum E*E:0f^predict[X;THETA]-Y;
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:.5*sum sum E*E:0f^mm[THETA;X]-Y;
  if[l>0f;J+:(.5*l)*dot[x]x:raze @[;0;:;0f]'[THETA]];
- g:mmt[E] prepend[1f] X;
+ g:mmt[E] X;
  if[l>0f;g+:l*@[;0;:;0f]'[THETA]];
  (J;raze g)}
 cbfcostgrad:rcbfcostgrad[0f]

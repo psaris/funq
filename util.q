@@ -3,6 +3,9 @@
 / generate a range of values between y and z with step-size x
 rng:{y+x*til 1+floor (z-y)%x}
 
+/ round y to nearest x
+rnd:{x*"j"$y%x}
+
 / (b)ase url, (f)ile, (e)xtension, (u)compress (f)unction
 download:{[b;f;e;uf]
  if[0h=type f;:.z.s[b;;e;uf] each f];

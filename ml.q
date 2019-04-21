@@ -191,15 +191,15 @@ softmax:prb exp::               / softmax function
 
 lpredict:sigmoid predict::      / logistic regression predict
 / cross-entropy loss
-celoss:{(-1f%count y 0)*sum sum each (y*log x)+(1f-y)*log 1f-x}
+celoss:{neg (y*log x)+(1f-y)*log 1f-x}
 
 / regularized logistic regression cost
 / expects a list of THETA matrices
 rlogcost:{[l;X;Y;THETA]
  if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
  if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
- J:celoss[X lpredict/ THETA;Y];
- if[l>0f;J+:(.5*l%count Y 0)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / regularize
+ J:(1f%n:count Y 0)*sum sum each celoss[X lpredict/ THETA;Y];
+ if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / regularize
  J}
 logcost:rlogcost[0f]
 
@@ -340,8 +340,7 @@ checkcfgradients:{[l;n]
 nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  THETA:nncut[n] theta;
  Y:last a:lpredict\[enlist[X],THETA];
- n:count YMAT 0;
- J:celoss[Y;YMAT];
+ J:(1f%n:count Y 0)*sum sum each celoss[Y;YMAT];
  if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / regularize
  g:bpg[THETA;a] Y-YMAT;
  if[l>0f;g+:(l%n)*@[THETA;0;:;0f]]; / regularize

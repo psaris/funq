@@ -30,7 +30,7 @@ show X:"f"$flip exec genre in/: genres from ([]movieId:m)#mlense.movie
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
 l:.2                          / lambda (l2 regularization coefficient)
-theta:first .fmincg.fmincg[20;.ml.rcbfcostgrad[l;X;Y];theta] / learn
+theta:first .fmincg.fmincg[20;.ml.rlincostgrad[l;X;Y];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_last THETA

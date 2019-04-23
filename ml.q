@@ -68,23 +68,27 @@ predict:{[X;THETA]mm[THETA] prepend[1f] X}
 rlincostgrad:{[l;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:sum (.5%n:count Y 0)*sum E*E:mm[THETA;X]-Y;
- if[l>0f;J+:(.5*l%n)*sum sum x*x:@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;J+:neg[l%n]*sum sum abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum sum x*x:@'[THETA;0;:;0f]]; / L2 regularize
  g:(1f%n)*mmt[E] X;
- if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
  (J;raze g)}
 lincostgrad:rlincostgrad[0f]
 
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
  J:sum (.5%n:count Y 0)*sum E*E:mm[THETA;prepend[1f] X]-Y;
- if[l>0f;J+:(.5*l%n)*sum sum x*x:@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;J+:neg[l%n]*sum sum abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum sum x*x:@'[THETA;0;:;0f]]; / L2 regularize
  J}
 lincost:rlincost[0f]
 
 / regularized linear regression gradient
 rlingrad:{[l;X;Y;THETA]
  g:(1f%n:count Y 0)*mmt[mm[THETA;X]-Y] X:prepend[1f] X;
- if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
  g}
 lingrad:rlingrad[0f]
 
@@ -92,23 +96,27 @@ lingrad:rlingrad[0f]
 rcbfcostgrad:{[l;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:sum .5*sum E*E:0f^mm[THETA;X]-Y;
- if[l>0f;J+:(.5*l)*sum sum x*x:@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;J+:neg[l]*sum sum abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l)*sum sum x*x:@'[THETA;0;:;0f]]; / L2 regularize
  g:mmt[E] X;
- if[l>0f;g+:l*@'[THETA;0;:;0f]]; / regularize
+ if[l<0f;g+:neg[l]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:l*@'[THETA;0;:;0f]];             / L2 regularize
  (J;raze g)}
 cbfcostgrad:rcbfcostgrad[0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]
  J:sum .5*sum E*E:0f^mtm[THETA;X]-Y;
- if[l>0f;J+:.5*l*sum sum over/:x*x:(THETA;X)]; / regularize
+ if[l<0f;J+:neg[l]*sum sum over/:abs (THETA;X)]; / L1 regularize
+ if[l>0f;J+:(.5*l)*sum sum over/:x*x:(THETA;X)]; / L2 regularize
  J}
 cfcost:rcfcost[0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l;Y;THETA;X]
  g:(mmt[X;E];mm[THETA] E:0f^mtm[THETA;X]-Y);
- if[l>0f;g+:l*(THETA;X)]; / regularize
+ if[l<0f;g+:neg[l]*signum (THETA;X)]; / L1 regularize
+ if[l>0f;g+:l*(THETA;X)];             / L2 regularize
  g}
 cfgrad:rcfgrad[0f]
 
@@ -119,8 +127,11 @@ cfcut:{[n;x](n[1],0N)#/:(0,prd n)_x}
 rcfcostgrad:{[l;Y;n;thetax]
  THETA:first X:cfcut[n] thetax;X@:1;
  J:.5*sum sum E*E:0f^mtm[THETA;X]-Y;
+ if[l<0f;J+:neg[l]*sum sum over/:abs (THETA;X)]; / L1 regularize
+ if[l>0f;J+:(.5*l)*sum sum over/:x*x:(THETA;X)]; / L2 regularize
  g:(mmt[X;E];mm[THETA;E]);
- if[l>0f;J+:.5*l*sum sum over/:x*x:(THETA;X);g+:l*(THETA;X)]; / regularize
+ if[l<0f;g+:neg[l]*signum (THETA;X)];            / L1 regularize
+ if[l>0f;g+:l*(THETA;X)];                        / L2 regularize
  (J;2 raze/ g)}
 cfcostgrad:rcfcostgrad[0f]
 
@@ -199,7 +210,8 @@ rlogcost:{[l;X;Y;THETA]
  if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
  if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
  J:(1f%n:count Y 0)*sum sum each celoss[X lpredict/ THETA;Y];
- if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / regularize
+ if[l<0f;J+:neg[l%n]*sum 2 raze/ abs @''[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / L2 regularize
  J}
 logcost:rlogcost[0f]
 
@@ -217,8 +229,9 @@ rloggrad:{[l;X;Y;THETA]
  if[type THETA 0;:first .z.s[l;X;Y] enlist THETA]; / single matrix
  n:count Y 0;
  a:lpredict\[enlist[X],THETA];
- g:bpg[THETA;a] last[a]-Y;            / back prop
- if[l>0f;g+:(l%n)*@''[THETA;0;:;0f]]; / regularize
+ g:bpg[THETA;a] last[a]-Y;                      / back prop
+ if[l<0f;g+:neg[l%n]*signum @''[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@''[THETA;0;:;0f]];           / L2 regularize
  g}
 loggrad:rloggrad[0f]
 
@@ -341,9 +354,11 @@ nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency
  THETA:nncut[n] theta;
  Y:last a:lpredict\[enlist[X],THETA];
  J:(1f%n:count Y 0)*sum sum each celoss[Y;YMAT];
- if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / regularize
+ if[l<0f;J+:neg[l%n]*sum 2 raze/ abs @''[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / L2 regularize
  g:bpg[THETA;a] Y-YMAT;
- if[l>0f;g+:(l%n)*@[THETA;0;:;0f]]; / regularize
+ if[l<0f;g+:neg[l%n]*signum @''[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@''[THETA;0;:;0f]];           / L2 regularize
  (J;2 raze/ g)}
 
 nncostgradf:{[l;n;X;YMAT]

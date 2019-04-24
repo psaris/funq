@@ -64,18 +64,6 @@ append:{y,((1;count y 0)#x)}
 / and multiplying the result to (THETA) coefficients
 predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
-/ regularized linear cost & gradient
-rlincostgrad:{[l;X;Y;theta]
- THETA:(count Y;0N)#theta; X:prepend[1f] X;
- J:(.5%n:count Y 0)*sum sum each E*E:0f^mm[THETA;X]-Y;
- if[l<0f;J+:neg[l%n]*sum sum each abs @'[THETA;0;:;0f]]; / L1 regularize
- if[l>0f;J+:(.5*l%n)*sum sum each x*x:@'[THETA;0;:;0f]]; / L2 regularize
- g:(1f%n)*mmt[E] X;
- if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
- if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
- (J;raze g)}
-lincostgrad:rlincostgrad[0f]
-
 / regularized linear regression cost
 rlincost:{[l;X;Y;THETA]
  J:(.5%n:count Y 0)*sum sum each E*E:0f^mm[THETA;prepend[1f] X]-Y;
@@ -91,6 +79,18 @@ rlingrad:{[l;X;Y;THETA]
  if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
  g}
 lingrad:rlingrad[0f]
+
+/ regularized linear cost & gradient
+rlincostgrad:{[l;X;Y;theta]
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:(.5%n:count Y 0)*sum sum each E*E:0f^mm[THETA;X]-Y;
+ if[l<0f;J+:neg[l%n]*sum sum each abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum sum each x*x:@'[THETA;0;:;0f]]; / L2 regularize
+ g:(1f%n)*mmt[E] X;
+ if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
+ (J;raze g)}
+lincostgrad:rlincostgrad[0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l;Y;THETA;X]

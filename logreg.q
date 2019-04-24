@@ -16,23 +16,23 @@ show plt (2#X),Y
 
 / logistic regression cost
 -1"to use gradient descent, we must first define a cost function";
-theta: 4#4?0f;
+THETA:enlist theta:4?0f;
 -1"compute cost of initial theta estimate";
-.ml.logcost[X;Y;theta]
+.ml.logcost[X;Y;THETA]
 
 if[2<count key `.qml;
  -1"qml comes with a minimizer that can be called";
  -1"with just this cost function:";
  opts:`iter,1000,`full`quiet; /`rk`slp`tol,1e-8
- 0N!first 1_.qml.minx[opts;.ml.logcost[X;Y];enlist theta];
+ 0N!first 1_.qml.minx[opts;.ml.logcost[X;Y]enlist::;THETA];
  ];
 
 -1"we can also define a gradient function to make this proces faster";
-.ml.loggrad[X;Y;theta]
+.ml.loggrad[X;Y;THETA]
 
 if[2<count key `.qml;
  -1"qml can also use both the cost and gradient to improve performance";
- 0N!first 1_.qml.minx[opts;.ml.logcostgradf[X;Y];enlist theta];
+ 0N!first 1_.qml.minx[opts;.ml.logcostgradf[X;Y];THETA];
  ];
 
 -1"but the gradient calculation often shares computations with the cost";

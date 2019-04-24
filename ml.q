@@ -193,45 +193,35 @@ lpredict:sigmoid predict::      / logistic regression predict
 celoss:{neg (y*log x)+(1f-y)*log 1f-x}
 
 / regularized logistic regression cost
-/ expects a list of THETA matrices
 rlogcost:{[l;X;Y;THETA]
- if[type THETA  ;:.z.s[l;X;Y] enlist THETA];     / vector
- if[type THETA 0;:.z.s[l;X;Y] enlist THETA];     / single matrix
- J:(1f%n:count Y 0)*sum sum each celoss[X lpredict/ THETA;Y];
- if[l<0f;J+:neg[l%n]*sum 2 raze/ abs @''[THETA;0;:;0f]]; / L1 regularize
- if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@''[THETA;0;:;0f]]; / L2 regularize
+ J:(1f%n:count Y 0)*sum sum each celoss[lpredict[X;THETA];Y];
+ if[l<0f;J+:neg[l%n]*sum 2 raze/ abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@'[THETA;0;:;0f]]; / L2 regularize
  J}
 logcost:rlogcost[0f]
 
-bpg:{[THETA;a;D] / back prop gradient
- a:prepend[1f] each -1_a;
- G:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a];
- G,:enlist D;
- g:(G mmt' a)%count D 0;
- g}
-
 / regularized logistic regression gradient
-/ expects a list of THETA matrices
 rloggrad:{[l;X;Y;THETA]
- if[type THETA  ;:first .z.s[l;X;Y] enlist THETA]; / vector
- if[type THETA 0;:first .z.s[l;X;Y] enlist THETA]; / single matrix
- n:count Y 0;
- a:lpredict\[enlist[X],THETA];
- g:bpg[THETA;a] last[a]-Y;                      / back prop
- if[l<0f;g+:neg[l%n]*signum @''[THETA;0;:;0f]]; / L1 regularize
- if[l>0f;g+:(l%n)*@''[THETA;0;:;0f]];           / L2 regularize
+ g:(1f%n:count Y 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
+ if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
  g}
 loggrad:rloggrad[0f]
 
-rlogcostgrad:{[l;X;Y;THETA]
- J:sum rlogcost[l;X;Y;THETA];
- g:rloggrad[l;X;Y;THETA];
- (J;g)}
+rlogcostgrad:{[l;X;Y;theta]
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:(1f%n:count Y 0)*sum sum each celoss[P:sigmoid[mm[THETA;X]];Y];
+ if[l<0f;J+:neg[l%n]*sum 2 raze/ abs @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;J+:(.5*l%n)*sum 2 raze/ x*x:@'[THETA;0;:;0f]]; / L2 regularize
+ g:(1f%n)*mmt[P-Y] X;
+ if[l<0f;g+:neg[l%n]*signum @'[THETA;0;:;0f]]; / L1 regularize
+ if[l>0f;g+:(l%n)*@'[THETA;0;:;0f]];           / L2 regularize
+ (J;raze g)}
 logcostgrad:rlogcostgrad[0f]
 
 rlogcostgradf:{[l;X;Y]
- Jf:sum rlogcost[l;X;Y]::;
- gf:enlist rloggrad[l;X;Y]::;
+ Jf:rlogcost[l;X;Y]enlist::;
+ gf:rloggrad[l;X;Y]enlist::;
  (Jf;gf)}
 logcostgradf:rlogcostgradf[0f]
 
@@ -321,8 +311,8 @@ checknngradients:{[l;n]
  X:flip ninit[-1+n 0;n 1];
  y:1+(1+til n 1) mod last n;
  YMAT:flip eye[last n]"i"$y-1;
- g:2 raze/ rloggrad[l;X;YMAT] THETA; / analytic gradient
- f:(rlogcost[l;X;YMAT]nncut[n]@);
+ g:last nncostgrad[l;n;X;YMAT] theta; / analytic gradient
+ f:first nncostgrad[l;n;X;YMAT]::;
  ng:numgrad[f;theta] count[theta]#1e-4; / numerical gradient
  (g;ng)}
 
@@ -336,6 +326,13 @@ checkcfgradients:{[l;n]
  ng:numgrad[f;thetax] count[thetax]#1e-4; / numerical gradient
  (g;ng)}
 
+
+bpg:{[THETA;a;D] / back prop gradient
+ a:prepend[1f] each -1_a;
+ G:{[D;THETA;a]1_mtm[THETA;D]*a*1f-a}\[D;reverse 1_THETA;reverse 1_a];
+ G,:enlist D;
+ g:(G mmt' a)%count D 0;
+ g}
 
 / n can be any network topology dimension
 nncostgrad:{[l;n;X;YMAT;theta] / combined cost and gradient for efficiency

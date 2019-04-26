@@ -225,8 +225,9 @@ rlogcostgradf:{[l;X;Y]
  (Jf;gf)}
 logcostgradf:rlogcostgradf[0f]
 
-/ normalized initialization - Glorot and Bengio (2010)
-ninit:{sqrt[6f%x+y]*-1f+(x+:1)?/:y#2f}
+/ Xavier Glorot and Yoshua Bengio (2010) initialization
+glorotu:{sqrt[6f%x+y]*-1f+y?/:x#2f}  / uniform
+glorotn:{rnorm'[x#y;0f;sqrt 2f%x+y]} / normal
 
 / (m)inimization (f)unction, (c)ost (g)radient (f)unction
 onevsall:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}
@@ -307,8 +308,8 @@ eye:{diag x#1f}
 numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
 
 checknngradients:{[l;n]
- theta:2 raze/ THETA:ninit'[-1_n;1_n];
- X:flip ninit[-1+n 0;n 1];
+ theta:2 raze/ THETA:glorotu'[1+-1_n;1_n];
+ X:glorotu[n 0;n 1];
  y:1+(1+til n 1) mod last n;
  YMAT:flip eye[last n]"i"$y-1;
  g:last nncostgrad[l;n;X;YMAT] theta; / analytic gradient
@@ -497,14 +498,10 @@ pi:acos -1f
 twopi:2f*pi
 logtwopi:log twopi
 
-/ box-muller (copied from qtips/stat.q) (m?-n in k6)
+/ box-muller (m?-n in k7)
 bm:{
- if[count[x] mod 2;'`length];
- x:2 0N#x;
- r:sqrt -2f*log first x;
- theta:twopi*last x;
- x: r*cos theta;
- x,:r*sin theta;
+ if[count[x] mod 2;:-1_.z.s x,rand 1f];
+ x:raze (sqrt -2f*log first x)*/:(cos;sin)@\:twopi*last x:2 0N#x;
  x}
 
 / random number generators

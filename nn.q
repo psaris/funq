@@ -33,8 +33,8 @@ n:0N!{(x;(x+y) div 2;y)}[count X;count YMAT]
 -1"instead of setting them all to a 0 (or any constant value),";
 -1"we must set them to randomn values to 'break the symmetry'.";
 -1"additionally, we must chose values that ensure the gradient";
--1"of the sigmoid function is not too small.  .ml.ninit does this";
-0N!theta:2 raze/ .ml.ninit'[-1_n;1_n];
+-1"of the sigmoid function is not too small.  .ml.glorotu does this";
+0N!theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 
 l:1                           / lambda (l2 regularization coefficient)
 -1"the neural network cost function feeds the X values through the network,";

@@ -228,6 +228,9 @@ logcostgradf:rlogcostgradf[0f]
 / Xavier Glorot and Yoshua Bengio (2010) initialization
 glorotu:{sqrt[6f%x+y]*-1f+y?/:x#2f}  / uniform
 glorotn:{rnorm'[x#y;0f;sqrt 2f%x+y]} / normal
+/ Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun (2015) initialization
+heu:{sqrt[6f%y]*-1f+y?/:x#2f}   / uniform
+hen:{rnorm'[x#y;0f;sqrt 2f%y]}  / normal
 
 / (m)inimization (f)unction, (c)ost (g)radient (f)unction
 onevsall:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}

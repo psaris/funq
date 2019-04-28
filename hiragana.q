@@ -12,6 +12,8 @@
 
 -1"referencing etl9b data from global namespace";
 `X`y`h set' etl9b`X`y`h
+-1"shrinking training set";
+X:500#'X;y:500#y;h:500#h;
 
 -1"setting the prng seed";
 system "S ",string "i"$.z.T
@@ -28,7 +30,9 @@ YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 theta:2 raze/ .ml.glorotu'[1_n;1+-1_n];
 l:1                           / lambda (l2 regularization coefficient)
 -1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
-mf:{first .fmincg.fmincg[10;.ml.nncostgrad[l;n;X[;y];YMAT[;y]];x]}
+hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
+
+mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X[;y];YMAT[;y]];x]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 
 -1"checking accuracy of parameters";

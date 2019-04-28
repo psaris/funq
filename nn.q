@@ -41,20 +41,25 @@ l:1                           / lambda (l2 regularization coefficient)
 -1"then backpropagates the errors and gradient for each layer.";
 -1"the cost and gradient calculations are expensive but share intermediate values";
 -1"it is therefore important to compute both simultaneously";
-show .ml.nncostgrad[l;n;X;YMAT;theta]
+hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
+/hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.xentropy
+/hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.xentropy
+show .ml.nncostgrad[l;n;hgflf;X;YMAT;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
 -1"as a discrete (and slower to calculate) gradient.";
-(=)."i"$1e8*.ml.checknngradients[.1f;3 5 3]
+all 0=(-/)"i"$1e6*.ml.checknngradients[.1f;3 5 10 50 2;hgflf]
 
 -1"we can now run (batch) gradient descent across the whole datatset.";
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
-theta:first .fmincg.fmincg[5;.ml.nncostgrad[l;n;X;YMAT];theta];
+
+first .fmincg.fmincg[5;.ml.nncostgrad[0;n;hgflf;X;YMAT];theta];
+theta:first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X;YMAT];theta];
 
 / NOTE: qml throws a `limit error (too many elements)
-/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l;n;X;YMAT];enlist theta]
+/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l;n;hgflf;X;YMAT];enlist theta]
 -1"we can, alternatively, perform stochastic gradient descent (SGD).";
 -1"by taking a subset of the data on each iteration, we can analyze all the data";
 -1"without holding it all in memory simultaneously. in addition, the parameters will";
@@ -68,7 +73,7 @@ theta:first .fmincg.fmincg[5;.ml.nncostgrad[l;n;X;YMAT];theta];
 -1"this is called 'on-line learning'";
 
 -1"we first define a minimization projection:";
-mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l;n;X[;y];YMAT[;y]];x]}
+mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X[;y];YMAT[;y]];x]}
 -1"we then have a few choices to randomize the dataset.";
 -1"A: permutate, then run n non-permuted epochs";
 i:0N?count X 0
@@ -80,10 +85,10 @@ theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
 theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[0f;n;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
+theta:(1f<first .ml.nncostgrad[0f;n;hgflf;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
 
 -1"what is the final cost?";
-first .ml.nncostgrad[0f;n;X;YMAT;theta]
+first .ml.nncostgrad[0f;n;hgflf;X;YMAT;theta]
 
 -1"how well did we learn on the training data set?";
 avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta

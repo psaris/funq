@@ -311,7 +311,7 @@ eye:{diag x#1f}
 numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
 
 checknngradients:{[l;n]
- theta:2 raze/ THETA:glorotu'[1+-1_n;1_n];
+ theta:2 raze/ glorotu'[1_n;1+-1_n];
  X:glorotu[n 0;n 1];
  y:1+(1+til n 1) mod last n;
  YMAT:flip eye[last n]"i"$y-1;

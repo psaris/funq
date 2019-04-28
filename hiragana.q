@@ -25,7 +25,7 @@ n:0N!{(x;(x+y) div 2;y)}[count X;count h]
 YMAT:.ml.diag[last[n]#1f]@\:"i"$y
 
 -1"initialize theta with random weights";
-theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
+theta:2 raze/ .ml.glorotu'[1_n;1+-1_n];
 l:1                           / lambda (l2 regularization coefficient)
 -1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
 mf:{first .fmincg.fmincg[10;.ml.nncostgrad[l;n;X[;y];YMAT[;y]];x]}

@@ -185,15 +185,15 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 prb:norm[%;sum]                 / convert densities into probabilities
 
-/ activation functions
+/ activation functions (derivatives optionally accept `z`a!(z;a) dict)
 sigmoid:1f%1f+exp neg::
-dsigmoid:{x*1f-x:sigmoid x}
+dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]}
 tanh:{(a-b)%(a:exp x)+b:exp neg x}
-dtanh:{1f-x*x:tanh x}
+dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}
 relu:0f|
-drelu:"f"$0f<=
-lrelu:{x*1 .1@0f>x}
-dlrelu:{1 .1@0f>x}
+drelu:{"f"$0f<=$[99h=type x;x`z;x]}
+lrelu:{x*1 .01@0f>x}
+dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
 
 / loss functions
 xentropy:{neg (y*log x)+(1f-y)*log 1f-x} / cross entropy
@@ -350,7 +350,7 @@ nncostgrad:{[l;n;hgflf;X;YMAT;theta]
  J:(1f%m:count X 0)*sum (sum') hgflf[3][Y;YMAT];     / loss
  if[l<0f;J+:neg[l%m]*sum(sum')(sum'')abs @''[THETA;0;:;0f]]; / L1 regularize
  if[l>0f;J+:(.5*l%m)*sum(sum')(sum'')x*x:@''[THETA;0;:;0f]]; / L2 regularize
- G:hgflf[1]@' 1_ZA[;0];         / activation gradients
+ G:hgflf[1]@'`z`a!/:1_ZA;       / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:Y-YMAT;reverse 1_THETA;reverse G];
  G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
  if[l<0f;G+:neg[l%m]*signum @''[THETA;0;:;0f]];   / L1 regularize

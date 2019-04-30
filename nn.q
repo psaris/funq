@@ -7,6 +7,8 @@
 `X`Xt`Y`y`yt set' mnist`X`Xt`Y`y`yt;
 -1"shrinking training set";
 X:1000#'X;y:1000#y;
+-1"normalize data set";
+X%:255f
 
 -1"define a plot function (which includes the empty space character)";
 plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
@@ -42,6 +44,7 @@ l:1                           / lambda (l2 regularization coefficient)
 -1"the cost and gradient calculations are expensive but share intermediate values";
 -1"it is therefore important to compute both simultaneously";
 hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
+/hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.xentropy
 /hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.xentropy
 /hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.xentropy
 show .ml.nncostgrad[l;n;hgflf;X;YMAT;theta]
@@ -55,8 +58,7 @@ all 0=(-/)"i"$1e6*.ml.checknngradients[.1f;3 5 10 50 2;hgflf]
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
 
-first .fmincg.fmincg[5;.ml.nncostgrad[0;n;hgflf;X;YMAT];theta];
-theta:first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X;YMAT];theta];
+first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X;YMAT];theta];
 
 / NOTE: qml throws a `limit error (too many elements)
 /.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l;n;hgflf;X;YMAT];enlist theta]

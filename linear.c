@@ -318,21 +318,21 @@ qml_linear_cross_validation(K kprob, K kparam, K nr_fold) {
 }
 
 K
-qml_linear_find_parameter_C(K kprob, K kparam, K nr_fold, K start_C, K max_C) {
+qml_linear_find_parameters(K kprob, K kparam, K nr_fold, K start_C, K start_p) {
     struct problem prob;
     struct parameter param;
     K r = 0;
 
-    P(nr_fold->t != -KI || start_C->t != -KF || max_C->t != -KF, krr("type"));
+    P(nr_fold->t != -KI || start_C->t != -KF || start_p->t != -KF, krr("type"));
 
     memset(&prob, 0, sizeof(struct problem));
     memset(&param, 0, sizeof(struct parameter));
 
     D(k_to_problem(kprob, &prob));
     D(k_to_parameter(kparam, &param));
-    r = ktn(KF,2);
-    find_parameter_C(&prob, &param, nr_fold->i, start_C->f, max_C->f,
-                     &kF(r)[0], &kF(r)[1]);
+    r = ktn(KF,3); memset(kF(r),0,3*sizeof(double));
+    find_parameters(&prob, &param, nr_fold->i, start_C->f, start_p->f,
+                    &kF(r)[0], &kF(r)[1], &kF(r)[2]);
  done:
     destroy_prob(&prob);
     destroy_param(&param);
@@ -515,7 +515,7 @@ qml_linear_lib(K x) {
     js(&x,ss("check_parameter")),         jk(&y,dl(qml_linear_check_parameter,2));
     js(&x,ss("train")),                   jk(&y,dl(qml_linear_train,2));
     js(&x,ss("cross_validation")),        jk(&y,dl(qml_linear_cross_validation,3));
-    js(&x,ss("find_parameter_C")),        jk(&y,dl(qml_linear_find_parameter_C,5));
+    js(&x,ss("find_parameters")),         jk(&y,dl(qml_linear_find_parameters,5));
     js(&x,ss("load_model")),              jk(&y,dl(qml_linear_load_model,1));
     js(&x,ss("save_model")),              jk(&y,dl(qml_linear_save_model,2));
     js(&x,ss("check_probability_model")), jk(&y,dl(qml_linear_check_probability_model,1));

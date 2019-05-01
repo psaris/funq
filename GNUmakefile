@@ -17,7 +17,7 @@ libsvm:
 	git clone --depth 1 -b v322 https://github.com/cjlin1/libsvm.git
 
 liblinear:
-	git clone --depth 1 -b v221 https://github.com/cjlin1/liblinear.git
+	git clone --depth 1 -b v230 https://github.com/cjlin1/liblinear.git
 
 xgboost:
 	git clone --depth 1 -b release_0.72 --recurse-submodules -j8 https://github.com/dmlc/xgboost.git
@@ -51,7 +51,7 @@ libsvm.so: svm.o libsvm/svm.o
 liblinear.so: linear.o liblinear/linear.o liblinear/tron.o liblinear/blas/blas.a
 	$(CC) $(CFLAGS) $(LDFLAGS),$@ $^ -o $@
 
-lib: libsvm.so liblinear.so xgboost #/lib/libxgboost.dylib
+lib: libsvm.so liblinear.so #xgboost /lib/libxgboost.dylib
 
 
 install: lib
@@ -76,9 +76,9 @@ test-funq:
   done
 
 test-svm: libsvm/heart_scale.model
-	cd libsvm && $(Q) ../testsvm.q < /dev/null
+	$(Q) testsvm.q < /dev/null
 test-linear: liblinear/heart_scale.model
-	cd liblinear && $(Q) ../testlinear.q < /dev/null
+	$(Q) testlinear.q < /dev/null
 
 test: test-funq
 

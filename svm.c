@@ -24,7 +24,7 @@ print_string_q(const char *s)
 }
 
 ZV
-svm_destroy_prob(struct svm_problem* prob) {
+destroy_prob(struct svm_problem* prob) {
     DO(prob->l, free(prob->x[i]));
     free(prob->x);
     free(prob->y);
@@ -256,7 +256,7 @@ k_to_model(const K d, struct svm_model *m) {
 }
 
 K
-qml_svm_check_parameter(K kprob, K kparam) {
+check_parameter(K kprob, K kparam) {
     struct svm_problem prob;
     struct svm_parameter param;
     K r = 0;
@@ -268,13 +268,13 @@ qml_svm_check_parameter(K kprob, K kparam) {
     D(k_to_parameter(kparam, &param));
     r = krr((S)svm_check_parameter(&prob,&param));
  done:
-    svm_destroy_prob(&prob);
+    destroy_prob(&prob);
     svm_destroy_param(&param);
     R r;
 }
 
 K
-qml_svm_train(K kprob, K kparam) {
+train(K kprob, K kparam) {
     struct svm_problem prob;
     struct svm_parameter param;
     struct svm_model *model = 0;
@@ -289,13 +289,13 @@ qml_svm_train(K kprob, K kparam) {
     kmodel = model_to_k(model);
  done:
     svm_free_and_destroy_model(&model);
-    svm_destroy_prob(&prob);
+    destroy_prob(&prob);
     svm_destroy_param(&param);
     R kmodel;
 }
 
 K
-qml_svm_cross_validation(K kprob, K kparam, K nr_fold) {
+cross_validation(K kprob, K kparam, K nr_fold) {
     struct svm_problem prob;
     struct svm_parameter param;
     K target = 0;
@@ -310,13 +310,13 @@ qml_svm_cross_validation(K kprob, K kparam, K nr_fold) {
     target = ktn(KF,prob.l);
     svm_cross_validation(&prob, &param, nr_fold->i, kF(target));
  done:
-    svm_destroy_prob(&prob);
+    destroy_prob(&prob);
     svm_destroy_param(&param);
     R target;
 }
 
 K
-qml_svm_load_model(K file) {
+load_model(K file) {
     struct svm_model *model;
     K r;
 
@@ -328,7 +328,7 @@ qml_svm_load_model(K file) {
 }
 
 K
-qml_svm_save_model(K file, K kmodel) {
+save_model(K file, K kmodel) {
     struct svm_model model;
     K r = 0;
 
@@ -343,7 +343,7 @@ qml_svm_save_model(K file, K kmodel) {
 }
 
 K
-qml_svm_check_probability_model(K kmodel) {
+check_probability_model(K kmodel) {
     struct svm_model model;
     K r = 0;
 
@@ -356,7 +356,7 @@ qml_svm_check_probability_model(K kmodel) {
 }
 
 K
-qml_svm_predict(K kmodel, K knodes) {
+predict(K kmodel, K knodes) {
     struct svm_model model;
     struct svm_node *nodes = 0;
     K r = 0;
@@ -381,7 +381,7 @@ qml_svm_predict(K kmodel, K knodes) {
 }
 
 K
-qml_svm_predict_values(K kmodel, K knodes) {
+predict_values(K kmodel, K knodes) {
     struct svm_model model;
     struct svm_node *nodes = 0;
     K r = 0, dec_values = 0;
@@ -410,7 +410,7 @@ qml_svm_predict_values(K kmodel, K knodes) {
 }
 
 K
-qml_svm_predict_probability(K kmodel, K knodes) {
+predict_probability(K kmodel, K knodes) {
     struct svm_model model;
     struct svm_node *nodes = 0;
     K r = 0, prob = 0;
@@ -440,18 +440,18 @@ qml_svm_predict_probability(K kmodel, K knodes) {
 }
 
 K
-qml_svm_prob_inout(K kprob) {
+prob_inout(K kprob) {
     struct svm_problem prob;
 
     memset(&prob, 0, sizeof(struct svm_problem));
     U(k_to_problem(kprob,&prob));
     kprob = problem_to_k(&prob);
-    svm_destroy_prob(&prob);
+    destroy_prob(&prob);
     R kprob;
 }
 
 K
-qml_svm_param_inout(K kparam) {
+param_inout(K kparam) {
     struct svm_parameter param;
 
     memset(&param, 0, sizeof(struct svm_parameter));
@@ -462,7 +462,7 @@ qml_svm_param_inout(K kparam) {
 }
 
 K
-qml_svm_model_inout(K kmodel) {
+model_inout(K kmodel) {
     struct svm_model model;
 
     memset(&model, 0, sizeof(struct svm_model)), model.free_sv = 1;
@@ -473,7 +473,7 @@ qml_svm_model_inout(K kmodel) {
 }
 
 K
-qml_svm_set_print_string_function(K x) {
+set_print_string_function(K x) {
     P(xt != -KS, krr("type"));
 
     print_string_function = xs;
@@ -481,7 +481,7 @@ qml_svm_set_print_string_function(K x) {
 }
 
 K
-qml_svm_lib(K x) {
+lib(K x) {
     K y;
 
     svm_set_print_string_function(print_string_q);
@@ -490,18 +490,18 @@ qml_svm_lib(K x) {
     y=ktn(0,0);
 
     js(&x,ss("version")),                 jk(&y,ki(libsvm_version));
-    js(&x,ss("check_parameter")),         jk(&y,dl(qml_svm_check_parameter,2));
-    js(&x,ss("train")),                   jk(&y,dl(qml_svm_train,2));
-    js(&x,ss("cross_validation")),        jk(&y,dl(qml_svm_cross_validation,3));
-    js(&x,ss("load_model")),              jk(&y,dl(qml_svm_load_model,1));
-    js(&x,ss("save_model")),              jk(&y,dl(qml_svm_save_model,2));
-    js(&x,ss("check_probability_model")), jk(&y,dl(qml_svm_check_probability_model,1));
-    js(&x,ss("predict")),                 jk(&y,dl(qml_svm_predict,2));
-    js(&x,ss("predict_values")),          jk(&y,dl(qml_svm_predict_values,2));
-    js(&x,ss("predict_probability")),     jk(&y,dl(qml_svm_predict_probability,2));
-    js(&x,ss("prob_inout")),              jk(&y,dl(qml_svm_prob_inout,1));
-    js(&x,ss("param_inout")),             jk(&y,dl(qml_svm_param_inout,1));
-    js(&x,ss("model_inout")),             jk(&y,dl(qml_svm_model_inout,1));
-    js(&x,ss("set_print_string_function")), jk(&y,dl(qml_svm_set_print_string_function,1));
+    js(&x,ss("check_parameter")),         jk(&y,dl(check_parameter,2));
+    js(&x,ss("train")),                   jk(&y,dl(train,2));
+    js(&x,ss("cross_validation")),        jk(&y,dl(cross_validation,3));
+    js(&x,ss("load_model")),              jk(&y,dl(load_model,1));
+    js(&x,ss("save_model")),              jk(&y,dl(save_model,2));
+    js(&x,ss("check_probability_model")), jk(&y,dl(check_probability_model,1));
+    js(&x,ss("predict")),                 jk(&y,dl(predict,2));
+    js(&x,ss("predict_values")),          jk(&y,dl(predict_values,2));
+    js(&x,ss("predict_probability")),     jk(&y,dl(predict_probability,2));
+    js(&x,ss("prob_inout")),              jk(&y,dl(prob_inout,1));
+    js(&x,ss("param_inout")),             jk(&y,dl(param_inout,1));
+    js(&x,ss("model_inout")),             jk(&y,dl(model_inout,1));
+    js(&x,ss("set_print_string_function")), jk(&y,dl(set_print_string_function,1));
     R xD(x,y);
 }

@@ -97,7 +97,7 @@ clean-liblinear: | liblinear
 clean-xgboost: | xgboost
 	$(MAKE) -C xgboost clean
 
-clean: clean-libsvm clean-liblinear clean-xgboost
+clean: clean-libsvm clean-liblinear
 	$(RM) *.so *.o
 
 nuke-libsvm:
@@ -107,5 +107,5 @@ nuke-liblinear:
 nuke-xgboost:
 	$(RM) -r xgboost
 
-nuke: nuke-libsvm nuke-liblinear nuke-xgboost
+nuke: nuke-libsvm nuke-liblinear
 	$(RM) *.so *.o k.h

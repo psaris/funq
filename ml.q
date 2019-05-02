@@ -45,8 +45,8 @@ enorm:sqrt enorm2::                        / euclidean norm
 pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p}  / p norm
 / apply (d)yadic function to the result of (a)ggregating
 / vector/matrix/dictionary/table x
-norm:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
-normalize:norm[%;enorm]         / normalize each vector to unit length
+dax:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
+normalize:dax[%;enorm]          / normalize each vector to unit length
 
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
@@ -158,9 +158,9 @@ nsvar:{$[type x;svar x;(n*nvar x)%-1+n:ncount x]}
 nsdev:sqrt nsvar::
 
 / centered
-demean:norm[-;navg]
+demean:dax[-;navg]
 / feature normalization (centered/unit variance)
-zscore:norm[%;nsdev] demean::
+zscore:dax[%;nsdev] demean::
 / feature normalization (scale values to [0,1])
 minmax:{(x-mm 1)%(-/)mm:(max;min)@\:x where not null x}
 
@@ -183,7 +183,7 @@ wnan:{$[all type each x;where not any null x;::]}
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 
-prb:norm[%;sum]                 / convert densities into probabilities
+prb:dax[%;sum]                  / convert densities into probabilities
 
 / activation functions (derivatives optionally accept `z`a!(z;a) dict)
 sigmoid:1f%1f+exp neg::
@@ -198,7 +198,7 @@ dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
 / loss functions
 xentropy:{neg (y*log x)+(1f-y)*log 1f-x} / cross entropy
 softmax:prb exp::                        / softmax
-ssoftmax:softmax norm[-;max]::           / stable softmax
+ssoftmax:softmax dax[-;max]::            / stable softmax
 
 lpredict:sigmoid predict::      / logistic regression predict
 

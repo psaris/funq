@@ -14,7 +14,7 @@ k.h:
 	wget https://raw.githubusercontent.com/KxSystems/kdb/master/c/c/k.h
 
 libsvm:
-	git clone --depth 1 -b v322 https://github.com/cjlin1/libsvm.git
+	git clone --depth 1 -b v323 https://github.com/cjlin1/libsvm.git
 
 liblinear:
 	git clone --depth 1 -b v230 https://github.com/cjlin1/liblinear.git

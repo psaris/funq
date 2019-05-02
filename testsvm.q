@@ -1,7 +1,7 @@
 \l svm.q
 \l util.q
 .svm.set_print_string_function `
-.util.assert[322i] .svm.version
+.util.assert[323i] .svm.version
 .util.assert[s] .svm.write_problem prob:.svm.read_problem s:read0 `:libsvm/heart_scale
 .util.assert[::] .svm.check_parameter[prob] param:.svm.defparam[prob] .svm.param
 .util.assert[prob] .svm.prob_inout prob

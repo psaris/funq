@@ -42,7 +42,7 @@ mnorm:sum abs::               / manhattan (taxicab) norm
 / NOTE: wavg converts all types to float
 enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
 enorm:sqrt enorm2::                        / euclidean norm
-mknorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / minkowski norm
+pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p}  / p norm
 / apply (d)yadic function to the result of (a)ggregating
 / vector/matrix/dictionary/table x
 norm:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
@@ -384,7 +384,7 @@ edist2:enorm2 (-)::            / euclidean distance squared
 edist:enorm (-)::              / euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]mknorm[p] x-y}   / minkowski distanace
+mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
 hmean:1f%avg 1f%                / harmonic mean
 
 / term document matrix built from (c)orpus and (v)ocabulary

@@ -67,7 +67,9 @@ FUNQFILES += testporter.q plot.q knn.q kmeans.q em.q pagerank.q sparse.q
 FUNQFILES += decisiontree.q randomforest.q markov.q hca.q cosim.q 
 FUNQFILES += adaboost.q linreg.q logreg.q recommend.q nn.q onevsall.q
 FUNQFILES += nb.q tfidf.q
-#FUNQFILES += supportvectormachine.q
+ifneq (,$(wildcard $(QHOME)/$(QARCH)/libsvm.so))
+FUNQFILES += supportvectormachine.q
+endif
 
 test-funq:
 	set -ex; SSL_VERIFY_SERVER=NO;\

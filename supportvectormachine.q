@@ -1,6 +1,8 @@
 \l funq.q
 \l iris.q
 
+stdout:1@
+.svm.set_print_string_function`stdout
 -1"enumerate species so we can use the integer value for svm";
 y:`species?iris.y
 -1"svm parameter x is a sparse matrix: - list of dictionaries";

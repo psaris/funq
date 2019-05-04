@@ -29,8 +29,8 @@ show X:"f"$flip exec genre in/: genres from ([]movieId:m)#mlense.movie
 -1"we then randomly initialize the THETA matrix";
 theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
 -1"since we don't use other user's preferences, this is quick optimization";
-l:.2                          / lambda (l2 regularization coefficient)
-theta:first .fmincg.fmincg[20;.ml.rlincostgrad[l;X;Y];theta] / learn
+l1:0;l2:.2                     / L1 and L2 regularization coefficients
+theta:first .fmincg.fmincg[20;.ml.rlincostgrad[l1;l2;X;Y];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_last THETA
@@ -136,7 +136,7 @@ n:(nu;nf)
 thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[100;.ml.rcfcostgrad[l;Y;n];thetax] / learn
+thetax:first .fmincg.fmincg[100;.ml.rcfcostgrad[l1;l2;Y;n];thetax] / learn
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
@@ -152,9 +152,9 @@ thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 -1"use 'where' to find list of coordinates of non-null items";
 i:.ml.mwhere not null R
 -1"define cost function";
-cf:.ml.rcfcost[l;Y] .
+cf:.ml.rcfcost[l1;l2;Y] .
 -1"define minimization function";
-mf:.ml.rcfupd1[l;Y;.05f]
+mf:.ml.rcfupd1[l2;Y;.05f]
 -1"keep running mf until improvement is lower than pct limit";
 
 THETAX:last(.ml.converge[.0001]first@).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX

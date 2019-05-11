@@ -1,5 +1,5 @@
 binary.f:"binary.csv"
-binary.b:"http://www.ats.ucla.edu/stat/data/"
+binary.b:"https://www.ats.ucla.edu/stat/data/"
 .util.download[binary.b;;"";""] binary.f;
 binary.t:("BIFI";1#",") 0: `$binary.f
 binary.Y:"f"$1#value flip binary.t

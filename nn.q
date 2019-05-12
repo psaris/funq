@@ -43,10 +43,10 @@ l1:0;l2:1;                     / L1 and L2 regularization coefficients
 -1"then backpropagates the errors and gradient for each layer.";
 -1"the cost and gradient calculations are expensive but share intermediate values";
 -1"it is therefore important to compute both simultaneously";
-hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
-/hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.xentropy
-/hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.xentropy
-/hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.xentropy
+hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
+/hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
+/hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
+/hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
 show .ml.nncostgrad[l1;l2;n;hgflf;X;Y;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";

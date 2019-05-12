@@ -200,15 +200,15 @@ lrelu:{x*1 .01@0f>x}
 dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
 
 / loss functions
-xentropy:{neg (x*log y)+(1f-x)*log 1f-y} / cross entropy
-softmax:prb exp::                        / softmax
-ssoftmax:softmax dax[-;max]::            / stable softmax
+logloss:{neg (x*log y)+(1f-x)*log 1f-y} / log loss
+softmax:prb exp::                       / softmax
+ssoftmax:softmax dax[-;max]::           / stable softmax
 
 lpredict:sigmoid predict::      / logistic regression predict
 
 / regularized logistic regression cost
 rlogcost:{[l1;l2;X;Y;THETA]
- J:(1f%m:count X 0)*sum (sum') xentropy[Y] sigmoid mm[THETA] prepend[1f] X;
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
  if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs @'[THETA;0;:;0f]];    / L1
  if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
  J}
@@ -224,7 +224,7 @@ loggrad:rloggrad[0f;0f]
 
 rlogcostgrad:{[l1;l2;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
- J:(1f%m:count X 0)*sum (sum') xentropy[Y] P:sigmoid mm[THETA] X;
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
  if[l1>0f;J+:(l1%m)*sum (sum') (sum'')abs @'[THETA;0;:;0f]];     / L1
  if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
  G:(1f%m)*mmt[P-Y] X;

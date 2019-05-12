@@ -30,7 +30,7 @@ Y:.ml.diag[last[n]#1f]@\:"i"$y
 theta:2 raze/ .ml.glorotu'[1_n;1+-1_n];
 l:1                           / lambda (l2 regularization coefficient)
 -1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
-hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
+hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
 
 mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l;n;hgflf;X[;y];Y[;y]];x]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta

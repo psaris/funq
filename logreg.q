@@ -28,8 +28,18 @@ if[2<count key `.qml;
  0N!first 1_.qml.minx[opts;.ml.logcost[X;Y]enlist::;THETA];
  ];
 
--1"we can also define a gradient function to make this proces faster";
+-1"we can also define a gradient function to make this process faster";
 .ml.loggrad[X;Y;THETA]
+
+-1"check that we've implemented the gradient correctly";
+cf:.ml.rlogcost[0;1;X;Y]enlist::
+gf:first .ml.rloggrad[0;1;X;Y]enlist::
+.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+cgf:.ml.rlogcostgrad[0;1;X;Y]
+cf:first cgf::
+gf:last cgf::
+.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+
 
 if[2<count key `.qml;
  -1"qml can also use both the cost and gradient to improve performance";

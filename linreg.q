@@ -66,7 +66,7 @@ if[2<count key `.qml;
 -1"its nice to have closed form solution, but what if we don't?";
 -1"we can use gradient descent as well";
 alpha:.1                        / learning rate
-THETA:1 2#0f                    / initial values
+THETA:enlist theta:2#0f         / initial values
 -1"by passing a learning rate and function to compute the gradient";
 -1".ml.gd will take one step in the steepest direction";
 .ml.gd[alpha;.ml.lingrad[X;Y]] THETA
@@ -78,3 +78,17 @@ THETA:1 2#0f                    / initial values
 (.4<.ml.lincost[X;Y]@) .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
 -1"or even until convergence";
 .ml.gd[alpha;.ml.lingrad[X;Y]] over THETA
+
+-1"check that we've implemented the gradient correctly";
+cf:.ml.rlincost[0;1;X;Y]enlist::
+gf:first .ml.rlingrad[0;1;X;Y]enlist::
+.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+cgf:.ml.rlincostgrad[0;1;X;Y]
+cf:first cgf::
+gf:last cgf::
+.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+
+-1"now use the fmincg minimizer to obtain optimal theta coefficients";
+first .fmincg.fmincg[1000;.ml.lincostgrad[X;Y];theta]
+
+

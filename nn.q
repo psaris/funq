@@ -52,7 +52,7 @@ show .ml.nncostgrad[l1;l2;n;hgflf;X;Y;theta]
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
 -1"as a discrete (and slower to calculate) gradient.";
-all 0=(-/)"i"$1e6*.ml.checknngradients[0;.1f;3 5 10 50 2;hgflf]
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-4;0;.1;3 5 10 50 2;hgflf]
 
 -1"we can now run (batch) gradient descent across the whole datatset.";
 -1"this will always move along the steepest gradient, but makes slow progress";

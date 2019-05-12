@@ -144,6 +144,9 @@ show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
 
+-1"check collaborative filtering gradient calculations";
+.util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;0;.1;20 5]
+
 / stocastic regularized gradient descent
 
 -1"randomly initialize THETA and X";

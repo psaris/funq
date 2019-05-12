@@ -94,7 +94,7 @@ rlincostgrad:{[l1;l2;X;Y;theta]
  if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
  if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2
  (J;raze G)}
-lincostgrad:rlincostgrad[0f]
+lincostgrad:rlincostgrad[0f;0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l1;l2;Y;THETA;X]
@@ -321,30 +321,35 @@ nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
 diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
 eye:{diag x#1f}
 
-/ (f)unction, x, (e)psilon
-/ compute partial derivatives if e is a list
+/ compute numerical gradient of (f)unction evaluated at x using steps of size
+/ (e)psilon. compute partial derivatives if (e)psilon is a list
 numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
 
+/ return analytic gradient using (g)radient (f)unction and numerical gradient
+/ by evaluating (c)ost (f)unction on theta perturbed by (e)psilon
+checkgrad:{[e;cf;gf;theta]
+ ag:gf theta;                         / analytic gradient
+ ng:numgrad[cf;theta] count[theta]#e; / numerical gradient
+ (ag;ng)}
+
 / hgflf: (h)idden (g)radient (f)inal (l)oss functions
-checknngradients:{[l1;l2;n;hgflf]
+checknngrad:{[e;l1;l2;n;hgflf]
  theta:2 raze/ glorotu'[1_n;1+-1_n];
  X:glorotu[n 0;n 1];
  y:1+(1+til n 1) mod last n;
  Y:flip eye[last n]"i"$y-1;
- cgf:nncostgrad[l1;l2;n;hgflf;X;Y];               / cost gradient function
- g:last cgf theta;                                / analytic gradient
- ng:numgrad[first cgf::;theta] count[theta]#1e-4; / numerical gradient
- (g;ng)}
+ cgf:nncostgrad[l1;l2;n;hgflf;X;Y]; / cost gradient function
+ r:checkgrad[e;first cgf::;last cgf::;theta];
+ r}
 
-checkcfgradients:{[l1;l2;n]
+checkcfgrad:{[e;l1;l2;n]
  nu:n 0;nm:10 ;nf:n 1;          / n users, n movies, n features
  Y:mm[nf?/:nu#1f]nm?/:nf#1f;    / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
- g:2 raze/ rcfgrad[l;Y;THETA;X];                 / analytic gradient
- f:(rcfcost[l1;l2;Y] . cfcut[n]@);
- ng:numgrad[f;thetax] count[thetax]#1e-4; / numerical gradient
- (g;ng)}
+ cgf:rcfcostgrad[l1;l2;Y;n];                     / cost gradient function
+ r:checkgrad[e;first cgf::;last cgf::;thetax];
+ r}
 
 / regularization (l)ambda, (n)etwork topology dimension
 / hgflf: (h)idden (g)radient (f)inal (l)oss functions

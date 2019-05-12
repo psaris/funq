@@ -199,10 +199,11 @@ drelu:{"f"$0f<=$[99h=type x;x`z;x]}
 lrelu:{x*1 .01@0f>x}
 dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
 
-/ loss functions
-logloss:{neg (x*log y)+(1f-x)*log 1f-y} / log loss
-softmax:prb exp::                       / softmax
-ssoftmax:softmax dax[-;max]::           / stable softmax
+/ compute the log loss given true (y) and (p)redicted values
+logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
+
+softmax:prb exp::               / softmax
+ssoftmax:softmax dax[-;max]::   / stable softmax
 
 lpredict:sigmoid predict::      / logistic regression predict
 

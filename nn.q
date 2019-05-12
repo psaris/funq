@@ -4,7 +4,7 @@
 
 / digit recognition
 -1"referencing mnist data from global namespace";
-`X`Xt`Y`y`yt set' mnist`X`Xt`Y`y`yt;
+`X`Xt`y`yt set' mnist`X`Xt`y`yt;
 -1"shrinking training set";
 X:1000#'X;y:1000#y;
 -1"normalize data set";
@@ -18,7 +18,7 @@ plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
 -1"we first generate a matrix of y values where each row only has a single 1 value";
 -1"the location of which corresponds the the digit in the dataset";
 
-show YMAT:.ml.diag[(1+max y)#1f]@\:y
+show Y:.ml.diag[(1+max y)#1f]@\:y
 
 -1"neural networks include multiple layers";
 -1"where the first and last are visible, but all others are hidden";
@@ -29,7 +29,7 @@ show YMAT:.ml.diag[(1+max y)#1f]@\:y
 -1"we present an example with a single hidden layer";
 -1"the size of the first and last layer are fixed.";
 -1"a good size for the middle layer is the average of the first and last";
-n:0N!{(x;(x+y) div 2;y)}[count X;count YMAT]
+n:0N!{(x;(x+y) div 2;y)}[count X;count Y]
 
 -1"correctly picking the initial THETA values is important.";
 -1"instead of setting them all to a 0 (or any constant value),";
@@ -47,7 +47,7 @@ hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.xentropy
 /hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.xentropy
 /hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.xentropy
 /hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.xentropy
-show .ml.nncostgrad[l1;l2;n;hgflf;X;YMAT;theta]
+show .ml.nncostgrad[l1;l2;n;hgflf;X;Y;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
@@ -58,10 +58,10 @@ all 0=(-/)"i"$1e6*.ml.checknngradients[0;.1f;3 5 10 50 2;hgflf]
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
 
-first .fmincg.fmincg[5;.ml.nncostgrad[l1;l2;n;hgflf;X;YMAT];theta];
+first .fmincg.fmincg[5;.ml.nncostgrad[l1;l2;n;hgflf;X;Y];theta];
 
 / NOTE: qml throws a `limit error (too many elements)
-/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l1;l2;n;hgflf;X;YMAT];enlist theta]
+/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[l1;l2;n;hgflf;X;Y];enlist theta]
 -1"we can, alternatively, perform stochastic gradient descent (SGD).";
 -1"by taking a subset of the data on each iteration, we can analyze all the data";
 -1"without holding it all in memory simultaneously. in addition, the parameters will";
@@ -75,11 +75,11 @@ first .fmincg.fmincg[5;.ml.nncostgrad[l1;l2;n;hgflf;X;YMAT];theta];
 -1"this is called 'on-line learning'";
 
 -1"we first define a minimization projection:";
-mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l1;l2;n;hgflf;X[;y];YMAT[;y]];x]}
+mf:{first .fmincg.fmincg[5;.ml.nncostgrad[l1;l2;n;hgflf;X[;y];Y[;y]];x]}
 -1"we then have a few choices to randomize the dataset.";
 -1"A: permutate, then run n non-permuted epochs";
 i:0N?count X 0
-X:X[;i];YMAT:YMAT[;i];Y:Y[;i];y:Y 0
+X:X[;i];Y:Y[;i];y@:i
 theta:1 .ml.sgd[mf;til;10000;X]/ theta
 -1"B: run n permuted epochs";
 theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
@@ -87,10 +87,10 @@ theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
 theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[0f;0f;n;hgflf;X;YMAT]@) .ml.sgd[mf;0N?;10000;X]/ theta
+theta:(1f<first .ml.nncostgrad[0f;0f;n;hgflf;X;Y]@) .ml.sgd[mf;0N?;10000;X]/ theta
 
 -1"what is the final cost?";
-first .ml.nncostgrad[0f;0f;n;hgflf;X;YMAT;theta]
+first .ml.nncostgrad[0f;0f;n;hgflf;X;Y;theta]
 
 -1"how well did we learn on the training data set?";
 avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta

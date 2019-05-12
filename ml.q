@@ -200,7 +200,7 @@ lrelu:{x*1 .01@0f>x}
 dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
 
 / loss functions
-xentropy:{neg (y*log x)+(1f-y)*log 1f-x} / cross entropy
+xentropy:{neg (x*log y)+(1f-x)*log 1f-y} / cross entropy
 softmax:prb exp::                        / softmax
 ssoftmax:softmax dax[-;max]::            / stable softmax
 
@@ -208,7 +208,7 @@ lpredict:sigmoid predict::      / logistic regression predict
 
 / regularized logistic regression cost
 rlogcost:{[l1;l2;X;Y;THETA]
- J:(1f%m:count X 0)*sum (sum') xentropy[lpredict[X;THETA];Y];
+ J:(1f%m:count X 0)*sum (sum') xentropy[Y] sigmoid mm[THETA] prepend[1f] X;
  if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs @'[THETA;0;:;0f]];    / L1
  if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
  J}
@@ -224,7 +224,7 @@ loggrad:rloggrad[0f;0f]
 
 rlogcostgrad:{[l1;l2;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
- J:(1f%m:count X 0)*sum (sum') xentropy[P:sigmoid[mm[THETA;X]];Y];
+ J:(1f%m:count X 0)*sum (sum') xentropy[Y] P:sigmoid mm[THETA] X;
  if[l1>0f;J+:(l1%m)*sum (sum') (sum'')abs @'[THETA;0;:;0f]];     / L1
  if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
  G:(1f%m)*mmt[P-Y] X;
@@ -329,8 +329,8 @@ checknngradients:{[l1;l2;n;hgflf]
  theta:2 raze/ glorotu'[1_n;1+-1_n];
  X:glorotu[n 0;n 1];
  y:1+(1+til n 1) mod last n;
- YMAT:flip eye[last n]"i"$y-1;
- cgf:nncostgrad[l1;l2;n;hgflf;X;YMAT];            / cost gradient function
+ Y:flip eye[last n]"i"$y-1;
+ cgf:nncostgrad[l1;l2;n;hgflf;X;Y];               / cost gradient function
  g:last cgf theta;                                / analytic gradient
  ng:numgrad[first cgf::;theta] count[theta]#1e-4; / numerical gradient
  (g;ng)}
@@ -347,22 +347,22 @@ checkcfgradients:{[l1;l2;n]
 
 / regularization (l)ambda, (n)etwork topology dimension
 / hgflf: (h)idden (g)radient (f)inal (l)oss functions
-nncostgrad:{[l1;l2;n;hgflf;X;YMAT;theta]
+nncostgrad:{[l1;l2;n;hgflf;X;Y;theta]
  THETA:nncut[n] theta;
  ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgflf 0;-1_THETA];
- Y:hgflf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
- J:(1f%m:count X 0)*sum (sum') hgflf[3][Y;YMAT];     / loss
+ P:hgflf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
+ J:(1f%m:count X 0)*sum (sum') hgflf[3][Y;P];        / loss
  if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs @''[THETA;0;:;0f]];    / L1
  if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@''[THETA;0;:;0f]]; / L2
  G:hgflf[1]@'`z`a!/:1_ZA;       / activation gradients
- D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:Y-YMAT;reverse 1_THETA;reverse G];
+ D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
  if[l1>0f;G+:(l1%m)*signum @''[THETA;0;:;0f]];    / L1
  if[l2>0f;G+:(l2%m)*@''[THETA;0;:;0f]];           / L2
  (J;2 raze/ G)}
 
-nncostgradf:{[l1;l2;n;hgflf;X;YMAT]
- cgf:nncostgrad[l1;l2;n;hgflf;X;YMAT]::;
+nncostgradf:{[l1;l2;n;hgflf;X;Y]
+ cgf:nncostgrad[l1;l2;n;hgflf;X;Y]::;
  (first cgf::;last cgf::)}
 
 / stochastic gradient descent

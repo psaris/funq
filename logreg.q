@@ -17,7 +17,7 @@ show plt .ml.sigmoid .1*-50+til 100
 
 / logistic regression cost
 -1"to use gradient descent, we must first define a cost function";
-THETA:enlist theta:(1+count X)?0f;
+THETA:enlist theta:(1+count X)#0f;
 -1"compute cost of initial theta estimate";
 .ml.logcost[X;Y;THETA]
 
@@ -51,7 +51,7 @@ theta:first .fmincg.fmincg[1000;.ml.logcostgrad[X;Y];theta]
 avg yt="i"$p:first .ml.lpredict[Xt;enlist theta]
 
 -1"lets add some regularization";
-theta:(1+count X)?0f;
+theta:(1+count X)#0f;
 theta:first .fmincg.fmincg[1000;.ml.rlogcostgrad[10;0;X;Y];theta]
 
 -1"test models accuracy";

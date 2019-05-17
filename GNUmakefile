@@ -3,7 +3,10 @@ $(error QHOME is not set)
 endif
 
 OS := $(shell uname)
-QARCH ?= $(if $(filter Darwin,$(OS)),m32,l32)
+ifndef QARCH
+QARCH=$(firstword $(wildcard $(QHOME)/[wml]64 [wml]32))
+$(warning QARCH not specified, defaulting to $(QARCH))
+endif
 Q ?= $(QHOME)/$(QARCH)/q
 export CFLAGS = -Wall -O3 -fPIC -DKXVER=3 $(if $(filter %32,$(QARCH)),-m32)
 LDFLAGS = $(if $(filter Darwin,$(OS)),-bundle -undefined dynamic_lookup -install_name,-shared -Wl,-soname)

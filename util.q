@@ -9,7 +9,7 @@ rng:{y+x*til 1+floor (z-y)%x}
 / round y to nearest x
 rnd:{x*"j"$y%x}
 
-/ (b)ase url, (f)ile, (e)xtension, (u)compress (f)unction
+/ (b)ase url, (f)ile, (e)xtension, (u)ncompress (f)unction
 download:{[b;f;e;uf]
  if[0h=type f;:.z.s[b;;e;uf] each f];
  if[l~key l:`$":",f;:l];                          / local file exists

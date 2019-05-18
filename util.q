@@ -1,5 +1,8 @@
 \d .util
 
+/ load (f)ile if it exists and return success boolean
+loadf:{[f]if[()~key f;:0b];system "l ",1_string f;1b}
+
 / generate a range of values between y and z with step-size x
 rng:{y+x*til 1+floor (z-y)%x}
 

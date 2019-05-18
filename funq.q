@@ -3,6 +3,5 @@
 \l fmincg.q
 \l porter.q
 
-/ trying to load qml and use its matrix operations
-@[system each;("l qml.q";"l qmlmm.q");0N!]; / use qml mm (if available)
-@[system each;("l svm.q";"l linear.q");0N!]; / load libsvm,liblinear (if available)
+/ attempt to load c libraries
+(.util.loadf ` sv hsym[`$getenv`QHOME],) each`qml.q`qmlmmq`svm.q`linear.q;

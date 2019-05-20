@@ -19,7 +19,7 @@ show plt X
 
 -1"using $ to generate correlated x and y";
 rho:.8                          / correlation
-X[0]:(rho;sqrt 1f-rho*rho)$X
+X[1]:(rho;sqrt 1f-rho*rho)$X
 
 -1"plotting correlations x,y";
 show plt X

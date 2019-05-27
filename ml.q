@@ -398,7 +398,7 @@ mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
 hmean:1f%avg 1f%                / harmonic mean
 
 / term document matrix built from (c)orpus and (v)ocabulary
-tdm:{[c;v](0^@[;v]count each group@) each c}
+tdm:{[c;v](0^@[;v]count each group::) each c}
 
 lntf:{log 1f+x}                    / log normalized term frequency
 dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
@@ -409,7 +409,7 @@ idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
-cosdist:(1f-) cossim::                           / cosine distance
+cosdist:1f-cossim::                              / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
@@ -534,7 +534,7 @@ rbern:{[n;p]p>runif n}
 rbinom:{[n;k;p]sum rbern[n] each k#p}
 / generate (n) variate-vectors from a multinomial distribution with
 / (k) trials and (p)robability vector defined for each class
-rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif@) each n#k}
+rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif::) each n#k}
 / generate (n) variates from a normal distribution with mean (mu) and
 / standard deviation (sigma)
 rnorm:{[n;mu;sigma]mu+sigma*bm runif n}
@@ -647,7 +647,7 @@ waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
 / return the best estimate of the (y)-values
 knn:{[wf;k;y;d]
  if[not type d;:.z.s[wf;k;y] peach d];
- n:(waom . (wf d@;y)@\:#[;iasc d]@) each k;
+ n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
  n}
 
 / markov clustering
@@ -657,9 +657,9 @@ addloop:{x|diag max peach x|flip x}
 expand:{[e;X](e-1)mm[X]/X}
 
 inflate:{[r;p;X]
- X:X xexp r;                             / inflate
- X*:$[-8h<type p;(p>iasc idesc@)';p<] X; / prune
- X%:sum peach X;                         / normalize
+ X:X xexp r;                              / inflate
+ X*:$[-8h<type p;(p>iasc idesc::)';p<] X; / prune
+ X%:sum peach X;                          / normalize
  X}
 
 / if (p)rune is an integer, take p largest, otherwise take everything > p
@@ -762,8 +762,8 @@ dt:{[cgf;ogf;impf;minl;maxd;w;t]
  if[not maxd;:(w;first d)];         / don't split deeper than maxd
  if[identical a:first d;:(w;a)];    / all values are equal
  d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach 1 _d; / compute gains
- d:(where (any minl>count each last@) each d) _ d; / drop < minl
- if[not count d;:(w;a)];                           / nothing left
+ d:(where (any minl>count each last::) each d) _ d;     / drop < minl
+ if[not count d;:(w;a)];                                / nothing left
  bc:imax first each (0N?key d)#d; / best classifier (after shuffle)
  if[0>=first b:d bc;:(w;a)];      / stop if no gain
  c:count k:key g:last b;          / grab subtree grouped indices
@@ -793,7 +793,7 @@ prune:{[ef;tr]
  b:value tr[2]:.z.s[ef] each tr 2; / prune subtree
  if[any 3=count each b;:tr];       / can't prune
  e:ef . wa:(,'/) b;            / pruned error
- if[e<((sum first@) each b) wavg (ef .) each b;:wa];
+ if[e<((sum first::) each b) wavg (ef .) each b;:wa];
  tr}
 
 / return the leaves of (tr)ee
@@ -832,7 +832,7 @@ dtmina:{[impf;atr]
 dtmincc:{[ef;tr;a]
  if[2=count tr;:tr];
  strs:subtrees tr;
- strs@:iasc (count leaves@) each strs; / prefer smaller trees
+ strs@:iasc (count leaves::) each strs; / prefer smaller trees
  str:strs imin dtcc[ef;a] each strs;
  str}
 
@@ -914,10 +914,10 @@ adaboost:{[tf;cf;t;amw]
  (a;m;w)}
 
 / Bootstrap AGgregating
-bag:{[b;f;t](f ?[;t]@) peach b#count t}
+bag:{[b;f;t](f ?[;t]::) peach b#count t}
 
 / Random FOrest
-rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]@);t]}
+rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]::);t]}
 
 / sparse matrix manipulation
 

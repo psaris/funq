@@ -160,7 +160,7 @@ cf:.ml.rcfcost[l1;l2;Y] .
 mf:.ml.rcfupd1[l2;Y;.05f]
 -1"keep running mf until improvement is lower than pct limit";
 
-THETAX:last(.ml.converge[.0001]first@).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX
+THETAX:last(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX    / predictions

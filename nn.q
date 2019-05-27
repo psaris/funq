@@ -87,7 +87,7 @@ theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
 theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[0f;0f;n;hgflf;X;Y]@) .ml.sgd[mf;0N?;10000;X]/ theta
+theta:(1f<first .ml.nncostgrad[0f;0f;n;hgflf;X;Y]::) .ml.sgd[mf;0N?;10000;X]/ theta
 
 -1"what is the final cost?";
 first .ml.nncostgrad[0f;0f;n;hgflf;X;Y;theta]

@@ -43,7 +43,7 @@ show .util.totals[`TOTAL] .ml.cm[y;m p]
 mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
-X:raze X0:mu0+s0*(.ml.bm ?[;1f]@) each m0 / build dataset
+X:raze X0:mu0+s0*(.ml.bm ?[;1f]::) each m0 / build dataset
 show .util.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and guassian curves
 k:count mu0
 phi:k#1f%k;      / guess that distributions occur with equal frequency
@@ -101,7 +101,7 @@ pT:(phi;flip enlist mu)
 -1"to prevent this, we need to use dirichlet smoothing";
 pT:.ml.em[1b;lf;mf;X] pT
 -1"after the first em round, the numbers are prototypes are much clearer";
--1 (,'/) (plt first @) each  pT 1;
+-1 (,'/) (plt first::) each  pT 1;
 -1"let's run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]/ pT
 -1"grouping the data and finding the mode identifies the clusters";

@@ -75,7 +75,7 @@ THETA:enlist theta:2#0f         / initial values
 -1"to run a fixed number of iterations";
 2 .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
 -1"or iterate until the cost is within a tolerance";
-(.4<.ml.lincost[X;Y]@) .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
+(.4<.ml.lincost[X;Y]::) .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
 -1"or even until convergence";
 .ml.gd[alpha;.ml.lingrad[X;Y]] over THETA
 

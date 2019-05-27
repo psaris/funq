@@ -79,7 +79,7 @@ show flip pT:.ml.fitnb[.ml.wmultimle[1];::;X;y]
 
 -1"modeling spam/ham classifier";
 -1"cleaning and stripping sms text";
-t:update (.util.stripstr lower .util.cleanstr@) peach text from smsspam.t
+t:update (.util.stripstr lower .util.cleanstr::) peach text from smsspam.t
 -1"tokenizng and stemming sms text";
 t:update (.porter.stem each " " vs) peach text from t
 -1"partitioning sms messages between training and test";

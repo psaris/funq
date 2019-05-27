@@ -18,7 +18,7 @@ plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
 lbls:til 10
 l1:0f;l2:1                     / L1 and L2 regularization coefficients
 theta:(1+count X)#0f
-mf:(first .fmincg.fmincg[5;;theta]@) / pass minimization func as parameter
+mf:(first .fmincg.fmincg[5;;theta]::) / pass minimization func as parameter
 cgf:.ml.rlogcostgrad[l1;l2;X] / pass cost & gradient function as parameter
 
 -1"to run one-vs-all",$[0<sum (l1;l2);" with regularization";""];

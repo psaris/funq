@@ -1,7 +1,7 @@
 / http://www.cs.toronto.edu/~kriz/cifar.html
 cifar.f:"cifar-10-binary"
 cifar.b:"http://www.cs.toronto.edu/~kriz/"
--1"download and extract the binary CFAR-10 dataset";
+-1"[down]loading CFAR-10 data set";
 .util.download[cifar.b;;".tar.gz";"tar -xzvf"] cifar.f;
 cifar.d:"cifar-10-batches-bin/"
 -1"reading labels";

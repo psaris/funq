@@ -460,6 +460,16 @@ covm:{[X] mmt[X;X]%count X 0}     / covariance matrix
 pca:{[X] last .qml.mev covm X}    / eigen vectors of scatter matrix
 project:{[V;X] mtm[V] mm[V;X]}    / project X onto subspace V
 
+/ given a (w)eight atom or vector, and data x, return a sorted
+/ dictionary mapping the distinct items to their weighted count
+wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
+freq:wfreq[1]
+
+/ given a (w)eight atom or vector, and data x, return the item which
+/ occurs most frequently
+wmode:imax wfreq::              / weighted mode
+mode:wmode[1]                   / standard mode
+
 / lance-williams algorithm update functions
 single:{.5 .5 0 -.5}
 complete:{.5 .5 0 .5}
@@ -477,7 +487,7 @@ lw:{[lf;dm]
  n:count dm 0;
  if[0w=d@:i:imin d:(n#dm)@'dm n;:dm]; / find closest clusters
  j:dm[n] i;                           / find j
- c:lf (count each group dm[n+1])@/:(i;j;til n); / determine coefficients
+ c:lf (freq dm[n+1])@/:(i;j;til n);   / determine coefficients
  nd:sum c*nd,d,enlist abs(-/)nd:dm(i;j);        / calc new distances
  dm[til n;i]:dm[i]:nd;                          / update distances
  dm[i;i]:0w;                                    / fix diagonal
@@ -630,11 +640,6 @@ em:{[fp;lf;wmf;X;pT]                / expectation maximization
  if[fp;pT[0]:avg each W];           / new phi estimates
  pT[1]:wmf[;X] peach W;             / new THETA estimates
  pT}
-
-/ return value which occurs most frequently
-nmode:{imax count each group x} / naive mode
-mode:{x first iasc x:where x=max x:@[x!(count x:distinct x)#0;x;+;1]}
-wmode:{[w;x]imax sum each w group x} / weighted mode
 
 isord:{type[x] in 8 9h}                / is ordered
 aom:{$[isord x;avg;mode]x}             / average or mode

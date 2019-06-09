@@ -52,7 +52,7 @@ s:update Temperature:` from s where Humidity=70f
 -1 "we can also use the gini impurity instead of entropy (faster with similar behavior)";
 -1 .ml.ptree[0] tr:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;2;0W;::] t;
 d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
-.util.assert[`Yes] .ml.dtc[tr] d
+.util.assert[`No] .ml.dtc[tr] d
 -1 "we can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tr:.ml.aid[3;0W;::] update "e"$`Yes=Play from t; / regression tree
 .util.assert[.2] .ml.dtc[tr] d

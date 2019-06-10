@@ -60,7 +60,7 @@ c16:" .-:=+*xoXO#$&%@"                   / 16 characters
 c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxn" / 68 characters
 c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
-plt:plot[60;30;c10]             / default plot function
+plt:plot[19;10;c10]             / default plot function
 
 spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[;8]::
 

@@ -470,6 +470,14 @@ freq:wfreq[1]
 wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
+/ given a (d)istance (f)unction and matrix X, construct the lance-williams
+/ dissimilarity matrix
+lwdm:{[df;X]
+ dm:f2nd[df X] X;                   / dissimilarity matrix
+ dm:@'[dm;i:til count dm;:;0w];     / ignore loops
+ dm,:(imin peach dm;i;();();();()); / append ancillary structures
+ dm}
+
 / lance-williams algorithm update functions
 single:{.5 .5 0 -.5}
 complete:{.5 .5 0 .5}
@@ -497,15 +505,6 @@ lw:{[lf;dm]
  dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
  dm:@[dm;n+2 3 4 5;,;(j;i;d;count where i=dm n+1)];
  dm}
-
-/ given a (d)istance (f)unction and (l)inkage (f)unction, construct the
-/ linkage (dendrogram) statistics of data in X
-linkage:{[df;lf;X]
- dm:f2nd[df X] X;                   / dissimilarity matrix
- dm:@'[dm;i:til count dm;:;0w];     / ignore loops
- dm,:(imin peach dm;i;();();();()); / append ancillary structures
- l:-4#lw[lf] over dm;               / grab results of lance-williams
- l}
 
 / merge node y[0] into y[1] in tree x
 graft:{@[x;y;:;(::;x y)]}

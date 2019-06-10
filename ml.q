@@ -501,12 +501,10 @@ lw:{[lf;dm]
 / given a (d)istance (f)unction and (l)inkage (f)unction, construct the
 / linkage (dendrogram) statistics of data in X
 linkage:{[df;lf;X]
- dm:f2nd[df X] X;                         / dissimilarity matrix
- dm:./[dm;flip (i;i:til count X 0);:;0w]; / ignore loops
- dm,:enlist imin peach dm;
- dm,:enlist til count dm 0;
- dm,:4#();
- l:-4#lw[lf] over dm;
+ dm:f2nd[df X] X;                   / dissimilarity matrix
+ dm:@'[dm;i:til count dm;:;0w];     / ignore loops
+ dm,:(imin peach dm;i;();();();()); / append ancillary structures
+ l:-4#lw[lf] over dm;               / grab results of lance-williams
  l}
 
 / merge node y[0] into y[1] in tree x

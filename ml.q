@@ -496,14 +496,14 @@ lw:{[lf;dm]
  if[0w=d@:i:imin d:(n#dm)@'dm n;:dm]; / find closest clusters
  j:dm[n] i;                           / find j
  c:lf (freq dm[n+1])@/:(i;j;til n);   / determine coefficients
- nd:sum c*nd,d,enlist abs(-/)nd:dm(i;j);        / calc new distances
- dm[til n;i]:dm[i]:nd;                          / update distances
- dm[i;i]:0w;                                    / fix diagonal
- dm[j;(::)]:0w;                                 / erase j
- dm[til n+2;j]:(n#0w),i,i;    / erase j and set aux data
- dm[n]:imin peach n#dm;       / find next closest element
- dm[n+1;where j=dm n+1]:i;    / all elements in cluster j are now in i
- dm:@[dm;n+2 3 4 5;,;(j;i;d;count where i=dm n+1)];
+ nd:sum c*nd,(d;abs(-/)nd:dm i,j);    / calc new distances
+ dm[til n;i]:dm[i]:nd;                / update distances
+ dm[i;i]:0w;                          / fix diagonal
+ dm[j;(::)]:0w;                       / erase j
+ dm[til n+2;j]:(n#0w),i,i;            / erase j and set aux data
+ dm[n]:imin peach n#dm;               / find next closest element
+ dm[n+1;where j=dm n+1]:i;      / all elements in cluster j are now in i
+ dm:@[dm;n+2 3 4 5;,;(j;i;d;sum i=dm n+1)];
  dm}
 
 / merge node y[0] into y[1] in tree x

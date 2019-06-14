@@ -470,42 +470,44 @@ freq:wfreq[1]
 wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
-/ given a (d)istance (f)unction and matrix X, construct the lance-williams
-/ dissimilarity matrix
-lwdm:{[df;X]
- dm:f2nd[df X] X;                   / dissimilarity matrix
- dm:@'[dm;i:til count dm;:;0w];     / ignore loops
- dm,:(imin peach dm;i;();();();()); / append ancillary structures
- dm}
-
-/ lance-williams algorithm update functions
-single:{.5 .5 0 -.5}
-complete:{.5 .5 0 .5}
-average:{(x%sum x _:2),0 0f}
-weighted:{.5 .5 0 0}
-centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
-ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
+/ lance-williams algorithm linkage functions. can be either a vector of four
+/ floats or a function that accepts the cluster counts of i, j and list of
+/ all cluster counts
+lw.single:.5 .5 0 -.5
+lw.complete:.5 .5 0 .5
+lw.average:{(x%sum x _:2),0 0f}
+lw.weighted:.5 .5 0 0
+lw.centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
+lw.median:.5 .5 -.25 0
+lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
 / implementation of lance-williams algorithm for performing
 / hierarchical agglomerative clustering. given (l)inkage (f)unction to
 / determine distance between new and remaining clusters and
 / (d)issimilarity (m)atrix, return (from;to;distance;#elements).  lf
-/ in `single`complete`average`weighted`centroid`ward
-lw:{[lf;dm]
- n:count dm 0;
- if[0w=d@:i:imin d:(n#dm)@'dm n;:dm]; / find closest clusters
- j:dm[n] i;                           / find j
- c:lf (freq dm[n+1])@/:(i;j;til n);   / determine coefficients
- nd:sum c*nd,(d;abs(-/)nd:dm i,j);    / calc new distances
- dm[til n;i]:dm[i]:nd;                / update distances
- dm[i;i]:0w;                          / fix diagonal
- dm[j;(::)]:0w;                       / erase j
- dm[til n+2;j]:(n#0w),i,i;            / erase j and set aux data
- dm[n]:imin peach n#dm;               / find next closest element
+/ in `single`complete`average`weighted`centroid`median`ward
+lancewillams:{[lf;dm]
+ d:(n#dm)@'dm n:count dm 0;                        / find closest distances
+ if[0w=d@:i:imin d;:dm]; j:dm[n] i;                / find closest clusters
+ c:$[9h=type lf;lf;lf(freq dm n+1)@/:(i;j;til n)]; / determine coefficients
+ nd:sum c*nd,(d;abs(-/)nd:dm (i;j));               / calc new distances
+ dm[til n;i]:dm[i]:@[nd;i;:;0w];                   / update distances
+ dm[til n;j]:dm[j]:n#0w;                           / erase j
+ dm[n]:imin peach n#dm;         / find next closest element
  dm[n+1;where j=dm n+1]:i;      / all elements in cluster j are now in i
- dm:@[dm;n+2 3 4 5;,;(j;i;d;sum i=dm n+1)];
+ dm:@[dm;n+2 3 4 5;,;(j;i;d;sum i=dm n+1)]; / append return values
  dm}
 
+/ given a (l)inkage (f)unction and dissimilarity matrix dm, run the
+/ lance-williams linkage algorithm for heirarchical agglomerative clustering
+/ and return the linkage stats
+hclust:{[lf;dm]
+ dm:@'[dm;i:til count dm;:;0w];     / ignore loops
+ dm,:(imin peach dm;i;();();();()); / append ancillary structures
+ if[-11h=type lf;lf:get lf];        / dereference lf
+ l:-4#lancewillams[lf] over dm;     / obtain linkage stats
+ l}
+ 
 / merge node y[0] into y[1] in tree x
 graft:{@[x;y;:;(::;x y)]}
 

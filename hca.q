@@ -3,9 +3,16 @@
 \l iris.q
 
 / hierarchical clustering analysis (HCA)
-l:-4#.ml.lw[.ml.ward] over .ml.lwdm[.ml.edist] iris.X / generate linkage stats
-t:.ml.tree flip 2#l             / build dendrogram
-show .util.plt 10#reverse l 2   / determine optimal number of clusters
-g:(.ml.mode each iris.y g)!g:(raze/) each 2 .ml.slice/ t / cut into 3 clusters
+-1"build dissimilarity matrix";
+dm:.ml.f2nd[.ml.edist iris.X] iris.X;
+-1"generate heirarchical clustering linage stats";
+l:.ml.hclust[.ml.lw.median] dm
+show .util.plt 10#reverse l 2 
+
+-1"build dendrogram";
+tr:.ml.tree flip 2#l
+-1"cut into 3 clusters";
+g:(.ml.mode each iris.y g)!g:(raze/) each 2 .ml.slice/ tr;
+-1"confirm accuracy";
 avg iris.y=.ml.ugrp g
 

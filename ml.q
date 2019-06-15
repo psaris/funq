@@ -509,10 +509,10 @@ link:{[lf;D]
  
 / create (n) clusters using (l)ink stats
 clust:{[n;l]
- c:til[1+count l],(::);            / initial clusters (force mixed list)
- c:c {@[x;y;:;(::;x y)]}/ (1-n)_l; / link into n clusters
- c:c where not (::)~'c;            / remove empty clusters
- c:(raze/) each c;                 / collapse clusters
+ c:1 cut til 1+count l 0;             / initial clusters
+ l:(1-n)_/:2#l;                       / drop unwanted links
+ c:{x[z],:x y;x[y]:();x}/[c;l 0;l 1]; / link into n clusters
+ c:c except enlist ();                / remove empty clusters
  c}
 
 pi:acos -1f

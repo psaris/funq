@@ -9,13 +9,13 @@ df:`.ml.edist2
 -1"checking accuracy of using ",string[k], " nearest neigbors and df=", string df;
 -1"and equal weight the points";
 -1"using .ml.f2nd to peach across the 2nd dimension of Xt to build distance matrix";
-avg yt=p:.ml.knn[0<=;k;y] d:.ml.f2nd[df X] Xt
+avg yt=p:.ml.knn[0<=;k;y] D:.ml.f2nd[df X] Xt
 -1"alternatively, we can peach the combination of knn+distance calculation";
 avg yt=p:.ml.f2nd[.ml.knn[0<=;k;y] df[X]@] Xt
 -1"we can also change the weighting function to be 1/distance";
 avg yt=p:.ml.f2nd[.ml.knn[sqrt 1%;k;y] df[X]@] Xt
 -1"using pairwise distance (squared) function uses matrix algebra for performance";
-avg yt=p:.ml.knn[sqrt 1%;k;y] d:.ml.pedist2[X;Xt]
+avg yt=p:.ml.knn[sqrt 1%;k;y] D:.ml.pedist2[X;Xt]
 
 
 -1"computing the accuracy of each digit";

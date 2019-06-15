@@ -5,9 +5,9 @@
 
 / hierarchical clustering analysis (HCA)
 -1"build dissimilarity matrix for seed data set";
-dm:.ml.f2nd[.ml.edist seeds.X] seeds.X;
+D:.ml.f2nd[.ml.edist seeds.X] seeds.X;
 -1"generate heirarchical clustering linkage stats";
-l:.ml.hclust[`.ml.lw.ward] dm
+l:.ml.hclust[`.ml.lw.ward] D
 show .util.plt 10#reverse l 2
 -1"build clusters";
 c:(raze/) each .ml.link[3] flip 2#l
@@ -18,8 +18,8 @@ g:(.ml.mode each seeds.y c)!c
 
 
 -1"build dissimilarity matrix for iris data set";
-dm:.ml.f2nd[.ml.edist iris.X] iris.X;
-l:.ml.hclust[`.ml.lw.median] dm
+D:.ml.f2nd[.ml.edist iris.X] iris.X;
+l:.ml.hclust[`.ml.lw.median] D
 show .util.plt 10#reverse l 2
 -1"build clusters";
 c:(raze/) each .ml.link[3] flip 2#l

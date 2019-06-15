@@ -500,18 +500,20 @@ lancewillams:{[lf;D]
 / given a (l)inkage (f)unction and (D)issimilarity matrix , run the
 / lance-williams linkage algorithm for heirarchical agglomerative clustering
 / and return the linkage stats
-hclust:{[lf;D]
+link:{[lf;D]
  D:@'[D;i:til count D;:;0n];    / ignore loops
  D,:(i;();();();());            / append ancillary structures
  if[-11h=type lf;lf:get lf];    / dereference lf
  l:-4#lancewillams[lf] over D;  / obtain linkage stats
  l}
  
-/ merge node y[0] into y[1] in tree x
-graft:{@[x;y;:;(::;x y)]}
-
-/ build n clusters using (l)ink stats
-link:{[n;l]l where not (::)~'l:(til[1+count l],(::)) graft/ (1-n)_l}
+/ create (n) clusters using (l)ink stats
+clust:{[n;l]
+ c:til[1+count l],(::);            / initial clusters (force mixed list)
+ c:c {@[x;y;:;(::;x y)]}/ (1-n)_l; / link into n clusters
+ c:c where not (::)~'c;            / remove empty clusters
+ c:(raze/) each c;                 / collapse clusters
+ c}
 
 pi:acos -1f
 twopi:2f*pi

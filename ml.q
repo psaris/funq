@@ -481,31 +481,30 @@ lw.centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
 lw.median:.5 .5 -.25 0
 lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
-/ implementation of lance-williams algorithm for performing
-/ hierarchical agglomerative clustering. given (l)inkage (f)unction to
-/ determine distance between new and remaining clusters and
-/ (d)issimilarity (m)atrix, return (from;to;distance;#elements).  lf
-/ in `single`complete`average`weighted`centroid`median`ward
+/ implementation of lance-williams algorithm for performing hierarchical
+/ agglomerative clustering. given (l)inkage (f)unction to determine distance
+/ between new and remaining clusters and augmented (d)issimilarity (m)atrix,
+/ return (from;to;distance;#elements).  lf in
+/ `single`complete`average`weighted`centroid`median`ward
 lancewillams:{[lf;dm]
- d:(n#dm)@'dm n:count dm 0;                        / find closest distances
- if[0w=d@:i:imin d;:dm]; j:dm[n] i;                / find closest clusters
- c:$[9h=type lf;lf;lf(freq dm n+1)@/:(i;j;til n)]; / determine coefficients
- nd:sum c*nd,(d;abs(-/)nd:dm (i;j));               / calc new distances
- dm[til n;i]:dm[i]:@[nd;i;:;0w];                   / update distances
- dm[til n;j]:dm[j]:n#0w;                           / erase j
- dm[n]:imin peach n#dm;         / find next closest element
- dm[n+1;where j=dm n+1]:i;      / all elements in cluster j are now in i
- dm:@[dm;n+2 3 4 5;,;(j;i;d;sum i=dm n+1)]; / append return values
+ d:(n#dm)@'di:imin peach (n:count dm 0)#dm;      / find closest distances
+ if[null d@:i:imin d;:dm]; j:di i;               / find closest clusters
+ c:$[9h=type lf;lf;lf(freq dm n)@/:(i;j;til n)]; / determine coefficients
+ nd:sum c*nd,(d;abs(-/)nd:dm (i;j));             / calc new distances
+ dm[til n;i]:dm[i]:nd;                           / update distances
+ dm[til n;j]:dm[j]:n#0n;                         / erase j
+ dm[n;where j=dm n]:i;          / all elements in cluster j are now in i
+ dm:@[dm;n+1 2 3 4;,;(j;i;d;sum i=dm n)]; / append return values
  dm}
 
 / given a (l)inkage (f)unction and dissimilarity matrix dm, run the
 / lance-williams linkage algorithm for heirarchical agglomerative clustering
 / and return the linkage stats
 hclust:{[lf;dm]
- dm:@'[dm;i:til count dm;:;0w];     / ignore loops
- dm,:(imin peach dm;i;();();();()); / append ancillary structures
- if[-11h=type lf;lf:get lf];        / dereference lf
- l:-4#lancewillams[lf] over dm;     / obtain linkage stats
+ dm:@'[dm;i:til count dm;:;0n]; / ignore loops
+ dm,:(i;();();();());           / append ancillary structures
+ if[-11h=type lf;lf:get lf];    / dereference lf
+ l:-4#lancewillams[lf] over dm; / obtain linkage stats
  l}
  
 / merge node y[0] into y[1] in tree x

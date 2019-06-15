@@ -2,7 +2,6 @@
 \l funq.q
 
 / redefine plot (to drop space)
-plt:.util.plot[30;15;.util.c10]
 
 -1"to demonstrate kmeans, we first generate clusters of data";
 -1"we will arbitrarily choose 3 clusters and define k=3";
@@ -12,7 +11,7 @@ k:3
 show C:"f"$k?/:2#20
 -1"and scatter points around the centroids with normally distributed errors";
 X:raze each C+.ml.bm(2;k)#100?/:(2*k)#1f
-show plt X
+show .util.plt X
 
 -1 .util.box["**"] (
  "kmeans is an implementation of lloyds algorithm,";
@@ -25,14 +24,14 @@ show plt X
 -1"there are two ways to initialze the algorithm:";
 -1" 1. randomly pick k centroids (k-means++ and forgy method)";
 -1" 2. assign points randomly to k centroids - random partition method";
--1"the forgy method is the simplest to implement"
+-1"the forgy method is the simplest to implement";
 .ml.kmeans[X] over neg[k]?/:X
 -1"the k-means++ method is supplied as an alternate initialization method";
 .ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()
 -1"the random partition method can also be done by hand";
 .ml.kmeans[X] over (avg'') X@\:value group count[X 0]?k
 -1"we can plot the data and overlay the centroids found using kmeans++";
-show plt .ml.append[0;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
+show .util.plt .ml.append[0;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 
 -1"kmedians uses the lloyd algorithm, but uses the *manhattan distince*";
 -1"also known as the taxicab metric to assign points to clusters";
@@ -47,7 +46,7 @@ show .ml.kmedians[X] scan neg[k]?/:X
 \l iris.q
 `X`y`t set' iris`X`y`t;
 -1"we can see how the data set clusters the petal width";
-show plt t.pwidth
+show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
 
 -1"we iteratively call kmeans until convergence";
 C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
@@ -60,4 +59,4 @@ show .util.totals[`TOTAL] .ml.cm[y;p]
 
 -1"we can also plot the total distortion from using a different number of centroids";
 / plot errors with increasing number of centroids
-show plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[X] each neg 1+til 10
+show .util.plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[X] each neg 1+til 10

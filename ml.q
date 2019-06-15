@@ -510,16 +510,8 @@ hclust:{[lf;dm]
 / merge node y[0] into y[1] in tree x
 graft:{@[x;y;:;(::;x y)]}
 
-/ build a complete dendrogram from linkage data x
-tree:{1#(til[1+count x],(::)) graft/ x}
-
-/ cut a single layer off tree
-slice:{
- if[type x;:x];
- if[type f:first x;:(1_x),f];
- if[type ff:first f;:(1_f),(1_x),ff]
- f,:1_x;
- f}
+/ build n clusters using (l)ink stats
+link:{[n;l]l where not (::)~'l:(til[1+count l],(::)) graft/ (1-n)_l}
 
 pi:acos -1f
 twopi:2f*pi

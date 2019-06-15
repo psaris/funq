@@ -484,8 +484,7 @@ lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 / implementation of lance-williams algorithm for performing hierarchical
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
 / between new and remaining clusters and augmented (D)issimilarity matrix,
-/ return (from;to;distance;#elements).  lf in
-/ `single`complete`average`weighted`centroid`median`ward
+/ return (from index j;to index i;distance d).
 lancewillams:{[lf;D]
  d:(n#D)@'di:imin peach (n:count D 0)#D;        / find closest distances
  if[null d@:i:imin d;:D]; j:di i;               / find closest clusters
@@ -494,7 +493,7 @@ lancewillams:{[lf;D]
  D[til n;i]:D[i]:nd;                            / update distances
  D[til n;j]:D[j]:n#0n;                          / erase j
  D[n;where j=D n]:i;            / all elements in cluster j are now in i
- D:@[D;n+1 2 3 4;,;(j;i;d;sum i=D n)]; / append return values
+ D:@[D;n+1 2 3;,;(j;i;d)];      / append return values
  D}
 
 / given a (l)inkage (f)unction and (D)issimilarity matrix , run the
@@ -502,9 +501,9 @@ lancewillams:{[lf;D]
 / and return the linkage stats
 link:{[lf;D]
  D:@'[D;i:til count D;:;0n];    / ignore loops
- D,:(i;();();();());            / append ancillary structures
+ D,:(i;();();());               / append ancillary structures
  if[-11h=type lf;lf:get lf];    / dereference lf
- l:-4#lancewillams[lf] over D;  / obtain linkage stats
+ l:-3#lancewillams[lf] over D;  / obtain linkage stats
  l}
  
 / create (n) clusters using (l)ink stats

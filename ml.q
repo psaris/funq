@@ -489,7 +489,7 @@ lancewillams:{[lf;D]
  d:(n#D)@'di:imin peach (n:count D 0)#D;        / find closest distances
  if[null d@:i:imin d;:D]; j:di i;               / find closest clusters
  c:$[9h=type lf;lf;lf(freq D n)@/:(i;j;til n)]; / determine coefficients
- nd:sum c*nd,(d;abs(-/)nd:D (i;j));             / calc new distances
+ nd:c wsum nd,(d;abs(-/)nd:D (i;j));            / calc new distances
  D[til n;i]:D[i]:nd;                            / update distances
  D[til n;j]:D[j]:n#0n;                          / erase j
  D[n;where j=D n]:i;            / all elements in cluster j are now in i

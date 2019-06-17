@@ -10,8 +10,8 @@ X:.ml.zscore seeds.X
 D:.ml.f2nd[.ml.edist X] X
 -1"generate heirarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.ward] D
--1"plot cluster distances";
-show .util.plt 10#reverse l 2
+-1"plot elbow curve (k vs distortion)";
+show .util.plt {[l;k].ml.distortion X@\:.ml.clust[k] l}[l] each 1+til 10
 -1"link into 3 clusters";
 c:.ml.clust[3] l
 -1"confirm accuracy";
@@ -24,11 +24,10 @@ X:.ml.zscore iris.X
 D:.ml.f2nd[.ml.edist X] X
 -1"generate heirarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.median] D
--1"plot cluster distances";
-show .util.plt 10#reverse l 2
+-1"plot elbow curve (k vs distortion)";
+show .util.plt {[l;k].ml.distortion X @\:.ml.clust[k] l}[l] each 1+til 10
 -1"link into 3 clusters";
 c:.ml.clust[3] l
 -1"confirm accuracy";
 g:(.ml.mode each iris.y c)!c
 .util.assert[.97] .util.rnd[.01] avg iris.y=.ml.ugrp g
-

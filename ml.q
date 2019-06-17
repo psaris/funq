@@ -413,7 +413,7 @@ cosdist:1f-cossim::                              / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
-cgroup:{[df;X;C] group f2nd[imin] f2nd[df X] C}
+cgroup:{[df;X;C] @[;til count C 0] group f2nd[imin] f2nd[df X] C}
 
 / return the index of n (w)eighted samples
 iwrand:{[n;w]s binr n?last s:sums w}
@@ -422,7 +422,7 @@ wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
 / using (d)istance (f)function and data X, append the next cluster
-/ to the pair (min cluster (d)istance^2;all (C)lusters)
+/ to the pair (min cluster (d)istance^2;all (C)entroids)
 kpp:{[df;X;d2C]
  if[not count C:d2C 1;:(0w;X@\:1?count X 0)];
  d2:d2C[0]&d*d:df[X] last each C;
@@ -435,21 +435,17 @@ khmeanspp:kpp[hmean]
 / k-(means|medians) algorithm
 
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
-/ data in (X) to the nearest (C)luster and then uses the (m)ean/edian
-/ (f)unction to update the cluster location.
-lloyd:{[df;mf;X;C]mf X@\:value cgroup[df;X;C]}
+/ data in (X) to the nearest (C)entroid and then uses the (m)ean/edian
+/ (f)unction to update the centroid location.
+lloyd:{[df;mf;X;C]mf X@\:cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k means
 kmedians:lloyd[mdist;med'']     / k median
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
-/ using the (d)istance (f)unction, cluster the data (X) into groups
-/ defined by the closest (C)entroid and return the distance
-cdist:{[df;X;C] k!df[X@\:value g] C@\:k:key g:cgroup[df;X;C]}
-mcdist:cdist[mdist]
-ecdist:cdist[edist]
-ccdist:cdist[cosdist]
+/ given a list of clustered data (X), compute the intra-cluster distortion
+distortion:{[X]sum sum each "f"$edist2[X] (avg'')X}
 
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}
@@ -489,7 +485,7 @@ lancewillams:{[lf;D]
  d:(n#D)@'di:imin peach (n:count D 0)#D;        / find closest distances
  if[null d@:i:imin d;:D]; j:di i;               / find closest clusters
  c:$[9h=type lf;lf;lf(freq D n)@/:(i;j;til n)]; / determine coefficients
- nd:c wsum nd,(d;abs(-/)nd:D (i;j));            / calc new distances
+ nd:sum c*nd,(d;abs(-/)nd:D (i;j));            / calc new distances
  D[til n;i]:D[i]:nd;                            / update distances
  D[til n;j]:D[j]:n#0n;                          / erase j
  D[n;where j=D n]:i;            / all elements in cluster j are now in i
@@ -506,10 +502,10 @@ link:{[lf;D]
  l:-3#lancewillams[lf] over D;  / obtain linkage stats
  l}
  
-/ create (n) clusters using (l)ink stats
-clust:{[n;l]
+/ create (k) clusters using (l)ink stats
+clust:{[k;l]
  c:1 cut til 1+count l 0;             / initial clusters
- l:(1-n)_/:2#l;                       / drop unwanted links
+ l:(1-k)_/:2#l;                       / drop unwanted links
  c:{x[z],:x y;x[y]:();x}/[c;l 0;l 1]; / link into n clusters
  c:c except enlist ();                / remove empty clusters
  c}

@@ -33,7 +33,7 @@ show .util.plt X
 -1"we can plot the data and overlay the centroids found using kmeans++";
 show .util.plt .ml.append[0;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 
--1"kmedians uses the lloyd algorithm, but uses the *manhattan distince*";
+-1"kmedians uses the lloyd algorithm, but uses the *manhattan distance*";
 -1"also known as the taxicab metric to assign points to clusters";
 -1"in addition, it uses the median instead of mean to compute the centroid";
 -1"this forces the resulting centroid to have values picked from the data";
@@ -50,13 +50,13 @@ show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
 
 -1"we iteratively call kmeans until convergence";
 C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
--1"and can show which group each data point was assigned to.";
-show m:.ml.mode each y g:.ml.cgroup[.ml.edist;X;C] / classify
+-1"and can show which group each data point was assigned to";
+show m:.ml.mode each y g:.ml.cgroup[.ml.edist2;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg y=p:m .ml.ugrp g            / accuracy
+avg y=p:.ml.ugrp m!g            / accuracy
 -1"what does the confusion matrix look like?";
 show .util.totals[`TOTAL] .ml.cm[y;p]
 
--1"we can also plot the total distortion from using a different number of centroids";
-/ plot errors with increasing number of centroids
-show .util.plt {sum sum each .ml.ecdist[x] .ml.kmeans[x] y?/:x}[X] each neg 1+til 10
+/ plot errors with increasing number of clusters
+-1"we can also plot the total distortion from using a different number of clusters";
+show .util.plt {[X;k].ml.distortion X@\:.ml.cgroup[.ml.edist2;X] .ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10

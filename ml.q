@@ -442,7 +442,7 @@ lloyd:{[df;mf;X;C]mf X@\:value cgroup[df;X;C]}
 kmeans:lloyd[edist2;avg'']      / k means
 kmedians:lloyd[mdist;med'']     / k median
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
-skmeans:lloyd[cosdist;normalize (avg'')@] / spherical k-means
+skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid and return the distance

@@ -479,27 +479,27 @@ lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
 / implementation of lance-williams algorithm for performing hierarchical
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
-/ between new and remaining clusters and augmented (D)issimilarity matrix,
-/ return (from index j;to index i).
-lancewillams:{[lf;D]
- d:(n#D)@'di:imin peach (n:count D 0)#D;        / find closest distances
- if[null d@:i:imin d;:D]; j:di i;               / find closest clusters
- c:$[9h=type lf;lf;lf(freq D n)@/:(i;j;til n)]; / determine coefficients
+/ between new and remaining clusters, (D)issimilarity matrix, and (I)ndex
+/ list, return updated D and I
+lancewilliams:{[lf;DI]
+ D:DI 0;I:DI 1; n:count D;
+ d:D@'di:imin peach D;                          / find closest distances
+ if[null d@:i:imin d;:DI]; j:di i;              / find closest clusters
+ c:$[9h=type lf;lf;lf(freq I 0)@/:(i;j;til n)]; / determine coefficients
  nd:sum c*nd,(d;abs(-/)nd:D (i;j));             / calc new distances
- D[til n;i]:D[i]:nd;                            / update distances
- D[til n;j]:D[j]:n#0n;                          / erase j
- D[n;where j=D n]:i;            / all elements in cluster j are now in i
- D:@[D;n+1 2;,;(j;i)];          / append return values
- D}
+ D[;i]:D[i]:nd;                                 / update distances
+ D[;j]:D[j]:n#0n;                               / erase j
+ I[0;where j=I 0]:i;            / all elements in cluster j are now in i
+ I[1 2],:(j;i);                 / append return values
+ (D;I)}
 
 / given a (l)inkage (f)unction and (D)issimilarity matrix, run the
 / lance-williams linkage algorithm for heirarchical agglomerative clustering
-/ and return the linkage stats
+/ and return the linkage stats: (from index j;to index i)
 link:{[lf;D]
- D:@'[D;i:til count D;:;0n];    / ignore loops
- D,:(i;();());                  / append ancillary structures
- if[-11h=type lf;lf:get lf];    / dereference lf
- l:-2#lancewillams[lf] over D;  / obtain linkage stats
+ D:@'[D;i:til count D;:;0n];                    / ignore loops
+ if[-11h=type lf;lf:get lf];                    / dereference lf
+ l:1_last lancewilliams[lf] over (D;(i;();())); / obtain linkage stats
  l}
  
 / create (k) clusters using (l)ink stats

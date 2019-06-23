@@ -480,32 +480,32 @@ lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 / implementation of lance-williams algorithm for performing hierarchical
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
 / between new and remaining clusters and augmented (D)issimilarity matrix,
-/ return (from index j;to index i;distance d).
+/ return (from index j;to index i).
 lancewillams:{[lf;D]
  d:(n#D)@'di:imin peach (n:count D 0)#D;        / find closest distances
  if[null d@:i:imin d;:D]; j:di i;               / find closest clusters
  c:$[9h=type lf;lf;lf(freq D n)@/:(i;j;til n)]; / determine coefficients
- nd:sum c*nd,(d;abs(-/)nd:D (i;j));            / calc new distances
+ nd:sum c*nd,(d;abs(-/)nd:D (i;j));             / calc new distances
  D[til n;i]:D[i]:nd;                            / update distances
  D[til n;j]:D[j]:n#0n;                          / erase j
  D[n;where j=D n]:i;            / all elements in cluster j are now in i
- D:@[D;n+1 2 3;,;(j;i;d)];      / append return values
+ D:@[D;n+1 2;,;(j;i)];          / append return values
  D}
 
-/ given a (l)inkage (f)unction and (D)issimilarity matrix , run the
+/ given a (l)inkage (f)unction and (D)issimilarity matrix, run the
 / lance-williams linkage algorithm for heirarchical agglomerative clustering
 / and return the linkage stats
 link:{[lf;D]
  D:@'[D;i:til count D;:;0n];    / ignore loops
- D,:(i;();();());               / append ancillary structures
+ D,:(i;();());                  / append ancillary structures
  if[-11h=type lf;lf:get lf];    / dereference lf
- l:-3#lancewillams[lf] over D;  / obtain linkage stats
+ l:-2#lancewillams[lf] over D;  / obtain linkage stats
  l}
  
 / create (k) clusters using (l)ink stats
 clust:{[k;l]
  c:1 cut til 1+count l 0;             / initial clusters
- l:(1-k)_/:2#l;                       / drop unwanted links
+ l:(1-k)_/:l;                         / drop unwanted links
  c:{x[z],:x y;x[y]:();x}/[c;l 0;l 1]; / link into n clusters
  c:c except enlist ();                / remove empty clusters
  c}

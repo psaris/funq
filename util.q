@@ -26,8 +26,8 @@ ldmnist:{
 / load http://etlcdb.db.aist.go.jp/etlcdb/data/ETL9B dataset
 etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
-/ allocate x into y bins
-nbin:{(y-1)&floor y*.5^x%max x-:min x}
+/ allocate y into x bins
+nbin:{(x-1)&floor x*.5^y%max y-:min y}
 
 / divide range (s;e) into n buckets
 nrng:{[n;s;e]s+til[1+n]*(e-s)%n}
@@ -46,9 +46,9 @@ plot:{[w;h;c;X]
  if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
- Z:nbin'[X 1 0;(h;w)];                / allocate (x;y) to (w;h) bins
+ Z:nbin'[(h;w);X 1 0];                / allocate (x;y) to (w;h) bins
  Z:avg each X[2]group flip Z;         / avg overlapping z
- Z:c nbin[0f^Z;count c];              / map values to characters
+ Z:c nbin[count c;0f^Z];              / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
  k:nrng[h-1] . (min;max)@\:X 1;       / compute key
  p:reverse k!p;                       / generate plot
@@ -61,7 +61,7 @@ c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 plt:plot[19;10;c10]             / default plot function
 
-spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[;8]::
+spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[8]::
 
 / remove gamma compression
 gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}

@@ -48,7 +48,7 @@ plot:{[w;h;c;X]
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
  Z:nbin'[X 1 0;(h;w)];                / allocate (x;y) to (w;h) bins
  Z:avg each X[2]group flip Z;         / avg overlapping z
- Z:c nbin[Z;count c];                 / map values to characters
+ Z:c nbin[0f^Z;count c];              / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
  k:nrng[h-1] . (min;max)@\:X 1;       / compute key
  p:reverse k!p;                       / generate plot

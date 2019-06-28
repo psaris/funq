@@ -31,7 +31,7 @@ show .util.plt X
 -1"the random partition method can also be done by hand";
 .ml.kmeans[X] over (avg'') X@\:value group count[X 0]?k
 -1"we can plot the data and overlay the centroids found using kmeans++";
-show .util.plt .ml.append[0;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
+show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 
 -1"kmedians uses the lloyd algorithm, but uses the *manhattan distance*";
 -1"also known as the taxicab metric to assign points to clusters";

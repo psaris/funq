@@ -46,13 +46,12 @@ plot:{[w;h;c;X]
  if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
- Z:@[X;0 1;nbin;(w;h)];               / allocate (x;y) to (w;h) bins
- Z:flip key[Z],'avg each value Z:Z[2]g:group flip 2#Z; / avg overlapping z
- Z:@[Z;2;nbin;cn:count c,:()];                         / binify z
- p:h#enlist w#" ";                                     / empty canvas
- p:./[p;flip Z 1 0;:;c Z 2];                           / plot points
- k:nrng[h-1] . (min;max)@\:X 1;                        / compute key
- p:reverse k!p;                                        / generate plot
+ Z:nbin'[X 1 0;(h;w)];                / allocate (x;y) to (w;h) bins
+ Z:avg each X[2]group flip Z;         / avg overlapping z
+ Z:c nbin[Z;count c];                 / map values to characters
+ p:./[(h;w)#" ";key Z;:;value Z];     / plot points
+ k:nrng[h-1] . (min;max)@\:X 1;       / compute key
+ p:reverse k!p;                       / generate plot
  p}
 
 c10:" .-:=+x#%@"                         / 10 characters

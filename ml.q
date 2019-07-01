@@ -435,14 +435,19 @@ khmeanspp:kpp[hmean]
 / k-(means|medians) algorithm
 
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
-/ data in (X) to the nearest (C)entroid and then uses the (m)ean/edian
+/ data in (X) to the nearest (C)entroid and then uses the (c)entroid
 / (f)unction to update the centroid location.
-lloyd:{[df;mf;X;C]mf X@\:cgroup[df;X;C]}
+lloyd:{[df;cf;X;C]cf X@\:cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k means
-kmedians:lloyd[mdist;med'']     / k median
+kmedians:lloyd[mdist;med'']     / k medians
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
+
+/ using (d)istance (f)unction, find the medoid in (X)
+medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
+/ partitioning around medoids
+pam:{[df;X;C]lloyd[df;flip f2nd[medoid df]::;X;C]}
 
 / given a list of clustered data (X), compute the intra-cluster distortion
 distortion:{[X]sum sum each "f"$edist2[X] (avg'')X}

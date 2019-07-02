@@ -413,7 +413,7 @@ cosdist:1f-cossim::                              / cosine distance
 
 / using the (d)istance (f)unction, cluster the data (X) into groups
 / defined by the closest (C)entroid
-cgroup:{[df;X;C] @[;til count C 0] group f2nd[imin] f2nd[df X] C}
+cgroup:{[df;X;C]group f2nd[imin] f2nd[df X] C}
 
 / return the index of n (w)eighted samples
 iwrand:{[n;w]s binr n?last s:sums w}
@@ -437,7 +437,7 @@ khmeanspp:kpp[hmean]
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
 / data in (X) to the nearest (C)entroid and then uses the (c)entroid
 / (f)unction to update the centroid location.
-lloyd:{[df;cf;X;C]cf X@\:cgroup[df;X;C]}
+lloyd:{[df;cf;X;C]cf X@\:value cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k means
 kmedians:lloyd[mdist;med'']     / k medians

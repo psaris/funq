@@ -39,6 +39,7 @@ show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 -1"this forces the resulting centroid to have values picked from the data";
 -1"it does not, however, force the centroid to be an actual point in the data";
 -1"the centroid can be (x1;y2;z3), and not necessarily (x3;y3;z3)";
+-1"(to use actual points from the data see k-medoids below)";
 -1"we can see the progress by using scan instead of over";
 show .ml.kmedians[X] scan neg[k]?/:X
 
@@ -60,3 +61,14 @@ show .util.totals[`TOTAL] .ml.cm[y;p]
 / plot errors with increasing number of clusters
 -1"we can also plot the total distortion from using a different number of clusters";
 show .util.plt {[X;k].ml.distortion X@\:.ml.cgroup[.ml.edist2;X] .ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
+
+-1"an alternative to k-means is the k-medoids algorithm";
+-1"which finds actual data points at the center of each cluster";
+-1"the algorithm is slower than k-means because it must computer";
+-1"the full dissimilarity matrix for each cluster";
+-1"the implementation is know as *partitioning around medoids*";
+-1"and is implemented in .ml.pam";
+-1"we can use any distance metric, but manhattan and euclidian";
+-1"(not euclidian squared) are the most popular";
+C:.ml.pam[.ml.edist;X] over X@\:3?count X
+show .util.plt .ml.append[0N;iris.X 1 2],'.ml.append[1] C 1 2

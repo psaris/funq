@@ -446,8 +446,9 @@ skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
 / using (d)istance (f)unction, find the medoid in (X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
-/ partitioning around medoids
-pam:{[df;X;C]lloyd[df;flip f2nd[medoid df]::;X;C]}
+/ given a (d)istance (f)unction, return a new function that finds a
+/ medoid during the "update" step of lloyd's algorithm
+pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
 / given a list of clustered data (X), compute the intra-cluster distortion
 distortion:{[X]sum sum each "f"$edist2[X] (avg'')X}

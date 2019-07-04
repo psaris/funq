@@ -70,5 +70,5 @@ show .util.plt {[X;k].ml.distortion X@\:.ml.cgroup[.ml.edist2;X] .ml.kmeans[X] o
 -1"and is implemented in .ml.pam";
 -1"we can use any distance metric, but manhattan and euclidian";
 -1"(not euclidian squared) are the most popular";
-C:.ml.pam[.ml.edist;X] over X@\:3?count X
+C:.ml.pam[.ml.edist][X] over X@\:3?count X
 show .util.plt .ml.append[0N;iris.X 1 2],'.ml.append[1] C 1 2

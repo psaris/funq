@@ -453,6 +453,16 @@ pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 / given a list of clustered data (X), compute the intra-cluster distortion
 distortion:{[X]sum sum each "f"$edist2[X] (avg'')X}
 
+/ given (d)istance (f)unction, features X, and cluster labels y, compute the
+/ silhouette statistic
+silhouette:{[df;X;y]
+ G:X@\:/:g:group y;
+ a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach value G;
+ b:{[df;G;k]min{f2nd[avg x[z]::]y}[df;G k]'[G _ k]}[df;G] peach key G;
+ s:0f^(b-a)%a|b;
+ s:raze[s] iasc raze g;
+ s}
+
 / ungroup (inverse of group)
 ugrp:{(key[x] where count each value x)iasc raze x}
 

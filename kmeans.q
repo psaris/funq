@@ -59,8 +59,9 @@ avg y=p:.ml.ugrp m!i            / accuracy
 show .util.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
--1"we can also plot the total distortion from using a different number of clusters";
-show .util.plt {[X;k].ml.distortion X@\:.ml.cgroup[.ml.edist2;X] .ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
+-1"we can also plot the total distortion from using different values for k";
+c:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
+show .util.plt .ml.lloyd[.ml.edist2;sum .ml.f2nd[.ml.distortion]::;X] each c
 
 -1"an alternative to k-means is the k-medoids algorithm";
 -1"which finds actual data points at the center of each cluster";

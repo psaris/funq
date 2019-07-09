@@ -3,7 +3,7 @@
 \l iris.q
 \l seeds.q
 
-/ hierarchical clustering analysis (HCA)
+/ hierarchical agglomerative clustering (HAC)
 -1"normalize seed data set features";
 X:.ml.zscore seeds.X
 -1"build dissimilarity matrix";

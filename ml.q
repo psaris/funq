@@ -510,7 +510,7 @@ lancewilliams:{[lf;DI]
  (D;I)}
 
 / given a (l)inkage (f)unction and (D)issimilarity matrix, run the
-/ lance-williams linkage algorithm for heirarchical agglomerative clustering
+/ lance-williams linkage algorithm for hierarchical agglomerative clustering
 / and return the linkage stats: (from index j;to index i)
 link:{[lf;D]
  D:@'[D;i:til count D;:;0n];                    / ignore loops

@@ -8,7 +8,7 @@
 X:.ml.zscore seeds.X
 -1"build dissimilarity matrix";
 D:.ml.f2nd[.ml.edist X] X
--1"generate heirarchical clustering linkage stats";
+-1"generate hierarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.ward] D
 -1"build a function that computes the total distortion over all clusters";
 kdist:{[X;l;k]sum (.ml.distortion X@\:) each .ml.clust[k] l}
@@ -24,7 +24,7 @@ g:(.ml.mode each seeds.y c)!c
 X:.ml.zscore iris.X
 -1"build dissimilarity matrix";
 D:.ml.f2nd[.ml.edist X] X
--1"generate heirarchical clustering linkage stats";
+-1"generate hierarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.median] D
 -1"plot elbow curve (k vs distortion)";
 show .util.plt kdist[X;l] each 1+til 10

@@ -20,6 +20,13 @@ c:.ml.clust[3] l
 g:(.ml.mode each seeds.y c)!c
 .util.assert[0.9] .util.rnd[.01] avg seeds.y=.ml.ugrp g
 
+-1"we can also check for maximum silhouette";
+-1"build a function that computes avg silhouette over all clusters";
+ksilhouette:{[X;l;k]avg .ml.silhouette[.ml.edist;X].ml.ugrp .ml.clust[k] l}
+-1"plot silhouette curve (k vs silhouette)";
+show .util.plt ksilhouette[X;l] each 1+til 10
+
+
 -1"normalize iris data set features";
 X:.ml.zscore iris.X
 -1"build dissimilarity matrix";
@@ -33,3 +40,5 @@ c:.ml.clust[3] l
 -1"confirm accuracy";
 g:(.ml.mode each iris.y c)!c
 .util.assert[.97] .util.rnd[.01] avg iris.y=.ml.ugrp g
+-1"plot silhouette curve (k vs silhouette)";
+show .util.plt ksilhouette[X;l] each 1+til 10

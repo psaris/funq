@@ -29,7 +29,6 @@ show v 5#/:idesc each vsm
 vsm:0f^.ml.tfidf[::;.ml.idf] m
 X:.ml.normalize vsm
 C:.ml.skmeans[X] -30?/:X
-g:.ml.cgroup[.ml.cosdist;X;C] / classify
 
 -1"using tfidf and nb to predict which jane austen book a chapter came from";
 

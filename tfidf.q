@@ -7,6 +7,7 @@
 \l sands.q
 \l mansfield.q
 \l northanger.q
+\l persuasion.q
 
 -1 "cleaning and stemming text";
 c:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
@@ -32,11 +33,12 @@ g:.ml.cgroup[.ml.cosdist;X;C] / classify
 
 -1"using tfidf and nb to predict which jane austen book a chapter came from";
 
-t:flip `text`class!(emma.s;`E)
-t,:flip `text`class!(pandp.s;`P)
-t,:flip `text`class!(sands.s;`S)
-t,:flip `text`class!(mansfield.s;`M)
-t,:flip `text`class!(northanger.s;`N)
+t:flip `text`class!(emma.s;`EM)        / emma
+t,:flip `text`class!(pandp.s;`PP)      / pride and prejudice
+t,:flip `text`class!(sands.s;`SS)      / sense and sensibility
+t,:flip `text`class!(mansfield.s;`MP)  / mansfield park
+t,:flip `text`class!(northanger.s;`NA) / northanger abbey
+t,:flip `text`class!(persuasion.s;`PE) / persuasion
 
 -1"cleaning and stripping text";
 t:update (.util.stripstr lower .util.cleanstr@) peach text from t
@@ -56,4 +58,4 @@ ct:d . `test`text
 yt:d . `test`class
 Xt:0f^.ml.tfidf[.ml.lntf;.ml.idf] .ml.tdm[ct] v
 avg yt=p:.ml.clfnb[1b;.ml.multill;pT] flip Xt
-show select[>N] from ([]word:v)!flip last pT
+show .util.rnd[1e-4] select[>PE] from ([]word:v)!flip last pT

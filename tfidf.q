@@ -10,7 +10,7 @@
 \l persuasion.q
 
 -1 "cleaning and stemming text";
-c:(.porter.stem each " " vs .util.stripstr lower .util.cleanstr@) peach moby.s
+c:(.porter.stem each " " vs .util.stripstr lower ::) peach moby.s
 -1 "building a term document matrix from corpus and vocabulary (minus stopwords)";
 sw:.porter.stem peach stopwords.xpo6
 m:.ml.tdm[c] v:asc distinct[raze c] except sw
@@ -41,7 +41,7 @@ t,:flip `text`class!(northanger.s;`NA) / northanger abbey
 t,:flip `text`class!(persuasion.s;`PE) / persuasion
 
 -1"cleaning and stripping text";
-t:update (.util.stripstr lower .util.cleanstr@) peach text from t
+t:update (.util.stripstr lower ::) peach text from t
 -1"tokenizng and stemming text";
 t:update (.porter.stem each " " vs) peach text from t
 -1"partitioning text between training and test";

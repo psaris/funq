@@ -6,19 +6,17 @@ clone this project and start q with any of the following:
 
 `q plot.q`
 
-`q linreg.q`
-
-`q onevsall.q`
-
-`q nn.q`
-
 `q kmeans.q`
 
 `q knn.q`
 
+`q hac.q`
+
 `q em.q`
 
-`q recommend.q`
+`q nb.q`
+
+`q tfidf.q`
 
 `q decisiontree.q`
 
@@ -26,37 +24,40 @@ clone this project and start q with any of the following:
 
 `q randomforest.q`
 
-`q supportvectormachine.q`
+`q linreg.q`
+
+`q onevsall.q`
+
+`q nn.q`
 
 `q hiragana.q`
+
+`q recommend.q`
+
+`q pagerank.q`
+
+`q supportvectormachine.q`
+
 
 you can then read the comments and run the examples one by one. topics include:
 
 ## Plotting
 
-## Least Squares Regression
-
-## Gradient Descent
-
-## Logistic Regression
+## K-Nearest Neighbors (KNN)
 
 ## Binary Classification Evaluation Metrics
 
-## One vs All Logistic Regression
+## K-Means/Medians/Medoids Clustering
 
-## Neural Networks
-
-## K-Means/Medians Clustering
-
-## Hierarchical Clustering Analysis (HCA)
+## Hierarchical Agglomerative Clustering (HAC)
 
 ## Expectation Maximization (EM)
-
-## K-Nearest Neighbors (kNN)
 
 ## Markov Clustering Algorithm (MCL)
 
 ## Naive Bayes
+
+## Vector Space Model (tf-idf)
 
 ## Decision Tree (ID3,C4.5)
 
@@ -64,13 +65,21 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Random Forest
 
-## Google PageRank
+## Least Squares Regression
+
+## Gradient Descent
+
+## Logistic Regression
+
+## One vs All Logistic Regression
+
+## Neural Networks
 
 ## Content-Based Filtering (Recommender Systems)
 
 ## Collaborative Filtering (Recommender Systems)
 
-## Vector Space Model (tf-idf)
+## Google PageRank
 
 ## Support Vector Machine (SVM)
 

@@ -453,14 +453,15 @@ pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 / given a cluster (X), compute the intra-cluster distortion
 distortion:{[X]sum edist2[X] avg each X}
 
-/ given (d)istance (f)unction, features X, and cluster labels y, compute the
-/ silhouette statistic
-silhouette:{[df;X;y]
- if[1=count g:group y;:count[y]#0f]; / special case a single cluster
- a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach value G:X@\:/:g;
- b:{[df;G;k]min{f2nd[avg x[z]::]y}[df;G k]'[G _ k]}[df;G] peach key G;
- s:0f^(b-a)%a|b;
- s:raze[s] iasc raze g;
+/ given (d)istance (f)unction, features (X), and (c)luster indices, compute
+/ the silhouette statistic. group c if not already grouped
+silhouette:{[df;X;c]
+ if[type c;c:value group c];        / clusters c if passed as vector
+ if[1=n:count c;:count[raze c]#0f]; / special case a single cluster
+ a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach C:X@\:/:c;
+ b:{[df;C;i]min{f2nd[avg x[z]::]y}[df;C i]'[C _ i]}[df;C] peach til n;
+ s:0f^(b-a)%a|b;                / 0 fill to handle single point clusters
+ s:raze[s] iasc raze c;         / ungroup vector
  s}
 
 / given a dictionary who's values are indices representing result of the

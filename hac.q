@@ -22,7 +22,7 @@ g:(.ml.mode each seeds.y c)!c
 
 -1"we can also check for maximum silhouette";
 -1"build a function that computes avg silhouette over all clusters";
-ksilhouette:{[X;l;k]avg .ml.silhouette[.ml.edist;X].ml.ugrp .ml.clust[k] l}
+ksilhouette:{[X;l;k]avg .ml.silhouette[.ml.edist;X] .ml.clust[k] l}
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt ksilhouette[X;l] each 1+til 10
 

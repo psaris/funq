@@ -524,8 +524,8 @@ link:{[lf;D]
  l:1_last lancewilliams[lf] over (D;(i;();())); / obtain linkage stats
  l}
  
-/ create (k) clusters using (l)ink stats
-clust:{[k;l]
+/ use (l)ink stats to create (k) clusters
+clust:{[l;k]
  c:1 cut til 1+count l 0;             / initial clusters
  l:(1-k)_/:l;                         / drop unwanted links
  c:{x[z],:x y;x[y]:();x}/[c;l 0;l 1]; / link into n clusters

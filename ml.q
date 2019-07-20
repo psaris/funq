@@ -526,10 +526,13 @@ link:{[lf;D]
  
 / use (l)ink stats to create (k) clusters
 clust:{[l;k]
- c:1 cut til 1+count l 0;             / initial clusters
- l:(1-k)_/:l;                         / drop unwanted links
- c:{x[z],:x y;x[y]:();x}/[c;l 0;l 1]; / link into n clusters
- c:c except enlist ();                / remove empty clusters
+ c:1 cut til 1+count l 0;       / initial clusters
+ sk@:i:idesc sk:k,();           / sort k descending
+ fl:(1-mk:last sk)_ flip l;     / drop unwanted links
+ fls:(0,-1_count[c]-sk) cut fl; / list of flipped link stats
+ c:{[c;fl]{x[y 1],:x y 0;x[y 0]:();x}/[c;fl]}\[c;fls]; / link into k clusters
+ c:c except\: enlist ();        / remove empty clusters
+ c:$[0h<type k;c iasc i;c 0];   / reorder based on original k
  c}
 
 pi:acos -1f

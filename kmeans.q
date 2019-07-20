@@ -1,5 +1,7 @@
 \c 20 100
 \l funq.q
+\l iris.q
+\l uef.q
 
 / redefine plot (to drop space)
 
@@ -44,7 +46,6 @@ show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 show .ml.kmedians[X] scan neg[k]?/:X
 
 -1"we can apply kmeans to the classic machine learning iris data";
-\l iris.q
 `X`y`t set' iris`X`y`t;
 -1"we can see how the data set clusters the petal width";
 show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
@@ -60,8 +61,8 @@ show .util.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
 -1"we can also plot the total distortion from using different values for k";
-c:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
-show .util.plt .ml.lloyd[.ml.edist2;sum .ml.f2nd[.ml.distortion]::;X] each c
+C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
+show .util.plt (.ml.tdist[X] .ml.cgroup[.ml.edist2;X] ::) peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
 -1"which finds actual data points at the center of each cluster";
@@ -72,4 +73,19 @@ show .util.plt .ml.lloyd[.ml.edist2;sum .ml.f2nd[.ml.distortion]::;X] each c
 -1"we can use any distance metric, but manhattan and euclidian";
 -1"(not euclidian squared) are the most popular";
 C:.ml.pam[.ml.edist][X] over X@\:3?count X
-show .util.plt .ml.append[0N;iris.X 1 2],'.ml.append[1] C 1 2
+show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
+
+-1"let's apply the analyis to one of the uef reference cluster datasets";
+X:uef.a1
+-1"first we generate the centroids for a few values for k";
+C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] peach ks:10+til 20
+-1"then we cluster the data";
+c:.ml.cgroup[.ml.edist2;X] peach C
+-1"plot elbow curve (k vs distortion)";
+show .util.plt .ml.tdist[X] peach c
+-1"plot silhouette curve (k vs silhouette)";
+show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach c
+ks i:.ml.imax s
+-1"superimpose the centroids on the data";
+show .util.plot[39;20;.util.c10] .ml.append[0N;X],'.ml.append[1] C i
+

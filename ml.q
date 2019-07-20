@@ -450,8 +450,11 @@ medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
 / medoid during the "update" step of lloyd's algorithm
 pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
-/ given a cluster (X), compute the intra-cluster distortion
-distortion:{[X]sum edist2[X] avg each X}
+/ given features (X) compute the intra-cluster distortion
+dist:{[X]sum edist2[X] avg each X}
+/ given features (X) and (c)luster indices, compute the total distortion
+/ across all clusters
+tdist:{[X;c]sum (dist X@\:) peach c}
 
 / given (d)istance (f)unction, features (X), and (c)luster indices, compute
 / the silhouette statistic. group c if not already grouped

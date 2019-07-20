@@ -42,3 +42,6 @@ xgboost
 /tree.png
 /seeds_dataset.txt
 /105.txt
+/dim*.txt
+/s[1-4].txt
+/a[1-3].txt

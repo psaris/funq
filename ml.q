@@ -452,7 +452,7 @@ pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
 / given matri(X) compute the sum of squared errors (distortion)
 sse:{[X]sum edist2[X] avg each X}
-/ given matri(X) and cluster (I)ndices, within-cluster sse
+/ given matri(X) and cluster (I)ndices, compute within-cluster sse
 ssw:{[X;I]sum (sse X@\:) peach I}
 
 / given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute

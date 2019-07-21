@@ -459,7 +459,7 @@ ssw:{[X;I]sum (sse X@\:) peach I}
 / the silhouette statistic. group I if not already grouped
 silhouette:{[df;X;I]
  if[type I;I:value group I];        / clusters c if passed as vector
- if[1=n:count I;:count[raze I]#0f]; / special case a single cluster
+ if[1=n:count I;:count[I 0]#0f];    / special case a single cluster
  a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach G:X@\:/:I;
  b:{[df;G;i]min{f2nd[avg x[z]::]y}[df;G i]'[G _ i]}[df;G] peach til n;
  s:0f^(b-a)%a|b;                / 0 fill to handle single point clusters

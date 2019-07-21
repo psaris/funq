@@ -60,7 +60,7 @@ part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
 prepend:{((1;count y 0)#x),y}
 append:{y,((1;count y 0)#x)}
 
-/ linear predict Y values by prepending matrix (X) with a vector of 1s
+/ linear predict Y values by prepending matri(X) with a vector of 1s
 / and multiplying the result to (THETA) coefficients
 predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
@@ -411,7 +411,7 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 
-/ using the (d)istance (f)unction, cluster the data (X) into groups
+/ using the (d)istance (f)unction, cluster matri(X) into groups
 / defined by the closest (C)entroid
 cgroup:{[df;X;C]value group f2nd[imin] f2nd[df X] C}
 
@@ -435,7 +435,7 @@ khmeanspp:kpp[hmean]
 / k-(means|medians) algorithm
 
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
-/ data in (X) to the nearest (C)entroid and then uses the (c)entroid
+/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid
 / (f)unction to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 
@@ -444,19 +444,18 @@ kmedians:lloyd[mdist;med'']     / k medians
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
-/ using (d)istance (f)unction, find the medoid in (X)
+/ using (d)istance (f)unction, find the medoid in matri(X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
 / given a (d)istance (f)unction, return a new function that finds a
 / medoid during the "update" step of lloyd's algorithm
 pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
-/ given features (X) compute the intra-cluster distortion
-dist:{[X]sum edist2[X] avg each X}
-/ given features (X) and (c)luster indices, compute the total distortion
-/ across all clusters
-tdist:{[X;c]sum (dist X@\:) peach c}
+/ given matri(X) compute the sum of squared errors (distortion)
+sse:{[X]sum edist2[X] avg each X}
+/ given matri(X) and (c)luster indices, within-cluster sse
+ssw:{[X;c]sum (sse X@\:) peach c}
 
-/ given (d)istance (f)unction, features (X), and (c)luster indices, compute
+/ given (d)istance (f)unction, matri(X), and (c)luster indices, compute
 / the silhouette statistic. group c if not already grouped
 silhouette:{[df;X;c]
  if[type c;c:value group c];        / clusters c if passed as vector

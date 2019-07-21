@@ -11,8 +11,8 @@ X:.ml.zscore seeds.X
 D:.ml.f2nd[.ml.edist X] X
 -1"generate hierarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.ward] D
--1"plot elbow curve (k vs distortion)";
-show .util.plt .ml.tdist[X] peach .ml.clust[l] 1+til 10
+-1"plot elbow curve (k vs ssw)";
+show .util.plt .ml.ssw[X] peach .ml.clust[l] 1+til 10
 -1"link into 3 clusters";
 c:.ml.clust[l] 3
 -1"confirm accuracy";
@@ -30,8 +30,8 @@ X:.ml.zscore iris.X
 D:.ml.f2nd[.ml.edist X] X
 -1"generate hierarchical clustering linkage stats";
 l:.ml.link[`.ml.lw.median] D
--1"plot elbow curve (k vs distortion)";
-show .util.plt .ml.tdist[X] peach .ml.clust[l] 1+til 10
+-1"plot elbow curve (k vs ssw)";
+show .util.plt .ml.ssw[X] peach .ml.clust[l] 1+til 10
 -1"link into 3 clusters";
 c:.ml.clust[l] 3
 -1"confirm accuracy";
@@ -46,9 +46,9 @@ X:uef.a1
 D:sqrt .ml.pedist2[X;X]
 -1"generate hierarchical clustering linkage stats with ward metric";
 l:.ml.link[`.ml.lw.ward] D
--1"plot elbow curve (k vs distortion)";
+-1"plot elbow curve (k vs ssw)";
 c:.ml.clust[l] ks:15+til 10
-show .util.plt .ml.tdist[X] peach c
+show .util.plt .ml.ssw[X] peach c
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach .ml.clust[l] ks
 .util.assert[20] ks i:.ml.imax s

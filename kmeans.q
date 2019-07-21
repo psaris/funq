@@ -60,9 +60,9 @@ avg y=p:.ml.ugrp m!i            / accuracy
 show .util.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
--1"we can also plot the total distortion from using different values for k";
+-1"we can also plot the total ssw from using different values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
-show .util.plt (.ml.tdist[X] .ml.cgroup[.ml.edist2;X] ::) peach C
+show .util.plt (.ml.ssw[X] .ml.cgroup[.ml.edist2;X] ::) peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
 -1"which finds actual data points at the center of each cluster";
@@ -81,8 +81,8 @@ X:uef.a1
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] peach ks:10+til 20
 -1"then we cluster the data";
 c:.ml.cgroup[.ml.edist2;X] peach C
--1"plot elbow curve (k vs distortion)";
-show .util.plt .ml.tdist[X] peach c
+-1"plot elbow curve (k vs ssw)";
+show .util.plt .ml.ssw[X] peach c
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach c
 ks i:.ml.imax s

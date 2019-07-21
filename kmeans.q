@@ -53,9 +53,9 @@ show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
 -1"we iteratively call kmeans until convergence";
 C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
 -1"and can show which group each data point was assigned to";
-show m:.ml.mode each y i:.ml.cgroup[.ml.edist2;X;C] / classify
+show m:.ml.mode each y I:.ml.cgroup[.ml.edist2;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg y=p:.ml.ugrp m!i            / accuracy
+avg y=p:.ml.ugrp m!I            / accuracy
 -1"what does the confusion matrix look like?";
 show .util.totals[`TOTAL] .ml.cm[y;p]
 
@@ -80,11 +80,11 @@ X:uef.a1
 -1"first we generate the centroids for a few values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] peach ks:10+til 20
 -1"then we cluster the data";
-c:.ml.cgroup[.ml.edist2;X] peach C
+I:.ml.cgroup[.ml.edist2;X] peach C
 -1"plot elbow curve (k vs ssw)";
-show .util.plt .ml.ssw[X] peach c
+show .util.plt .ml.ssw[X] peach I
 -1"plot silhouette curve (k vs silhouette)";
-show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach c
+show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
 show .util.plot[39;20;.util.c10] .ml.append[0N;X],'.ml.append[1] C i

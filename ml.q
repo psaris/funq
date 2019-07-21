@@ -452,18 +452,18 @@ pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
 / given matri(X) compute the sum of squared errors (distortion)
 sse:{[X]sum edist2[X] avg each X}
-/ given matri(X) and (c)luster indices, within-cluster sse
-ssw:{[X;c]sum (sse X@\:) peach c}
+/ given matri(X) and cluster (I)ndices, within-cluster sse
+ssw:{[X;I]sum (sse X@\:) peach I}
 
-/ given (d)istance (f)unction, matri(X), and (c)luster indices, compute
-/ the silhouette statistic. group c if not already grouped
-silhouette:{[df;X;c]
- if[type c;c:value group c];        / clusters c if passed as vector
- if[1=n:count c;:count[raze c]#0f]; / special case a single cluster
- a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach C:X@\:/:c;
- b:{[df;C;i]min{f2nd[avg x[z]::]y}[df;C i]'[C _ i]}[df;C] peach til n;
+/ given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute
+/ the silhouette statistic. group I if not already grouped
+silhouette:{[df;X;I]
+ if[type I;I:value group I];        / clusters c if passed as vector
+ if[1=n:count I;:count[raze I]#0f]; / special case a single cluster
+ a:{[df;X](1f%-1+count X 0)*sum f2nd[df X] X}[df] peach G:X@\:/:I;
+ b:{[df;G;i]min{f2nd[avg x[z]::]y}[df;G i]'[G _ i]}[df;G] peach til n;
  s:0f^(b-a)%a|b;                / 0 fill to handle single point clusters
- s:raze[s] iasc raze c;         / ungroup vector
+ s:raze[s] iasc raze I;         / ungroup vector
  s}
 
 / given a dictionary who's values are indices representing result of the

@@ -14,9 +14,9 @@ l:.ml.link[`.ml.lw.ward] D
 -1"plot elbow curve (k vs ssw)";
 show .util.plt .ml.ssw[X] peach .ml.clust[l] 1+til 10
 -1"link into 3 clusters";
-c:.ml.clust[l] 3
+I:.ml.clust[l] 3
 -1"confirm accuracy";
-g:(.ml.mode each seeds.y c)!c
+g:(.ml.mode each seeds.y I)!I
 .util.assert[0.9] .util.rnd[.01] avg seeds.y=.ml.ugrp g
 
 -1"we can also check for maximum silhouette";
@@ -33,9 +33,9 @@ l:.ml.link[`.ml.lw.median] D
 -1"plot elbow curve (k vs ssw)";
 show .util.plt .ml.ssw[X] peach .ml.clust[l] 1+til 10
 -1"link into 3 clusters";
-c:.ml.clust[l] 3
+I:.ml.clust[l] 3
 -1"confirm accuracy";
-g:(.ml.mode each iris.y c)!c
+g:(.ml.mode each iris.y I)!I
 .util.assert[.97] .util.rnd[.01] avg iris.y=.ml.ugrp g
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt (avg .ml.silhouette[.ml.edist;X]::) peach .ml.clust[l] 1+til 10
@@ -47,10 +47,10 @@ D:sqrt .ml.pedist2[X;X]
 -1"generate hierarchical clustering linkage stats with ward metric";
 l:.ml.link[`.ml.lw.ward] D
 -1"plot elbow curve (k vs ssw)";
-c:.ml.clust[l] ks:15+til 10
-show .util.plt .ml.ssw[X] peach c
+I:.ml.clust[l] ks:15+til 10
+show .util.plt .ml.ssw[X] peach I
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach .ml.clust[l] ks
 .util.assert[20] ks i:.ml.imax s
 -1"plot the clustered data";
-show .util.plot[39;20;.util.c68] .ml.append[.ml.ugrp c i;X]
+show .util.plot[39;20;.util.c68] .ml.append[.ml.ugrp I i;X]

@@ -71,7 +71,6 @@ show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
 show .util.totals[`TOTAL] .ml.cm[y;m p]
-plt:.util.plot[60;30;".@"]
 -1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
 -1"let's cluster hand written numbers into groups";
@@ -83,7 +82,7 @@ plt:.util.plot[60;30;".@"]
 X:1000#'X;y:1000#y;
 -1"convert the grayscale image into black/white";
 X>:128
-plt:value .util.plot[28;14;.util.c10] .util.hmap flip 28 cut
+plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 k:10
 -1"let's use ",string[k]," clusters";
 -1"we first initialize phi to be equal weight across all clusters";

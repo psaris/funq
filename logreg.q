@@ -12,7 +12,7 @@ yt:first Yt:1#YXt
 Xt:1_YXt
 
 -1"the sigmoid function is used to represent a binary outcome";
-plt:.util.plot[30;15;.util.c10]
+plt:.util.plot[30;15;.util.c10;sum]
 show plt .ml.sigmoid .1*-50+til 100
 
 / logistic regression cost

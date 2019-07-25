@@ -120,7 +120,7 @@ if[2<count key `.qml;
  -1"what does the first factor look like?";
  show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#mlense.movie;
  -1"how much variance does each factor explain?";
- show .util.plot[40;19;.util.c10] {x%sum x*:x}.qml.mdiag usv 1;
+ show .util.plot[40;19;.util.c10;avg] {x%sum x*:x}.qml.mdiag usv 1;
  ];
 
 / regularized gradient descent

@@ -2,7 +2,7 @@
 \l funq.q
 
 / define a plotting function using 10 characters of gradation
-plt:.util.plot[w:40;h:20;c:.util.c10]
+plt:.util.plot[w:40;h:20;c:.util.c10;sum]
 
 -1"plotting 1-dimensional dataset (sin x): x";
 -1 value plt X:sin .01*til 1000;

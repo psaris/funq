@@ -11,7 +11,7 @@ X:1000#'X;y:1000#y;
 X%:255f
 
 -1"define a plot function (which includes the empty space character)";
-plt:.util.plot[28;14;.util.c10] .util.hmap flip 28 cut
+plt:.util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 -1"visualize the data";
 -1 value (,') over plt each flip  X[;-4?count X 0];
 

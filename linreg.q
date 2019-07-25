@@ -15,14 +15,14 @@ show X:(.ml.bm 10000?) each 1 1f
 / (not stored) flipped
 
 -1"plotting uncorrelations x,y";
-show plt X
+show plt[sum] X
 
 -1"using $ to generate correlated x and y";
 rho:.8                          / correlation
 X[1]:(rho;sqrt 1f-rho*rho)$X
 
 -1"plotting correlations x,y";
-show plt X
+show plt[sum] X
 
 -1 .util.box["**"] (
  "mmu is usually used for matrix multiplication";
@@ -53,7 +53,7 @@ show .ml.prepend[1f] X
 show THETA:Y lsq .ml.prepend[1f] 1#X
 
 -1"plotting data with fitted line";
-show plt .ml.append[0;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
+show plt[avg] .ml.append[0N;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
 
 -1"fitting with normal equations (fast but not numerically stable)";
 .ml.normeq[Y;.ml.prepend[1f] X]

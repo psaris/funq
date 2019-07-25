@@ -77,15 +77,18 @@ show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
 
 -1"let's apply the analyis to one of the uef reference cluster datasets";
 X:uef.a1
+show .util.plot[39;20;.util.c10;sum] X
 -1"first we generate the centroids for a few values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] peach ks:10+til 20
 -1"then we cluster the data";
 I:.ml.cgroup[.ml.edist2;X] peach C
 -1"plot elbow curve (k vs ssw)";
 show .util.plt .ml.ssw[X] peach I
+-1"plot elbow curve (k vs % of variance explained)";
+show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
-show .util.plot[39;20;.util.c10] .ml.append[0N;X],'.ml.append[1] C i
+show .util.plot[39;20;.util.c10;avg] .ml.append[0N;X],'.ml.append[1] C i
 

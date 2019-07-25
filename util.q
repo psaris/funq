@@ -39,15 +39,15 @@ tcross:{value flip ([]x) cross ([]y)}
 / and z is the value stored in X[x;y] - result used to plot heatmaps
 hmap:{[X]@[;0;`s#]tcross[til count X;reverse til count X 0],enlist raze X}
 
-/ plot X using (c)haracters limited to (w)idth and (h)eight
-/ X can be x, (x;y), (x;y;z)
-plot:{[w;h;c;X]
+/ using (a)ggregation (f)unction, plot (X) using (c)haracters limited to
+/ (w)idth and (h)eight. X can be x, (x;y), or (x;y;z)
+plot:{[w;h;c;af;X]
  if[type X;X:enlist X];               / promote vector to matrix
  if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
  Z:nbin'[(h;w);X 1 0];                / allocate (x;y) to (w;h) bins
- Z:avg each X[2]group flip Z;         / avg overlapping z
+ Z:af each X[2]group flip Z;          / aggregating overlapping z
  Z:c nbin[count c;0f^Z];              / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
  k:nrng[h-1] . (min;max)@\:X 1;       / compute key
@@ -59,7 +59,7 @@ c16:" .-:=+*xoXO#$&%@"                   / 16 characters
 c68:" .'`^,:;Il!i><~+_-?][}{1)(|/tfjrxn" / 68 characters
 c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
-plt:plot[19;10;c10]             / default plot function
+plt:plot[19;10;c10;avg]         / default plot function
 
 spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[8]::
 

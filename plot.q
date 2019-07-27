@@ -36,3 +36,7 @@ x:w cut last 20 .ml.mbrot[x]/x:c,(1;count c 0)#0
 -1"plotting mandelbrot series color";
 x:(flip (0;0;desc (neg 1+max over x)?256)) x;
 `mandel.ppm 0: .util.ppm[b;255] x
+
+/ tests
+.util.assert[1b] last[x]<last .util.heckbert[4] . x:.47 .56
+.util.assert[1b] last[x]<last .util.heckbert[10] . x:32064 64978f

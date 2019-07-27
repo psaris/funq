@@ -4,7 +4,7 @@
 loadf:{[f]if[()~key f;:0b];system "l ",1_string f;1b}
 
 / generate a range of values between y and z with step-size x
-rng:{y+x*til 1+floor (z-y)%x}
+rng:{y+x*til 1+floor 1e-14+(z-y)%x}
 
 / round y to nearest x
 rnd:{x*"j"$y%x}
@@ -32,6 +32,22 @@ nbin:{(x-1)&floor x*.5^y%max y-:min y}
 / divide range (s;e) into n buckets
 nrng:{[n;s;e]s+til[1+n]*(e-s)%n}
 
+/ use heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number
+nicenum:{[rnd;x]
+ s:`s#$[rnd;0 1.5 3 7!1 2 5 10f;(0f,1e-15+1 2 5f)!1 2 5 10f];
+ x:f * s x%f:10 xexp floor 10 xlog x;
+ x}
+
+/ given requested (n)umber of labels and the (m)i(n) and (m)a(x) values, use
+/ heckbert's algorithm to generate a series of nice numbers
+heckbert:{[n;mn;mx]
+ r:nicenum[0b] mx-mn;           / range of values
+ s:nicenum[1b] r%n-1;           / step size
+ mn:s*floor mn%s;               / new min
+ mx:s*ceiling mx%s;             / new max
+ l:rng[s;mn;mx];                / labels
+ l}
+
 / table x cross y
 tcross:{value flip ([]x) cross ([]y)}
 
@@ -47,12 +63,14 @@ plot:{[w;h;c;af;X]
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
  x:-1_nrng[w] . (min;max)@\:X 0;      / compute x axis
- y:-1_nrng[h] . (min;max)@\:X 1;      / compute y axis
+ y:-1_nrng[h] . mm:(min;max)@\:X 1;   / compute y axis
  Z:(y;x) bin' "f"$X 1 0;              / allocate (x;y) to (w;h) bins
  Z:af each X[2]group flip Z;          / aggregating overlapping z
  Z:c nbin[count c;0f^Z];              / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
- p:reverse y!p;                       / generate plot
+ l:heckbert[h div 2] . mm;            / generate labels
+ k:@[count[y]#0n;0|y bin l;:;l];      / generate key
+ p:reverse k!p;                       / generate plot
  p}
 
 c10:" .-:=+x#%@"                         / 10 characters

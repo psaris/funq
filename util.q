@@ -62,13 +62,13 @@ plot:{[w;h;c;af;X]
  if[1=count X;X:(til count X 0;X 0)]; / turn ,x into (x;y)
  if[2=count X;X,:count[X 0]#1];       / turn (x;y) into (x;y;z)
  if[not `s=attr X 0;c:1_c];           / remove space unless heatmap
+ l:heckbert[h div 2].(min;max)@\:X 1; / generate labels
  x:-1_nrng[w] . (min;max)@\:X 0;      / compute x axis
- y:-1_nrng[h] . mm:(min;max)@\:X 1;   / compute y axis
+ y:-1_nrng[h] . (first;last)@\:l;     / compute y axis
  Z:(y;x) bin' "f"$X 1 0;              / allocate (x;y) to (w;h) bins
  Z:af each X[2]group flip Z;          / aggregating overlapping z
  Z:c nbin[count c;0f^Z];              / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
- l:heckbert[h div 2] . mm;            / generate labels
  k:@[count[y]#0n;0|y bin l;:;l];      / generate key
  p:reverse k!p;                       / generate plot
  p}

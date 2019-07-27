@@ -1,4 +1,4 @@
-\c 20 100
+\c 40 100
 \l funq.q
 \l iris.q
 \l uef.q
@@ -91,4 +91,3 @@ show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
 show .util.plot[39;20;.util.c10;avg] .ml.append[0N;X],'.ml.append[1] C i
-

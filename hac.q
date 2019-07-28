@@ -69,4 +69,4 @@ show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
 .util.assert[20] ks i:.ml.imax s
 -1"plot the clustered data";
-show .util.plot[39;20;.util.c68;.ml.mode] .ml.append[.ml.ugrp I i;X]
+show .util.plot[39;20;.util.c68;.ml.mode] X,enlist .ml.ugrp I i

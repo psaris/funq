@@ -424,9 +424,10 @@ wrand:{[n;w;x]x iwrand[n] w}
 / using (d)istance (f)function and matri(X), append the next centroid
 / to the pair (min centroid (d)istance^2;all (C)centroids)
 kpp:{[df;X;d2C]
- if[not count C:d2C 1;:(0w;X@\:1?count X 0)];
- d2:d2C[0]&d*d:df[X] last each C;
- C:C,'X@\: first iwrand[1] d2;
+ if[not count C:d2C 1;:(0w;X@\:1?count X 0)]; / first centroid
+ if[count[X 0]=n:count C 0;:d2C];             / no more centroids
+ d2:d2C[0]&d*d:df[X] C[;n-1];                 / update distance vector
+ C:C,'X@\: first iwrand[1] d2;                / pick next centroid
  (d2;C)}
 kmeanspp:kpp[edist]
 kmedianspp:kpp[mdist]

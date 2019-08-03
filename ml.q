@@ -411,8 +411,8 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 
-/ using the (d)istance (f)unction, cluster matri(X) into groups
-/ defined by the closest (C)entroid
+/ using the (d)istance (f)unction, group matri(X) based on the closest
+/ (C)entroid and return the cluster indices
 cgroup:{[df;X;C]value group f2nd[imin] f2nd[df X] C}
 
 / return the index of n (w)eighted samples
@@ -421,8 +421,8 @@ iwrand:{[n;w]s binr n?last s:sums w}
 wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
-/ using (d)istance (f)function and data X, append the next cluster
-/ to the pair (min cluster (d)istance^2;all (C)entroids)
+/ using (d)istance (f)function and matri(X), append the next centroid
+/ to the pair (min centroid (d)istance^2;all (C)centroids)
 kpp:{[df;X;d2C]
  if[not count C:d2C 1;:(0w;X@\:1?count X 0)];
  d2:d2C[0]&d*d:df[X] last each C;

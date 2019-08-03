@@ -422,16 +422,14 @@ wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
 / using (d)istance (f)function and matri(X), append the next centroid
-/ to the pair (min centroid (d)istance^2;all (C)centroids)
-kpp:{[df;X;d2C]
- if[not count C:d2C 1;:(0w;X@\:1?count X 0)]; / first centroid
- if[count[X 0]=n:count C 0;:d2C];             / no more centroids
- d2:d2C[0]&d*d:df[X] C[;n-1];                 / update distance vector
- C:C,'X@\: first iwrand[1] d2;                / pick next centroid
- (d2;C)}
-kmeanspp:kpp[edist]
-kmedianspp:kpp[mdist]
-khmeanspp:kpp[hmean]
+/ to the pair (min centroid (d)istance;all (C)centroids)
+kpp:{[df;X;dC]
+ if[not count C:dC 1;:(0w;X@\:1?count X 0)]; / first centroid
+ if[count[X 0]=n:count C 0;:dC];             / no more centroids
+ d:dC[0]&df[X] C[;n-1];                      / update distance vector
+ C:C,'X@\: first iwrand[1] d;                / pick next centroid
+ (d;C)}
+kmeanspp:kpp[edist2]
 
 / k-(means|medians) algorithm
 

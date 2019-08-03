@@ -13,7 +13,7 @@ k:3
 show C:"f"$k?/:2#20
 -1"and scatter points around the centroids with normally distributed errors";
 X:raze each C+.ml.bm(2;k)#100?/:(2*k)#1f
-show .util.plt X
+show .util.plot[19;10;.util.c10;sum] X
 
 -1 .util.box["**"] (
  "kmeans is an implementation of lloyds algorithm,";

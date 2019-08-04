@@ -53,20 +53,20 @@ I:.ml.clust[l] 1+til 10
 show .util.plt (avg .ml.silhouette[.ml.edist;X]::) peach I
 
 -1"let's apply the analyis to one of the uef reference cluster datasets";
-X:uef.a1
+X:uef.d32
 show .util.plot[39;20;.util.c10;sum] X
 -1"using pedist2 makes calculating the dissimilarity matrix much faster";
 D:sqrt .ml.pedist2[X;X]
 -1"generate hierarchical clustering linkage stats with ward metric";
 l:.ml.link[`.ml.lw.ward] D
 -1"generate cluster indices";
-I:.ml.clust[l] ks:15+til 10
+I:.ml.clust[l] ks:1+til 19
 -1"plot elbow curve (k vs ssw)";
 show .util.plt .ml.ssw[X] peach I
 -1"plot elbow curve (k vs % of variance explained)";
 show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
-.util.assert[20] ks i:.ml.imax s
+.util.assert[16] ks i:.ml.imax s
 -1"plot the clustered data";
-show .util.plot[39;20;.util.c68;.ml.mode] X,enlist .ml.ugrp I i
+show .util.plot[39;20;.util.c68;.ml.mode] X[0 1],enlist .ml.ugrp I i

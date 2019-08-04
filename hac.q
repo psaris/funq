@@ -26,7 +26,7 @@ g:(.ml.mode each seeds.y I)!I
 -1"we can also check for maximum silhouette";
 -1"plot silhouette curve (k vs silhouette)";
 I:.ml.clust[l] 1+til 10
-show .util.plt (avg .ml.silhouette[.ml.edist;X]::) peach I
+show .util.plt (avg raze .ml.silhouette[.ml.edist;X]::) peach I
 
 
 -1"normalize iris data set features";
@@ -50,7 +50,7 @@ g:(.ml.mode each iris.y I)!I
 -1"generate clusters indices";
 I:.ml.clust[l] 1+til 10
 -1"plot silhouette curve (k vs silhouette)";
-show .util.plt (avg .ml.silhouette[.ml.edist;X]::) peach I
+show .util.plt (avg raze .ml.silhouette[.ml.edist;X]::) peach I
 
 -1"let's apply the analyis to one of the uef reference cluster datasets";
 X:uef.d32
@@ -66,7 +66,7 @@ show .util.plt .ml.ssw[X] peach I
 -1"plot elbow curve (k vs % of variance explained)";
 show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 -1"plot silhouette curve (k vs silhouette)";
-show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
+show .util.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
 .util.assert[16] ks i:.ml.imax s
 -1"plot the clustered data";
 show .util.plot[39;20;.util.c68;.ml.mode] X[0 1],enlist .ml.ugrp I i

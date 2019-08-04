@@ -87,7 +87,7 @@ show .util.plt .ml.ssw[X] peach I
 -1"plot elbow curve (k vs % of variance explained)";
 show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 -1"plot silhouette curve (k vs silhouette)";
-show .util.plt s:(avg .ml.silhouette[.ml.edist;X]::) peach I
+show .util.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
 show .util.plot[39;20;.util.c10;avg] .ml.append[0N;X],'.ml.append[1] C i

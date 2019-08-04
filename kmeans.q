@@ -62,7 +62,7 @@ show .util.totals[`TOTAL] .ml.cm[y;p]
 / plot errors with increasing number of clusters
 -1"we can also plot the total ssw from using different values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
-show .util.plt (.ml.ssw[X] .ml.cgroup[.ml.edist2;X] ::) peach C
+show .util.plt .ml.dist[X] peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
 -1"which finds actual data points at the center of each cluster";

@@ -455,6 +455,8 @@ sse:{[X]sum edist2[X] avg each X}
 ssw:{[X;I]sum (sse X@\:) peach I}
 / given matri(X) and cluster (I)ndices, compute between-cluster sse
 ssb:{[X;I]count'[I] wsum edist2[(avg '')G] (avg raze::) each G:X@\:I}
+/ usting data matri(X) and (C)entroids, compute total cluster distortion
+dist:{[X;C]ssw[X] cgroup[edist2;X] C}
 
 / given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute
 / the silhouette statistic. group I if not already grouped

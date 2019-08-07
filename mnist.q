@@ -6,7 +6,7 @@ mnist.f:(
  "t10k-images-idx3-ubyte")
 mnist.b:"http://yann.lecun.com/exdb/mnist/"
 -1"[down]loading handwritten numbers data set";
-.util.download[mnist.b;;".gz";"gunzip -v"] mnist.f; / download data
+.util.download[mnist.b;;".gz";.util.gunzip] mnist.f; / download data
 
 -1"loading mnist training data";
 mnist.Y:enlist mnist.y:"i"$.util.ldmnist read1 `$mnist.f 0

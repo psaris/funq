@@ -9,12 +9,16 @@ rng:{y+x*til 1+floor 1e-14+(z-y)%x}
 / round y to nearest x
 rnd:{x*"j"$y%x}
 
+unzip:$["w"=first string .z.o;"7z.exe x -y -aos";"unzip -n"]
+gunzip:"gunzip -v"
+untar:"tar -xzvf"
+
 / (b)ase url, (f)ile, (e)xtension, (u)ncompress (f)unction
 download:{[b;f;e;uf]
  if[0h=type f;:.z.s[b;;e;uf] each f];
  if[l~key l:`$":",f;:l];                          / local file exists
  if[()~key z:`$":",f,e;z 1: .Q.hg`$":",0N!b,f,e]; / download
- if[count uf;system 0N!uf," ", f,e];              / uncompress
+ if[count uf;system 0N!uf," ",f,e];               / uncompress
  l}
 
 / load mnist dataset

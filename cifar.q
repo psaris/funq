@@ -2,7 +2,7 @@
 cifar.f:"cifar-10-binary"
 cifar.b:"http://www.cs.toronto.edu/~kriz/"
 -1"[down]loading CFAR-10 data set";
-.util.download[cifar.b;;".tar.gz";"tar -xzvf"] cifar.f;
+.util.download[cifar.b;;".tar.gz";.util.untar] cifar.f;
 cifar.d:"cifar-10-batches-bin/"
 -1"reading labels";
 cifar.labels:`$10#read0`$cifar.d,"batches.meta.txt"

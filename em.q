@@ -1,5 +1,7 @@
 \c 40 100
 \l funq.q
+\l mnist.q
+\l iris.q
 
 / expectation maximization (EM)
 
@@ -56,7 +58,6 @@ group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussll;X] . pT
 
 / let's use the iris data for multivariate gauss
 
-\l iris.q
 `X`y set' iris`X`y;
 k:count distinct y              / 3 clusters
 phi:k#1f%k                      / equal prior probability
@@ -76,7 +77,6 @@ show .util.totals[`TOTAL] .ml.cm[y;m p]
 -1"let's cluster hand written numbers into groups";
 -1"assuming each pixel of a black/white image is a bernoulli distribution,";
 -1"we can model each picture as a bernoulli mixture model";
-\l mnist.q
 `X`y set' mnist`X`y;
 -1"shrinking training set";
 X:1000#'X;y:1000#y;

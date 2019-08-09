@@ -66,10 +66,8 @@ libsvm/heart_scale.model: libsvm/svm-train
 liblinear/heart_scale.model: liblinear/train
 	cd liblinear && ./train heart_scale
 
-FUNQFILES += testporter.q plot.q knn.q kmeans.q em.q pagerank.q sparse.q 
-FUNQFILES += decisiontree.q randomforest.q markov.q hac.q cossim.q 
-FUNQFILES += adaboost.q linreg.q logreg.q recommend.q nn.q onevsall.q
-FUNQFILES += nb.q tfidf.q silhouette.q
+FUNQFILES := $(shell cat files.txt)
+
 ifneq (,$(wildcard $(QHOME)/$(QARCH)/libsvm.so))
 FUNQFILES += supportvectormachine.q
 endif

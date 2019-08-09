@@ -10,7 +10,7 @@ rng:{y+x*til 1+floor 1e-14+(z-y)%x}
 rnd:{x*"j"$y%x}
 
 unzip:$["w"=first string .z.o;"7z.exe x -y -aos";"unzip -n"]
-gunzip:$["w"=first string .z.o;"7z.exe x -y -aos";"gunzip -v"]
+gunzip:$["w"=first string .z.o;"7z.exe x -y -aos";"gunzip -f -N -v"]
 untar:"tar -xzvf"               / tar is now in windows 10 system32
 
 / (b)ase url, (f)ile, (e)xtension, (u)ncompress (f)unction

@@ -798,10 +798,11 @@ dt:{[cgf;ogf;impf;minl;maxd;w;t]
 / one-hot encode vector, (symbol columns of) table or (non-key symbol
 / columns of) keyed table x.
 onehot:{
- if[98h>t:type x;:u!x=/:u:distinct x]; / vector
- if[99h=t;:key[x]!.z.s value x];       / keyed table
- c:where 11h=type each flip x;         / table
- x:c _ x,' flip raze .z.s each x c;
+ if[98h>t:type x;:u!x=/:u:distinct x];       / vector
+ if[99h=t;:key[x]!.z.s value x];             / keyed table
+ D:.z.s each x c:where 11h=type each flip x; / list of dictionaries
+ D:string[c] {(`$(x,"_"),/:string key y)!value y}' D; / rename uniquely
+ x:c _ x,' flip raze D;                               / append to table
  x}
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)

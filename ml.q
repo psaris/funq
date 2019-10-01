@@ -28,7 +28,7 @@ mchol:{[X]                      / cholesky decomposition
  L}
 
 / returns true if all values are exactly equal
-identical:{min first[x]~':x}
+identical:{all x~\:first x}
 
 / returns true if x is a matrix as defined by q
 ismatrix:{

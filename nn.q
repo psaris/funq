@@ -36,7 +36,7 @@ n:0N!{(x;(x+y) div 2;y)}[count X;count Y]
 -1"we must set them to randomn values to 'break the symmetry'.";
 -1"additionally, we must chose values that ensure the gradient";
 -1"of the sigmoid function is not too small.  .ml.glorotu does this";
-0N!theta:2 raze/ THETA:.ml.glorotu'[1_n;1+-1_n];
+0N!theta:2 raze/ THETA:.ml.glorotu'[1+-1_n;1_n];
 
 l1:0;l2:1;                     / L1 and L2 regularization coefficients
 -1"the neural network cost function feeds the X values through the network,";

@@ -241,11 +241,13 @@ rlogcostgradf:{[l1;l2;X;Y]
 logcostgradf:rlogcostgradf[0f;0f]
 
 / Xavier Glorot and Yoshua Bengio (2010) initialization
-glorotu:{sqrt[6f%x+y]*-1f+y?/:x#2f}  / uniform
-glorotn:{rnorm'[x#y;0f;sqrt 2f%x+y]} / normal
+/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
+glorotu:{[i;o]sqrt[6f%i+o]*-1f+i?/:o#2f}  / uniform
+glorotn:{[i;o]rnorm'[o#i;0f;sqrt 2f%i+o]} / normal
 / Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun (2015) initialization
-heu:{sqrt[6f%y]*-1f+y?/:x#2f}   / uniform
-hen:{rnorm'[x#y;0f;sqrt 2f%y]}  / normal
+/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
+heu:{[i;o]sqrt[6f%i]*-1f+i?/:o#2f}   / uniform
+hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
 
 / (m)inimization (f)unction, (c)ost (g)radient (f)unction
 onevsall:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}
@@ -334,8 +336,8 @@ checkgrad:{[e;cf;gf;theta]
 
 / hgflf: (h)idden (g)radient (f)inal (l)oss functions
 checknngrad:{[e;l1;l2;n;hgflf]
- theta:2 raze/ glorotu'[1_n;1+-1_n];
- X:glorotu[n 0;n 1];
+ theta:2 raze/ glorotu'[1+-1_n;1_n];
+ X:glorotu[n 1;n 0];
  y:1+(1+til n 1) mod last n;
  Y:flip eye[last n]"i"$y-1;
  cgf:nncostgrad[l1;l2;n;hgflf;X;Y]; / cost gradient function

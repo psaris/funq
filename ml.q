@@ -166,7 +166,7 @@ demean:dax[-;navg]
 / feature normalization (centered/unit variance)
 zscore:dax[%;nsdev] demean::
 / feature normalization (scale values to [0,1])
-minmax:{(x-mm 1)%(-/)mm:(max;min)@\:x where not null x}
+minmax:{(x-m)%max[x]-m:min x}
 
 / compute the average of the top n items
 tnavg:{[n;x;y]navg y (n&count x)#idesc x}

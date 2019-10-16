@@ -84,7 +84,8 @@ c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 plt:plot[19;10;c10;avg]         / default plot function
 
-spark:"▁▂▃▄▅▆▇█" raze 0 1 2+/:3*nbin[8]::
+/ generate unicode sparkline
+spark:raze("c"$226 150,/:129+til 8)nbin[8]::
 
 / remove gamma compression
 gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}

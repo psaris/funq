@@ -1,5 +1,6 @@
 ionosphere.f:"ionosphere.data"
-ionosphere.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/"
+ionosphere.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
+ionosphere.b,:"ionosphere/"
 -1"[down]loading ionosphere data set";
 .util.download[ionosphere.b;;"";""] ionosphere.f;
 ionosphere.XY:((34#"E"),"C";",")0:`$ionosphere.f

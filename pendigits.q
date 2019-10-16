@@ -1,5 +1,6 @@
 pendigits.f:("pendigits.tra";"pendigits.tes")
-pendigits.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/pendigits/"
+pendigits.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
+pendigits.b,:"pendigits/"
 -1"download the pendigits training and test data set";
 .util.download[pendigits.b;;"";""] each pendigits.f;
 pendigits.y:last pendigits.X:(17#"h";",") 0: `$pendigits.f 0

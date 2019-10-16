@@ -1,5 +1,6 @@
 winequality.f:`red`white!("winequality-red.csv";"winequality-white.csv")
-winequality.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/"
+winequality.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
+winequality.b,:"wine-quality/"
 -1"[down]loading wine quality data set";
 .util.download[winequality.b;;"";""] each winequality.f;
 .winequality.load:{[f]

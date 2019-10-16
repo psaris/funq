@@ -1,5 +1,6 @@
 liver.f:"bupa.data"
-liver.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/liver-disorders/"
+liver.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
+liver.b,:"liver-disorders/"
 -1"[down]loading liver data set";
 .util.download[liver.b;;"";""] liver.f;
 liver.XY:((6#"E"),"H";",")0:`$liver.f

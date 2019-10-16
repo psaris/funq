@@ -1,5 +1,6 @@
 onp.f:"OnlineNewsPopularity"
-onp.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/00332/"
+onp.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
+onp.b,:"00332/"
 -1"[down]loading online news popularity data set";
 .util.download[onp.b;;".zip";.util.unzip] onp.f;
 

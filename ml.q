@@ -210,8 +210,8 @@ lpredict:sigmoid predict::      / logistic regression predict
 / regularized logistic regression cost
 rlogcost:{[l1;l2;X;Y;THETA]
  J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
- if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs @'[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
+ if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
  J}
 logcost:rlogcost[0f;0f]
 
@@ -226,8 +226,8 @@ loggrad:rloggrad[0f;0f]
 rlogcostgrad:{[l1;l2;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
- if[l1>0f;J+:(l1%m)*sum (sum') (sum'')abs @'[THETA;0;:;0f]];     / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@'[THETA;0;:;0f]]; / L2
+ if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
  G:(1f%m)*mmt[P-Y] X;
  if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
  if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2

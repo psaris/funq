@@ -93,7 +93,7 @@ theta:(1f<first .ml.nncostgrad[0f;0f;n;hgflf;X;Y]::) .ml.sgd[mf;0N?;10000;X]/ th
 first .ml.nncostgrad[0f;0f;n;hgflf;X;Y;theta]
 
 -1"how well did we learn on the training data set?";
-avg y=p:.ml.predictonevsall[X] .ml.nncut[n] theta
+avg y=p:.ml.clfova[X] .ml.nncut[n] theta
 
 -1"we can visualize the hidden features"
 plt 1_ rand first .ml.nncut[n] theta
@@ -103,7 +103,7 @@ p w:where not y=p
 do[2;-1 value plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
-avg yt=p:.ml.predictonevsall[Xt] .ml.nncut[n] theta
+avg yt=p:.ml.clfova[Xt] .ml.nncut[n] theta
 
 -1"or view a few mistakes"
 p w:where not yt=p

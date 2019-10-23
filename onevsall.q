@@ -25,10 +25,10 @@ cgf:.ml.rlogcostgrad[l1;l2;X] / pass cost & gradient function as parameter
 -1"we perform multiple runs of logistic regression (one for each digit)";
 -1"this trains one set of parameters for each number";
 -1 .util.box["**"] "for performance, we peach across digits";
-theta:.ml.onevsall[mf;cgf;Y;lbls]
+theta:.ml.fitova[mf;cgf;Y;lbls]
 
 -1"checking accuracy of parameters";
-avg yt=p:.ml.predictonevsall[Xt] enlist theta
+avg yt=p:.ml.clfova[Xt] enlist theta
 
 -1"view a few confused characters";
 w:where not yt=p

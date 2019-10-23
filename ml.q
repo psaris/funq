@@ -249,14 +249,18 @@ glorotn:{[i;o]rnorm'[o#i;0f;sqrt 2f%i+o]} / normal
 heu:{[i;o]sqrt[6f%i]*-1f+i?/:o#2f}   / uniform
 hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
 
-/ (m)inimization (f)unction, (c)ost (g)radient (f)unction
-onevsall:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}
-
 imax:{x?max x}                  / index of max element
 imin:{x?min x}                  / index of min element
 
-/ predict each number and pick best
-predictonevsall:{[X;THETA]f2nd[imax] X lpredict/ THETA}
+/ one vs all
+
+/ given (m)inimization (f)unction, (c)ost (g)radient (f)unction,
+/ fit a one-vs-all model against Y for each unique (lbls)
+fitova:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}
+
+/ given data matri(X) and (THETA) coefficients, return integer of THETA
+/ vector which produces highest one-vs-all value (probability)
+clfova:{[X;THETA]f2nd[imax] X lpredict/ THETA}
 
 / binary classification evaluation metrics (summary statistics)
 

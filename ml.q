@@ -71,16 +71,18 @@ l1l2:{[a;lr]a*/:(lr;1f-lr)}
 / regularized linear regression cost
 rlincost:{[l1;l2;X;Y;THETA]
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;prepend[1f] X]-Y;
- if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
+ THETA[;0]:0f;
+ if[l1>0f;J+:(l1%m)*sum (sum') abs THETA];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') THETA*THETA];
  J}
 lincost:rlincost[0f;0f]
 
 / regularized linear regression gradient
 rlingrad:{[l1;l2;X;Y;THETA]
  G:(1f%m:count X 0)*mmt[0f^mm[THETA;X]-Y] X:prepend[1f] X;
- if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
- if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2
+ THETA[;0]:0f;
+ if[l1>0f;G+:(l1%m)*signum THETA];
+ if[l2>0f;G+:(l2%m)*THETA];
  G}
 lingrad:rlingrad[0f;0f]
 
@@ -88,27 +90,30 @@ lingrad:rlingrad[0f;0f]
 rlincostgrad:{[l1;l2;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;X]-Y;
- if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
  G:(1f%m)*mmt[E] X;
- if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
- if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2
+ THETA[;0]:0f;
+ if[l1>0f;J+:(l1%m)*sum (sum') abs THETA];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') THETA*THETA];
+ if[l1>0f;G+:(l1%m)*signum THETA];
+ if[l2>0f;G+:(l2%m)*THETA];
  (J;raze G)}
 lincostgrad:rlincostgrad[0f;0f]
 
 / regularized collaborative filtering cost
 rcfcost:{[l1;l2;Y;THETA;X]
  J:(.5f%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
- if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs (THETA;X)];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:(THETA;X)]; / L2
+ THETAX:(THETA;X);
+ if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs THETAX];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') THETAX*THETAX];
  J}
 cfcost:rcfcost[0f;0f]
 
 / regularized collaborative filtering gradient
 rcfgrad:{[l1;l2;Y;THETA;X]
  G:(1f%m:count X 0)*(mmt[X;E];mm[THETA] E:0f^mtm[THETA;X]-Y);
- if[l1>0f;G+:(l1%m)*signum (THETA;X)]; / L1
- if[l2>0f;G+:(l2%m)*(THETA;X)];        / L2
+ THETAX:(THETA;X);
+ if[l1>0f;G+:(l1%m)*signum THETAX];
+ if[l2>0f;G+:(l2%m)*THETAX];
  G}
 cfgrad:rcfgrad[0f;0f]
 
@@ -119,11 +124,12 @@ cfcut:{[n;x](n[1],0N)#/:(0,prd n)_x}
 rcfcostgrad:{[l1;l2;Y;n;thetax]
  THETA:first X:cfcut[n] thetax;X@:1;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
- if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs (THETA;X)];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:(THETA;X)]; / L2
  G:(1f%m)*(mmt[X;E];mm[THETA;E]);
- if[l1>0f;G+:(l1%m)*signum (THETA;X)]; / L1
- if[l2>0f;G+:(l2%m)*(THETA;X)];        / L2
+ THETAX:(THETA;X);
+ if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs THETAX];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') THETAX*THETAX];
+ if[l1>0f;G+:(l1%m)*signum THETAX];
+ if[l2>0f;G+:(l2%m)*THETAX];
  (J;2 raze/ G)}
 cfcostgrad:rcfcostgrad[0f;0f]
 
@@ -210,27 +216,30 @@ lpredict:sigmoid predict::      / logistic regression predict
 / regularized logistic regression cost
 rlogcost:{[l1;l2;X;Y;THETA]
  J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
- if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
+ THETA[;0]:0f;
+ if[l1>0f;J+:(l1%m)*sum (sum') abs THETA];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') THETA*THETA];
  J}
 logcost:rlogcost[0f;0f]
 
 / regularized logistic regression gradient
 rloggrad:{[l1;l2;X;Y;THETA]
  G:(1f%m:count X 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
- if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
- if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2
+ THETA[;0]:0f;
+ if[l1>0f;G+:(l1%m)*signum THETA];
+ if[l2>0f;G+:(l2%m)*THETA];
  G}
 loggrad:rloggrad[0f;0f]
 
 rlogcostgrad:{[l1;l2;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
- if[l1>0f;J+:(l1%m)*sum (sum') abs @'[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') x*x:@'[THETA;0;:;0f]]; / L2
  G:(1f%m)*mmt[P-Y] X;
- if[l1>0f;G+:(l1%m)*signum @'[THETA;0;:;0f]]; / L1
- if[l2>0f;G+:(l2%m)*@'[THETA;0;:;0f]];        / L2
+ THETA[;0]:0f;
+ if[l1>0f;J+:(l1%m)*sum (sum') abs THETA];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') THETA*THETA];
+ if[l1>0f;G+:(l1%m)*signum THETA];
+ if[l2>0f;G+:(l2%m)*THETA];
  (J;raze G)}
 logcostgrad:rlogcostgrad[0f;0f]
 
@@ -364,13 +373,14 @@ nncostgrad:{[l1;l2;n;hgflf;X;Y;theta]
  ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgflf 0;-1_THETA];
  P:hgflf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
  J:(1f%m:count X 0)*sum (sum') hgflf[3][Y;P];        / loss
- if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs @''[THETA;0;:;0f]];    / L1
- if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') x*x:@''[THETA;0;:;0f]]; / L2
  G:hgflf[1]@'`z`a!/:1_ZA;       / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
- if[l1>0f;G+:(l1%m)*signum @''[THETA;0;:;0f]];    / L1
- if[l2>0f;G+:(l2%m)*@''[THETA;0;:;0f]];           / L2
+ THETA[;;0]:0f;
+ if[l1>0f;J+:(l1%m)*sum (sum') (sum'') abs THETA];
+ if[l2>0f;J+:(.5*l2%m)*sum (sum') (sum'') THETA*THETA];
+ if[l1>0f;G+:(l1%m)*signum THETA];
+ if[l2>0f;G+:(l2%m)*THETA];
  (J;2 raze/ G)}
 
 nncostgradf:{[l1;l2;n;hgflf;X;Y]

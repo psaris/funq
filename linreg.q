@@ -80,10 +80,10 @@ THETA:enlist theta:2#0f         / initial values
 .ml.gd[alpha;.ml.lingrad[X;Y]] over THETA
 
 -1"check that we've implemented the gradient correctly";
-cf:.ml.rlincost[0;1;X;Y]enlist::
-gf:first .ml.rlingrad[0;1;X;Y]enlist::
+cf:.ml.rlincost[.ml.l2[1];X;Y]enlist::
+gf:first .ml.rlingrad[.ml.l2[1];X;Y]enlist::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-cgf:.ml.rlincostgrad[0;1;X;Y]
+cgf:.ml.rlincostgrad[.ml.l2[1];X;Y]
 cf:first cgf::
 gf:last cgf::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]

@@ -32,10 +32,11 @@ if[2<count key `.qml;
 .ml.loggrad[X;Y;THETA]
 
 -1"check that we've implemented the gradient correctly";
-cf:.ml.rlogcost[0;1;X;Y]enlist::
-gf:first .ml.rloggrad[0;1;X;Y]enlist::
+rf:.ml.l2[1]
+cf:.ml.rlogcost[rf;X;Y]enlist::
+gf:first .ml.rloggrad[rf;X;Y]enlist::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-cgf:.ml.rlogcostgrad[0;1;X;Y]
+cgf:.ml.rlogcostgrad[rf;X;Y]
 cf:first cgf::
 gf:last cgf::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
@@ -62,7 +63,7 @@ avg yt="i"$p:first .ml.lpredict[Xt;enlist theta]
 
 -1"lets add some regularization";
 theta:(1+count X)#0f;
-theta:first .fmincg.fmincg[1000;.ml.rlogcostgrad[10;0;X;Y];theta]
+theta:first .fmincg.fmincg[1000;.ml.rlogcostgrad[.ml.l1[10];X;Y];theta]
 
 -1"test models accuracy";
 avg yt=p:"i"$first .ml.lpredict[Xt;enlist theta]

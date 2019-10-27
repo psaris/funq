@@ -28,11 +28,11 @@ Y:.ml.diag[last[n]#1f]@\:"i"$y
 
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
-l:1                           / lambda (l2 regularization coefficient)
--1"run mini-batch stochastic gradient descent",$[l;" with l2 regularization";""];
+rf:.ml.l2[1]                     / l2 regularization function
+-1"run mini-batch stochastic gradient descent",$[count rf;" with l2 regularization";""];
 hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
 
-mf:{first .fmincg.fmincg[5;.ml.nncostgrad[0;l;n;hgflf;X[;y];Y[;y]];x]}
+mf:{first .fmincg.fmincg[5;.ml.nncostgrad[();n;hgflf;X[;y];Y[;y]];x]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 
 -1"checking accuracy of parameters";

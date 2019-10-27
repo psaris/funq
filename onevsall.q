@@ -19,7 +19,7 @@ lbls:til 10
 rf:.ml.l2[1]                    / regularization function
 theta:(1+count X)#0f
 mf:(first .fmincg.fmincg[5;;theta]::) / pass minimization func as parameter
-cgf:.ml.rlogcostgrad[rf;X] / pass cost & gradient function as parameter
+cgf:.ml.logcostgrad[rf;X] / pass cost & gradient function as parameter
 
 -1"to run one-vs-all",$[count rf;" with regularization";""];
 -1"we perform multiple runs of logistic regression (one for each digit)";

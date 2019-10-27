@@ -69,26 +69,26 @@ alpha:.1                        / learning rate
 THETA:enlist theta:2#0f         / initial values
 -1"by passing a learning rate and function to compute the gradient";
 -1".ml.gd will take one step in the steepest direction";
-.ml.gd[alpha;.ml.lingrad[X;Y]] THETA
+.ml.gd[alpha;.ml.lingrad[();X;Y]] THETA
 
 -1"we can then use q's iteration controls";
 -1"to run a fixed number of iterations";
-2 .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
+2 .ml.gd[alpha;.ml.lingrad[();X;Y]]/ THETA
 -1"or iterate until the cost is within a tolerance";
-(.4<.ml.lincost[X;Y]::) .ml.gd[alpha;.ml.lingrad[X;Y]]/ THETA
+(.4<.ml.lincost[();X;Y]::) .ml.gd[alpha;.ml.lingrad[();X;Y]]/ THETA
 -1"or even until convergence";
-.ml.gd[alpha;.ml.lingrad[X;Y]] over THETA
+.ml.gd[alpha;.ml.lingrad[();X;Y]] over THETA
 
 -1"check that we've implemented the gradient correctly";
-cf:.ml.rlincost[.ml.l2[1];X;Y]enlist::
-gf:first .ml.rlingrad[.ml.l2[1];X;Y]enlist::
+cf:.ml.lincost[.ml.l2[1];X;Y]enlist::
+gf:first .ml.lingrad[.ml.l2[1];X;Y]enlist::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-cgf:.ml.rlincostgrad[.ml.l2[1];X;Y]
+cgf:.ml.lincostgrad[.ml.l2[1];X;Y]
 cf:first cgf::
 gf:last cgf::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
 
 -1"now use the fmincg minimizer to obtain optimal theta coefficients";
-first .fmincg.fmincg[1000;.ml.lincostgrad[X;Y];theta]
+first .fmincg.fmincg[1000;.ml.lincostgrad[();X;Y];theta]
 
 

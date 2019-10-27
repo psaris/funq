@@ -74,58 +74,52 @@ revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
 l1:{[l;m]((   l%m)*revo[sum]   abs::;(l%m)*signum::)}
 l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
 
-/ regularized linear regression cost
-rlincost:{[rf;X;Y;THETA]
+/ linear regression cost
+lincost:{[rf;X;Y;THETA]
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;prepend[1f] X]-Y;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
-lincost:rlincost[()]
 
-/ regularized linear regression gradient
-rlingrad:{[rf;X;Y;THETA]
+/ linear regression gradient
+lingrad:{[rf;X;Y;THETA]
  G:(1f%m:count X 0)*mmt[0f^mm[THETA;X]-Y] X:prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
  G}
-lingrad:rlingrad[()]
 
-/ regularized linear cost & gradient
-rlincostgrad:{[rf;X;Y;theta]
+/ linear cost & gradient
+lincostgrad:{[rf;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;X]-Y;
  G:(1f%m)*mmt[E] X;
  if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;raze G)}
-lincostgrad:rlincostgrad[()]
 
-/ regularized collaborative filtering cost
-rcfcost:{[rf;Y;THETA;X]
+/ collaborative filtering cost
+cfcost:{[rf;Y;THETA;X]
  J:(.5f%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
  if[count rf,:();J+:sum rf[;m][;0]@\:(THETA;X)];
  J}
-cfcost:rcfcost[()]
 
-/ regularized collaborative filtering gradient
-rcfgrad:{[rf;Y;THETA;X]
+/ collaborative filtering gradient
+cfgrad:{[rf;Y;THETA;X]
  G:(1f%m:count X 0)*(mmt[X;E];mm[THETA] E:0f^mtm[THETA;X]-Y);
  if[count rf,:();G+:sum rf[;m][;1]@\:(THETA;X)];
  G}
-cfgrad:rcfgrad[()]
 
 / collaborative filtering cut where n:(nu;nf)
 cfcut:{[n;x](n[1],0N)#/:(0,prd n)_x}
 
-/ regularized collaborative filtering cost & gradient
-rcfcostgrad:{[rf;Y;n;thetax]
+/ collaborative filtering cost & gradient
+cfcostgrad:{[rf;Y;n;thetax]
  THETA:first X:cfcut[n] thetax;X@:1;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
  G:(1f%m)*(mmt[X;E];mm[THETA;E]);
  if[count rf,:();JG:rf[;m][;;(THETA;X)];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
-cfcostgrad:rcfcostgrad[()]
 
-/ L2 regularized collaborative filtering update one rating
+/ collaborative filtering update one rating
 / (a)lpha: learning rate, (xy): coordinates of Y to update
-rcfupd1:{[l2;Y;a;THETAX;xy]
+cfupd1:{[l2;Y;a;THETAX;xy]
  e:(Y . xy)-dot . tx:THETAX .'i:flip(::;xy);
  THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l2*tx];
  THETAX}
@@ -203,33 +197,29 @@ ssoftmax:softmax dax[-;max]::   / stable softmax
 
 lpredict:sigmoid predict::      / logistic regression predict
 
-/ regularized logistic regression cost
-rlogcost:{[rf;X;Y;THETA]
+/ logistic regression cost
+logcost:{[rf;X;Y;THETA]
  J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
-logcost:rlogcost[()]
 
-/ regularized logistic regression gradient
-rloggrad:{[rf;X;Y;THETA]
+/ logistic regression gradient
+loggrad:{[rf;X;Y;THETA]
  G:(1f%m:count X 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
  G}
-loggrad:rloggrad[()]
 
-rlogcostgrad:{[rf;X;Y;theta]
+logcostgrad:{[rf;X;Y;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
  G:(1f%m)*mmt[P-Y] X;
  if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;raze G)}
-logcostgrad:rlogcostgrad[()]
 
-rlogcostgradf:{[rf;X;Y]
- Jf:rlogcost[rf;X;Y]enlist::;
- gf:rloggrad[rf;X;Y]enlist::;
+logcostgradf:{[rf;X;Y]
+ Jf:logcost[rf;X;Y]enlist::;
+ gf:loggrad[rf;X;Y]enlist::;
  (Jf;gf)}
-logcostgradf:rlogcostgradf[()]
 
 / Xavier Glorot and Yoshua Bengio (2010) initialization
 / given the number of (i)nput and (o)utput nodes, initialize THETA matrix
@@ -344,7 +334,7 @@ checkcfgrad:{[e;rf;n]
  Y:mm[nf?/:nu#1f]nm?/:nf#1f;    / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
- cgf:rcfcostgrad[rf;Y;n];                     / cost gradient function
+ cgf:cfcostgrad[rf;Y;n];                     / cost gradient function
  r:checkgrad[e;first cgf::;last cgf::;thetax];
  r}
 

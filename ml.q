@@ -71,7 +71,12 @@ l1l2:{[a;lr]a*/:(lr;1f-lr)}
 / reverse of over (start deep and end shallow)
 revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
 
+/ given l1 regularization (l)ambda and size of dimension (m), return two
+/ function compositions which compute the cost and gradient
 l1:{[l;m]((   l%m)*revo[sum]   abs::;(l%m)*signum::)}
+
+/ given l2 regularization (l)ambda and size of dimension (m), return two
+/ function compositions which compute the cost and gradient
 l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
 
 / linear regression cost

@@ -64,20 +64,20 @@ append:{y,((1;count y 0)#x)}
 / and multiplying the result to (THETA) coefficients
 predict:{[X;THETA]mm[THETA] prepend[1f] X}
 
-/ convert elastic net parameters (a)lpha and (l)ambda (r)atio into L1 L2
-/ regularization parmeters
-l1l2:{[a;lr]a*/:(lr;1f-lr)}
-
 / reverse of over (start deep and end shallow)
 revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
 
 / given l1 regularization (l)ambda and size of dimension (m), return two
 / function compositions which compute the cost and gradient
-l1:{[l;m]((   l%m)*revo[sum]   abs::;(l%m)*signum::)}
+l1:{[l;m]((l%m)*revo[sum] abs::;(l%m)*signum::)}
 
 / given l2 regularization (l)ambda and size of dimension (m), return two
 / function compositions which compute the cost and gradient
 l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
+
+/ given (a)lpha and (l)ambda (r)atio elastic net parameters, convert them
+/ into l1 and l2 units and return a pair of l1 and l2 projections
+enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 
 / linear regression cost
 lincost:{[rf;X;Y;THETA]

@@ -19,24 +19,24 @@ show plt .ml.sigmoid .1*-50+til 100
 -1"to use gradient descent, we must first define a cost function";
 THETA:enlist theta:(1+count X)#0f;
 -1"compute cost of initial theta estimate";
-.ml.logcost[();X;Y;THETA]
+.ml.logcost[();Y;X;THETA]
 
 if[2<count key `.qml;
  -1"qml comes with a minimizer that can be called";
  -1"with just this cost function:";
  opts:`iter,1000,`full`quiet; /`rk`slp`tol,1e-8
- 0N!first 1_.qml.minx[opts;.ml.logcost[();X;Y]enlist::;THETA];
+ 0N!first 1_.qml.minx[opts;.ml.logcost[();Y;X]enlist::;THETA];
  ];
 
 -1"we can also define a gradient function to make this process faster";
-.ml.loggrad[();X;Y;THETA]
+.ml.loggrad[();Y;X;THETA]
 
 -1"check that we've implemented the gradient correctly";
 rf:.ml.l2[1]
-cf:.ml.logcost[rf;X;Y]enlist::
-gf:first .ml.loggrad[rf;X;Y]enlist::
+cf:.ml.logcost[rf;Y;X]enlist::
+gf:first .ml.loggrad[rf;Y;X]enlist::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-cgf:.ml.logcostgrad[rf;X;Y]
+cgf:.ml.logcostgrad[rf;Y;X]
 cf:first cgf::
 gf:last cgf::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
@@ -44,7 +44,7 @@ gf:last cgf::
 
 if[2<count key `.qml;
  -1"qml can also use both the cost and gradient to improve performance";
- 0N!first 1_.qml.minx[opts;.ml.logcostgradf[();X;Y];THETA];
+ 0N!first 1_.qml.minx[opts;.ml.logcostgradf[();Y;X];THETA];
  ];
 
 -1"but the gradient calculation often shares computations with the cost";
@@ -53,17 +53,17 @@ if[2<count key `.qml;
 
 -1 .util.box["**"]"use '\\r' to create a progress bar with in-place updates";
 
-theta:first .fmincg.fmincg[1000;.ml.logcostgrad[();X;Y];theta]
+theta:first .fmincg.fmincg[1000;.ml.logcostgrad[();Y;X];theta]
 
 -1"compute cost of initial theta estimate";
-.ml.logcost[();X;Y;enlist theta]
+.ml.logcost[();Y;X;enlist theta]
 
 -1"test models accuracy";
 avg yt="i"$p:first .ml.lpredict[Xt;enlist theta]
 
 -1"lets add some regularization";
 theta:(1+count X)#0f;
-theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];X;Y];theta]
+theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 
 -1"test models accuracy";
 avg yt=p:"i"$first .ml.lpredict[Xt;enlist theta]

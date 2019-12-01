@@ -47,7 +47,7 @@ hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
 /hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
 /hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
 /hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
-show .ml.nncostgrad[rf;n;hgflf;X;Y;theta]
+show .ml.nncostgrad[rf;n;hgflf;Y;X;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
@@ -58,10 +58,10 @@ show .ml.nncostgrad[rf;n;hgflf;X;Y;theta]
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
 
-first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;X;Y];theta];
+first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;Y;X];theta];
 
 / NOTE: qml throws a `limit error (too many elements)
-/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[rf;n;hgflf;X;Y];enlist theta]
+/.qml.minx[`quiet`full`iter,1;.ml.nncostgradf[rf;n;hgflf;Y;X];enlist theta]
 -1"we can, alternatively, perform stochastic gradient descent (SGD).";
 -1"by taking a subset of the data on each iteration, we can analyze all the data";
 -1"without holding it all in memory simultaneously. in addition, the parameters will";
@@ -75,7 +75,7 @@ first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;X;Y];theta];
 -1"this is called 'on-line learning'";
 
 -1"we first define a minimization projection:";
-mf:{first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;X[;y];Y[;y]];x]}
+mf:{first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;Y[;y];X[;y]];x]}
 -1"we then have a few choices to randomize the dataset.";
 -1"A: permutate, then run n non-permuted epochs";
 i:0N?count X 0
@@ -87,10 +87,10 @@ theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
 theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[();n;hgflf;X;Y]::) .ml.sgd[mf;0N?;10000;X]/ theta
+theta:(1f<first .ml.nncostgrad[();n;hgflf;Y;X]::) .ml.sgd[mf;0N?;10000;X]/ theta
 
 -1"what is the final cost?";
-first .ml.nncostgrad[();n;hgflf;X;Y;theta]
+first .ml.nncostgrad[();n;hgflf;Y;X;theta]
 
 -1"how well did we learn on the training data set?";
 avg y=p:.ml.clfova[X] .ml.nncut[n] theta

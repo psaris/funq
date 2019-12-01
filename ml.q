@@ -80,19 +80,19 @@ l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
 enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 
 / linear regression cost
-lincost:{[rf;X;Y;THETA]
+lincost:{[rf;Y;X;THETA]
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;prepend[1f] X]-Y;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
 / linear regression gradient
-lingrad:{[rf;X;Y;THETA]
+lingrad:{[rf;Y;X;THETA]
  G:(1f%m:count X 0)*mmt[0f^mm[THETA;X]-Y] X:prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
  G}
 
 / linear cost & gradient
-lincostgrad:{[rf;X;Y;theta]
+lincostgrad:{[rf;Y;X;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;X]-Y;
  G:(1f%m)*mmt[E] X;
@@ -209,27 +209,27 @@ ssoftmax:softmax dax[-;max]::   / stable softmax
 lpredict:sigmoid predict::      / logistic regression predict
 
 / logistic regression cost
-logcost:{[rf;X;Y;THETA]
+logcost:{[rf;Y;X;THETA]
  J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
 / logistic regression gradient
-loggrad:{[rf;X;Y;THETA]
+loggrad:{[rf;Y;X;THETA]
  G:(1f%m:count X 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
  if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
  G}
 
-logcostgrad:{[rf;X;Y;theta]
+logcostgrad:{[rf;Y;X;theta]
  THETA:(count Y;0N)#theta; X:prepend[1f] X;
  J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
  G:(1f%m)*mmt[P-Y] X;
  if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;raze G)}
 
-logcostgradf:{[rf;X;Y]
- Jf:logcost[rf;X;Y]enlist::;
- gf:loggrad[rf;X;Y]enlist::;
+logcostgradf:{[rf;Y;X]
+ Jf:logcost[rf;Y;X]enlist::;
+ gf:loggrad[rf;Y;X]enlist::;
  (Jf;gf)}
 
 / Xavier Glorot and Yoshua Bengio (2010) initialization
@@ -336,7 +336,7 @@ checknngrad:{[e;rf;n;hgflf]
  X:glorotu[n 1;n 0];
  y:1+(1+til n 1) mod last n;
  Y:flip eye[last n]"i"$y-1;
- cgf:nncostgrad[rf;n;hgflf;X;Y]; / cost gradient function
+ cgf:nncostgrad[rf;n;hgflf;Y;X]; / cost gradient function
  r:checkgrad[e;first cgf::;last cgf::;theta];
  r}
 
@@ -351,7 +351,7 @@ checkcfgrad:{[e;rf;n]
 
 / regularization (l)ambda, (n)etwork topology dimension
 / hgflf: (h)idden (g)radient (f)inal (l)oss functions
-nncostgrad:{[rf;n;hgflf;X;Y;theta]
+nncostgrad:{[rf;n;hgflf;Y;X;theta]
  THETA:nncut[n] theta;
  ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgflf 0;-1_THETA];
  P:hgflf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
@@ -362,8 +362,8 @@ nncostgrad:{[rf;n;hgflf;X;Y;theta]
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
-nncostgradf:{[rf;n;hgflf;X;Y]
- cgf:nncostgrad[rf;n;hgflf;X;Y]::;
+nncostgradf:{[rf;n;hgflf;Y;X]
+ cgf:nncostgrad[rf;n;hgflf;Y;X]::;
  (first cgf::;last cgf::)}
 
 / stochastic gradient descent

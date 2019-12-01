@@ -79,16 +79,23 @@ THETA:enlist theta:2#0f         / initial values
 -1"or even until convergence";
 .ml.gd[alpha;.ml.lingrad[();X;Y]] over THETA
 
--1"check that we've implemented the gradient correctly";
-cf:.ml.lincost[.ml.l2[1];X;Y]enlist::
-gf:first .ml.lingrad[.ml.l2[1];X;Y]enlist::
+l:1000f / l2 regularization factor
+-1"we can reduce over-fitting by adding l2 regularization";
+.ml.gd[alpha;.ml.lingrad[.ml.l2[l];X;Y]] over THETA
+
+-1"we can also use the fmincg minimizer to obtain optimal theta values";
+first .fmincg.fmincg[1000;.ml.lincostgrad[.ml.l2[l];X;Y];theta]
+
+-1"linear regression with l2 regularization has a closed-form solution";
+-1"called ridge regression";
+-1"in this example, we fit an un-regularized intercept";
+.ml.ridge[0f,count[X]#l;Y;.ml.prepend[1f]X]
+
+-1"let's check that we've implemented the gradient calculations correctly";
+cf:.ml.lincost[.ml.l2[l];X;Y]enlist::
+gf:first .ml.lingrad[.ml.l2[l];X;Y]enlist::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-cgf:.ml.lincostgrad[.ml.l2[1];X;Y]
+cgf:.ml.lincostgrad[.ml.l2[l];X;Y]
 cf:first cgf::
 gf:last cgf::
 .util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
-
--1"now use the fmincg minimizer to obtain optimal theta coefficients";
-first .fmincg.fmincg[1000;.ml.lincostgrad[();X;Y];theta]
-
-

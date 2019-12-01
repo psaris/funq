@@ -145,7 +145,13 @@ converge:{[p;c]
 / (a)lpha: learning rate, gf: gradient function
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
-normeq:{mm[mmt[x;y]] minv mmt[y;y]} / normal equations
+/ given target matrix Y and data matri(X),
+/ return the THETA matrix resulting from minimizing sum of squared residuals
+normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
+
+/ given (l)2 regularization parameter, target matrix Y and data matri(X),
+/ return the THETA matrix resulting from performing ridge regression
+ridge:{[l;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l}
 
 / null-aware operators account for nulls in matrices
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}

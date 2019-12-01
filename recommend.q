@@ -136,7 +136,7 @@ n:(nu;nf)
 thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;Y;n];thetax] / learn
+thetax:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];thetax] / learn
 
 -1"predict missing ratings";
 P:b+ub+mb+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
@@ -157,7 +157,7 @@ i:.ml.mwhere not null R
 -1"define cost function";
 cf:.ml.cfcost[rf;Y] .
 -1"define minimization function";
-mf:.ml.cfupd1[.2;Y;.05f]
+mf:.ml.cfupd1[.05;.2;Y]
 -1"keep running mf until improvement is lower than pct limit";
 
 THETAX:last(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX

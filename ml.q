@@ -115,7 +115,7 @@ cfgrad:{[rf;Y;THETA;X]
 cfcut:{[n;x](n[1],0N)#/:(0,prd n)_x}
 
 / collaborative filtering cost & gradient
-cfcostgrad:{[rf;Y;n;thetax]
+cfcostgrad:{[rf;n;Y;thetax]
  THETA:first X:cfcut[n] thetax;X@:1;
  J:(.5%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
  G:(1f%m)*(mmt[X;E];mm[THETA;E]);
@@ -124,7 +124,7 @@ cfcostgrad:{[rf;Y;n;thetax]
 
 / collaborative filtering update one rating
 / (a)lpha: learning rate, (xy): coordinates of Y to update
-cfupd1:{[l2;Y;a;THETAX;xy]
+cfupd1:{[a;l2;Y;THETAX;xy]
  e:(Y . xy)-dot . tx:THETAX .'i:flip(::;xy);
  THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l2*tx];
  THETAX}
@@ -345,7 +345,7 @@ checkcfgrad:{[e;rf;n]
  Y:mm[nf?/:nu#1f]nm?/:nf#1f;    / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
- cgf:cfcostgrad[rf;Y;n];                     / cost gradient function
+ cgf:cfcostgrad[rf;n;Y];                     / cost gradient function
  r:checkgrad[e;first cgf::;last cgf::;thetax];
  r}
 

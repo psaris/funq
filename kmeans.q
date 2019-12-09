@@ -29,7 +29,7 @@ show .util.plot[19;10;.util.c10;sum] X
 -1"the forgy method is the simplest to implement";
 .ml.kmeans[X] over neg[k]?/:X
 -1"the k-means++ method is supplied as an alternate initialization method";
-.ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()
+.ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()
 -1"the random partition method can also be done by hand";
 .ml.kmeans[X] over (avg'') X@\:value group count[X 0]?k
 -1"we can plot the data and overlay the centroids found using kmeans++";
@@ -51,7 +51,7 @@ show .ml.kmedians[X] scan neg[k]?/:X
 show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
 
 -1"we iteratively call kmeans until convergence";
-C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]/ ()
+C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]// 2#()
 -1"and can show which group each data point was assigned to";
 show m:.ml.mode each y I:.ml.cgroup[.ml.edist2;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
@@ -61,7 +61,7 @@ show .util.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
 -1"we can also plot the total ssw from using different values for k";
-C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] each 1+til 10
+C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()}[X] each 1+til 10
 show .util.plt .ml.dist[X] peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
@@ -79,7 +79,7 @@ show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
 X:uef.a1
 show .util.plot[39;20;.util.c10;sum] X
 -1"first we generate the centroids for a few values for k";
-C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]/ ()}[X] peach ks:10+til 20
+C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()}[X] peach ks:10+til 20
 -1"then we cluster the data";
 I:.ml.cgroup[.ml.edist2;X] peach C
 -1"plot elbow curve (k vs ssw)";

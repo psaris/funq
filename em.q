@@ -88,7 +88,7 @@ k:10
 -1"we first initialize phi to be equal weight across all clusters";
 phi:k#1f%k                      / equal prior probability
 -1"then we use the hamming distance to pick different prototypes";
-mu:flip last k .ml.kpp[.ml.hdist;X]/ () / pick k distant proto
+mu:flip last k .ml.kpp[.ml.hdist;X]// 2#() / pick k distant proto
 -1"and finally we add a bit of noise without 'pathological' extreme values";
 mu:.5*mu+.15+count[X]?/:k#.7            / randomly disturb around .5
 -1"display a few initial prototypes";

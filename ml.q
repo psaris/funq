@@ -417,12 +417,12 @@ wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
 / using (d)istance (f)function and matri(X), append the next centroid
-/ to the pair (min centroid (d)istance;all (C)centroids)
-kpp:{[df;X;dC]
- if[not count C:dC 1;:(0w;X@\:1?count X 0)]; / first centroid
- if[count[X 0]=n:count C 0;:dC];             / no more centroids
- d:dC[0]&df[X] C[;n-1];                      / update distance vector
- C:C,'X@\: first iwrand[1] d;                / pick next centroid
+/ to the min centroid (d)istance and all (C)centroids
+kpp:{[df;X;d;C]
+ if[not count C;:(0w;X@\:1?count X 0)]; / first centroid
+ if[count[X 0]=n:count C 0;:(d;C)];     / no more centroids
+ d&:df[X] C[;n-1];                      / update distance vector
+ C:C,'X@\: first iwrand[1] d;           / pick next centroid
  (d;C)}
 kmeanspp:kpp[edist2]
 
@@ -502,10 +502,10 @@ lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
 / between new and remaining clusters, (D)issimilarity matrix, and (I)ndex
 / list, return updated D and I
-lancewilliams:{[lf;DI]
- D:DI 0;I:DI 1; n:count D;
+lancewilliams:{[lf;D;I]
+ n:count D;
  d:D@'di:imin peach D;                          / find closest distances
- if[null d@:i:imin d;:DI]; j:di i;              / find closest clusters
+ if[null d@:i:imin d;:(D;I)]; j:di i;           / find closest clusters
  c:$[9h=type lf;lf;lf(freq I 0)@/:(i;j;til n)]; / determine coefficients
  nd:sum c*nd,(d;abs(-/)nd:D (i;j));             / calc new distances
  D[;i]:D[i]:nd;                                 / update distances
@@ -520,7 +520,7 @@ lancewilliams:{[lf;DI]
 link:{[lf;D]
  D:@'[D;i:til count D;:;0n];                    / ignore loops
  if[-11h=type lf;lf:get lf];                    / dereference lf
- l:1_last lancewilliams[lf] over (D;(i;();())); / obtain linkage stats
+ l:1_last .[lancewilliams lf] over (D;(i;();())); / obtain linkage stats
  l}
  
 / use (l)ink stats to create (k) clusters
@@ -919,10 +919,9 @@ ct:dt[oig;oig;wgini]           / classification tree
 rt:dt[oig;oig;wmse]            / regression tree
 stump:dt[gr;ogr;wentropy;1;1]  / decision stump (one split)
 
-/ (t)rain (f)unction, (c)lassifier (f)unction, (t)able,
-/ (alpha;model;weights)
-adaboost:{[tf;cf;t;amw]
- w:last amw;
+/ given (t)rain (f)unction, (c)lassifier (f)unction, (t)able, (w)eights
+/ return new (a)lpha, (m)odel, (w)eights
+adaboost:{[tf;cf;t;w]
  m:tf[w] t;                     / train model
  yh:cf[m] each t;               / predict
  e:sum w*not yh=y:first flip t; / weighted error

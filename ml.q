@@ -246,9 +246,9 @@ imin:{x?min x}                  / index of min element
 
 / one vs all
 
-/ given (m)inimization (f)unction, (c)ost (g)radient (f)unction,
-/ fit a one-vs-all model against Y for each unique (lbls)
-fitova:{[mf;cgf;Y;lbls] (mf cgf "f"$Y=) peach lbls}
+/ given binary classification fitting (f)unction, fit a one-vs-all model
+/ against Y for each unique (lbls)
+fitova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 
 / given data matri(X) and (THETA) coefficients, return integer of THETA
 / vector which produces highest one-vs-all value (probability)

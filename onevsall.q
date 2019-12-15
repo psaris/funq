@@ -17,18 +17,18 @@ plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 
 lbls:til 10
 rf:.ml.l2[1]                    / regularization function
-theta:(1+count X)#0f
-mf:(first .fmincg.fmincg[5;;theta]::) / pass minimization func as parameter
-cgf:.ml.logcostgrad[rf;;X] / pass cost & gradient function as parameter
+theta:(1+count X)#0f            / initial theta coefficients
+
+f:first .fmincg.fmincg[5;;theta] .ml.logcostgrad[rf;;X]@
 
 -1"to run one-vs-all",$[count rf;" with regularization";""];
 -1"we perform multiple runs of logistic regression (one for each digit)";
 -1"this trains one set of parameters for each number";
 -1 .util.box["**"] "for performance, we peach across digits";
-theta:.ml.fitova[mf;cgf;Y;lbls]
+THETA:.ml.fitova[f;Y;lbls]
 
 -1"checking accuracy of parameters";
-avg yt=p:.ml.clfova[Xt] enlist theta
+avg yt=p:.ml.clfova[Xt] enlist THETA
 
 -1"view a few confused characters";
 w:where not yt=p

@@ -8,7 +8,7 @@
 -1"shrinking training set";
 X:1000#'X;y:1000#y;
 -1"normalize data set";
-X%:255f
+X%:255f;Xt%:255f
 
 -1"define a plot function (which includes the empty space character)";
 plt:.util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
@@ -95,17 +95,17 @@ first .ml.nncostgrad[();n;hgflf;Y;X;theta]
 -1"how well did we learn on the training data set?";
 avg y=p:.ml.clfova[X] .ml.nncut[n] theta
 
--1"we can visualize the hidden features"
+-1"we can visualize the hidden features";
 plt 1_ rand first .ml.nncut[n] theta
 
--1"or view a few mistakes"
+-1"or view a few mistakes";
 p w:where not y=p
 do[2;-1 value plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
 avg yt=p:.ml.clfova[Xt] .ml.nncut[n] theta
 
--1"or view a few mistakes"
+-1"or view a few mistakes";
 p w:where not yt=p
 do[2;-1 value plt Xt[;i:rand w];show ([]p;yt) i]
 

@@ -8,7 +8,7 @@
 `X`Xt`Y`y`yt set' mnist`X`Xt`Y`y`yt;
 -1"shrinking training set";
 X:1000#'X;Y:1000#'Y;y:1000#y;
-
+X%:255f;Xt%:255f
 
 -1"define a plot function (which includes the empty space character)";
 plt:.util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut

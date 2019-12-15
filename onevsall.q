@@ -15,7 +15,7 @@ plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 -1"visualize the data";
 -1 (,'/) plt each X@\:/: -4?count X 0;
 
-lbls:til 10
+lbls:"i"$til 10
 rf:.ml.l2[1]                    / regularization function
 theta:(1+count X)#0f            / initial theta coefficients
 
@@ -28,11 +28,11 @@ f:first .fmincg.fmincg[5;;theta] .ml.logcostgrad[rf;;X]@
 THETA:.ml.fitova[f;Y;lbls]
 
 -1"checking accuracy of parameters";
-avg yt=p:.ml.clfova[Xt] enlist THETA
+avg yt=p:lbls .ml.clfova[Xt] enlist THETA
 
 -1"view a few confused characters";
 w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
+show .util.totals[`TOTAL] .ml.cm[yt;p]

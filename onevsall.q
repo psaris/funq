@@ -11,9 +11,9 @@ X:1000#'X;Y:1000#'Y;y:1000#y;
 X%:255f;Xt%:255f
 
 -1"define a plot function (which includes the empty space character)";
-plt:.util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
+plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 -1"visualize the data";
--1 value (,') over plt each flip  X[;-4?count X 0];
+-1 (,'/) plt each flip X[;-4?count X 0];
 
 lbls:til 10
 rf:.ml.l2[1]                    / regularization function
@@ -32,7 +32,7 @@ avg yt=p:.ml.clfova[Xt] enlist theta
 
 -1"view a few confused characters";
 w:where not yt=p
-do[2;show value plt Xt[;i:rand w];show ([]p;yt) i]
+do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"view the confusion matrix";
 show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]

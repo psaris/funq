@@ -11,9 +11,9 @@ X:1000#'X;y:1000#y;
 X%:255f;Xt%:255f
 
 -1"define a plot function (which includes the empty space character)";
-plt:.util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
+plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 -1"visualize the data";
--1 value (,') over plt each flip  X[;-4?count X 0];
+-1 (,'/) plt each flip X[;-4?count X 0];
 
 -1"we first generate a matrix of y values where each row only has a single 1 value";
 -1"the location of which corresponds the the digit in the dataset";
@@ -100,14 +100,14 @@ plt 1_ rand first .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not y=p
-do[2;-1 value plt X[;i:rand w];show ([]p;y) i]
+do[2;-1 plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
 avg yt=p:.ml.clfova[Xt] .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not yt=p
-do[2;-1 value plt Xt[;i:rand w];show ([]p;yt) i]
+do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 / confusion matrix
 show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]

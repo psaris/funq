@@ -13,7 +13,7 @@ X%:255f;Xt%:255f
 -1"define a plot function (which includes the empty space character)";
 plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
 -1"visualize the data";
--1 (,'/) plt each flip X[;-4?count X 0];
+-1 (,'/) plt each X@\:/: -4?count X 0;
 
 -1"we first generate a matrix of y values where each row only has a single 1 value";
 -1"the location of which corresponds the the digit in the dataset";

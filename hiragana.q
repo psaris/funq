@@ -20,7 +20,7 @@ system "S ",string "i"$.z.T
 
 -1"view 4 random drawings of the same character";
 plt:value .util.plot[64;32;.util.c10;avg] .util.hmap flip 64 cut
--1 (,'/) plt each flip X[;rand[count h]+count[distinct y]*til 4];
+-1 (,'/) plt each X@\:/: rand[count h]+count[distinct y]*til 4;
 
 -1"generate neural network topology with one hidden layer";
 n:0N!{(x;(x+y) div 2;y)}[count X;count h]
@@ -40,8 +40,8 @@ avg y=p:.ml.clfova[X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";
--1 (,'/) plt each flip X[;value ([]p;y) rw:rand w];
--1 (,'/) plt each flip X[;value ([]p;y) rw:rand w];
+-1 (,'/) plt each X@\:/: value ([]p;y) rw:rand w;
+-1 (,'/) plt each X@\:/: value ([]p;y) rw:rand w;
 
 -1"view the confusion matrix";
 show .util.totals[`TOTAL] .ml.cm[y;"j"$p]

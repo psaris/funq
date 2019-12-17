@@ -315,7 +315,7 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  p}
 
 / neural network cut
-nncut:{[n;x](1+-1_n) cut' (sums {x*y+1} prior -1_n) cut x}
+nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
 diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
 eye:{diag x#1f}
 

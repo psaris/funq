@@ -191,20 +191,26 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 prb:dax[%;sum]                  / convert densities into probabilities
 
 / activation functions (derivatives optionally accept `z`a!(z;a) dict)
-sigmoid:1f%1f+exp neg::
-dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]}
-tanh:{(a-b)%(a:exp x)+b:exp neg x}
-dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}
-relu:0f|
-drelu:{"f"$0f<=$[99h=type x;x`z;x]}
-lrelu:{x*1 .01@0f>x}
-dlrelu:{1 .01@0f>$[99h=type x;x`z;x]}
-
-/ compute the log loss given true (y) and (p)redicted values
-logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
+sigmoid:1f%1f+exp neg::                       / sigmoid
+dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
+tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
+dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyberbolic tangent gradient
+relu:0f|                              / rectified linear unit
+drelu:{"f"$0f<=$[99h=type x;x`z;x]}   / rectified linear unit gradient
+lrelu:{x*1 .01@0f>x}                  / leaky rectified linear unit
+dlrelu:{1 .01@0f>$[99h=type x;x`z;x]} / leaky rectified linear unit gradient
 
 softmax:prb exp::               / softmax
 ssoftmax:softmax dax[-;max]::   / stable softmax
+dsoftmax:{diag[x] - x*\:/:x:softmax x} / softmax gradient
+linear:(::)
+
+/ given true (y) and (p)redicted values return the log loss
+logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
+/ given true (y) and (p)redicted values return the cross entropy loss 
+celoss:{[y;p]neg sum y*log 1e-15|p}
+/ given true (y) and (p)redicted values return the mean squared error loss
+mseloss:{[y;p].5*y*y-:p}
 
 lpredict:sigmoid predict::      / logistic regression predict
 

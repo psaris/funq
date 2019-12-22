@@ -44,15 +44,27 @@ rf:.ml.l2[1f];                  / regularization function
 -1"the cost and gradient calculations are expensive but share intermediate values";
 -1"it is therefore important to compute both simultaneously";
 hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
-/hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
-/hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
-/hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
 show .ml.nncostgrad[rf;n;hgflf;Y;X;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
 -1"as a discrete (and slower to calculate) gradient.";
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-4;.ml.l2[.1];3 5 10 50 2;hgflf]
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;.ml.l2[.1];3 5 10 50 2;hgflf]
+-1"confirming gradient of a few different activation and loss functions";
+hgflf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+hgflf:`.ml.relu`.ml.drelu`.ml.softmax`.ml.celoss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+hgflf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+hgflf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+hgflf:`.ml.tanh`.ml.dtanh`.ml.softmax`.ml.celoss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+hgflf:`.ml.tanh`.ml.dtanh`.ml.linear`.ml.mseloss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgflf]
+
+hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 
 -1"we can now run (batch) gradient descent across the whole datatset.";
 -1"this will always move along the steepest gradient, but makes slow progress";
@@ -96,7 +108,7 @@ first .ml.nncostgrad[();n;hgflf;Y;X;theta]
 avg y=p:.ml.clfova[X] .ml.nncut[n] theta
 
 -1"we can visualize the hidden features";
-plt 1_ rand first .ml.nncut[n] theta
+-1 plt 1_ rand first .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not y=p

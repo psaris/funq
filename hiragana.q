@@ -30,9 +30,9 @@ Y:.ml.diag[last[n]#1f]@\:"i"$y
 theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 rf:.ml.l2[1]                     / l2 regularization function
 -1"run mini-batch stochastic gradient descent",$[count rf;" with l2 regularization";""];
-hgflf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
+hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
 
-mf:{[THETA;i]first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgflf;Y[;i];X[;i]];THETA]}
+mf:{[THETA;i]first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THETA]}
 theta:1 .ml.sgd[mf;0N?;100;X]/ theta
 
 -1"checking accuracy of parameters";

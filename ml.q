@@ -336,13 +336,13 @@ checkgrad:{[e;cf;gf;theta]
  ng:numgrad[cf;theta] count[theta]#e; / numerical gradient
  (ag;ng)}
 
-/ hgflf: (h)idden (g)radient (f)inal (l)oss functions
-checknngrad:{[e;rf;n;hgflf]
+/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
+checknngrad:{[e;rf;n;hgolf]
  theta:2 raze/ glorotu'[1+-1_n;1_n];
  X:glorotu[n 1;n 0];
  y:1+(1+til n 1) mod last n;
  Y:flip eye[last n]"i"$y-1;
- cgf:nncostgrad[rf;n;hgflf;Y;X]; / cost gradient function
+ cgf:nncostgrad[rf;n;hgolf;Y;X]; / cost gradient function
  r:checkgrad[e;first cgf::;last cgf::;theta];
  r}
 
@@ -356,20 +356,20 @@ checkcfgrad:{[e;rf;n]
  r}
 
 / regularization (l)ambda, (n)etwork topology dimension
-/ hgflf: (h)idden (g)radient (f)inal (l)oss functions
-nncostgrad:{[rf;n;hgflf;Y;X;theta]
+/ hgolf: (h)idden (g)radient (f)inal (l)oss functions
+nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;
- ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgflf 0;-1_THETA];
- P:hgflf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
- J:(1f%m:count X 0)*sum (sum') hgflf[3][Y;P];        / loss
- G:hgflf[1]@'`z`a!/:1_ZA;       / activation gradients
+ ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgolf 0;-1_THETA];
+ P:hgolf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
+ J:(1f%m:count X 0)*sum (sum') hgolf[3][Y;P];        / loss
+ G:hgolf[1]@'`z`a!/:1_ZA;       / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
-nncostgradf:{[rf;n;hgflf;Y;X]
- cgf:nncostgrad[rf;n;hgflf;Y;X]::;
+nncostgradf:{[rf;n;hgolf;Y;X]
+ cgf:nncostgrad[rf;n;hgolf;Y;X]::;
  (first cgf::;last cgf::)}
 
 / stochastic gradient descent

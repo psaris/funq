@@ -366,10 +366,10 @@ checkcfgrad:{[e;rf;n]
 / hgolf: (h)idden (g)radient (f)inal (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;
- ZA:enlist[(X;X)],{(z;y z:mm[z;prepend[1f] x 1])}\[(X;X);hgolf 0;-1_THETA];
- P:hgolf[2] mm[last THETA;prepend[1f] last last ZA]; / final layer
- J:(1f%m:count X 0)*sum (sum') hgolf[3][Y;P];        / loss
- G:hgolf[1]@'`z`a!/:1_ZA;       / activation gradients
+ ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf 0;-1_THETA];
+ P:hgolf[2] predict[last[ZA]1;last THETA];    / final layer
+ J:(1f%m:count X 0)*sum (sum') hgolf[3][Y;P]; / loss
+ G:hgolf[1]@'`z`a!/:1_ZA;                     / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];

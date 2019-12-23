@@ -191,6 +191,8 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 prb:dax[%;sum]                  / convert densities into probabilities
 
 / activation functions (derivatives optionally accept `z`a!(z;a) dict)
+linear:(::)                                   / linear
+dlinear:{1f+0f*$[99h=type x;x`z;x]}           / linear gradient
 sigmoid:1f%1f+exp neg::                       / sigmoid
 dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
 tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
@@ -203,7 +205,6 @@ dlrelu:{1 .01@0f>$[99h=type x;x`z;x]} / leaky rectified linear unit gradient
 softmax:prb exp::               / softmax
 ssoftmax:softmax dax[-;max]::   / stable softmax
 dsoftmax:{diag[x] - x*\:/:x:softmax x} / softmax gradient
-linear:(::)
 
 / given true (y) and (p)redicted values return the log loss
 logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
@@ -258,7 +259,7 @@ fitova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 
 / given data matri(X) and (THETA) coefficients, return integer of THETA
 / vector which produces highest one-vs-all value (probability)
-clfova:{[X;THETA]f2nd[imax] X lpredict/ THETA}
+clfova:{[Y]f2nd[imax] Y}
 
 / binary classification evaluation metrics (summary statistics)
 
@@ -319,6 +320,12 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  m:ff[t];                       / fit model
  p:pf[m] ts i;                  / use model to make predictions
  p}
+
+ / use (h)idden and (o)utput layer functions to predict neural network Y
+nnpredict:{[hof;X;THETA]
+ X:X (hof[0] predict::)/ -1_THETA;
+ Y:hof[1] predict[X] last THETA;
+ Y}
 
 / neural network cut
 nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}

@@ -63,6 +63,8 @@ hgolf:`.ml.tanh`.ml.dtanh`.ml.softmax`.ml.celoss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`.ml.tanh`.ml.dtanh`.ml.linear`.ml.mseloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+hgolf:`.ml.linear`.ml.dlinear`.ml.linear`.ml.mseloss
+.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 
 hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 
@@ -105,7 +107,7 @@ theta:(1f<first .ml.nncostgrad[();n;hgolf;Y;X]::) .ml.sgd[mf;0N?;10000;X]/ theta
 first .ml.nncostgrad[();n;hgolf;Y;X;theta]
 
 -1"how well did we learn on the training data set?";
-avg y=p:.ml.clfova[X] .ml.nncut[n] theta
+avg y=p:.ml.clfova .ml.nnpredict[hgolf 0 2;X] .ml.nncut[n] theta
 
 -1"we can visualize the hidden features";
 -1 plt 1_ rand first .ml.nncut[n] theta
@@ -115,7 +117,7 @@ p w:where not y=p
 do[2;-1 plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
-avg yt=p:.ml.clfova[Xt] .ml.nncut[n] theta
+avg yt=p:.ml.clfova .ml.nnpredict[hgolf 0 2;Xt] .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not yt=p

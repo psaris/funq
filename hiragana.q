@@ -1,4 +1,4 @@
-\c 100 300
+\c 40 100
 \l funq.q
 \l etl9b.q
 
@@ -19,24 +19,24 @@ X:500#'X;y:500#y;h:500#h;
 system "S ",string "i"$.z.T
 
 -1"view 4 random drawings of the same character";
-plt:value .util.plot[64;32;.util.c10;avg] .util.hmap flip 64 cut
+plt:value .util.plot[32;16;.util.c10;avg] .util.hmap flip 64 cut
 -1 (,'/) plt each X@\:/: rand[count h]+count[distinct y]*til 4;
 
 -1"generate neural network topology with one hidden layer";
 n:0N!{(x;(x+y) div 2;y)}[count X;count h]
 Y:.ml.diag[last[n]#1f]@\:"i"$y
 
--1"initialize theta with random weights";
-theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 rf:.ml.l2[1]                     / l2 regularization function
 -1"run mini-batch stochastic gradient descent",$[count rf;" with l2 regularization";""];
-hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
+hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
+-1"initialize theta with random weights";
+theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 
-mf:{[THETA;i]first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THETA]}
-theta:1 .ml.sgd[mf;0N?;100;X]/ theta
+mf:{[THETA;i]first .fmincg.fmincg[10;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THETA]}
+theta:2 .ml.sgd[mf;0N?;250;X]/ theta
 
 -1"checking accuracy of parameters";
-avg y=p:.ml.clfova[X] .ml.nncut[n] theta
+avg y=p:.ml.clfova .ml.nnpredict[hgolf 0 2;X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";

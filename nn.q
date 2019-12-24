@@ -1,6 +1,7 @@
 \c 20 100
 \l funq.q
 \l mnist.q
+\l winequality.q
 
 / digit recognition
 -1"referencing mnist data from global namespace";
@@ -123,6 +124,45 @@ avg yt=p:.ml.clfova .ml.nnpredict[hgolf 0 2;Xt] .ml.nncut[n] theta
 p w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
-/ confusion matrix
+-1"we can view the confusion matrix as well";
 show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
+-1"neural networks are not limited to classification problems.";
+-1"using a linear activation function on the output layer";
+-1"along with a means squared (aka quadratic) error loss function";
+-1"our feed forward neural network can be used for non-linear regression.";
+
+-1"we split the wine quality data into train and test partitions";
+d:`train`test!.ml.part[3 1] winequality.red.t
+X:1_value flip d.train
+Y:1#value flip d.train
+-1"and then z-score the train and test data";
+a:avg each X
+sd:sdev each X
+Xt:1_value flip d.test
+Yt:1#value flip d.test
+X:(X-a)%sd
+Xt:(Xt-a)%sd
+
+
+-1"next we define the topology";
+n:{(x;(x+y) div 2;y)}[count X;count Y];
+-1"add some regularization";
+rf:.ml.l2[l:10f];
+-1"add initialize the THETA coefficients";
+theta:2 raze/ THETA:.ml.heu'[1+-1_n;1_n];
+-1"using the (leaky) rectified linear unit prevents vanishing gradients";
+hgolf:`.ml.lrelu`.ml.dlrelu`.ml.linear`.ml.mseloss
+theta:first r:.fmincg.fmincg[1000;.ml.nncostgrad[rf;n;hgolf;Y;X]::;theta]
+
+-1"before revealing how our non-linear neural network faired,";
+-1"lets review the mse resulting from ridge regression on the train data";
+THETA:.ml.ridge[0f,count[X]#l;Y;.ml.prepend[1f]X]
+.ml.lincost[();Y;X] THETA
+-1"and the test data";
+.ml.lincost[();Yt;Xt] THETA
+
+-1"now we check for a reduction in the mse using the neural network";
+.ml.nncost[();n;hgolf;Y;X] theta
+-1"and the test data";
+.ml.nncost[();n;hgolf;Yt;Xt] theta

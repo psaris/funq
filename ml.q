@@ -81,7 +81,7 @@ enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 
 / linear regression cost
 lincost:{[rf;Y;X;THETA]
- J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;prepend[1f] X]-Y;
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^predict[X;THETA]-Y;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
@@ -217,7 +217,7 @@ lpredict:sigmoid predict::      / logistic regression predict
 
 / logistic regression cost
 logcost:{[rf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') logloss[Y] sigmoid mm[THETA] prepend[1f] X;
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] lpredict[X;THETA];
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
@@ -236,8 +236,8 @@ logcostgrad:{[rf;Y;X;theta]
 
 logcostgradf:{[rf;Y;X]
  Jf:logcost[rf;Y;X]enlist::;
- gf:loggrad[rf;Y;X]enlist::;
- (Jf;gf)}
+ Gf:loggrad[rf;Y;X]enlist::;
+ (Jf;Gf)}
 
 / Xavier Glorot and Yoshua Bengio (2010) initialization
 / given the number of (i)nput and (o)utput nodes, initialize THETA matrix
@@ -362,22 +362,43 @@ checkcfgrad:{[e;rf;n]
  r:checkgrad[e;first cgf::;last cgf::;thetax];
  r}
 
-/ regularization (l)ambda, (n)etwork topology dimension
-/ hgolf: (h)idden (g)radient (f)inal (l)oss functions
-nncostgrad:{[rf;n;hgolf;Y;X;theta]
- THETA:nncut[n] theta;
+/ (r)egularization (f)unction, (n)etwork topology dimension
+/ hgolf: (h)idden (g)radient (o)output (l)oss functions
+nncost:{[rf;n;hgolf;Y;X;theta]
+ THETA:nncut[n] theta; m:count X 0;
+ J:(1f%m)*sum (sum') hgolf[3][Y] nnpredict[hgolf 0 2;X] THETA;
+ if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
+ J}
+
+/ (r)egularization (f)unction, (n)etwork topology dimension
+/ hgolf: (h)idden (g)radient (o)output (l)oss functions
+nngrad:{[rf;n;hgolf;Y;X;theta]
+ THETA:nncut[n] theta; m:count X 0;
  ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf 0;-1_THETA];
  P:hgolf[2] predict[last[ZA]1;last THETA];    / final layer
- J:(1f%m:count X 0)*sum (sum') hgolf[3][Y;P]; / loss
  G:hgolf[1]@'`z`a!/:1_ZA;                     / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
- G:((D,enlist E) mmt' prepend[1f] each ZA[;1])%m; / full gradient
+ G:(1%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
+ if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
+ 2 raze/ G}
+
+/ (r)egularization (f)unction, (n)etwork topology dimensions
+/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
+nncostgrad:{[rf;n;hgolf;Y;X;theta]
+ THETA:nncut[n] theta; m:count X 0;
+ ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf 0;-1_THETA];
+ P:hgolf[2] predict[last[ZA]1;last THETA];    / final layer
+ J:(1f%m)*sum (sum') hgolf[3][Y;P];           / cost
+ G:hgolf[1]@'`z`a!/:1_ZA;                     / activation gradients
+ D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
+ G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
 nncostgradf:{[rf;n;hgolf;Y;X]
- cgf:nncostgrad[rf;n;hgolf;Y;X]::;
- (first cgf::;last cgf::)}
+ Jf:nncost[rf;n;hgolf;Y;X];
+ Gf:nngrad[rf;n;hgolf;Y;X];
+ (Jf;Gf)}
 
 / stochastic gradient descent
 

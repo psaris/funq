@@ -28,7 +28,7 @@ Y:.ml.diag[last[n]#1f]@\:"i"$y
 
 rf:.ml.l2[1]                     / l2 regularization function
 -1"run mini-batch stochastic gradient descent",$[count rf;" with l2 regularization";""];
-hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
+hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 
@@ -36,7 +36,7 @@ mf:{[THETA;i]first .fmincg.fmincg[10;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THET
 theta:2 .ml.sgd[mf;0N?;250;X]/ theta
 
 -1"checking accuracy of parameters";
-avg y=p:.ml.clfova .ml.nnpredict[hgolf 0 2;X] .ml.nncut[n] theta
+avg y=p:.ml.clfova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";

@@ -321,10 +321,10 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  p:pf[m] ts i;                  / use model to make predictions
  p}
 
- / use (h)idden and (o)utput layer functions to predict neural network Y
+/ use (h)idden and (o)utput layer functions to predict neural network Y
 nnpredict:{[hof;X;THETA]
- X:X (hof[0] predict::)/ -1_THETA;
- Y:hof[1] predict[X] last THETA;
+ X:X (hof[`h] predict::)/ -1_THETA;
+ Y:hof[`o] predict[X] last THETA;
  Y}
 
 / neural network cut
@@ -363,20 +363,20 @@ checkcfgrad:{[e;rf;n]
  r}
 
 / (r)egularization (f)unction, (n)etwork topology dimension
-/ hgolf: (h)idden (g)radient (o)output (l)oss functions
-nncost:{[rf;n;hgolf;Y;X;theta]
+/ holf: (h)idden (o)utput (l)oss functions
+nncost:{[rf;n;holf;Y;X;theta]
  THETA:nncut[n] theta; m:count X 0;
- J:(1f%m)*sum (sum') hgolf[3][Y] nnpredict[hgolf 0 2;X] THETA;
+ J:(1f%m)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
  if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
  J}
 
 / (r)egularization (f)unction, (n)etwork topology dimension
-/ hgolf: (h)idden (g)radient (o)output (l)oss functions
-nngrad:{[rf;n;hgolf;Y;X;theta]
+/ hgof: (h)idden (g)radient (o)utput functions
+nngrad:{[rf;n;hgof;Y;X;theta]
  THETA:nncut[n] theta; m:count X 0;
- ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf 0;-1_THETA];
- P:hgolf[2] predict[last[ZA]1;last THETA];    / final layer
- G:hgolf[1]@'`z`a!/:1_ZA;                     / activation gradients
+ ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgof`h;-1_THETA];
+ P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
+ G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
@@ -386,10 +386,10 @@ nngrad:{[rf;n;hgolf;Y;X;theta]
 / hgolf: (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta; m:count X 0;
- ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf 0;-1_THETA];
- P:hgolf[2] predict[last[ZA]1;last THETA];    / final layer
- J:(1f%m)*sum (sum') hgolf[3][Y;P];           / cost
- G:hgolf[1]@'`z`a!/:1_ZA;                     / activation gradients
+ ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf`h;-1_THETA];
+ P:hgolf[`o] predict[last[ZA]1;last THETA]; / final layer
+ J:(1f%m)*sum (sum') hgolf[`l][Y;P];        / cost
+ G:hgolf[`g]@'`z`a!/:1_ZA;                  / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];

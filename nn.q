@@ -44,7 +44,7 @@ rf:.ml.l2[1f];                  / regularization function
 -1"then backpropagates the errors and gradient for each layer.";
 -1"the cost and gradient calculations are expensive but share intermediate values";
 -1"it is therefore important to compute both simultaneously";
-hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
+hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.sigmoid`.ml.logloss
 show .ml.nncostgrad[rf;n;hgolf;Y;X;theta]
 
 -1"in addition, it is important to confirm that the analytic gradient we compute";
@@ -52,22 +52,22 @@ show .ml.nncostgrad[rf;n;hgolf;Y;X;theta]
 -1"as a discrete (and slower to calculate) gradient.";
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;.ml.l2[.1];3 5 10 50 2;hgolf]
 -1"confirming gradient of a few different activation and loss functions";
-hgolf:`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
+hgolf:`h`g`o`l!`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.relu`.ml.drelu`.ml.softmax`.ml.celoss
+hgolf:`h`g`o`l!`.ml.relu`.ml.drelu`.ml.softmax`.ml.celoss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
+hgolf:`h`g`o`l!`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
+hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.tanh`.ml.dtanh`.ml.softmax`.ml.celoss
+hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.softmax`.ml.celoss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.tanh`.ml.dtanh`.ml.linear`.ml.mseloss
+hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.linear`.ml.mseloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
-hgolf:`.ml.linear`.ml.dlinear`.ml.linear`.ml.mseloss
+hgolf:`h`g`o`l!`.ml.linear`.ml.dlinear`.ml.linear`.ml.mseloss
 .util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 
-hgolf:`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
+hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 
 -1"we can now run (batch) gradient descent across the whole datatset.";
 -1"this will always move along the steepest gradient, but makes slow progress";
@@ -108,7 +108,7 @@ theta:(1f<first .ml.nncostgrad[();n;hgolf;Y;X]::) .ml.sgd[mf;0N?;10000;X]/ theta
 first .ml.nncostgrad[();n;hgolf;Y;X;theta]
 
 -1"how well did we learn on the training data set?";
-avg y=p:.ml.clfova .ml.nnpredict[hgolf 0 2;X] .ml.nncut[n] theta
+avg y=p:.ml.clfova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
 
 -1"we can visualize the hidden features";
 -1 plt 1_ rand first .ml.nncut[n] theta
@@ -118,7 +118,7 @@ p w:where not y=p
 do[2;-1 plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
-avg yt=p:.ml.clfova .ml.nnpredict[hgolf 0 2;Xt] .ml.nncut[n] theta
+avg yt=p:.ml.clfova .ml.nnpredict[hgolf;Xt] .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not yt=p
@@ -152,8 +152,8 @@ rf:.ml.l2[l:10f];
 -1"add initialize the THETA coefficients";
 theta:2 raze/ THETA:.ml.heu'[1+-1_n;1_n];
 -1"using the (leaky) rectified linear unit prevents vanishing gradients";
-hgolf:`.ml.lrelu`.ml.dlrelu`.ml.linear`.ml.mseloss
-theta:first r:.fmincg.fmincg[1000;.ml.nncostgrad[rf;n;hgolf;Y;X]::;theta]
+hgolf:`h`g`o`l!`.ml.lrelu`.ml.dlrelu`.ml.linear`.ml.mseloss
+theta:first r:.fmincg.fmincg[1000;.ml.nncostgrad[rf;n;hgolf;Y;X];theta]
 
 -1"before revealing how our non-linear neural network faired,";
 -1"lets review the mse resulting from ridge regression on the train data";

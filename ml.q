@@ -374,7 +374,7 @@ nncost:{[rf;n;holf;Y;X;theta]
 / hgof: (h)idden (g)radient (o)utput functions
 nngrad:{[rf;n;hgof;Y;X;theta]
  THETA:nncut[n] theta; m:count X 0;
- ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgof`h;-1_THETA];
+ ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgof`h]\ -1_THETA;
  P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
  G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
@@ -386,7 +386,7 @@ nngrad:{[rf;n;hgof;Y;X;theta]
 / hgolf: (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta; m:count X 0;
- ZA:enlist[(X;X)],{(z;y z:predict[x 1;z])}\[(X;X);hgolf`h;-1_THETA];
+ ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgolf`h]\ -1_THETA;
  P:hgolf[`o] predict[last[ZA]1;last THETA]; / final layer
  J:(1f%m)*sum (sum') hgolf[`l][Y;P];        / cost
  G:hgolf[`g]@'`z`a!/:1_ZA;                  / activation gradients

@@ -408,9 +408,8 @@ sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 
 / (w)eighted (r)egularized (a)lternating (l)east (s)quares
 wrals:{[l2;Y;THETAX]
- X:THETAX 1;
- THETA:flip updals[l2;X] peach Y;
- X:flip f2nd[updals[l2;THETA]] Y;
+ THETA:flip updals[l2;THETAX 1] peach Y; / hold X constant, solve for THETA
+ X:flip f2nd[updals[l2;THETA]] Y;        / hold THETA constant, solve for X
  (THETA;X)}
 updals:{[l2;M;y]
  l:diag count[M:M[;w]]#l2*count y@:w:where not null y;

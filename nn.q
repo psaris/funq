@@ -148,16 +148,16 @@ Xt:(Xt-a)%sd
 -1"next we define the topology";
 n:{(x;(x+y) div 2;y)}[count X;count Y];
 -1"add some regularization";
-rf:.ml.l2[l:10f];
+rf:.ml.l2[l2:10f];
 -1"add initialize the THETA coefficients";
-theta:2 raze/ THETA:.ml.heu'[1+-1_n;1_n];
+theta:2 raze/ .ml.heu'[1+-1_n;1_n];
 -1"using the (leaky) rectified linear unit prevents vanishing gradients";
 hgolf:`h`g`o`l!`.ml.lrelu`.ml.dlrelu`.ml.linear`.ml.mseloss
 theta:first r:.fmincg.fmincg[1000;.ml.nncostgrad[rf;n;hgolf;Y;X];theta]
 
 -1"before revealing how our non-linear neural network faired,";
 -1"lets review the mse resulting from ridge regression on the train data";
-THETA:.ml.ridge[0f,count[X]#l;Y;.ml.prepend[1f]X]
+THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 .ml.lincost[();Y;X] THETA
 -1"and the test data";
 .ml.lincost[();Yt;Xt] THETA

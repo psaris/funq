@@ -149,9 +149,9 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 / return the THETA matrix resulting from minimizing sum of squared residuals
 normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 
-/ given (l)2 regularization parameter, target matrix Y and data matri(X),
+/ given (l2) regularization parameter, target matrix Y and data matri(X),
 / return the THETA matrix resulting from performing ridge regression
-ridge:{[l;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l}
+ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 
 / null-aware operators account for nulls in matrices
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}

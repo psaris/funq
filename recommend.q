@@ -131,7 +131,7 @@ if[2<count key `.qml;
  "and can use regularization");
 
 nu:count R;nm:count R 0 / n users, n movies
-n:(nu;nf)
+n:(nu;nm)
 -1"randomly initialize THETA and X";
 thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
 

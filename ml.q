@@ -111,8 +111,8 @@ cfgrad:{[rf;Y;THETA;X]
  if[count rf,:();G+:sum rf[;m][;1]@\:(THETA;X)];
  G}
 
-/ collaborative filtering cut where n:(nu;nf)
-cfcut:{[n;x](n[1],0N)#/:(0,prd n)_x}
+/ collaborative filtering cut where n:(nu;nm)
+cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
 
 / collaborative filtering cost & gradient
 cfcostgrad:{[rf;n;Y;thetax]
@@ -354,7 +354,7 @@ checknngrad:{[e;rf;n;hgolf]
  r}
 
 checkcfgrad:{[e;rf;n]
- nu:n 0;nm:10 ;nf:n 1;          / n users, n movies, n features
+ nu:n 0;nm:n 1 ;nf:10;          / n users, n movies, n features
  Y:mm[nf?/:nu#1f]nm?/:nf#1f;    / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
  thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters

@@ -413,8 +413,8 @@ wrals:{[l2;Y;THETAX]
  X:flip f2nd[updals[l2;THETA]] Y;
  (THETA;X)}
 updals:{[l2;M;y]
- l:diag count[M:M[;w]]#l2*count w:where not null y;
- v:first mlsq[enlist mm[M;y w]] mmt[M;M]+l;
+ l:diag count[M:M[;w]]#l2*count y@:w:where not null y;
+ v:first mlsq[enlist mm[M;y]] mmt[M;M]+l;
  v}
 
 hdist:sum (<>)::               / hamming distance

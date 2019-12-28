@@ -191,4 +191,5 @@ THETAX:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\
 P:b+ub+mb+/:.ml.mtm . THETAX          / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
-show rpt select from (update score:last P from r) where not null rating
+show rpt r:select from (update score:last P from r) where not null rating
+.util.assert[0.13] .util.rnd[.01] .ml.mse exec rating-score from r

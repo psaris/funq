@@ -73,7 +73,9 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## One vs All Logistic Regression
 
-## Neural Networks
+## Neural Network Classification
+
+## Neural Network Regression
 
 ## Content-Based Filtering (Recommender Systems)
 

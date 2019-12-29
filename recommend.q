@@ -132,14 +132,14 @@ if[2<count key `.qml;
 
 nu:count R;nm:count R 0 / n users, n movies
 n:(nu;nm)
--1"randomly initialize THETA and X";
-thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
+-1"randomly initialize X and THETA";
+xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+nm?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
-thetax:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];thetax] / learn
+xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . THETAX:.ml.cfcut[n] thetax / predictions
+P:b+ub+mb+/:.ml.mtm . XTHETA:.ml.cfcut[n] xtheta / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -149,8 +149,8 @@ show rpt select from (update score:last P from r) where not null rating
 
 / stocastic regularized gradient descent
 
--1"randomly initialize THETA and X";
-thetax:2 raze/ THETAX:(THETA:-1+nu?/:nf#2f;X:-1+nm?/:nf#2f)
+-1"randomly initialize X and THETA";
+xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+nm?/:nf#2f)
 
 -1"use 'where' to find list of coordinates of non-null items";
 i:.ml.mwhere not null R
@@ -160,10 +160,10 @@ cf:.ml.cfcost[rf;Y] .
 mf:.ml.cfupd1[.05;.2;Y]
 -1"keep running mf until improvement is lower than pct limit";
 
-THETAX:last(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:THETAX
+XTHETA:last(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . THETAX    / predictions
+P:b+ub+mb+/:.ml.mtm . XTHETA    / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -174,21 +174,21 @@ show rpt select from (update score:last P from r) where not null rating
 / http://dl.acm.org/citation.cfm?id=1424269
 
 -1"Alterating Least Squares is used to factor the rating matrix";
--1"into a movie matrix (X) and user matrix (THETA)";
--1"by alternating between keeping X constant and solving for THETA";
+-1"into a user matrix (X) and movie matrix (THETA)";
+-1"by alternating between keeping THETA constant and solving for X";
 -1"and vice versa.  this changes a non-convex problem";
 -1"into a quadratic problem solvable with parallel least squares.";
 -1"this implementation uses a weighting scheme where";
 -1"the weights are equal to the number of ratings per user/movie";
 
--1"reset THETA and X";
-THETAX:(THETA:-1+nu?/:nf#1f;X:-1+nm?/:nf#2f)
+-1"reset X and THETA";
+XTHETA:(X:-1+nu?/:nf#1f;THETA:-1+nm?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
 
-THETAX:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\:THETAX
+XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . THETAX          / predictions
+P:b+ub+mb+/:.ml.mtm . XTHETA          / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt r:select from (update score:last P from r) where not null rating

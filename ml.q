@@ -100,34 +100,34 @@ lincostgrad:{[rf;Y;X;theta]
  (J;raze G)}
 
 / collaborative filtering cost
-cfcost:{[rf;Y;THETA;X]
- J:(.5f%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
+cfcost:{[rf;Y;X;THETA]
+ J:(.5f%m:count X 0)*sum (sum') E*E:0f^mtm[X;THETA]-Y;
  if[count rf,:();J+:sum rf[;m][;0]@\:(THETA;X)];
  J}
 
 / collaborative filtering gradient
-cfgrad:{[rf;Y;THETA;X]
- G:(1f%m:count X 0)*(mmt[X;E];mm[THETA] E:0f^mtm[THETA;X]-Y);
- if[count rf,:();G+:sum rf[;m][;1]@\:(THETA;X)];
+cfgrad:{[rf;Y;X;THETA]
+ G:(1f%m:count X 0)*(mmt[THETA;E];mm[X] E:0f^mtm[X;THETA]-Y);
+ if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];
  G}
 
 / collaborative filtering cut where n:(nu;nm)
 cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
 
 / collaborative filtering cost & gradient
-cfcostgrad:{[rf;n;Y;thetax]
- THETA:first X:cfcut[n] thetax;X@:1;
- J:(.5%m:count X 0)*sum (sum') E*E:0f^mtm[THETA;X]-Y;
- G:(1f%m)*(mmt[X;E];mm[THETA;E]);
- if[count rf,:();JG:rf[;m][;;(THETA;X)];J+:sum JG@'0;G+:sum JG@'1];
+cfcostgrad:{[rf;n;Y;xtheta]
+ THETA:last X:cfcut[n] xtheta;X@:0;
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^mtm[X;THETA]-Y;
+ G:(1f%m)*(mmt[THETA;E];mm[X;E]);
+ if[count rf,:();JG:rf[;m][;;(X;THETA)];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
 / collaborative filtering update one rating
 / (a)lpha: learning rate, (xy): coordinates of Y to update
-cfupd1:{[a;l2;Y;THETAX;xy]
- e:(Y . xy)-dot . tx:THETAX .'i:flip(::;xy);
- THETAX:./[THETAX;0 1,'i;+;a*(e*reverse tx)-l2*tx];
- THETAX}
+cfupd1:{[a;l2;Y;XTHETA;xy]
+ e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;xy);
+ XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
+ XTHETA}
 
 / accumulate cost by calling (c)ost (f)unction on the result of
 / (f)unction applied to x[1].  append resulting cost to x[0] and
@@ -362,9 +362,9 @@ checkcfgrad:{[e;rf;n]
  nu:n 0;nm:n 1 ;nf:10;          / n users, n movies, n features
  Y:mm[nf?/:nu#1f]nm?/:nf#1f;    / random recommendations
  Y*:0N 1@.5<nm?/:nu#1f;         / drop some recommendations
- thetax:2 raze/ (THETA:nu?/:nf#1f;X:nm?/:nf#1f); / random initial parameters
+ xtheta:2 raze/ (X:nu?/:nf#1f;THETA:nm?/:nf#1f); / random initial parameters
  cgf:cfcostgrad[rf;n;Y];                     / cost gradient function
- r:checkgrad[e;first cgf::;last cgf::;thetax];
+ r:checkgrad[e;first cgf::;last cgf::;xtheta];
  r}
 
 / (r)egularization (f)unction, (n)etwork topology dimension
@@ -412,10 +412,10 @@ nncostgradf:{[rf;n;hgolf;Y;X]
 sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 
 / (w)eighted (r)egularized (a)lternating (l)east (s)quares
-wrals:{[l2;Y;THETAX]
- THETA:flip wridge[l2;THETAX 1] peach Y; / hold X constant, solve for THETA
- X:flip f2nd[wridge[l2;THETA]] Y;        / hold THETA constant, solve for X
- (THETA;X)}
+wrals:{[l2;Y;XTHETA]
+ X:flip wridge[l2;XTHETA 1] peach Y; / hold THETA constant, solve for X
+ THETA:flip f2nd[wridge[l2;X]] Y;    / hold X constant, solve for THETA
+ (X;THETA)}
 
 hdist:sum (<>)::               / hamming distance
 mdist:mnorm (-)::              / manhattan distance (taxicab metric)

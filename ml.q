@@ -367,42 +367,40 @@ checkcfgrad:{[e;rf;n]
  r:checkgrad[e;first cgf::;last cgf::;xtheta];
  r}
 
-/ (r)egularization (f)unction, (n)etwork topology dimension
+/ (r)egularization (f)unction
 / holf: (h)idden (o)utput (l)oss functions
-nncost:{[rf;n;holf;Y;X;theta]
- THETA:nncut[n] theta; m:count X 0;
- J:(1f%m)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
+nncost:{[rf;holf;Y;X;THETA]
+ J:(1f%m:count X 0)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
  if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
  J}
 
-/ (r)egularization (f)unction, (n)etwork topology dimension
+/ (r)egularization (f)unction
 / hgof: (h)idden (g)radient (o)utput functions
-nngrad:{[rf;n;hgof;Y;X;theta]
- THETA:nncut[n] theta; m:count X 0;
+nngrad:{[rf;hgof;Y;X;THETA]
  ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgof`h]\ -1_THETA;
  P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
  G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
- G:(1%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
+ G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
  2 raze/ G}
 
 / (r)egularization (f)unction, (n)etwork topology dimensions
 / hgolf: (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
- THETA:nncut[n] theta; m:count X 0;
+ THETA:nncut[n] theta;
  ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgolf`h]\ -1_THETA;
- P:hgolf[`o] predict[last[ZA]1;last THETA]; / final layer
- J:(1f%m)*sum (sum') hgolf[`l][Y;P];        / cost
- G:hgolf[`g]@'`z`a!/:1_ZA;                  / activation gradients
+ P:hgolf[`o] predict[last[ZA]1;last THETA];    / final layer
+ J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P]; / cost
+ G:hgolf[`g]@'`z`a!/:1_ZA;                     / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
 nncostgradf:{[rf;n;hgolf;Y;X]
- Jf:nncost[rf;n;hgolf;Y;X];
- Gf:nngrad[rf;n;hgolf;Y;X];
+ Jf:nncost[rf;hgolf;Y;X] nncut[n]::;
+ Gf:nngrad[rf;hgolf;Y;X] nncut[n]::;
  (Jf;Gf)}
 
 / stochastic gradient descent

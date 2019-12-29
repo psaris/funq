@@ -163,6 +163,6 @@ THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 .ml.lincost[();Yt;Xt] THETA
 
 -1"now we check for a reduction in the mse using the neural network";
-.ml.nncost[();n;hgolf;Y;X] theta
+.ml.nncost[();hgolf;Y;X] .ml.nncut[n] theta
 -1"and the test data";
-.ml.nncost[();n;hgolf;Yt;Xt] theta
+.ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta

@@ -153,6 +153,11 @@ normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 / return the THETA matrix resulting from performing ridge regression
 ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 
+/ given (l2) regularization parameter, target vector y and data matri(x),
+/ return the theta vector resulting from performing weighted ridge regression
+/ by scaling the regularization parameter by the count of non-null values
+wridge:{[l2;X;y]first ridge[l2*count w;enlist y w;X[;w:where not null y]]}
+
 / null-aware operators account for nulls in matrices
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
@@ -408,13 +413,9 @@ sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
 
 / (w)eighted (r)egularized (a)lternating (l)east (s)quares
 wrals:{[l2;Y;THETAX]
- THETA:flip updals[l2;THETAX 1] peach Y; / hold X constant, solve for THETA
- X:flip f2nd[updals[l2;THETA]] Y;        / hold THETA constant, solve for X
+ THETA:flip wridge[l2;THETAX 1] peach Y; / hold X constant, solve for THETA
+ X:flip f2nd[wridge[l2;THETA]] Y;        / hold THETA constant, solve for X
  (THETA;X)}
-updals:{[l2;M;y]
- l:diag count[M:M[;w]]#l2*count y@:w:where not null y;
- v:first mlsq[enlist mm[M;y]] mmt[M;M]+l;
- v}
 
 hdist:sum (<>)::               / hamming distance
 mdist:mnorm (-)::              / manhattan distance (taxicab metric)

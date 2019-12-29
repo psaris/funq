@@ -130,10 +130,9 @@ if[2<count key `.qml;
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-nu:count R;nm:count R 0 / n users, n movies
-n:(nu;nm)
+n:(nu:count R;ni:count R 0) / n users, n items
 -1"randomly initialize X and THETA";
-xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+nm?/:nf#2f)
+xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+ni?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
 xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
@@ -147,10 +146,10 @@ show rpt select from (update score:last P from r) where not null rating
 -1"check collaborative filtering gradient calculations";
 .util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
 
-/ stocastic regularized gradient descent
+/ stochastic regularized gradient descent
 
 -1"randomly initialize X and THETA";
-xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+nm?/:nf#2f)
+xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+ni?/:nf#2f)
 
 -1"use 'where' to find list of coordinates of non-null items";
 i:.ml.mwhere not null R
@@ -182,7 +181,7 @@ show rpt select from (update score:last P from r) where not null rating
 -1"the weights are equal to the number of ratings per user/movie";
 
 -1"reset X and THETA";
-XTHETA:(X:-1+nu?/:nf#1f;THETA:-1+nm?/:nf#2f)
+XTHETA:(X:-1+nu?/:nf#1f;THETA:-1+ni?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
 
 XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\:XTHETA

@@ -383,7 +383,7 @@ nngrad:{[rf;hgof;Y;X;THETA]
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
- 2 raze/ G}
+ G}
 
 / (r)egularization (f)unction, (n)etwork topology dimensions
 / hgolf: (h)idden (g)radient (o)utput (l)oss functions
@@ -397,11 +397,6 @@ nncostgrad:{[rf;n;hgolf;Y;X;theta]
  G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
-
-nncostgradf:{[rf;n;hgolf;Y;X]
- Jf:nncost[rf;hgolf;Y;X] nncut[n]::;
- Gf:nngrad[rf;hgolf;Y;X] nncut[n]::;
- (Jf;Gf)}
 
 / stochastic gradient descent
 

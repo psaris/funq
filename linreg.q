@@ -53,7 +53,7 @@ show .ml.prepend[1f] X
 show THETA:Y lsq .ml.prepend[1f] 1#X
 
 -1"plotting data with fitted line";
-show plt[avg] .ml.append[0N;X,Y],'.ml.append[1]X,.ml.predict[X] THETA;
+show plt[avg] .ml.append[0N;X,Y],'.ml.append[1]X,.ml.linpredict[X] THETA;
 
 -1"fitting with normal equations (fast but not numerically stable)";
 .ml.normeq[Y;.ml.prepend[1f] X]

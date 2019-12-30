@@ -746,11 +746,11 @@ wridge:{[l2;X;y]first ridge[l2*count w;enlist y w;X[;w:where not null y]]}
 
 / linear predict Y values by prepending matri(X) with a vector of 1s
 / and multiplying the result to (THETA) coefficients
-predict:{[X;THETA]mm[THETA] prepend[1f] X}
+linpredict:{[X;THETA]mm[THETA] prepend[1f] X}
 
 / linear regression cost
 lincost:{[rf;Y;X;THETA]
- J:(.5%m:count X 0)*sum (sum') E*E:0f^predict[X;THETA]-Y;
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^linpredict[X;THETA]-Y;
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
@@ -796,11 +796,12 @@ mseloss:{[y;p].5*y*y-:p}
 
 / logistic regression
 
-lpredict:sigmoid predict::      / logistic regression predict
+/ logistic regression predict
+logpredict:sigmoid linpredict::
 
 / logistic regression cost
 logcost:{[rf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') logloss[Y] lpredict[X;THETA];
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] logpredict[X;THETA];
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
  J}
 
@@ -848,8 +849,8 @@ hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
 
 / use (h)idden and (o)utput layer functions to predict neural network Y
 nnpredict:{[hof;X;THETA]
- X:X (hof[`h] predict::)/ -1_THETA;
- Y:hof[`o] predict[X] last THETA;
+ X:X (hof[`h] linpredict::)/ -1_THETA;
+ Y:hof[`o] linpredict[X] last THETA;
  Y}
 
 / (r)egularization (f)unction
@@ -862,9 +863,9 @@ nncost:{[rf;holf;Y;X;THETA]
 / (r)egularization (f)unction
 / hgof: (h)idden (g)radient (o)utput functions
 nngrad:{[rf;hgof;Y;X;THETA]
- ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgof`h]\ -1_THETA;
- P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
- G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
+ ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgof`h]\ -1_THETA;
+ P:hgof[`o] linpredict[last[ZA]1;last THETA]; / final layer
+ G:hgof[`g]@'`z`a!/:1_ZA;                     / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
@@ -877,10 +878,10 @@ nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
 / hgolf: (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;
- ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgolf`h]\ -1_THETA;
- P:hgolf[`o] predict[last[ZA]1;last THETA];    / final layer
- J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P]; / cost
- G:hgolf[`g]@'`z`a!/:1_ZA;                     / activation gradients
+ ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgolf`h]\ -1_THETA;
+ P:hgolf[`o] linpredict[last[ZA]1;last THETA];    / final layer
+ J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P];    / cost
+ G:hgolf[`g]@'`z`a!/:1_ZA;                        / activation gradients
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];

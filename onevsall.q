@@ -28,7 +28,7 @@ f:first .fmincg.fmincg[5;;theta] .ml.logcostgrad[rf;;X]@
 THETA:.ml.fitova[f;Y;lbls]
 
 -1"checking accuracy of parameters";
-avg yt=p:lbls .ml.clfova .ml.lpredict[Xt] THETA
+avg yt=p:lbls .ml.clfova .ml.logpredict[Xt] THETA
 
 -1"view a few confused characters";
 w:where not yt=p

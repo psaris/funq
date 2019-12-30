@@ -35,9 +35,9 @@ THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_last THETA
 -1"how closely do the computed scores match our preferences";
-show rpt select from (update score:last .ml.predict[X;THETA] from r) where not null rating
+show rpt select from (update score:last .ml.linpredict[X;THETA] from r) where not null rating
 -1"and finally, show the recommendations";
-show rpt update score:last .ml.predict[X;THETA] from r
+show rpt update score:last .ml.linpredict[X;THETA] from r
 
 / ratings data summary
 

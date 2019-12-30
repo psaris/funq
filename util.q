@@ -1,13 +1,9 @@
 \d .util
 
+/ data loading utilities
+
 / load (f)ile if it exists and return success boolean
 loadf:{[f]if[()~key f;:0b];system "l ",1_string f;1b}
-
-/ generate a range of values between y and z with step-size x
-rng:{y+x*til 1+floor 1e-14+(z-y)%x}
-
-/ round y to nearest x
-rnd:{x*"j"$y%x}
 
 unzip:$["w"=first string .z.o;"7z.exe x -y -aos";"unzip -n"]
 gunzip:$["w"=first string .z.o;"7z.exe x -y -aos";"gunzip -f -N -v"]
@@ -30,11 +26,74 @@ ldmnist:{
 / load http://etlcdb.db.aist.go.jp/etlcdb/data/ETL9B dataset
 etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
+/ general utilities
+
+/ throw verbose exception if x <> y
+assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
+
+/ generate a range of values between y and z with step-size x
+rng:{y+x*til 1+floor 1e-14+(z-y)%x}
+
+/ round y to nearest x
+rnd:{x*"j"$y%x}
+
 / allocate y into x bins
 nbin:{(x-1)&floor x*.5^y%max y-:min y}
 
 / divide range (s;e) into n buckets
 nrng:{[n;s;e]s+til[1+n]*(e-s)%n}
+
+/ table x cross y
+tcross:{value flip ([]x) cross ([]y)}
+
+/ return memory (used;allocated;max)
+/ returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
+mem:{(3#system"w")%x (1024*)/ 1}
+
+/ given a dictionary who's values are indices representing result of the
+/ group operator, return the original ungrouped list.  generate the
+/ dictionary key if only the indices are provided
+ugrp:{
+ if[not type x;:.z.s til[count x]!x];
+ x:(key[x] where count each value x)iasc raze x;
+ x}
+
+/ append a total row and (c)olumn to (t)able
+totals:{[c;t]
+ t[key[t]0N]:sum value t;
+ t:t,'flip (1#c)!enlist sum each value t;
+ t}
+
+/ surround a (s)tring or list of stings with a box of (c)haracters
+box:{[c;s]
+ if[type s;s:enlist s];
+ m:max count each s;
+ h:enlist (m+2*1+count c)#c;
+ s:(c," "),/:(m$/:s),\:(" ",c);
+ s:h,s,h;
+ s}
+
+/ use (w)eights to randomly partition (x)
+part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
+
+/ one-hot encode vector, (symbol columns of) table or (non-key symbol
+/ columns of) keyed table x.
+onehot:{
+ if[98h>t:type x;:u!x=/:u:distinct x];       / vector
+ if[99h=t;:key[x]!.z.s value x];             / keyed table
+ D:.z.s each x c:where 11h=type each flip x; / list of dictionaries
+ D:string[c] {(`$(x,"_"),/:string key y)!value y}' D; / rename uniquely
+ x:c _ x,' flip raze D;                               / append to table
+ x}
+
+/ confusion matrix
+cm:{
+ n:count u:asc distinct x,y;
+ m:./[(n;n)#0;flip (u?y;u?x);1+];
+ t:([]x:u)!flip (`$string u)!m;
+ t}
+
+/ heckbert's axis label algorithm
 
 / use heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number
 nicenum:{[rnd;x]
@@ -52,8 +111,7 @@ heckbert:{[n;mn;mx]
  l:rng[s;mn;mx];                / labels
  l}
 
-/ table x cross y
-tcross:{value flip ([]x) cross ([]y)}
+/ plotting utilities
 
 / cut m x n matrix X into (x;y;z) where x and y are the indices for X
 / and z is the value stored in X[x;y] - result used to plot heatmaps
@@ -87,6 +145,8 @@ plt:plot[19;10;c10;avg]         / default plot function
 / generate unicode sparkline
 spark:raze("c"$226 150,/:129+til 8)nbin[8]::
 
+/ image manipulation utilities
+
 / remove gamma compression
 gexpand:{?[x>0.0405;((.055+x)%1.055) xexp 2.4;x%12.92]}
 / add gamma compression
@@ -111,27 +171,7 @@ ppm:{[b;m;x]
  s,:$[b;enlist "c"$2 raze/flip x;" "0:raze flip each "h"$x];
  s}
 
-/ surround a (s)tring or list of stings with a box of (c)haracters
-box:{[c;s]
- if[type s;s:enlist s];
- m:max count each s;
- h:enlist (m+2*1+count c)#c;
- s:(c," "),/:(m$/:s),\:(" ",c);
- s:h,s,h;
- s}
-
-/ append a total row and (c)olumn to (t)able
-totals:{[c;t]
- t[key[t]0N]:sum value t;
- t:t,'flip (1#c)!enlist sum each value t;
- t}
-
-/ return memory (used;allocated;max)
-/ returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
-mem:{(3#system"w")%x (1024*)/ 1}
-
-/ throw verbose exception if x <> y
-assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
+/ text utilities
 
 / remove byte order mark if it exists
 rbom:{$["\357\273\277"~3#x[0];@[x;0;3_];x]}

@@ -3,7 +3,7 @@
 \l wdbc.q
 
 -1"partitioning wdbc data into train and test";
-show d:`train`test!.ml.part[3 1] "f"$update "M"=diagnosis from wdbc.t
+show d:`train`test!.util.part[3 1] "f"$update "M"=diagnosis from wdbc.t
 YX:value flip d`train
 y:first Y:1#YX
 X:1_YX
@@ -68,7 +68,7 @@ theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 -1"test models accuracy";
 avg yt=p:"i"$first .ml.lpredict[Xt;enlist theta]
 
-show .util.totals[`TOTAL] .ml.cm["i"$yt;p]
+show .util.totals[`TOTAL] .util.cm["i"$yt;p]
 
 -1"demonstrate a few binary classification evaluation metrics";
 -1"how well did we fit the data";

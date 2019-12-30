@@ -35,4 +35,4 @@ w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[yt;p]
+show .util.totals[`TOTAL] .util.cm[yt;p]

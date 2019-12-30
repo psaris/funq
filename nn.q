@@ -125,7 +125,7 @@ p w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"we can view the confusion matrix as well";
-show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
+show .util.totals[`TOTAL] .util.cm[yt;"i"$p]
 
 -1"neural networks are not limited to classification problems.";
 -1"using a linear activation function on the output layer";
@@ -133,7 +133,7 @@ show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 -1"our feed forward neural network can be used for non-linear regression.";
 
 -1"we split the wine quality data into train and test partitions";
-d:`train`test!.ml.part[3 1] winequality.red.t
+d:`train`test!.util.part[3 1] winequality.red.t
 X:1_value flip d.train
 Y:1#value flip d.train
 -1"and then z-score the train and test data";

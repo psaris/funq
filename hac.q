@@ -21,7 +21,7 @@ show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 I:.ml.clust[l] 3
 -1"confirm accuracy";
 g:(.ml.mode each seeds.y I)!I
-.util.assert[0.9] .util.rnd[.01] avg seeds.y=.ml.ugrp g
+.util.assert[0.9] .util.rnd[.01] avg seeds.y=.util.ugrp g
 
 -1"we can also check for maximum silhouette";
 -1"plot silhouette curve (k vs silhouette)";
@@ -46,7 +46,7 @@ show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 I:.ml.clust[l] 3
 -1"confirm accuracy";
 g:(.ml.mode each iris.y I)!I
-.util.assert[.97] .util.rnd[.01] avg iris.y=.ml.ugrp g
+.util.assert[.97] .util.rnd[.01] avg iris.y=.util.ugrp g
 -1"generate clusters indices";
 I:.ml.clust[l] 1+til 10
 -1"plot silhouette curve (k vs silhouette)";
@@ -69,4 +69,4 @@ show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 show .util.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
 .util.assert[16] ks i:.ml.imax s
 -1"plot the clustered data";
-show .util.plot[39;20;.util.c68;.ml.mode] X[0 1],enlist .ml.ugrp I i
+show .util.plot[39;20;.util.c68;.ml.mode] X[0 1],enlist .util.ugrp I i

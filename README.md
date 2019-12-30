@@ -53,17 +53,17 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Expectation Maximization (EM)
 
-## Markov Clustering Algorithm (MCL)
-
 ## Naive Bayes
 
 ## Vector Space Model (tf-idf)
 
 ## Decision Tree (ID3,C4.5)
 
-## Adaboost
+## Adaptive Boosting
 
 ## Random Forest
+
+## Regularization
 
 ## Least Squares Regression
 
@@ -71,7 +71,7 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Logistic Regression
 
-## One vs All Logistic Regression
+## One vs All 
 
 ## Neural Network Classification
 
@@ -84,4 +84,6 @@ you can then read the comments and run the examples one by one. topics include:
 ## Google PageRank
 
 ## Support Vector Machine (SVM)
+
+## Markov Clustering Algorithm (MCL)
 

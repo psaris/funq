@@ -44,4 +44,4 @@ w:where not y=p
 -1 (,'/) plt each X@\:/: value ([]p;y) rw:rand w;
 
 -1"view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[y;"j"$p]
+show .util.totals[`TOTAL] .util.cm[y;"j"$p]

@@ -61,7 +61,7 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`Yes] .ml.dtc[tr] d
 
 -1 "we can now split the iris data into training and test batches";
-show d:`train`test!.ml.part[3 1] iris.t
+show d:`train`test!.util.part[3 1] iris.t
 -1 "then create a classification tree";
 -1 .ml.ptree[0] tr:.ml.ct[1;0W;::] `species xcols d`train;
 -1 "testing the tree on the test set produces an accuracy of:";
@@ -73,9 +73,9 @@ avg d.test.species=p:tr .ml.dtc/: d`test
 
 -1 "we can predict iris petal lengths with a regression tree";
 -1 "first we need to one-hot encode the species";
-t:"f"$.ml.onehot iris.t
+t:"f"$.util.onehot iris.t
 -1 "then split the data into training and test batches"
-show d:`train`test!.ml.part[3 1] t
+show d:`train`test!.util.part[3 1] t
 -1 "and generate a regression tree";
 -1 .ml.ptree[0] tr:.ml.rt[1;0W;::]  `plength xcols d`train;
 -1 "we now compute the root mean square error (rmse)";
@@ -94,7 +94,7 @@ t:t,'([]y:1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 )
 
 -1 "we then pick the alpha (and therefore subtree) with cross validation";
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:.ml.part[(n:10)#1] t
+ts:.util.part[(n:10)#1] t
 show e:avg each ts[;`z]=p:.ml.dtkfxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
@@ -102,12 +102,12 @@ show e:avg each ts[;`z]=p:.ml.dtkfxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] tr:dtf iris.t;
 .util.assert[0 .01 .02 .02 .04 .88 1f] 3*first atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:.ml.part[(n:10)#1]iris.t
+ts:.util.part[(n:10)#1]iris.t
 show e:avg each ts[;`species]=p:.ml.dtkfxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
 -1 "or even grow and prune a regression tree with wine quality data";
-d:`train`test!.ml.part[1 1] winequality.red.t
+d:`train`test!.util.part[1 1] winequality.red.t
 dtf:.ml.rt[1;0W;(::)]
 ef:.ml.wmse
 -1 "the fully grown tree has more than 200 leaves!";
@@ -116,7 +116,7 @@ ef:.ml.wmse
 -1 "first we find the list of critical alphas";
 atr:flip .ml.dtmina[ef] scan (0f;tr)
 b:sqrt (1_a,0w)*a:atr 0 / geometric mean
-ts:.ml.part[(n:5)#1]d`train
+ts:.util.part[(n:5)#1]d`train
 -1 "then we compute the accuracy of each of these alphas with kfxv";
 show e:avg each e*e:ts[;`quality]-p:(.ml.dtkfxv[dtf;ef;b;ts]0N!) peach til n
 -1 "finally, we pick the tree whose alpha had the min error";

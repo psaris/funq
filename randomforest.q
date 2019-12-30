@@ -2,7 +2,7 @@
 \l funq.q
 \l wdbc.q
 
-d:`train`test!.ml.part[3 1] wdbc.t
+d:`train`test!.util.part[3 1] wdbc.t
 -1"bagging grows B decision trees with a random sampling (with replacement) of data";
 m:.ml.bag[10;.ml.q45[1;0W;::]] d`train
 avg d.test.diagnosis=.ml.mode each m .ml.dtc\:/: d`test

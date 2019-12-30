@@ -16,4 +16,4 @@ m:.svm.train[prob;param]
 -1"how well did we learn";
 avg prob.y=p:.svm.predict[m] each prob.x
 -1"lets view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[`species!"i"$prob.y] `species!"i"$p
+show .util.totals[`TOTAL] .util.cm[`species!"i"$prob.y] `species!"i"$p

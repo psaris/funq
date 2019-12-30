@@ -3,12 +3,16 @@
 / apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
 f2nd:{[f;x]$[system"g";(f (::)x') peach til count x 0;f peach flip x]}
 
+/ matrix primitives
+
 mm:{$[;y] peach x}              / X  * Y
 mmt:{(y$) peach x}              / X  * Y'
 mtm:{f2nd[$[;y];x]}             / X' * Y
 minv:inv                        / X**-1
 mlsq:lsq                        / least squares
 dot:$                           / dot product
+diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
+eye:{diag x#1f}
 mdet:{[X]                       / determinant
  if[2>n:count X;:X];
  if[2=n;:(X[0;0]*X[1;1])-X[0;1]*X[1;0]];
@@ -37,131 +41,39 @@ ismatrix:{
  b:identical count each x;
  b}
 
+/ basic utilities
+
+imax:{x?max x}                  / index of max element
+imin:{x?min x}                  / index of min element
+prepend:{((1;count y 0)#x),y}   / prepend matrix y with row of repeated x
+append:{y,((1;count y 0)#x)}    / append matrix y with row of repeated x
+/ where not any null
+wnan:{$[all type each x;where not any null x;::]}
+
+/ norm primitives
+
 mnorm:sum abs::               / manhattan (taxicab) norm
 / euclidean norm squared
 / NOTE: wavg converts all types to float
 enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
 enorm:sqrt enorm2::                        / euclidean norm
 pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p}  / p norm
-/ apply (d)yadic function to the result of (a)ggregating
-/ vector/matrix/dictionary/table x
-dax:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
-normalize:dax[%;enorm]          / normalize each vector to unit length
 
-cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
-csqr:{((-/)x*x;2f*(*/)x)}       / complex square
-cabs:enorm                      / complex absolute value
-mandelbrot:{[c;x]c+csqr x}      / mandelbrot
-mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
+/ distance primitives
 
-/ use (w)eights to randomly partition (x)
-part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
+hdist:sum (<>)::               / hamming distance
+mdist:mnorm (-)::              / manhattan distance (taxicab metric)
+edist2:enorm2 (-)::            / euclidean distance squared
+edist:enorm (-)::              / euclidean distance
+pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
+/pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
+mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
+hmean:1f%avg 1f%                / harmonic mean
+cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
+cosdist:1f-cossim::                              / cosine distance
 
-prepend:{((1;count y 0)#x),y}
-append:{y,((1;count y 0)#x)}
+/ null aware primitives (account for nulls in matrices)n
 
-/ linear predict Y values by prepending matri(X) with a vector of 1s
-/ and multiplying the result to (THETA) coefficients
-predict:{[X;THETA]mm[THETA] prepend[1f] X}
-
-/ reverse of over (start deep and end shallow)
-revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
-
-/ given l1 regularization (l)ambda and size of dimension (m), return two
-/ function compositions which compute the cost and gradient
-l1:{[l;m]((l%m)*revo[sum] abs::;(l%m)*signum::)}
-
-/ given l2 regularization (l)ambda and size of dimension (m), return two
-/ function compositions which compute the cost and gradient
-l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
-
-/ given (a)lpha and (l)ambda (r)atio elastic net parameters, convert them
-/ into l1 and l2 units and return a pair of l1 and l2 projections
-enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
-
-/ linear regression cost
-lincost:{[rf;Y;X;THETA]
- J:(.5%m:count X 0)*sum (sum') E*E:0f^predict[X;THETA]-Y;
- if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
- J}
-
-/ linear regression gradient
-lingrad:{[rf;Y;X;THETA]
- G:(1f%m:count X 0)*mmt[0f^mm[THETA;X]-Y] X:prepend[1f] X;
- if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
- G}
-
-/ linear cost & gradient
-lincostgrad:{[rf;Y;X;theta]
- THETA:(count Y;0N)#theta; X:prepend[1f] X;
- J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;X]-Y;
- G:(1f%m)*mmt[E] X;
- if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
- (J;raze G)}
-
-/ collaborative filtering predict
-cfpredict:{[X;THETA] mtm[THETA;X]}
-
-/ collaborative filtering cost
-cfcost:{[rf;Y;X;THETA]
- J:(.5f%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y;
- if[count rf,:();J+:sum rf[;m][;0]@\:(X;THETA)];
- J}
-
-/ collaborative filtering gradient
-cfgrad:{[rf;Y;X;THETA]
- G:(1f%m:count X 0)*(mm[THETA;E];mmt[X] E:0f^cfpredict[X;THETA]-Y);
- if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];
- G}
-
-/ collaborative filtering cut where n:(nu;ni)
-cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
-
-/ collaborative filtering cost & gradient
-cfcostgrad:{[rf;n;Y;xtheta]
- THETA:last X:cfcut[n] xtheta;X@:0;
- J:(.5%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y;
- G:(1f%m)*(mm[THETA;E];mmt[X;E]);
- if[count rf,:();JG:rf[;m][;;(X;THETA)];J+:sum JG@'0;G+:sum JG@'1];
- (J;2 raze/ G)}
-
-/ collaborative filtering update one rating
-/ (a)lpha: learning rate, (xy): coordinates of Y to update
-cfupd1:{[a;l2;Y;XTHETA;xy]
- e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;reverse xy);
- XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
- XTHETA}
-
-/ accumulate cost by calling (c)ost (f)unction on the result of
-/ (f)unction applied to x[1].  append resulting cost to x[0] and
-/ return.
-acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
-
-/ return 1b until the improvement from the (c)ost is less than
-/ the specified (p)ercent.
-converge:{[p;c]
- b:$[1<n:count c;p<pct:neg -1f+c[n-1]%c[n-2];1b];
- s:"Iteration ",string[n]," | cost: ",string last c;
- 1 s," | pct: ",string[pct],"\n\r"b;
- b}
-
-/ (a)lpha: learning rate, gf: gradient function
-gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
-
-/ given target matrix Y and data matri(X),
-/ return the THETA matrix resulting from minimizing sum of squared residuals
-normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
-
-/ given (l2) regularization parameter, target matrix Y and data matri(X),
-/ return the THETA matrix resulting from performing ridge regression
-ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
-
-/ given (l2) regularization parameter, target vector y and data matri(x),
-/ return the theta vector resulting from performing weighted ridge regression
-/ by scaling the regularization parameter by the count of non-null values
-wridge:{[l2;X;y]first ridge[l2*count w;enlist y w;X[;w:where not null y]]}
-
-/ null-aware operators account for nulls in matrices
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
 navg:{$[type x;avg x;nsum[x]%ncount x]}
@@ -170,104 +82,52 @@ ndev:sqrt nvar::
 nsvar:{$[type x;svar x;(n*nvar x)%-1+n:ncount x]}
 nsdev:sqrt nsvar::
 
+/ normalization primitives
+
+/ apply (d)yadic function to the result of (a)ggregating
+/ vector/matrix/dictionary/table x
+dax:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
+
+/ normalize each vector to unit length
+normalize:dax[%;enorm]
 / centered
 demean:dax[-;navg]
 / feature normalization (centered/unit variance)
 zscore:dax[%;nsdev] demean::
 / feature normalization (scale values to [0,1])
 minmax:{(x-m)%max[x]-m:min x}
+/ convert densities into probabilities
+prb:dax[%;sum]
+
+/ null aware statistics
 
 / compute the average of the top n items
 tnavg:{[n;x;y]navg y (n&count x)#idesc x}
 / compute the weighted average of the top n items
 tnwavg:{[n;x;y]nsum[x*y i]%sum abs x@:i:(n&count x)#idesc x}
 
-/ user-user collaborative filtering
-/ (s)imilarity (f)unction, (a)veraging (f)unction
-/ (R)ating matrix and new (r)ating vector
-uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
-
 / spearman's rank (tied value get averaged rank)
 /srank:{(avg each rank[x] group x) x}
 srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
-/ where not any null
-wnan:{$[all type each x;where not any null x;::]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 
+/ frequency and mode primitives
 
-prb:dax[%;sum]                  / convert densities into probabilities
+/ given a (w)eight atom or vector, and data x, return a sorted
+/ dictionary mapping the distinct items to their weighted count
+wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
+freq:wfreq[1]
 
-/ activation functions (derivatives optionally accept `z`a!(z;a) dict)
-linear:(::)                                   / linear
-dlinear:{1f+0f*$[99h=type x;x`z;x]}           / linear gradient
-sigmoid:1f%1f+exp neg::                       / sigmoid
-dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
-tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
-dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyberbolic tangent gradient
-relu:0f|                              / rectified linear unit
-drelu:{"f"$0f<=$[99h=type x;x`z;x]}   / rectified linear unit gradient
-lrelu:{x*1 .01@0f>x}                  / leaky rectified linear unit
-dlrelu:{1 .01@0f>$[99h=type x;x`z;x]} / leaky rectified linear unit gradient
+/ given a (w)eight atom or vector, and data x, return the item which
+/ occurs most frequently
+wmode:imax wfreq::              / weighted mode
+mode:wmode[1]                   / standard mode
 
-softmax:prb exp::               / softmax
-ssoftmax:softmax dax[-;max]::   / stable softmax
-dsoftmax:{diag[x] - x*\:/:x:softmax x} / softmax gradient
-
-/ given true (y) and (p)redicted values return the log loss
-logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
-/ given true (y) and (p)redicted values return the cross entropy loss 
-celoss:{[y;p]neg sum y*log 1e-15|p}
-/ given true (y) and (p)redicted values return the mean squared error loss
-mseloss:{[y;p].5*y*y-:p}
-
-lpredict:sigmoid predict::      / logistic regression predict
-
-/ logistic regression cost
-logcost:{[rf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') logloss[Y] lpredict[X;THETA];
- if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
- J}
-
-/ logistic regression gradient
-loggrad:{[rf;Y;X;THETA]
- G:(1f%m:count X 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
- if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
- G}
-
-logcostgrad:{[rf;Y;X;theta]
- THETA:(count Y;0N)#theta; X:prepend[1f] X;
- J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
- G:(1f%m)*mmt[P-Y] X;
- if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
- (J;raze G)}
-
-logcostgradf:{[rf;Y;X]
- Jf:logcost[rf;Y;X]enlist::;
- Gf:loggrad[rf;Y;X]enlist::;
- (Jf;Gf)}
-
-/ Xavier Glorot and Yoshua Bengio (2010) initialization
-/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
-glorotu:{[i;o]sqrt[6f%i+o]*-1f+i?/:o#2f}  / uniform
-glorotn:{[i;o]rnorm'[o#i;0f;sqrt 2f%i+o]} / normal
-/ Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun (2015) initialization
-/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
-heu:{[i;o]sqrt[6f%i]*-1f+i?/:o#2f}   / uniform
-hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
-
-imax:{x?max x}                  / index of max element
-imin:{x?min x}                  / index of min element
-
-/ one vs all
-
-/ given binary classification fitting (f)unction, fit a one-vs-all model
-/ against Y for each unique (lbls)
-fitova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
-
-/ given data matri(X) and (THETA) coefficients, return integer of THETA
-/ vector which produces highest one-vs-all value (probability)
-clfova:{[Y]f2nd[imax] Y}
+/ weighted average or mode
+isord:{type[x] in 8 9h}                / is ordered
+aom:{$[isord x;avg;mode]x}             / average or mode
+waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
 
 / binary classification evaluation metrics (summary statistics)
 
@@ -303,12 +163,7 @@ jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}
 / -1 0 1 (none right, same as random prediction, all right)
 MCC:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
 
-/ confusion matrix
-cm:{
- n:count u:asc distinct x,y;
- m:./[(n;n)#0;flip (u?y;u?x);1+];
- t:([]x:u)!flip (`$string u)!m;
- t}
+/ k-fold cross validation primitives
 
 / use all data from ys and Xs except the (i)th element to fit a model
 / using the (f)itting (f)unction and then make a use (p)rediction
@@ -329,112 +184,17 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  p:pf[m] ts i;                  / use model to make predictions
  p}
 
-/ use (h)idden and (o)utput layer functions to predict neural network Y
-nnpredict:{[hof;X;THETA]
- X:X (hof[`h] predict::)/ -1_THETA;
- Y:hof[`o] predict[X] last THETA;
- Y}
+/ k nearest neighbors
 
-/ neural network cut
-nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
-diag:{$[0h>t:type x;x;@[n#t$0;;:;]'[til n:count x;x]]}
-eye:{diag x#1f}
+/ pick (k) indices corresponding to the smallest values from
+/ (d)istance vector (or matrix) and use (w)eighting (f)unction to
+/ return the best estimate of the (y)-values
+knn:{[wf;k;y;d]
+ if[not type d;:.z.s[wf;k;y] peach d];
+ n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
+ n}
 
-/ compute numerical gradient of (f)unction evaluated at x using steps of size
-/ (e)psilon. compute partial derivatives if (e)psilon is a list
-numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
-
-/ return analytic gradient using (g)radient (f)unction and numerical gradient
-/ by evaluating (c)ost (f)unction on theta perturbed by (e)psilon
-checkgrad:{[e;cf;gf;theta]
- ag:gf theta;                         / analytic gradient
- ng:numgrad[cf;theta] count[theta]#e; / numerical gradient
- (ag;ng)}
-
-/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
-checknngrad:{[e;rf;n;hgolf]
- theta:2 raze/ glorotu'[1+-1_n;1_n];
- X:glorotu[n 1;n 0];
- y:1+(1+til n 1) mod last n;
- Y:flip eye[last n]"i"$y-1;
- cgf:nncostgrad[rf;n;hgolf;Y;X]; / cost gradient function
- r:checkgrad[e;first cgf::;last cgf::;theta];
- r}
-
-checkcfgrad:{[e;rf;n]
- ni:n 0;nu:n 1 ;nf:10;          / n items, n users, n features
- Y:mm[nf?/:nu#1f]ni?/:nf#1f;    / random recommendations
- Y*:0N 1@.5<ni?/:nu#1f;         / drop some recommendations
- xtheta:2 raze/ (X:ni?/:nf#1f;THETA:nu?/:nf#1f); / random initial parameters
- cgf:cfcostgrad[rf;n;Y];                     / cost gradient function
- r:checkgrad[e;first cgf::;last cgf::;xtheta];
- r}
-
-/ (r)egularization (f)unction
-/ holf: (h)idden (o)utput (l)oss functions
-nncost:{[rf;holf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
- if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
- J}
-
-/ (r)egularization (f)unction
-/ hgof: (h)idden (g)radient (o)utput functions
-nngrad:{[rf;hgof;Y;X;THETA]
- ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgof`h]\ -1_THETA;
- P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
- G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
- D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
- G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
- if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
- G}
-
-/ (r)egularization (f)unction, (n)etwork topology dimensions
-/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
-nncostgrad:{[rf;n;hgolf;Y;X;theta]
- THETA:nncut[n] theta;
- ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgolf`h]\ -1_THETA;
- P:hgolf[`o] predict[last[ZA]1;last THETA];    / final layer
- J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P]; / cost
- G:hgolf[`g]@'`z`a!/:1_ZA;                     / activation gradients
- D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
- G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
- if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
- (J;2 raze/ G)}
-
-/ stochastic gradient descent
-
-/ successively call (m)inimization (f)unction with (THETA) and
-/ randomly sorted (n)-sized chunks generated by (s)ampling (f)unction
-sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0}
-
-/ (w)eighted (r)egularized (a)lternating (l)east (s)quares
-wrals:{[l2;Y;XTHETA]
- X:flip f2nd[wridge[l2;XTHETA 1]] Y; / hold THETA constant, solve for X
- THETA:flip wridge[l2;X] peach Y;    / hold X constant, solve for THETA
- (X;THETA)}
-
-hdist:sum (<>)::               / hamming distance
-mdist:mnorm (-)::              / manhattan distance (taxicab metric)
-edist2:enorm2 (-)::            / euclidean distance squared
-edist:enorm (-)::              / euclidean distance
-pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
-/pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
-hmean:1f%avg 1f%                / harmonic mean
-
-/ term document matrix built from (c)orpus and (v)ocabulary
-tdm:{[c;v](-1_@[(1+count v)#0;;+;1]::) each v?c}
-
-lntf:{log 1f+x}                    / log normalized term frequency
-dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
-
-idf: {log count[x]%sum 0<x}     / inverse document frequency
-idfs:{log 1f+count[x]%sum 0<x}  / inverse document frequency smooth
-idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
-pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
-tfidf:{[tff;idff;x]tff[x]*\:idff x}
-cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
-cosdist:1f-cossim::                              / cosine distance
+/ k-(means|medians)
 
 / using the (d)istance (f)unction, group matri(X) based on the closest
 / (C)entroid and return the cluster indices
@@ -456,15 +216,13 @@ kpp:{[df;X;d;C]
  (d;C)}
 kmeanspp:kpp[edist2]
 
-/ k-(means|medians) algorithm
-
 / stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
 / matrix(X) to the nearest (C)entroid and then uses the (c)entroid
 / (f)unction to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 
-kmeans:lloyd[edist2;avg'']      / k means
-kmedians:lloyd[mdist;med'']     / k medians
+kmeans:lloyd[edist2;avg'']      / k-means
+kmedians:lloyd[mdist;med'']     / k-medians
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
@@ -473,6 +231,8 @@ medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
 / given a (d)istance (f)unction, return a new function that finds a
 / medoid during the "update" step of lloyd's algorithm
 pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
+
+/ cluster purity primitives
 
 / given matri(X) compute the sum of squared errors (distortion)
 sse:{[X]sum edist2[X] avg each X}
@@ -493,29 +253,7 @@ silhouette:{[df;X;I]
  s:0f^(b-a)%a|b;                / 0 fill to handle single point clusters
  s}
 
-/ given a dictionary who's values are indices representing result of the
-/ group operator, return the original ungrouped list.  generate the
-/ dictionary key if only the indices are provided
-ugrp:{
- if[not type x;:.z.s til[count x]!x];
- x:(key[x] where count each value x)iasc raze x;
- x}
-
-/ dimensionality reduction
-
-covm:{[X] mmt[X;X]%count X 0}     / covariance matrix
-pca:{[X] last .qml.mev covm X}    / eigen vectors of scatter matrix
-project:{[V;X] mtm[V] mm[V;X]}    / project X onto subspace V
-
-/ given a (w)eight atom or vector, and data x, return a sorted
-/ dictionary mapping the distinct items to their weighted count
-wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
-freq:wfreq[1]
-
-/ given a (w)eight atom or vector, and data x, return the item which
-/ occurs most frequently
-wmode:imax wfreq::              / weighted mode
-mode:wmode[1]                   / standard mode
+/ hierarchical agglomerative clustering
 
 / lance-williams algorithm linkage functions. can be either a vector of four
 / floats or a function that accepts the cluster counts of i, j and list of
@@ -564,6 +302,8 @@ clust:{[l;k]
  c:c except\: enlist ();        / remove empty clusters
  c:c iasc i;                    / reorder based on original k
  c}
+
+/ random variate primitives
 
 pi:acos -1f
 twopi:2f*pi
@@ -635,7 +375,6 @@ mmmll:sum multill::
 mmmmle:{[n;a;w;x]enlist avg each a+x%n}
 wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
-
 / gaussian kernel
 gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2*sigma}
 
@@ -669,6 +408,9 @@ gaussmvll:{[mu;SIGMA;X]
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
+
+/ expectation maximization
+
 likelihood:{[l;lf;X;phi;THETA]
  p:(@[;X]lf .) peach THETA;    / compute [log] probability densitities
  p:$[l;p+log phi;p*phi];       / apply prior probabiliites
@@ -683,37 +425,19 @@ em:{[fp;lf;wmf;X;pT]                / expectation maximization
  pT[1]:wmf[;X] peach W;             / new THETA estimates
  pT}
 
-isord:{type[x] in 8 9h}                / is ordered
-aom:{$[isord x;avg;mode]x}             / average or mode
-waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
+/ term frequency primitives
 
-/ k nearest neighbors
+/ term document matrix built from (c)orpus and (v)ocabulary
+tdm:{[c;v](-1_@[(1+count v)#0;;+;1]::) each v?c}
 
-/ pick (k) indices corresponding to the smallest values from
-/ (d)istance vector (or matrix) and use (w)eighting (f)unction to
-/ return the best estimate of the (y)-values
-knn:{[wf;k;y;d]
- if[not type d;:.z.s[wf;k;y] peach d];
- n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
- n}
+lntf:{log 1f+x}                    / log normalized term frequency
+dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
 
-/ markov clustering
-
-addloop:{x|diag max peach x|flip x}
-
-expand:{[e;X](e-1)mm[X]/X}
-
-inflate:{[r;p;X]
- X:X xexp r;                              / inflate
- X*:$[-8h<type p;(p>iasc idesc::)';p<] X; / prune
- X%:sum peach X;                          / normalize
- X}
-
-/ if (p)rune is an integer, take p largest, otherwise take everything > p
-mcl:{[e;r;p;X] inflate[r;p] expand[e] X}
-
-chaos:{max {max[x]-enorm2 x} peach x}
-interpret:{1_asc distinct f2nd[where] 0<x}
+idf: {log count[x]%sum 0<x}     / inverse document frequency
+idfs:{log 1f+count[x]%sum 0<x}  / inverse document frequency smooth
+idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
+pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
+tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
 / naive bayes
 
@@ -820,15 +544,16 @@ dt:{[cgf;ogf;impf;minl;maxd;w;t]
  b[2]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
  bc,1_b}
 
-/ one-hot encode vector, (symbol columns of) table or (non-key symbol
-/ columns of) keyed table x.
-onehot:{
- if[98h>t:type x;:u!x=/:u:distinct x];       / vector
- if[99h=t;:key[x]!.z.s value x];             / keyed table
- D:.z.s each x c:where 11h=type each flip x; / list of dictionaries
- D:string[c] {(`$(x,"_"),/:string key y)!value y}' D; / rename uniquely
- x:c _ x,' flip raze D;                               / append to table
- x}
+/ decision tree classifier: classify the (d)ictionary based on
+/ decision (tr)ee
+dtc:{[tr;d] waom . dtcr[tr;d]}
+dtcr:{[tr;d]                    / recursive component
+ if[2=count tr;:tr];            / (w;a)
+ if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
+ v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
+ v}
+
+/ decistion tree pruning primitives
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
@@ -884,18 +609,11 @@ dtmincc:{[ef;tr;a]
  str:strs imin dtcc[ef;a] each strs;
  str}
 
-/ decision tree classifier: classify the (d)ictionary based on
-/ decision (tr)ee
-dtc:{[tr;d] waom . dtcr[tr;d]}
-dtcr:{[tr;d]                    / recursive component
- if[2=count tr;:tr];            / (w;a)
- if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
- v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
- v}
-
 / k-fold cross validate (i)th table in (t)able(s) using (d)ecision
 / (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
 dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
+
+/ decision tree utilities
 
 / print leaf: prediction followd by classification error% or regresssion sse
 pleaf:{[w;x]
@@ -939,6 +657,8 @@ pgraph:{[tr]
  s,:1#"}";
  s}
 
+/ decision tree projections
+
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
 aid:dt[sig;oig;wmse]           / automatic interaction detection
@@ -948,6 +668,8 @@ q45:dt[gr;ogr;wentropy]        / like c4.5
 ct:dt[oig;oig;wgini]           / classification tree
 rt:dt[oig;oig;wmse]            / regression tree
 stump:dt[gr;ogr;wentropy;1;1]  / decision stump (one split)
+
+/ adaptive boosting
 
 / given (t)rain (f)unction, (c)lassifier (f)unction, (t)able, (w)eights
 / return new (a)lpha, (m)odel, (w)eights
@@ -960,11 +682,294 @@ adaboost:{[tf;cf;t;w]
  w%:sum w;                      / scale
  (a;m;w)}
 
+/ random forest
+
 / Bootstrap AGgregating
 bag:{[b;f;t](f ?[;t]::) peach b#count t}
 
 / Random FOrest
 rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]::);t]}
+
+/ regularization primitives
+
+/ reverse of over (start deep and end shallow)
+revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
+
+/ given l1 regularization (l)ambda and size of dimension (m), return two
+/ function compositions which compute the cost and gradient
+l1:{[l;m]((l%m)*revo[sum] abs::;(l%m)*signum::)}
+
+/ given l2 regularization (l)ambda and size of dimension (m), return two
+/ function compositions which compute the cost and gradient
+l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
+
+/ given (a)lpha and (l)ambda (r)atio elastic net parameters, convert them
+/ into l1 and l2 units and return a pair of l1 and l2 projections
+enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
+
+/ gradient descent utilities
+
+/ accumulate cost by calling (c)ost (f)unction on the result of
+/ (f)unction applied to x[1].  append resulting cost to x[0] and
+/ return.
+acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
+
+/ return 1b until the improvement from the (c)ost is less than
+/ the specified (p)ercent.
+converge:{[p;c]
+ b:$[1<n:count c;p<pct:neg -1f+c[n-1]%c[n-2];1b];
+ s:"Iteration ",string[n]," | cost: ",string last c;
+ 1 s," | pct: ",string[pct],"\n\r"b;
+ b}
+
+/ (a)lpha: learning rate, gf: gradient function
+gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
+
+/ successively call (m)inimization (f)unction with (THETA) and
+/ randomly sorted (n)-sized chunks generated by (s)ampling (f)unction
+sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0} / stochastic gd
+
+/ linear regression
+
+/ given target matrix Y and data matri(X),
+/ return the THETA matrix resulting from minimizing sum of squared residuals
+normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
+
+/ given (l2) regularization parameter, target matrix Y and data matri(X),
+/ return the THETA matrix resulting from performing ridge regression
+ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
+
+/ given (l2) regularization parameter, target vector y and data matri(x),
+/ return the theta vector resulting from performing weighted ridge regression
+/ by scaling the regularization parameter by the count of non-null values
+wridge:{[l2;X;y]first ridge[l2*count w;enlist y w;X[;w:where not null y]]}
+
+/ linear predict Y values by prepending matri(X) with a vector of 1s
+/ and multiplying the result to (THETA) coefficients
+predict:{[X;THETA]mm[THETA] prepend[1f] X}
+
+/ linear regression cost
+lincost:{[rf;Y;X;THETA]
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^predict[X;THETA]-Y;
+ if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
+ J}
+
+/ linear regression gradient
+lingrad:{[rf;Y;X;THETA]
+ G:(1f%m:count X 0)*mmt[0f^mm[THETA;X]-Y] X:prepend[1f] X;
+ if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
+ G}
+
+/ linear cost & gradient
+lincostgrad:{[rf;Y;X;theta]
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^mm[THETA;X]-Y;
+ G:(1f%m)*mmt[E] X;
+ if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
+ (J;raze G)}
+
+/ activation primitives (derivatives optionally accept `z`a!(z;a) dict)
+
+linear:(::)                                   / linear
+dlinear:{1f+0f*$[99h=type x;x`z;x]}           / linear gradient
+sigmoid:1f%1f+exp neg::                       / sigmoid
+dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
+tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
+dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyberbolic tangent gradient
+relu:0f|                              / rectified linear unit
+drelu:{"f"$0f<=$[99h=type x;x`z;x]}   / rectified linear unit gradient
+lrelu:{x*1 .01@0f>x}                  / leaky rectified linear unit
+dlrelu:{1 .01@0f>$[99h=type x;x`z;x]} / leaky rectified linear unit gradient
+
+softmax:prb exp::               / softmax
+ssoftmax:softmax dax[-;max]::   / stable softmax
+dsoftmax:{diag[x] - x*\:/:x:softmax x} / softmax gradient
+
+/ loss primitives
+
+/ given true (y) and (p)redicted values return the log loss
+logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
+/ given true (y) and (p)redicted values return the cross entropy loss 
+celoss:{[y;p]neg sum y*log 1e-15|p}
+/ given true (y) and (p)redicted values return the mean squared error loss
+mseloss:{[y;p].5*y*y-:p}
+
+/ logistic regression
+
+lpredict:sigmoid predict::      / logistic regression predict
+
+/ logistic regression cost
+logcost:{[rf;Y;X;THETA]
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] lpredict[X;THETA];
+ if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];
+ J}
+
+/ logistic regression gradient
+loggrad:{[rf;Y;X;THETA]
+ G:(1f%m:count X 0)*mmt[sigmoid[mm[THETA;X]]-Y] X:prepend[1f] X;
+ if[count rf,:();THETA[;0]:0f; G+:sum rf[;m][;1][;THETA]];
+ G}
+
+logcostgrad:{[rf;Y;X;theta]
+ THETA:(count Y;0N)#theta; X:prepend[1f] X;
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] P:sigmoid mm[THETA] X;
+ G:(1f%m)*mmt[P-Y] X;
+ if[count rf,:();THETA[;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
+ (J;raze G)}
+
+logcostgradf:{[rf;Y;X]
+ Jf:logcost[rf;Y;X]enlist::;
+ Gf:loggrad[rf;Y;X]enlist::;
+ (Jf;Gf)}
+
+/ one vs all
+
+/ given binary classification fitting (f)unction, fit a one-vs-all model
+/ against Y for each unique (lbls)
+fitova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
+
+/ given data matri(X) and (THETA) coefficients, return integer of THETA
+/ vector which produces highest one-vs-all value (probability)
+clfova:{[Y]f2nd[imax] Y}
+
+/ neural network matrix initialization primitives
+
+/ Xavier Glorot and Yoshua Bengio (2010) initialization
+/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
+glorotu:{[i;o]sqrt[6f%i+o]*-1f+i?/:o#2f}  / uniform
+glorotn:{[i;o]rnorm'[o#i;0f;sqrt 2f%i+o]} / normal
+
+/ Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun (2015) initialization
+/ given the number of (i)nput and (o)utput nodes, initialize THETA matrix
+heu:{[i;o]sqrt[6f%i]*-1f+i?/:o#2f}   / uniform
+hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
+
+/ neural network primitives
+
+/ use (h)idden and (o)utput layer functions to predict neural network Y
+nnpredict:{[hof;X;THETA]
+ X:X (hof[`h] predict::)/ -1_THETA;
+ Y:hof[`o] predict[X] last THETA;
+ Y}
+
+/ (r)egularization (f)unction
+/ holf: (h)idden (o)utput (l)oss functions
+nncost:{[rf;holf;Y;X;THETA]
+ J:(1f%m:count X 0)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
+ if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
+ J}
+
+/ (r)egularization (f)unction
+/ hgof: (h)idden (g)radient (o)utput functions
+nngrad:{[rf;hgof;Y;X;THETA]
+ ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgof`h]\ -1_THETA;
+ P:hgof[`o] predict[last[ZA]1;last THETA]; / final layer
+ G:hgof[`g]@'`z`a!/:1_ZA;                  / activation gradients
+ D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
+ G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
+ if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]];
+ G}
+
+/ neural network cut
+nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
+
+/ (r)egularization (f)unction, (n)etwork topology dimensions
+/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
+nncostgrad:{[rf;n;hgolf;Y;X;theta]
+ THETA:nncut[n] theta;
+ ZA:enlist[(X;X)],(X;X) {(z;x z:predict[y 1;z])}[hgolf`h]\ -1_THETA;
+ P:hgolf[`o] predict[last[ZA]1;last THETA];    / final layer
+ J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P]; / cost
+ G:hgolf[`g]@'`z`a!/:1_ZA;                     / activation gradients
+ D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
+ G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
+ if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
+ (J;2 raze/ G)}
+
+/ collaborative filtering
+
+/ collaborative filtering predict
+cfpredict:{[X;THETA] mtm[THETA;X]}
+
+/ collaborative filtering cost
+cfcost:{[rf;Y;X;THETA]
+ J:(.5f%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y;
+ if[count rf,:();J+:sum rf[;m][;0]@\:(X;THETA)];
+ J}
+
+/ collaborative filtering gradient
+cfgrad:{[rf;Y;X;THETA]
+ G:(1f%m:count X 0)*(mm[THETA;E];mmt[X] E:0f^cfpredict[X;THETA]-Y);
+ if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];
+ G}
+
+/ collaborative filtering cut where n:(nu;ni)
+cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
+
+/ collaborative filtering cost & gradient
+cfcostgrad:{[rf;n;Y;xtheta]
+ THETA:last X:cfcut[n] xtheta;X@:0;
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y;
+ G:(1f%m)*(mm[THETA;E];mmt[X;E]);
+ if[count rf,:();JG:rf[;m][;;(X;THETA)];J+:sum JG@'0;G+:sum JG@'1];
+ (J;2 raze/ G)}
+
+/ collaborative filtering update one rating
+/ (a)lpha: learning rate, (xy): coordinates of Y to update
+cfupd1:{[a;l2;Y;XTHETA;xy]
+ e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;reverse xy);
+ XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
+ XTHETA}
+
+/ (w)eighted (r)egularized (a)lternating (l)east (s)quares
+wrals:{[l2;Y;XTHETA]
+ X:flip f2nd[wridge[l2;XTHETA 1]] Y; / hold THETA constant, solve for X
+ THETA:flip wridge[l2;X] peach Y;    / hold X constant, solve for THETA
+ (X;THETA)}
+
+/ user-user collaborative filtering
+/ (s)imilarity (f)unction, (a)veraging (f)unction
+/ (R)ating matrix and new (r)ating vector
+uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
+
+/ top n svd factors
+nsvd:{[n;usv]n#''@[usv;1;(n:min n,count each usv 0 2)#]}
+
+/ use svd decomposition to predict missing exposures for new user
+/ (ui=0b) or item (ui=1b) (r)ecord
+foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
+
+/ gradient checking primitives
+
+/ compute numerical gradient of (f)unction evaluated at x using steps of size
+/ (e)psilon. compute partial derivatives if (e)psilon is a list
+numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
+
+/ return analytic gradient using (g)radient (f)unction and numerical gradient
+/ by evaluating (c)ost (f)unction on theta perturbed by (e)psilon
+checkgrad:{[e;cf;gf;theta]
+ ag:gf theta;                         / analytic gradient
+ ng:numgrad[cf;theta] count[theta]#e; / numerical gradient
+ (ag;ng)}
+
+/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
+checknngrad:{[e;rf;n;hgolf]
+ theta:2 raze/ glorotu'[1+-1_n;1_n];
+ X:glorotu[n 1;n 0];
+ y:1+(1+til n 1) mod last n;
+ Y:flip eye[last n]"i"$y-1;
+ cgf:nncostgrad[rf;n;hgolf;Y;X]; / cost gradient function
+ r:checkgrad[e;first cgf::;last cgf::;theta];
+ r}
+
+checkcfgrad:{[e;rf;n]
+ ni:n 0;nu:n 1 ;nf:10;          / n items, n users, n features
+ Y:mm[nf?/:nu#1f]ni?/:nf#1f;    / random recommendations
+ Y*:0N 1@.5<ni?/:nu#1f;         / drop some recommendations
+ xtheta:2 raze/ (X:ni?/:nf#1f;THETA:nu?/:nf#1f); / random initial parameters
+ cgf:cfcostgrad[rf;n;Y];                     / cost gradient function
+ r:checkgrad[e;first cgf::;last cgf::;xtheta];
+ r}
 
 / sparse matrix manipulation
 
@@ -998,6 +1003,8 @@ sma:{
  m:enlist[x 0],value flip t;
  m}
 
+/ google pagerank
+
 / given a (d)amping factor (1 - the probability of random surfing) and
 / the (A)djacency matrix, create the markov Google matrix
 google:{[d;A]
@@ -1007,7 +1014,7 @@ google:{[d;A]
  M}
 
 / given a (d)amping factor (1 - the probability of random surfing) and
-/ the (A)djacency matrix, obtain the page rank algebraically
+/ the (A)djacency matrix, obtain the pagerank algebraically
 pageranka:{[d;A]
  M:A%1f|s:sum each A;           / convert to markov matrix
  M+:(0f=s)%n:count M;           / add links to dangling pages
@@ -1032,9 +1039,37 @@ pageranks:{[d;S;r]
  r:(d*r)+(1f-d)%n;                                 / dampen
  r}
 
-/ top n svd factors
-nsvd:{[n;usv]n#''@[usv;1;(n:min n,count each usv 0 2)#]}
+/ dimensionality reduction
 
-/ use svd decomposition to predict missing exposures for new user
-/ (ui=0b) or item (ui=1b) (r)ecord
-foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
+covm:{[X] mmt[X;X]%count X 0}     / covariance matrix
+pca:{[X] last .qml.mev covm X}    / eigen vectors of scatter matrix
+project:{[V;X] mtm[V] mm[V;X]}    / project X onto subspace V
+
+/ markov clustering
+
+addloop:{x|diag max peach x|flip x}
+
+expand:{[e;X](e-1)mm[X]/X}
+
+inflate:{[r;p;X]
+ X:X xexp r;                              / inflate
+ X*:$[-8h<type p;(p>iasc idesc::)';p<] X; / prune
+ X%:sum peach X;                          / normalize
+ X}
+
+/ if (p)rune is an integer, take p largest, otherwise take everything > p
+mcl:{[e;r;p;X] inflate[r;p] expand[e] X}
+
+chaos:{max {max[x]-enorm2 x} peach x}
+interpret:{1_asc distinct f2nd[where] 0<x}
+
+/ complex primitives
+
+cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
+csqr:{((-/)x*x;2f*(*/)x)}       / complex square
+cabs:enorm                      / complex absolute value
+
+/ mandelbrot
+
+mandelbrot:{[c;x]c+csqr x}      / mandelbrot
+mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}

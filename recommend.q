@@ -130,15 +130,15 @@ if[2<count key `.qml;
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-n:(nu:count R;ni:count R 0) / n users, n items
+n:(ni:count R 0;nu:count R) / n items, n users
 -1"randomly initialize X and THETA";
-xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+ni?/:nf#2f)
+xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 
 -1"learn latent factors that best predict existing ratings matrix";
 xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . XTHETA:.ml.cfcut[n] xtheta / predictions
+P:b+ub+mb+/:.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -149,7 +149,7 @@ show rpt select from (update score:last P from r) where not null rating
 / stochastic regularized gradient descent
 
 -1"randomly initialize X and THETA";
-xtheta:2 raze/ XTHETA:(X:-1+nu?/:nf#2f;THETA:-1+ni?/:nf#2f)
+xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 
 -1"use 'where' to find list of coordinates of non-null items";
 i:.ml.mwhere not null R
@@ -159,10 +159,10 @@ cf:.ml.cfcost[rf;Y] .
 mf:.ml.cfupd1[.05;.2;Y]
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:last(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
+XTHETA:last a:(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . XTHETA    / predictions
+P:b+ub+mb+/:.ml.cfpredict . XTHETA    / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -181,14 +181,14 @@ show rpt select from (update score:last P from r) where not null rating
 -1"the weights are equal to the number of ratings per user/movie";
 
 -1"reset X and THETA";
-XTHETA:(X:-1+nu?/:nf#1f;THETA:-1+ni?/:nf#2f)
+XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.1;Y]]/(cf;::)@\:XTHETA
+XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;Y]]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.mtm . XTHETA          / predictions
+P:b+ub+mb+/:.ml.cfpredict . XTHETA          / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt r:select from (update score:last P from r) where not null rating
-.util.assert[0.13] .util.rnd[.01] .ml.mse exec rating-score from r
+.util.assert[0f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r

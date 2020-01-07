@@ -522,27 +522,29 @@ ogr:{[impf;w;x;y] / ordered gain ratio
  g:@[g;0;%[;impf[w;g[1] y]]]; / divide by splitinfo
  g}
 
-/ given a (t)able of classifiers and labels where the first column is
-/ the target attribute, create a decision tree using the (c)ategorical
-/ (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the (imp)urity
-/ (f)unction determines which statistic to minimize.  the tree is
-/ pre-pruned to have (min)imum number of (l)eaves, and (max) (d)epth
-dt:{[cgf;ogf;impf;minl;maxd;w;t]
- if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
- if[1=count d:flip t;:(w;first d)]; / no features to test
- if[not maxd;:(w;first d)];         / don't split deeper than maxd
- if[identical a:first d;:(w;a)];    / all values are equal
- d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach 1 _d; / compute gains
- d:(where (any minl>count each last::) each d) _ d;     / drop < minl
- if[not count d;:(w;a)];                                / nothing left
- bc:imax first each (0N?key d)#d; / best classifier (after shuffle)
- if[0>=first b:d bc;:(w;a)];      / stop if no gain
- c:count k:key g:last b;          / grab subtree grouped indices
+/ given a vector of (w)eights (or ::) and a (t)able of features where the
+/ first column is the target attribute, create a decision tree using the
+/ (c)ategorical (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the
+/ (imp)urity (f)unction determines which statistic to minimize.  tree will
+/ have a (max) (d)epth and (min)imum number of (o)bservations at each leaf.
+/ features are randomly selected using (max)imum (f)eature (f)unction
+dt:{[cgf;ogf;impf;mino;maxd;maxff;w;t]
+ if[(::)~w;w:n#1f%n:count t];         / handle unassigned weight
+ if[1=count d:flip t;:(w;first d)];   / no features to test
+ if[not maxd;:(w;first d)];           / don't split deeper than maxd
+ if[identical a:first d;:(w;a)];      / all values are equal
+ d:((neg floor maxff count d)?key d)#d:1 _d;         / sub-select features
+ d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d; / compute gains
+ d:(where (any mino>count each last::) each d) _ d;  / drop < mino
+ if[not count d;:(w;a)];                             / nothing left
+ bf:imax first each d;                               / best feature
+ if[0>=first b:d bf;:(w;a)];                         / stop if no gain
+ c:count k:key g:last b;        / grab subtree grouped indices
  / distribute nulls down each branch with reduced weight
  if[c>ni:null[k]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
- if[null b 1;t:(1#bc)_t];       / don't reuse categorical classifiers
- b[2]:.z.s[cgf;ogf;impf;minl;maxd-1]'[w g;t g]; / classify subtree
- bc,1_b}
+ if[null b 1;t:(1#bf)_t];       / don't reuse categorical features
+ b[2]:.z.s[cgf;ogf;impf;mino;maxd-1;maxff]'[w g;t g]; / split sub-trees
+ bf,1_b}
 
 / decision tree classifier: classify the (d)ictionary based on
 / decision (tr)ee
@@ -661,13 +663,12 @@ pgraph:{[tr]
 
 / given a (t)able of classifiers and labels where the first column is
 / target attribute, create a decision tree
-aid:dt[sig;oig;wmse]           / automatic interaction detection
-thaid:dt[sig;oig;wmisc]        / theta automatic interaction detection
-id3:dt[ig;ig;wentropy;1;0W;::] / iterative dichotomizer 3
-q45:dt[gr;ogr;wentropy]        / like c4.5
-ct:dt[oig;oig;wgini]           / classification tree
-rt:dt[oig;oig;wmse]            / regression tree
-stump:dt[gr;ogr;wentropy;1;1]  / decision stump (one split)
+aid:dt[sig;oig;wmse]            / automatic interaction detection
+thaid:dt[sig;oig;wmisc]         / theta automatic interaction detection
+id3:dt[ig;ig;wentropy]          / iterative dichotomizer 3
+q45:dt[gr;ogr;wentropy]         / like c4.5
+ct:dt[oig;oig;wgini]            / classification tree
+rt:dt[oig;oig;wmse]             / regression tree
 
 / adaptive boosting
 
@@ -684,11 +685,9 @@ adaboost:{[tf;cf;t;w]
 
 / random forest
 
-/ Bootstrap AGgregating
-bag:{[b;f;t](f ?[;t]::) peach b#count t}
-
-/ Random FOrest
-rfo:{[b;p;f;t]bag[b;(f{0!(x?1_cols y)#/:1!y}[p]::);t]}
+/ generate (n) decision trees by applying (f) to a resampled (with
+/ replacemnt) (t)able
+bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 
 / regularization primitives
 

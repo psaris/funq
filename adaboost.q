@@ -5,10 +5,10 @@
 
 / https://cseweb.ucsd.edu/~yfreund/papers/adaboost.ps
 
--1 .ml.ptree[0] tree:.ml.q45[`minsl`maxd!2 3;::] pima.t;
+-1 .ml.ptree[0] tree:.ml.q45[();::] pima.t;
 avg pima.t.class=.ml.dtc[tree] each pima.t / accuracy
 -1 "a stump is a single branch tree";
-stump:.ml.q45[`minsl`maxd!1 1]
+stump:.ml.q45[(1#`maxd)!1#1]
 -1 .ml.ptree[0] stump[::] pima.t;
 t:update -1 1 class from pima.t
 r:20 (.ml.adaboost[stump;.ml.dtc;pima.t]last::)\(0f;2 1#1;n#1f%n:count pima.t)

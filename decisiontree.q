@@ -14,13 +14,12 @@
 -1"load weather data, remove the day column and move Play to front";
 show t:weather.t
 -1"use the id3 algorithm to build a decision tree";
--1 .ml.ptree[0] tr:.ml.id3[`maxd`minss`minsl`ming!(0W;4;3;0);::] t;
+-1 .ml.ptree[0] tr:.ml.id3[();::] t;
 `:tree.dot 0: .ml.pgraph tr
--1"the tree is build with pairs of values.";
+-1"the tree is built with tripplets.";
 -1"the first value is the decision feature,";
--1"and the second value is itself another pair:";
--1"a function (used for numeric values) to apply to the feature,";
--1"and a dictionary representing the leaves";
+-1"and the second value is operator to use on the feature";
+-1"and the third value is a dictionary representing the leaves";
 -1"we can then use the (d)ecission (t)ree (c)lassifier function to classify our data";
 avg t.Play=p:.ml.dtc[tr] each t / accuracy
 -1"since the test and training data are the same, it is no suprise we have 100% accuracy";

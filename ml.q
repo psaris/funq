@@ -529,12 +529,12 @@ ogr:{[impf;w;x;y] / ordered gain ratio
 / of (opt)ions specify the (max) (d)epth, (min)imum # of (s)amples required
 / to (s)plit, (min)imum # of samples at each leaf, (min)imum (g)ain and the
 / (max)imum (f)eature (f)unction used to sub sample features for random
-/ forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0W;2;1;0;::)
+/ forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)
 dt:{[cgf;ogf;impf;opt;w;t]
  if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
  if[1=count d:flip t;:(w;first d)]; / no features to test
- opt:(`maxd`minss`minsl`ming`maxff!(0W;2;1;0;::)),opt; / default options
- if[not opt`maxd;:(w;first d)];  / don't split if we've reached maxd
+ opt:(`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)),opt; / default options
+ if[0=opt`maxd;:(w;first d)];    / don't split if we've reached maxd
  if[identical a:first d;:(w;a)]; / stop when all values are equal
  if[opt[`minss]>count a;:(w;a)]; / don't split if minss > # samples
  d:((neg floor opt[`maxff] count d)?key d)#d:1 _d;   / sub-select features

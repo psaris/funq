@@ -531,19 +531,18 @@ ogr:{[impf;w;x;y] / ordered gain ratio
 / (max)imum (f)eature (f)unction used to sub sample features for random
 / forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)
 dt:{[cgf;ogf;impf;opt;w;t]
- if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
+ if[(::)~w;w:n#1f%n:count t];       / compute default weight vector
  if[1=count d:flip t;:(w;first d)]; / no features to test
  opt:(`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)),opt; / default options
- if[0=opt`maxd;:(w;first d)];    / don't split if we've reached maxd
- if[identical a:first d;:(w;a)]; / stop when all values are equal
- if[opt[`minss]>count a;:(w;a)]; / don't split if minss > # samples
+ if[0=opt`maxd;:(w;first d)];    / check if we've reached max depth
+ if[identical a:first d;:(w;a)]; / check if all values are equal
+ if[opt[`minss]>count a;:(w;a)]; / check if insufficent samples
  d:((neg floor opt[`maxff] count d)?key d)#d:1 _d;   / sub-select features
  d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d; / compute gains
- d:(where (any opt[`minsl]>count each last::) each d) _ d; / drop < minsl
- if[not count d;:(w;a)];                                   / nothing left
- bf:imax first each d;                                     / best feature
- if[opt[`ming]>=first b:d bf;:(w;a)]; / stop if gain is insufficient
- c:count k:key g:last b;              / grab subtrees and feature names
+ d:(where (any opt[`minsl]>count each last::) each d) _ d; / filter on minsl
+ if[0=count d;:(w;a)];          / check if all leaves have < minsl samples
+ if[opt[`ming]>=first b:d bf:imax d[;0];:(w;a)]; / check gain of best feature
+ c:count k:key g:last b;        / grab subtrees, feature names and count
  / distribute nulls down each branch with reduced weight
  if[c>ni:null[k]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
  if[(::)~b 1;t:(1#bf)_t];       / don't reuse exhausted features

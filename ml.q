@@ -525,30 +525,33 @@ ogr:{[impf;w;x;y] / ordered gain ratio
 / given a vector of (w)eights (or ::) and a (t)able of features where the
 / first column is the target attribute, create a decision tree using the
 / (c)ategorical (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the
-/ (imp)urity (f)unction determines which statistic to minimize.  tree will
-/ have a (max) (d)epth and (min)imum number of (o)bservations at each leaf.
-/ features are randomly selected using (max)imum (f)eature (f)unction
-dt:{[cgf;ogf;impf;mino;maxd;maxff;w;t]
- if[(::)~w;w:n#1f%n:count t];         / handle unassigned weight
- if[1=count d:flip t;:(w;first d)];   / no features to test
- if[not maxd;:(w;first d)];           / don't split deeper than maxd
- if[identical a:first d;:(w;a)];      / all values are equal
- d:((neg floor maxff count d)?key d)#d:1 _d;         / sub-select features
+/ (imp)urity (f)unction determines which statistic to minimize.  a dictionary
+/ of (opt)ions specify the (max) (d)epth, (min)imum # of (s)amples required
+/ to (s)plit, (min)imum # of samples at each leaf, (min)imum (g)ain and the
+/ (max)imum (f)eature (f)unction used to sub sample features for random
+/ forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0W;2;1;0;::)
+dt:{[cgf;ogf;impf;opt;w;t]
+ if[(::)~w;w:n#1f%n:count t];       / handle unassigned weight
+ if[1=count d:flip t;:(w;first d)]; / no features to test
+ opt:(`maxd`minss`minsl`ming`maxff!(0W;2;1;0;::)),opt; / default options
+ if[not opt`maxd;:(w;first d)];  / don't split if we've reached maxd
+ if[identical a:first d;:(w;a)]; / stop when all values are equal
+ if[opt[`minss]>count a;:(w;a)]; / don't split if minss > # samples
+ d:((neg floor opt[`maxff] count d)?key d)#d:1 _d;   / sub-select features
  d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d; / compute gains
- d:(where (any mino>count each last::) each d) _ d;  / drop < mino
- if[not count d;:(w;a)];                             / nothing left
- bf:imax first each d;                               / best feature
- if[0>=first b:d bf;:(w;a)];                         / stop if no gain
- c:count k:key g:last b;        / grab subtree grouped indices
+ d:(where (any opt[`minsl]>count each last::) each d) _ d; / drop < minsl
+ if[not count d;:(w;a)];                                   / nothing left
+ bf:imax first each d;                                     / best feature
+ if[opt[`ming]>=first b:d bf;:(w;a)]; / stop if gain is insufficient
+ c:count k:key g:last b;              / grab subtrees and feature names
  / distribute nulls down each branch with reduced weight
  if[c>ni:null[k]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
- if[null b 1;t:(1#bf)_t];       / don't reuse categorical features
- b[2]:.z.s[cgf;ogf;impf;mino;maxd-1;maxff]'[w g;t g]; / split sub-trees
+ if[(::)~b 1;t:(1#bf)_t];       / don't reuse exhausted features
+ b[2]:.z.s[cgf;ogf;impf;@[opt;`maxd;-;1]]'[w g;t g]; / split sub-trees
  bf,1_b}
 
-/ decision tree classifier: classify the (d)ictionary based on
-/ decision (tr)ee
-dtc:{[tr;d] waom . dtcr[tr;d]}
+/ classify the (d)ictionary based on decision (tr)ee
+dtc:{[tr;d] waom . dtcr[tr;d]}  / decision tree classifier
 dtcr:{[tr;d]                    / recursive component
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];

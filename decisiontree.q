@@ -14,7 +14,7 @@
 -1"load weather data, remove the day column and move Play to front";
 show t:weather.t
 -1"use the id3 algorithm to build a decision tree";
--1 .ml.ptree[0] tr:.ml.id3[1;0W;::;::] t;
+-1 .ml.ptree[0] tr:.ml.id3[`maxd`minss`minsl`ming!(0W;4;3;0);::] t;
 `:tree.dot 0: .ml.pgraph tr
 -1"the tree is build with pairs of values.";
 -1"the first value is the decision feature,";
@@ -25,7 +25,7 @@ show t:weather.t
 avg t.Play=p:.ml.dtc[tr] each t / accuracy
 -1"since the test and training data are the same, it is no suprise we have 100% accuracy";
 -1".ml.dtc does not fail on missing features. it digs deeper into the tree";
-.util.assert[.71428571428571431] avg t.Play=p:.ml.dtc[.ml.id3[1;0W;::;::] (1#`Outlook) _ t] each t
+.util.assert[.71428571428571431] avg t.Play=p:.ml.dtc[.ml.id3[();::] (1#`Outlook) _ t] each t
 -1"id3 only handles discrete features.  c4.5 handles continues features";
 -1".ml.q45 implements many of the features of c4.5 including:";
 -1"* information gain normalized by split info";
@@ -37,33 +37,33 @@ avg t.Play=p:.ml.dtc[tr] each t / accuracy
 -1"we can test this feature by changing humidity into a continuous variable";
 show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80f]
 -1"we can see how id3 creates a bushy tree";
--1 .ml.ptree[0] .ml.id3[1;0W;::;::] s;
+-1 .ml.ptree[0] .ml.id3[();::] s;
 -1"while q45 picks a single split value";
 
 z:@[{.qml.nicdf x};.0125;2.241403];
--1 .ml.ptree[0] tr:.ml.prune[.ml.perr[z]] .ml.q45[2;0W;::;::] s;
+-1 .ml.ptree[0] tr:.ml.prune[.ml.perr[z]] .ml.q45[();::] s;
 .util.assert[1f] avg s.Play=p:.ml.dtc[tr] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tr] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85f;`)
 -1"we can even can handle nulls in the training data by propegating them down the tree";
 s:update Temperature:` from s where Humidity=70f
--1 .ml.ptree[0] tr:.ml.q45[2;0W;::;::] s;
+-1 .ml.ptree[0] tr:.ml.q45[();::] s;
 .util.assert[`No] .ml.dtc[tr] d
 -1 "we can also use the gini impurity instead of entropy (faster with similar behavior)";
--1 .ml.ptree[0] tr:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;2;0W;::;::] t;
+-1 .ml.ptree[0] tr:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;();::] t;
 d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`No] .ml.dtc[tr] d
 -1 "we can also create an aid tree when the target is numeric";
--1 .ml.ptree[0] tr:.ml.aid[3;0W;::;::] update "e"$`Yes=Play from t; / regression tree
+-1 .ml.ptree[0] tr:.ml.aid[(1#`minsl)!1#3;::] update "e"$`Yes=Play from t; / regression tree
 .util.assert[.2] .ml.dtc[tr] d
 -1 "we can also create a thaid tree for classifiction";
--1 .ml.ptree[0] tr:.ml.thaid[3;0W;::;::] t; / classification tree
+-1 .ml.ptree[0] tr:.ml.thaid[(1#`minsl)!1#3;::] t; / classification tree
 .util.assert[`Yes] .ml.dtc[tr] d
 
 -1 "we can now split the iris data into training and test batches";
 show d:`train`test!.util.part[3 1] iris.t
 -1 "then create a classification tree";
--1 .ml.ptree[0] tr:.ml.ct[1;0W;::;::] `species xcols d`train;
+-1 .ml.ptree[0] tr:.ml.ct[();::] `species xcols d`train;
 -1 "testing the tree on the test set produces an accuracy of:";
 avg d.test.species=p:tr .ml.dtc/: d`test
 -1 "we can save the decision tree into graphviz compatible format";
@@ -77,12 +77,12 @@ t:"f"$.util.onehot iris.t
 -1 "then split the data into training and test batches"
 show d:`train`test!.util.part[3 1] t
 -1 "and generate a regression tree";
--1 .ml.ptree[0] tr:.ml.rt[1;0W;::;::]  `plength xcols d`train;
+-1 .ml.ptree[0] tr:.ml.rt[();::]  `plength xcols d`train;
 -1 "we now compute the root mean square error (rmse)";
 .ml.rms d.test.plength-p:tr .ml.dtc/: d`test
 
 -1 "using breiman algorithm, compute pruning alphas";
-dtf:.ml.ct[1;0W;::;::]
+dtf:.ml.ct[();::]
 ef:.ml.wmisc
 
 / http://mlwiki.org/index.php/Cost-Complexity_Pruning
@@ -108,7 +108,7 @@ show e:avg each ts[;`species]=p:.ml.dtkfxv[dtf;ef;b;ts] peach til n
 
 -1 "or even grow and prune a regression tree with wine quality data";
 d:`train`test!.util.part[1 1] winequality.red.t
-dtf:.ml.rt[1;0W;::;::]
+dtf:.ml.rt[();::]
 ef:.ml.wmse
 -1 "the fully grown tree has more than 200 leaves!";
 .util.assert[1b] 200<0N!count .ml.leaves tr:dtf d`train

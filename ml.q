@@ -672,24 +672,24 @@ q45:dt[gr;ogr;wentropy]         / like c4.5
 ct:dt[oig;oig;wgini]            / classification tree
 rt:dt[oig;oig;wmse]             / regression tree
 
-/ adaptive boosting
+/ random forest
 
-/ given (t)rain (f)unction, (c)lassifier (f)unction, (t)able, (w)eights
-/ return new (a)lpha, (m)odel, (w)eights
+/ generate (n) decision trees by applying (f) to a resampled (with
+/ replacemnt) (t)able
+bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
+
+/ discrete adaptive boosting
+
+/ given (t)rain (f)unction, discrete (c)lassifier (f)unction, (t)able, and
+/ initial (w)eights, return (a)lpha, (m)odel, and new (w)eights
 adaboost:{[tf;cf;t;w]
  m:tf[w] t;                     / train model
  p:cf[m] each t;                / predict
  e:sum w*not p=y:first flip t;  / weighted error
  a:.5*log (1f-e)%e;             / alpha
  w*:exp neg a*y*p;              / up/down weight
- w%:sum w;                      / scale
+ w%:sum w;                      / rescale
  (a;m;w)}
-
-/ random forest
-
-/ generate (n) decision trees by applying (f) to a resampled (with
-/ replacemnt) (t)able
-bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 
 / regularization primitives
 

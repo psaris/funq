@@ -57,13 +57,13 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Vector Space Model (tf-idf)
 
-## Decision Tree (ID3,C4.5)
+## Decision Tree (ID3,C4.5,CART)
 
-## Adaptive Boosting
+## Random Forest (and Boosted Aggregating BAG)
 
-## Random Forest
+## Discrete Adaptive Boosting (AdaBoost)
 
-## Regularization
+## Regularization (L1,L2)
 
 ## Least Squares Regression
 
@@ -71,7 +71,7 @@ you can then read the comments and run the examples one by one. topics include:
 
 ## Logistic Regression
 
-## One vs All 
+## One vs All
 
 ## Neural Network Classification
 

@@ -510,9 +510,9 @@ sig:{[impf;w;x;y]               / set information gain
 / use (imp)urity (f)unction to pick the maximum (w)eighted information
 / gain of x after splitting across all values of y
 oig:{[impf;w;x;y] / ordered information gain
- g:(ig[impf;w;x] y <) peach u:desc distinct y;
+ g:(ig[impf;w;x] y >) peach u:asc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
- g[1]:<[;avg u i+0 1];          / split function
+ g[1]:>[;avg u i+0 1];          / split function
  g}
 
 / use (imp)urity (f)unction to pick the maximum (w)eighted gain ratio

@@ -678,10 +678,10 @@ rt:dt[oig;oig;wmse]             / regression tree
 / return new (a)lpha, (m)odel, (w)eights
 adaboost:{[tf;cf;t;w]
  m:tf[w] t;                     / train model
- yh:cf[m] each t;               / predict
- e:sum w*not yh=y:first flip t; / weighted error
+ p:cf[m] each t;                / predict
+ e:sum w*not p=y:first flip t;  / weighted error
  a:.5*log (1f-e)%e;             / alpha
- w*:exp neg a*y*yh;             / up/down weight
+ w*:exp neg a*y*p;              / up/down weight
  w%:sum w;                      / scale
  (a;m;w)}
 

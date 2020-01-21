@@ -683,12 +683,13 @@ bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 / given (t)rain (f)unction, discrete (c)lassifier (f)unction, (t)able, and
 / initial (w)eights, return (a)lpha, (m)odel, and new (w)eights
 adaboost:{[tf;cf;t;w]
+ if[(::)~w;w:n#1f%n:count t];   / initialize weights
  m:tf[w] t;                     / train model
- p:cf[m] each t;                / predict
- e:sum w*not p=y:first flip t;  / weighted error
- a:.5*log (1f-e)%e;             / alpha
- w*:exp neg a*y*p;              / up/down weight
- w%:sum w;                      / rescale
+ p:cf[m] each t;                / make predictions
+ e:sum w*not p=y:first flip t;  / compute weighted error
+ a:.5*log (1f-e)%e;             / compute alpha (signficance)
+ w*:exp neg a*y*p;              / increase/decrease weights
+ w%:sum w;                      / normalize weights
  (a;m;w)}
 
 / regularization primitives

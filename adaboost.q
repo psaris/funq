@@ -17,11 +17,15 @@ stump:.ml.ct[(1#`maxd)!1#1]
 -1 .ml.ptree[0] stump[::] d.train;
 -1 "convert wdbc.diagnosis to discrete values -1 and 1";
 t:update -1 1 "M"=diagnosis from d.train
--1 "run 5 rounds of adaboost";
-r:5 (.ml.adaboost[stump;.ml.dtc;t]last::)\ (0f;2 1#1;::)
+n:50
+-1 "run ",string[n]," rounds of adaboost";
+r:1_n (.ml.adaboost[stump;.ml.dtc;t]last::)\ (::)
+.util.assert[1f] avg t.diagnosis=signum sum r[;1] * r[;0] .ml.dtc/:\: t
+-1 "plot the improvement to accuracy on the training set as we increase the ensemble size";
+show .util.plt (avg t.diagnosis=) each signum sums r[;1] * r[;0] .ml.dtc/:\: t
 
--1 "check accuracy";
+-1 "but how does each extra stump help in predicting the test set?";
 tt:update -1 1 "M"=diagnosis from d.test
-.util.assert[.95] .util.rnd[.01] avg tt.diagnosis=signum sum r[;0] * r[;1] .ml.dtc/:\: tt
--1 "plot improvement of accuracy";
-show .util.plt (avg tt.diagnosis=) each signum sums r[;0] * r[;1] .ml.dtc/:\: tt;
+.util.assert[.96] .util.rnd[.01] avg tt.diagnosis=signum sum r[;1] * r[;0] .ml.dtc/:\: tt
+-1 "we can also plot the improvement to accuracy on the test set as we increase the ensemble size";
+show .util.plt (avg tt.diagnosis=) each signum sums r[;1] * r[;0] .ml.dtc/:\: tt

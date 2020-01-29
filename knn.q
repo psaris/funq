@@ -32,13 +32,15 @@ show t;
 
 n:5
 -1"cross validate with ", string[n], " buckets";
-Xs:flip (n;0N)#/:X
-ys:(n;0N)#y
-ff:{[y;X].ml.knn[sqrt 1%;ks;y] .ml.pedist2[X]::}
-e:ys=p:(.ml.kfxvyx[ff;(::);ys;Xs]0N!) each til n
+i:.util.part[n#1] til count X 0
+Xs:flip X[;i]
+ys:y i
+ff:{[k;y;X].ml.knn[sqrt 1%;k;y] .ml.pedist2[X]::}
+pf:@
+e:ys=p:.ml.kfxvyx[ff ks;pf;ys;Xs] peach til n
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e
 
 -1"confirm accuracy against test dataset";
-avg yt=p:.ml.knn[sqrt 1%;k;y] .ml.pedist2[X] Xt
+avg yt=p:pf[;Xt] ff[k;y;X]

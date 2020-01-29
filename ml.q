@@ -681,7 +681,7 @@ bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 / discrete adaptive boosting
 
 / given (t)rain (f)unction, discrete (c)lassifier (f)unction, (t)able, and
-/ initial (w)eights, return (m)odel, (a)lpha, and new (w)eights
+/ initial (w)eights, return ((m)odel;(a)lpha;new (w)eights)
 adaboost:{[tf;cf;t;w]
  if[(::)~w;w:n#1f%n:count t];    / initialize weights
  m:tf[w] t;                      / train model
@@ -692,6 +692,18 @@ adaboost:{[tf;cf;t;w]
  / w%:sum w;                       / normalize weights
  w%:2f*?[y=p;c;e];               / increase/decrease and normalize weights
  (m;a;w)}
+
+/ given an atom or list (k), (t)rain (f)unction, discrete (c)lassifier
+/ (f)unction, and (t)able perform max(k) iterations of adaboost
+fitab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;t] last::)\ (::)}
+
+/ given an atom or list (k), discrete (c)lassifier function, adaboost
+/ (m)odel, classify samples in (t)able
+clfab:{[k;cf;m;t]
+ if[count[m]<mx:max k;'`length];
+ P:m[;1] * m[;0] cf/:\: t;
+ P:signum $[0h>type k;sum k#P;sums[mx#P] k-1];
+ P}
 
 / regularization primitives
 

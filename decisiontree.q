@@ -123,4 +123,4 @@ show e:avg each e*e:ts[;`quality]-p:(.ml.dtkfxv[dtf;ef;b;ts]0N!) peach til n
 -1 "the pruned tree has less than 15 leaves";
 .util.assert[1b] 20>0N!count .ml.leaves btr
 -1 "and an rms less than .70";
-.util.assert[1b] .71>0N!.ml.rms d.test.quality - btr .ml.dtc/: d`test
+.util.assert[1b] .72>0N!.ml.rms d.test.quality - btr .ml.dtc/: d`test

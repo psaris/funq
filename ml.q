@@ -682,6 +682,13 @@ rt:dt[oig;oig;wmse]             / regression tree
 / replacemnt) (t)able
 bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 
+/ given an atom or list (k), and Bootstrap AGgregating (m)odel, make
+/ predictions on samples in (t)able
+pbag:{[k;m;t]
+ if[count[m]<mx:max k;'`length];
+ p:k {(aom x#) each y}\: m dtc\:/: t;
+ p}
+
 / discrete adaptive boosting
 
 / given (t)rain (f)unction, discrete (c)lassifier (f)unction, (t)able, and
@@ -705,9 +712,9 @@ fab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;t] last::)\ (::)}
 / (m)odel, make predictions on samples in (t)able
 pab:{[k;cf;m;t]
  if[count[m]<mx:max k;'`length];
- P:m[;1] * m[;0] cf/:\: t;
- P:signum $[0h>type k;sum k#P;sums[mx#P] k-1];
- P}
+ p:m[;1] * m[;0] cf/:\: t;
+ p:signum $[0h>type k;sum k#p;sums[mx#p] k-1];
+ p}
 
 / regularization primitives
 

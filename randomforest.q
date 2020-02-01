@@ -4,23 +4,25 @@
 \l winequality.q
 
 -1"applying random forest to the wdbc data set";
+k:20
 d:`train`test!.util.part[3 1] wdbc.t
 -1"bagging grows B decision trees with random sampling (with replacement)";
-m:.ml.bag[20;.ml.q45[();::]] d`train
-avg d.test.diagnosis=.ml.mode each m .ml.dtc\:/: d`test
+m:.ml.bag[k;.ml.q45[();::]] d`train
+avg d.test.diagnosis=.ml.pbag[k;m] d`test
 
 -1"a random forest grows B decision trees with random sampling (with replacement)";
 -1"and a sub-selection of sqrt (for classifiction) of the features at each split";
-m:.ml.bag[20;.ml.q45[(1#`maxff)!1#sqrt;::]] d`train
-avg d.test.diagnosis=.ml.mode each m .ml.dtc\:/: d`test
+m:.ml.bag[k;.ml.q45[(1#`maxff)!1#sqrt;::]] d`train
+avg d.test.diagnosis=.ml.pbag[k;m] d`test
 
 -1"applying random forest to the winequality data set";
 d:`train`test!.util.part[1 1] winequality.red.t
 -1"bagging grows B decision trees with random sampling (with replacement)";
-m:.ml.bag[20;.ml.q45[();::]] d`train
-.ml.rms d.test.quality-avg each m .ml.dtc\:/: d`test
+m:.ml.bag[k;.ml.q45[();::]] d`train
+.ml.rms d.test.quality-.ml.pbag[k;m] d`test
 
 -1"a random forest grows B decision trees with random sampling (with replacement)";
 -1"and a sub-selection of one third (for regression) of the features at each split";
-m:.ml.bag[20;.ml.q45[(1#`maxff)!1#%[;3];::]] d`train
-.ml.rms d.test.quality-avg each m .ml.dtc\:/: d`test
+m:.ml.bag[k;.ml.q45[(1#`maxff)!1#%[;3];::]] d`train
+.ml.rms d.test.quality-.ml.pbag[k;m] d`test
+

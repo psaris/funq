@@ -25,10 +25,10 @@ f:first .fmincg.fmincg[5;;theta] .ml.logcostgrad[rf;;X]@
 -1"we perform multiple runs of logistic regression (one for each digit)";
 -1"this trains one set of parameters for each number";
 -1 .util.box["**"] "for performance, we peach across digits";
-THETA:.ml.fitova[f;Y;lbls]
+THETA:.ml.fova[f;Y;lbls]
 
 -1"checking accuracy of parameters";
-avg yt=p:lbls .ml.clfova .ml.logpredict[Xt] THETA
+avg yt=p:lbls .ml.pova .ml.logpredict[Xt] THETA
 
 -1"view a few confused characters";
 w:where not yt=p

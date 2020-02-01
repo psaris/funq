@@ -443,13 +443,13 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
 / fit parameters given (w)eighted (m)aximization (f)unction
 / returns a dictionary with prior and conditional likelihoods
-fitnb:{[wmf;w;X;y]
+fnb:{[wmf;w;X;y]
  if[(::)~w;w:count[y]#1f];      / handle unassigned weight
  pT:(odds g; w[value g] wmf' X@\:/:g:group y);
  pT}
 / using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform
-/ naive bayes classification
-clfnb:{[l;lf;pT;X]
+/ naive bayes prediction
+pnb:{[l;lf;pT;X]
  d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
  c:imax each flip $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
  c}
@@ -695,11 +695,11 @@ adaboost:{[tf;cf;t;w]
 
 / given an atom or list (k), (t)rain (f)unction, discrete (c)lassifier
 / (f)unction, and (t)able perform max(k) iterations of adaboost
-fitab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;t] last::)\ (::)}
+fab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;t] last::)\ (::)}
 
 / given an atom or list (k), discrete (c)lassifier function, adaboost
-/ (m)odel, classify samples in (t)able
-clfab:{[k;cf;m;t]
+/ (m)odel, make predictions on samples in (t)able
+pab:{[k;cf;m;t]
  if[count[m]<mx:max k;'`length];
  P:m[;1] * m[;0] cf/:\: t;
  P:signum $[0h>type k;sum k#P;sums[mx#P] k-1];
@@ -842,11 +842,11 @@ logcostgradf:{[rf;Y;X]
 
 / given binary classification fitting (f)unction, fit a one-vs-all model
 / against Y for each unique (lbls)
-fitova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
+fova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 
 / given data matri(X) and (THETA) coefficients, return integer of THETA
 / vector which produces highest one-vs-all value (probability)
-clfova:{[Y]f2nd[imax] Y}
+pova:{[Y]f2nd[imax] Y}
 
 / neural network matrix initialization primitives
 

@@ -36,7 +36,7 @@ mf:{[THETA;i]first .fmincg.fmincg[10;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THET
 theta:2 .ml.sgd[mf;0N?;250;X]/ theta
 
 -1"checking accuracy of parameters";
-avg y=p:.ml.clfova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
+avg y=p:.ml.pova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";

@@ -51,10 +51,10 @@ y:d . `train`class
 sw:.porter.stem peach stopwords.xpo6
 X:0f^.ml.tfidf[.ml.lntf;.ml.idf] .ml.tdm[c] v:asc distinct[raze c] except sw
 -1 "fitting multinomial naive bayes classifier";
-pT:.ml.fitnb[.ml.wmultimle[1];(::);flip X;y]
+pT:.ml.fnb[.ml.wmultimle[1];(::);flip X;y]
 -1"confirming accuracy";
 ct:d . `test`text
 yt:d . `test`class
 Xt:0f^.ml.tfidf[.ml.lntf;.ml.idf] .ml.tdm[ct] v
-avg yt=p:.ml.clfnb[1b;.ml.multill;pT] flip Xt
+avg yt=p:.ml.pnb[1b;.ml.multill;pT] flip Xt
 show .util.rnd[1e-4] select[>PE] from ([]word:v)!flip last pT

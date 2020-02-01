@@ -35,7 +35,7 @@ n:5
 i:.util.part[n#1] til count X 0
 Xs:flip X[;i]
 ys:y i
-ff:{[k;y;X].ml.knn[sqrt 1%;k;y] .ml.pedist2[X]::}
+ff:.ml.fknn[sqrt 1%;.ml.pedist2]
 pf:@
 e:ys=p:.ml.kfxvyx[ff ks;pf;ys;Xs] peach til n
 

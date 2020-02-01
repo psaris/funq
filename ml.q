@@ -194,6 +194,10 @@ knn:{[wf;k;y;d]
  n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
  n}
 
+/ given (w)eighting (f)unction, (d)istance (f)unction, atom or vector of (k)
+/ values, a (y) vector and matrix(X), return a prediction composition
+fknn:{[wf;df;k;y;X] knn[wf;k;y] df[X]::}
+ 
 / k-(means|medians)
 
 / using the (d)istance (f)unction, group matri(X) based on the closest

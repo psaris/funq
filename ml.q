@@ -185,6 +185,7 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
 / find (k) smallest values from (d)istance vector (or matrix) and use
 / (w)eighting (f)unction to return the best estimate of y
 knn:{[wf;k;y;d]
+ if[count[y]<max k;'`length];
  if[not type d;:.z.s[wf;k;y] peach d];
  n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
  n}
@@ -681,7 +682,7 @@ bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
 / given an atom or list (k), and Bootstrap AGgregating (m)odel, make
 / predictions on samples in (t)able
 pbag:{[k;m;t]
- if[count[m]<mx:max k;'`length];
+ if[count[m]<max k;'`length];
  p:k {(aom x#) each y}\: m dtc\:/: t;
  p}
 

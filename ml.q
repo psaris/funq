@@ -114,13 +114,12 @@ scor:{srank[x w] cor srank y w:wnan(x;y)}
 
 / frequency and mode primitives
 
-/ given a (w)eight atom or vector, and data x, return a sorted
-/ dictionary mapping the distinct items to their weighted count
+/ given a (w)eight atom or vector, and data x, return a sorted dictionary
+/ mapping the distinct items to their weighted count
 wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
 freq:wfreq[1]
 
-/ given a (w)eight atom or vector, and data x, return the item which
-/ occurs most frequently
+/ given a (w)eight return (x)-value which occurs most frequently
 wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
@@ -140,8 +139,8 @@ accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}
 precision:{[tp;tn;fp;fn]tp%tp+fp}
 recall:{[tp;tn;fp;fn]tp%tp+fn}
 
-/ f measure: given (b)eta and tp,tn,fp,fn
-/ harmonic mean of precision and recall
+/ f measure: given (b)eta and tp,tn,fp,fn compute the harmonic mean of
+/ precision and recall
 F:{[b;tp;tn;fp;fn]
  f:1+b2:b*b;
  f*:r:recall[tp;tn;fp;fn];
@@ -154,8 +153,7 @@ F1:F[1]
 / geometric mean of precision and recall
 FM:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
 
-/ returns a number between 0 and 1 which indicates the similarity
-/ between two datasets
+/ returns a number between 0 and 1 indicating the similarity of two datasets
 jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}
 
 / Matthews Correlation Coefficient
@@ -165,9 +163,8 @@ MCC:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
 
 / k-fold cross validation primitives
 
-/ use all data from ys and Xs except the (i)th element to fit a model
-/ using the (f)itting (f)unction and then make a use (p)rediction
-/ (f)unction on Xs[i]
+/ use all data from ys and Xs except the (i)th element to fit a model using
+/ the (f)itting (f)unction and then apply (p)rediction (f)unction on Xs[i]
 kfxvyx:{[ff;pf;ys;Xs;i]     / k-fold cross validate vec y and matrix X
  X:(,'/)Xs _ i;             / drop i and raze
  y:raze ys _ i;             / drop i and raze
@@ -175,9 +172,8 @@ kfxvyx:{[ff;pf;ys;Xs;i]     / k-fold cross validate vec y and matrix X
  p:pf[m] Xs i;              / use model to make predictions:
  p}
 
-/ use all data from (t)able(s) except the (i)th element to fit a model
-/ using the (f)itting (f)unction and then use (p)rediction (f)unction
-/ on ts[i]
+/ use all data from (t)able(s) except the (i)th element to fit a model using
+/ the (f)itting (f)unction and then use (p)rediction (f)unction on ts[i]
 kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
  t:raze ts _ i;                 / drop i and raze
  m:ff[t];                       / fit model
@@ -186,9 +182,8 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
 
 / k nearest neighbors
 
-/ pick (k) indices corresponding to the smallest values from
-/ (d)istance vector (or matrix) and use (w)eighting (f)unction to
-/ return the best estimate of the (y)-values
+/ find (k) smallest values from (d)istance vector (or matrix) and use
+/ (w)eighting (f)unction to return the best estimate of y
 knn:{[wf;k;y;d]
  if[not type d;:.z.s[wf;k;y] peach d];
  n:(waom . (wf d::;y)@\:#[;iasc d]::) each k;
@@ -210,8 +205,8 @@ iwrand:{[n;w]s binr n?last s:sums w}
 wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
-/ using (d)istance (f)function and matri(X), append the next centroid
-/ to the min centroid (d)istance and all (C)centroids
+/ using (d)istance (f)function and matri(X), append the next centroid to the
+/ min centroid (d)istance and all (C)centroids
 kpp:{[df;X;d;C]
  if[not count C;:(0w;X@\:1?count X 0)]; / first centroid
  if[count[X 0]=n:count C 0;:(d;C)];     / no more centroids
@@ -220,9 +215,9 @@ kpp:{[df;X;d;C]
  (d;C)}
 kmeanspp:kpp[edist2]
 
-/ stuart lloyd's algorithm. using a (d)istance (f)unction assigns the
-/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid
-/ (f)unction to update the centroid location.
+/ stuart lloyd's algorithm. uses (d)istance (f)unction to assign the
+/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction
+/ to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k-means
@@ -232,8 +227,8 @@ skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
 / using (d)istance (f)unction, find the medoid in matri(X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}
-/ given a (d)istance (f)unction, return a new function that finds a
-/ medoid during the "update" step of lloyd's algorithm
+/ given a (d)istance (f)unction, return a new function that finds a medoid
+/ during the "update" step of lloyd's algorithm
 pam:{[df]lloyd[df;flip f2nd[medoid df]::]} / partitioning around medoids
 
 / cluster purity primitives
@@ -247,8 +242,8 @@ ssb:{[X;I]count'[I] wsum edist2[(avg '')G] (avg raze::) each G:X@\:I}
 / usting data matri(X) and (C)entroids, compute total cluster distortion
 dist:{[X;C]ssw[X] cgroup[edist2;X] C}
 
-/ given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute
-/ the silhouette statistic. group I if not already grouped
+/ given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute the
+/ silhouette statistic. group I if not already grouped
 silhouette:{[df;X;I]
  if[type I;s:.z.s[df;X]I:value group I;:raze[s] iasc raze I];
  if[1=n:count I;:count[I 0]#0f]; / special case a single cluster
@@ -420,10 +415,10 @@ likelihood:{[l;lf;X;phi;THETA]
  p:$[l;p+log phi;p*phi];       / apply prior probabiliites
  p}
 
-/ (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
-/ (f)unction with prior probabilities (p)hi and distribution
-/ parameters (t)heta (with optional (f)itting of (p)hi)
-em:{[fp;lf;wmf;X;pT]                / expectation maximization
+/ using (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
+/ (f)unction with prior probabilities (p)hi and distribution parameters
+/ (t)heta (with optional (f)itting of (p)hi) perform expectation maximization
+em:{[fp;lf;wmf;X;pT]
  W:prb likelihood[0b;lf;X] . pT;    / weights (responsibilities)
  if[fp;pT[0]:avg each W];           / new phi estimates
  pT[1]:wmf[;X] peach W;             / new THETA estimates
@@ -445,14 +440,15 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
 / naive bayes
 
-/ fit parameters given (w)eighted (m)aximization (f)unction
-/ returns a dictionary with prior and conditional likelihoods
+/ fit parameters given (w)eighted (m)aximization (f)unction returns a
+/ dictionary with prior and conditional likelihoods
 fnb:{[wmf;w;X;y]
  if[(::)~w;w:count[y]#1f];      / handle unassigned weight
  pT:(odds g; w[value g] wmf' X@\:/:g:group y);
  pT}
-/ using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform
-/ naive bayes prediction
+
+/ using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform naive
+/ bayes prediction
 pnb:{[l;lf;pT;X]
  d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
  c:imax each flip $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
@@ -488,22 +484,22 @@ cmb:{
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
-/ use (imp)urity (f)unction to compute the (w)eighted information gain
-/ of x after splitting on y
+/ use (imp)urity (f)unction to compute the (w)eighted information gain of x
+/ after splitting on y
 ig:{[impf;w;x;y]                / information gain
  g:impf[w] x;
  g-:sum wodds[w;gy]*(not null key gy)*w[gy] impf' x gy:group y;
  (g;::;gy)}
 
-/ use (imp)urity (f)unction to compute the (w)eighted gain ratio of x
-/ after splitting on y
+/ use (imp)urity (f)unction to compute the (w)eighted gain ratio of x after
+/ splitting on y
 gr:{[impf;w;x;y]                / gain ratio
  g:ig[impf;w;x;y];
  g:@[g;0;%[;impf[w;y]]];        / divide by splitinfo
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted information
-/ gain of x after splitting across all sets of distinct y
+/ use (imp)urity (f)unction to pick the maximum (w)eighted information gain
+/ of x after splitting across all sets of distinct y
 sig:{[impf;w;x;y]               / set information gain
  c:raze cmb[;u] each 1|count[u:distinct y] div 2;
  g:(ig[impf;w;x] y in) peach c;
@@ -511,16 +507,16 @@ sig:{[impf;w;x;y]               / set information gain
  g[1]:in[;c i];                 / replace split function
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted information
-/ gain of x after splitting across all values of y
+/ use (imp)urity (f)unction to pick the maximum (w)eighted information gain
+/ of x after splitting across all values of y
 oig:{[impf;w;x;y] / ordered information gain
  g:(ig[impf;w;x] y >) peach u:asc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:>[;avg u i+0 1];          / split function
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted gain ratio
-/ of x after splitting across all values of y
+/ use (imp)urity (f)unction to pick the maximum (w)eighted gain ratio of x
+/ after splitting across all values of y
 ogr:{[impf;w;x;y] / ordered gain ratio
  g:oig[impf;w;x;y];
  g:@[g;0;%[;impf[w;g[1] y]]]; / divide by splitinfo
@@ -580,12 +576,12 @@ prune:{[ef;tr]
 / return the leaves of (tr)ee
 leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
-/ using (e)rror (f)unction, return the decision (tr)ee's risk R(T) and
-/ number of terminal nodes |T|
+/ using (e)rror (f)unction, return the decision (tr)ee's risk R(T) and number
+/ of terminal nodes |T|
 dtriskn:{[ef;tr](sum'[l[;0]] wsum ef ./: l;count l:leaves tr)}
 
-/ using (e)rror (f)unction and regularization coefficient a, compute
-/ cost complexity for (tr)ee
+/ using (e)rror (f)unction and regularization coefficient a, compute cost
+/ complexity for (tr)ee
 dtcc:{[ef;a;tr](1f;a) wsum dtriskn[ef;tr]}
 
 / given a decision (tr)ee, return all the subtrees sharing the same root
@@ -598,8 +594,8 @@ subtrees:{[tr]
  trs,:enlist (,'/) leaves tr; / collapse this node too
  trs}
 
-/ given an (imp)urity function and the pair of values (a;tr), return
-/ the minimum (a)lpha and its associated sub(tr)ee.
+/ given an (imp)urity function and the pair of values (a;tr), return the
+/ minimum (a)lpha and its associated sub(tr)ee.
 dtmina:{[impf;atr]
  if[2=count tr:last atr;:atr];
  en:dtriskn[impf;tr];
@@ -608,8 +604,8 @@ dtmina:{[impf;atr]
  atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
  atr}
 
-/ given an (e)rror function, a cost parameter (a)lpha and decision
-/ (tr)ee, return the subtree that minimizes the cost complexity
+/ given an (e)rror function, a cost parameter (a)lpha and decision (tr)ee,
+/ return the subtree that minimizes the cost complexity
 dtmincc:{[ef;tr;a]
  if[2=count tr;:tr];
  strs:subtrees tr;
@@ -617,8 +613,8 @@ dtmincc:{[ef;tr;a]
  str:strs imin dtcc[ef;a] each strs;
  str}
 
-/ k-fold cross validate (i)th table in (t)able(s) using (d)ecision
-/ (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
+/ k-fold cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
+/ (f)unction, (a)lphas and misclassification (e)rror (f)unction
 dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
 
 / decision tree utilities
@@ -656,8 +652,8 @@ pnode:{[p;l;tr]
  s,:raze last each c;
  (x;s)}
 
-/ print graph text for use with the 'dot' graphviz command, graph-easy
-/ or http://webgraphviz.com
+/ print graph text for use with the 'dot' graphviz command, graph-easy or
+/ http://webgraphviz.com
 pgraph:{[tr]
  s:enlist "digraph Tree {";
  s,:enlist "node [shape=box] ;";
@@ -667,8 +663,8 @@ pgraph:{[tr]
 
 / decision tree projections
 
-/ given a (t)able of classifiers and labels where the first column is
-/ target attribute, create a decision tree
+/ given a (t)able of classifiers and labels where the first column is target
+/ attribute, create a decision tree
 aid:dt[sig;oig;wmse]            / automatic interaction detection
 thaid:dt[sig;oig;wmisc]         / theta automatic interaction detection
 id3:dt[ig;ig;wentropy]          / iterative dichotomizer 3
@@ -735,9 +731,8 @@ enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 
 / gradient descent utilities
 
-/ accumulate cost by calling (c)ost (f)unction on the result of
-/ (f)unction applied to x[1].  append resulting cost to x[0] and
-/ return.
+/ accumulate cost by calling (c)ost (f)unction on the result of (f)unction
+/ applied to x[1].  append resulting cost to x[0] and return.
 acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
 
 / return 1b until the improvement from the (c)ost is less than
@@ -751,14 +746,14 @@ converge:{[p;c]
 / (a)lpha: learning rate, gf: gradient function
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
-/ successively call (m)inimization (f)unction with (THETA) and
-/ randomly sorted (n)-sized chunks generated by (s)ampling (f)unction
+/ successively call (m)inimization (f)unction with (THETA) and randomly
+/ sorted (n)-sized chunks generated by (s)ampling (f)unction
 sgd:{[mf;sf;n;X;THETA]THETA mf/ n cut sf count X 0} / stochastic gd
 
 / linear regression
 
-/ given target matrix Y and data matri(X),
-/ return the THETA matrix resulting from minimizing sum of squared residuals
+/ given target matrix Y and data matri(X), return the THETA matrix resulting
+/ from minimizing sum of squared residuals
 normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 
 / given (l2) regularization parameter, target matrix Y and data matri(X),
@@ -879,15 +874,13 @@ nnpredict:{[hof;X;THETA]
  Y:hof[`o] linpredict[X] last THETA;
  Y}
 
-/ (r)egularization (f)unction
-/ holf: (h)idden (o)utput (l)oss functions
+/ (r)egularization (f)unction, holf: (h)idden (o)utput (l)oss functions
 nncost:{[rf;holf;Y;X;THETA]
  J:(1f%m:count X 0)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA;
  if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];
  J}
 
-/ (r)egularization (f)unction
-/ hgof: (h)idden (g)radient (o)utput functions
+/ (r)egularization (f)unction, hgof: (h)idden (g)radient (o)utput functions
 nngrad:{[rf;hgof;Y;X;THETA]
  ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgof`h]\ -1_THETA;
  P:hgof[`o] linpredict[last[ZA]1;last THETA]; / final layer
@@ -900,8 +893,8 @@ nngrad:{[rf;hgof;Y;X;THETA]
 / neural network cut
 nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
 
-/ (r)egularization (f)unction, (n)etwork topology dimensions
-/ hgolf: (h)idden (g)radient (o)utput (l)oss functions
+/ (r)egularization (f)unction, (n)etwork topology dimensions, hgolf: (h)idden
+/ (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;
  ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgolf`h]\ -1_THETA;
@@ -1032,34 +1025,34 @@ sma:{
 
 / google pagerank
 
-/ given a (d)amping factor (1 - the probability of random surfing) and
-/ the (A)djacency matrix, create the markov Google matrix
+/ given a (d)amping factor (1 - the probability of random surfing) and the
+/ (A)djacency matrix, create the markov Google matrix
 google:{[d;A]
  M:A%1f|s:sum each A;           / convert to markov matrix
  M+:(0f=s)%n:count M;           / add links to dangling pages
  M:(d*M)+(1f-d)%n;              / dampen
  M}
 
-/ given a (d)amping factor (1 - the probability of random surfing) and
-/ the (A)djacency matrix, obtain the pagerank algebraically
+/ given a (d)amping factor (1 - the probability of random surfing) and the
+/ (A)djacency matrix, obtain the pagerank algebraically
 pageranka:{[d;A]
  M:A%1f|s:sum each A;           / convert to markov matrix
  M+:(0f=s)%n:count M;           / add links to dangling pages
  r:prb first mlsq[(1;n)#(1f-d)%n] eye[n]-d*M; / compute rankings
  r}
 
-/ given a (d)amping factor (1 - the probability of random surfing),
-/ the (A)djacency matrix and an initial (r)ank vector, obtain a better
-/ ranking (iterative model)
+/ given a (d)amping factor (1 - the probability of random surfing), the
+/ (A)djacency matrix and an initial (r)ank vector, obtain a better ranking
+/ (iterative model)
 pageranki:{[d;A;r]
  w:sum r*0f=s:sum each A;       / compute dangling weight
  r:sum[A*r%1f|s]+w%n:count A;   / compute rankings
  r:(d*r)+(1f-d)%n;              / dampen
  r}
 
-/ given a (d)amping factor (1 - the probability of random surfing),
-/ the (S)parse adjacency matrix and an initial (r)ank vector, obtain a
-/ better ranking (iterative model)
+/ given a (d)amping factor (1 - the probability of random surfing), the
+/ (S)parse adjacency matrix and an initial (r)ank vector, obtain a better
+/ ranking (iterative model)
 pageranks:{[d;S;r]
  w:sum r*0f=s:0f^sum'[S[3] group S 1]til n:S[0;0]; / compute dangling weight
  r:first full[smm[sparse enlist r%1f|s;S]]+w%n;    / compute rankings

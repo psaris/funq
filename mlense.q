@@ -16,6 +16,6 @@ mlense.movie:update `u#movieId,`genre?/:`$"|"vs'genres from mlense.movie
 -1"adding the decade as a genre";
 update genres:(genres,'`$string 10 xbar year) from `mlense.movie;
 -1"loading movie ratings";
-mlense.rating:("IIF";1#",") 0:`$mlense.f,"/ratings.csv"
+mlense.rating:("IIFP";1#",") 0:`$mlense.f,"/ratings.csv"
 -1"adding `p on userId and linking movieId to movie table";
 update `p#userId,`mlense.movie$movieId from `mlense.rating;

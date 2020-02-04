@@ -178,23 +178,46 @@ rbom:{$["\357\273\277"~3#x[0];@[x;0;3_];x]}
 
 / clean (s)tring of non ascii characters
 cleanstr:{[s]
- s:ssr[s;"\342\200[\234\235]";"\""]; / replace double quotes
- s:ssr[s;"\342\200[\231\230]";"'"];  / replace single quotes
- s:ssr[s;"\342\200\246";"..."];      / replace ellipses
- s:ssr[s;"\342\200\223";"--"];       / replace endash
- s:ssr[s;"\342\200\224";"---"];      / replace emdash
- s:ssr[s;"\302\222";"'"];            / replace single quotes
- s:ssr[s;"\302\243";"$"];            / replace pound symbol with $
- s:ssr[s;"\302\241";"!"];            / replace !
- s:ssr[s;"\303\206";"AE"];              / replace AE
- s:ssr[s;"\303[\210\211\212\213]";"E"]; / replace E
- s:ssr[s;"\303[\231\232\233\234]";"U"]; / replace U
- s:ssr[s;"\303\246";"ae"];              / replace ae
- s:ssr[s;"\303[\250\251\252\253]";"e"]; / replace e
- s:ssr[s;"\303[\271\272\273\274]";"u"]; / replace u
- s:ssr[s;"&lt;";"<"];                / replace <
- s:ssr[s;"&gt;";">"];                / replace >
- s:ssr[s;"&amp;";"&"];               / replace &
+ s:ssr[s;"\342\200[\234\235]";"\""];            / replace double quotes
+ s:ssr[s;"\342\200[\231\230]";"'"];             / replace single quotes
+ s:ssr[s;"\342\200\246";"..."];                 / replace ellipses
+ s:ssr[s;"\342\200\223";"--"];                  / replace endash
+ s:ssr[s;"\342\200\224";"---"];                 / replace emdash
+ s:ssr[s;"\302\222";"'"];                       / replace single quotes
+ s:ssr[s;"\302\241";"!"];                       / replace !
+ s:ssr[s;"\302\243";"$"];                       / replace pound symbol with $
+ s:ssr[s;"\302\260";"o"];                       / replace o
+ s:ssr[s;"\302\262";"^2"];                      / replace ^2
+ s:ssr[s;"\302\263";"^3"];                      / replace ^3
+ s:ssr[s;"\302\267";"-"];                       / replace -
+ s:ssr[s;"\302\274";"1/4"];                     / replace 1/4
+ s:ssr[s;"\302\275";"1/2"];                     / replace 1/2
+ s:ssr[s;"\302\276";"3/4"];                     / replace 3/4
+ s:ssr[s;"\302\277";"?"];                       / replace ?
+ s:ssr[s;"\303[\200\201\202\203\204\205]";"A"]; / replace A
+ s:ssr[s;"\303\206";"AE"];                      / replace AE
+ s:ssr[s;"\303\207";"C"];                       / replace C
+ s:ssr[s;"\303[\210\211\212\213]";"E"];         / replace E
+ s:ssr[s;"\303[\214\215\216\217]";"I"];         / replace I
+ s:ssr[s;"\303\220";"D"];                       / replace D
+ s:ssr[s;"\303\221";"N"];                       / replace N
+ s:ssr[s;"\303[\222\223\224\225\226\230]";"O"]; / replace O
+ s:ssr[s;"\303[\231\232\233\234]";"U"];         / replace U
+ s:ssr[s;"\303\235";"Y"];                       / replace y
+ s:ssr[s;"\303\237";"s"];                       / replace s
+ s:ssr[s;"\303[\240\241\242\243\244\245]";"a"]; / replace a
+ s:ssr[s;"\303\246";"ae"];                      / replace ae
+ s:ssr[s;"\303\247";"c"];                       / replace c
+ s:ssr[s;"\303[\250\251\252\253]";"e"];         / replace e
+ s:ssr[s;"\303[\254\255\256\257]";"i"];         / replace i
+ s:ssr[s;"\303\260";"d"];                       / replace d
+ s:ssr[s;"\303\261";"n"];                       / replace n
+ s:ssr[s;"\303[\262\263\264\265\266\270]";"o"]; / replace o
+ s:ssr[s;"\303[\271\272\273\274]";"u"];         / replace u
+ s:ssr[s;"\303\275";"y"];                       / replace y
+ s:ssr[s;"&lt;";"<"];                           / replace <
+ s:ssr[s;"&gt;";">"];                           / replace >
+ s:ssr[s;"&amp;";"&"];                          / replace &
  s}
 
 / strip (s)tring of puntuation marks

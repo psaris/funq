@@ -4,15 +4,16 @@
 
 -1"to ensure the ratings matrix only contains movies with relevant movies,";
 -1"we generate a list of unique movie ids that meet our threshold.";
-show m:exec distinct asc movieId from mlense.rating where 100<(count;i) fby movieId
+show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
 
 / personal ratings
 
 -1"we now build a dataset to hold our own ratings/preferences";
-r:([movieId:m]rating:count[m]#0n) / initial ratings
-r:r lj ([movieId:173 208 260 435 1197 2005 1968 2918i]rating:.5 .5 4 .5 4 4 4 5f)
-r:r lj ([movieId:4006 53996 69526 87520 112370i]rating:5 4 4 5 5f)
-show select from r lj mlense.movie where not null rating  / my ratings
+r:1!flip `movieId`rating!"if"$\:()
+r,:([]movieId:173 208 260 435 1197 2005 1968i;rating:.5 .5 4 .5 4 4 4f)
+r,:([]movieId:2918 4006 53996 69526 87520 112370i;rating:5 5 4 4 5 5f)
+show r lj mlense.movie
+r:([]movieId:m)#r
 
 / projection to sort ratings and append movie title
 rpt:lj[;mlense.movie] `score xdesc
@@ -45,7 +46,7 @@ show rpt update score:last .ml.linpredict[X;THETA] from r
 -1"we begin be reporting summary statistics about the ratings dataset";
 -1"support";
 -1"reporting the number of users, movies and ratings";
-show exec nu:count distinct userId, nm:count distinct movieId, nr:count i from mlense.rating
+(count distinct@) each exec nu:userId, nm:movieId, nr:i from mlense.rating
 -1"distribution:";
 -1"we can see that only users with >20 ratings are included";
 show select nu:count userId by nr from select nr:10 xbar count rating by userId from mlense.rating
@@ -191,4 +192,4 @@ P:b+ub+mb+/:.ml.cfpredict . XTHETA          / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt r:select from (update score:last P from r) where not null rating
-.util.assert[0f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r
+.util.assert[.01f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r

@@ -2,10 +2,6 @@
 \l funq.q
 \l mlense.q
 
--1"to ensure the ratings matrix only contains movies with relevant movies,";
--1"we generate a list of unique movie ids that meet our threshold.";
-show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
-
 / personal ratings
 
 -1"we now build a dataset to hold our own ratings/preferences";
@@ -13,7 +9,7 @@ r:1!flip `movieId`rating!"if"$\:()
 r,:([]movieId:173 208 260 435 1197 2005 1968i;rating:.5 .5 4 .5 4 4 4f)
 r,:([]movieId:2918 4006 53996 69526 87520 112370i;rating:5 5 4 4 5 5f)
 show r lj mlense.movie
-r:([]movieId:m)#r
+r:key[mlense.movie]#r
 
 / projection to sort ratings and append movie title
 rpt:lj[;mlense.movie] `score xdesc
@@ -24,13 +20,13 @@ rpt:lj[;mlense.movie] `score xdesc
 
 -1"content based filtering does not use ratings from other people.";
 -1"it uses our own preferences mixed with each movie's genre";
-Y:enlist value[r]`rating
+Y:value[r]1#`rating
 -1"we build the X matrix based on each movie's genres";
-show X:"f"$flip exec genre in/: genres from ([]movieId:m)#mlense.movie
--1"we then randomly initialize the THETA matrix";
-theta:raze 0N!THETA:-1+(1+count X)?/:count[Y]#2f;
+show X:"f"$flip exec genre in/: genres from mlense.movie
+-1"we then initialize the THETA matrix";
+theta:raze 0N!THETA:(1;1+count X)#0f
 -1"since we don't use other user's preferences, this is quick optimization";
-rf:.ml.l2[.2]                   / l2 regularization 
+rf:.ml.l2[.1]                   / l2 regularization 
 theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
 THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
@@ -68,6 +64,11 @@ show select[10;>n] avg rating, n:count i by movieId.title from mlense.rating
 -1"";
 -1"by using a syntax that is similar to pivoting,";
 -1"we can generate the user/movie matrix";
+
+-1"to ensure the ratings matrix only contains movies with relevant movies,";
+-1"we generate a list of unique movie ids that meet our threshold.";
+show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
+r:([]movieId:m)#r
 
 show R:value exec (movieId!rating) m by userId from mlense.rating where ([]movieId) in key r
 -1"then add our own ratings";

@@ -124,7 +124,7 @@ wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
 / weighted average or mode
-isord:{type[x] in 8 9h}                / is ordered
+isord:{type[x] in 0 8 9h}              / is ordered
 aom:{$[isord x;avg;mode]x}             / average or mode
 waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
 

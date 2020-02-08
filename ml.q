@@ -72,7 +72,7 @@ hmean:1f%avg 1f%                / harmonic mean
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 
-/ null aware primitives (account for nulls in matrices)n
+/ null aware primitives (account for nulls in matrices)
 
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
@@ -207,7 +207,7 @@ wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
 / using (d)istance (f)function and matri(X), append the next centroid to the
-/ min centroid (d)istance and all (C)centroids
+/ min centroid (d)istance and all (C)entroids
 kpp:{[df;X;d;C]
  if[not count C;:(0w;X@\:1?count X 0)]; / first centroid
  if[count[X 0]=n:count C 0;:(d;C)];     / no more centroids

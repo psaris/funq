@@ -108,7 +108,7 @@ tnwavg:{[n;x;y]nsum[x*y i]%sum abs x@:i:(n&count x)#idesc x}
 
 / spearman's rank (tied value get averaged rank)
 /srank:{(avg each rank[x] group x) x}
-srank:{@[r;g;:;avg each (r:"f"$rank x) g@:where 1<count each g:group x]}
+srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
 

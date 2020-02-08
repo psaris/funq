@@ -5,11 +5,11 @@
 / personal ratings
 
 -1"we now build a dataset to hold our own ratings/preferences";
-r:1!flip `movieId`rating!"if"$\:()
+r:1!select `mlense.movie$movieId,rating:0n from mlense.movie
 r,:([]movieId:173 208 260 435 1197 2005 1968i;rating:.5 .5 4 .5 4 4 4f)
 r,:([]movieId:2918 4006 53996 69526 87520 112370i;rating:5 5 4 4 5 5f)
-show r lj mlense.movie
-r:key[mlense.movie]#r
+show select movieId,rating,movieId.title from r where not null rating
+
 
 / projection to sort ratings and append movie title
 rpt:lj[;mlense.movie] `score xdesc
@@ -22,19 +22,22 @@ rpt:lj[;mlense.movie] `score xdesc
 -1"it uses our own preferences mixed with each movie's genre";
 Y:value[r]1#`rating
 -1"we build the X matrix based on each movie's genres";
-show X:"f"$flip exec genre in/: genres from mlense.movie
+show X:"f"$flip genre in/: value[mlense.movie]`genres
 -1"we then initialize the THETA matrix";
 theta:raze 0N!THETA:(1;1+count X)#0f
 -1"since we don't use other user's preferences, this is quick optimization";
 rf:.ml.l2[.1]                   / l2 regularization 
 theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
-THETA:(count[Y];0N)#theta
 -1"view our deduced genre preferences";
-show {(5#x),-5#x}desc genre!1_last THETA
+show {(5#x),-5#x}desc genre!1_theta
 -1"how closely do the computed scores match our preferences";
-show rpt select from (update score:last .ml.linpredict[X;THETA] from r) where not null rating
+THETA:(count[Y];0N)#theta
+r:update score:first .ml.linpredict[X;THETA] from r
+show select[>score] rating,score,movieId.title from r where not null rating
 -1"and finally, show the recommendations";
-show rpt update score:last .ml.linpredict[X;THETA] from r
+show select[10;>score] movieId,score,movieId.title from r
+-1"'Mars Needs Moms' was my top recommendation because it had so many genres";
+select genres from mlense.movie where movieId = 85261
 
 / ratings data summary
 
@@ -45,16 +48,20 @@ show rpt update score:last .ml.linpredict[X;THETA] from r
 (count distinct@) each exec nu:userId, nm:movieId, nr:i from mlense.rating
 -1"distribution:";
 -1"we can see that only users with >20 ratings are included";
-show select nu:count userId by nr from select nr:10 xbar count rating by userId from mlense.rating
+t:select nr:count rating by userId from mlense.rating
+show select nu:count userId by 10 xbar nr from t
 -1"we can also see that a large majority of movies have less than 10 ratings";
-show select nm:count movieId by nr from select nr:10 xbar count rating by movieId from mlense.rating
+t:select nr:count rating by movieId from mlense.rating
+show select nm:count movieId by 10 xbar nr from t
 -1"quality:";
 -1"we can see that there is a positive bias to the ratings";
-show exec `min`med`avg`mode`max!(min;med;avg;.ml.mode;max)@\:rating from mlense.rating
+show `min`med`avg`mode`max!(min;med;avg;.ml.mode;max)@\:mlense.rating`rating
 /rating:select from rating where 19<(count;i) fby userId,9<(count;i) fby movieId
 -1"the average rating per user (and movie) is distributed around 3.5";
-t:select nm:count i by rating from select .5 xbar avg rating by movieId from mlense.rating
-show t lj select nu:count i by rating from select .5 xbar avg rating by userId from mlense.rating
+t:select avg rating by movieId from mlense.rating
+t:select nm:count i by .5 xbar rating from t
+s:select avg rating by userId from mlense.rating
+show t lj select nu:count i by .5 xbar rating from s
 -1"movies with a small number of ratings can distort the rankings";
 -1"the top rankings are dominated by movies with a single rating";
 show select[10;>rating] avg rating, n:count i by movieId.title from mlense.rating
@@ -67,13 +74,14 @@ show select[10;>n] avg rating, n:count i by movieId.title from mlense.rating
 
 -1"to ensure the ratings matrix only contains movies with relevant movies,";
 -1"we generate a list of unique movie ids that meet our threshold.";
-show m:exec distinct asc movieId from mlense.rating where 10<(count;i) fby movieId
+n:10
+show m:exec distinct asc movieId from mlense.rating where n<(count;i) fby movieId
 r:([]movieId:m)#r
 
 show R:value exec (movieId!rating) m by userId from mlense.rating where ([]movieId) in key r
 -1"then add our own ratings";
 R,:value[r]`rating
--1"demean the data and store global/movie/user bias";
+-1"demean the data and store global/user bias";
 b:avg 2 raze/ R
 Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b
 y:r-'mb+b+last ub
@@ -86,19 +94,21 @@ y:r-'mb+b+last ub
 -1"[ ] should we use Pearson's correlation (cor) or Spearman's (.ml.scor)";
 -1"[ ] should we use cosine similarity instead?";
 
--1"average top n users based on correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[cor;.ml.tnavg 20;0^Y] rating from y
+k:20
+-1"average top ",string[k], "users based on correlation";
+show rpt b+mb+'last[ub]+update score:.ml.uucf[cor;.ml.tnavg k;0^Y] rating from y
+/show rpt b+mb+'last[ub]+update score:.ml.fknn[1+0*;{neg cor[y] peach x};k;0^Y;0^Y] rating from y
 -1"weighted average top n users based on spearman correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.scor;.ml.tnwavg 20;0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.scor;.ml.tnwavg k;0^Y] rating from y
 -1"weighted average top n users based on cosine similarity";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg 20;0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg k;0^Y] rating from y
 -1"what if we would like recommend more niche movies.";
 -1"ie: underweight movies with more ratings?";
 -1"we can use the 'idf' (inverse document frequency) calculation ";
 -1"from nlp (natural language processing)";
 -1"weighted average top n users based on cosine similarity of idf-adjusted ratings";
 / weight by inverse user frequencies to underweight universally liked movies
-show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[20];0^Y] rating from y
+show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[k];0^Y] rating from y
 nf:10;
 
 if[2<count key `.qml;
@@ -193,4 +203,4 @@ P:b+ub+mb+/:.ml.cfpredict . XTHETA          / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt r:select from (update score:last P from r) where not null rating
-.util.assert[.01f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r
+.util.assert[.02f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r

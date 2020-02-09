@@ -72,6 +72,11 @@ hmean:1f%avg 1f%                / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance
+/ spearman's rank (tied values get averaged rank)
+srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
+/srank:{(avg each rank[x] group x) x}
+scor:{srank[x i] cor srank y i:wnan(x;y)} / spearman's rank correlation
+scordist:1f-scor::              / spearman's rank correlation distance
 
 / null-aware primitives (account for nulls in matrices)
 
@@ -100,13 +105,6 @@ zscore:dax[%;nsdev] demean::
 minmax:{(x-m)%max[x]-m:min x}
 / convert densities into probabilities
 prb:dax[%;sum]
-
-/ spearman's rank (tied value get averaged rank)
-/srank:{(avg each rank[x] group x) x}
-srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
-/ spearman's rank correlation
-scor:{srank[x i] cor srank y i:wnan(x;y)}
-scordist:1f-scor::              / spearman rank correlation distance
 
 / frequency and mode primitives
 

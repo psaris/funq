@@ -120,7 +120,7 @@ ts:.util.part[(n:5)#1]d`train
 show e:avg each e*e:ts[;`quality]-p:(.ml.dtkfxv[dtf;ef;b;ts]0N!) peach til n
 -1 "finally, we pick the tree whose alpha had the min error";
 -1 .ml.ptree[0] btr:atr[1] 0N!.ml.imin 0N!avg e;
--1 "the pruned tree has less than 15 leaves";
-.util.assert[1b] 20>0N!count .ml.leaves btr
--1 "and an rms less than .70";
-.util.assert[1b] .72>0N!.ml.rms d.test.quality - btr .ml.dtc/: d`test
+-1 "the pruned tree has less than 25 leaves";
+.util.assert[1b] 25>0N!count .ml.leaves btr
+-1 "and an rms less than .73";
+.util.assert[1b] .73>0N!.ml.rms d.test.quality - btr .ml.dtc/: d`test

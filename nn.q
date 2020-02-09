@@ -165,5 +165,5 @@ THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 -1"now we check for a reduction in the mse using the neural network";
 .ml.nncost[();hgolf;Y;X] .ml.nncut[n] theta
 -1"and the test data";
-.util.assert[0.21625244670714813] 0N!.ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta
-.util.assert[0.27492519074906702] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta
+.util.assert[0.217] .util.rnd[.001] .ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta
+.util.assert[0.282] .util.rnd[.001] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta

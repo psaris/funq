@@ -10,10 +10,6 @@ r,:([]movieId:173 208 260 435 1197 2005 1968i;rating:.5 .5 4 .5 4 4 4f)
 r,:([]movieId:2918 4006 53996 69526 87520 112370i;rating:5 5 4 4 5 5f)
 show select movieId,rating,movieId.title from r where not null rating
 
-
-/ projection to sort ratings and append movie title
-rpt:lj[;mlense.movie] `score xdesc
-
 / http://files.grouplens.org/papers/FnT%20CF%20Recsys%20Survey.pdf
 
 / content based filtering
@@ -82,8 +78,11 @@ show R:value exec (movieId!rating) m by userId from mlense.rating where ([]movie
 -1"then add our own ratings";
 R,:value[r]`rating
 -1"demean the data and store global/user bias";
-b:avg 2 raze/ R
-Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b
+b:avg 2 raze/ R                         / bias
+Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b / bias, move bias, user bias
+Y:Y-ub:avg each Y:R;b:0f;mb:0f          / user bias
+/Y:Y-ub:avg each Y:R-b;mb:0f             / bias, user bias
+/Y:R;ub:0;mb:0;b:0                       / no bias
 y:r-'mb+b+last ub
 
 / user user collaborative filtering
@@ -97,8 +96,7 @@ y:r-'mb+b+last ub
 k:20
 -1"average top ",string[k], "users based on correlation";
 p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.cordist\:;k;Y;Y] (0!y)`rating
-show 10#`score xdesc update score:p,movieId.title,movieId.year from r
-select from (update score:p,movieId.title,movieId.year from r) where not null rating
+show 10#`score xdesc update score:p,movieId.title from r
 -1"average top n users based on spearman correlation";
 p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.scordist\:;k;Y;Y] (0!y)`rating
 show 10#`score xdesc update score:p,movieId.title from r
@@ -118,9 +116,9 @@ if[2<count key `.qml;
  usv:.qml.msvd 0^Y;
  -1"predict missing ratings using low rank approximations";
  P:(b+ub)+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv;
- show rpt update score:last P from r;
+ show 10#`score xdesc update score:last P,movieId.title from r;
  -1"compare against existing ratings";
- show rpt select from (update score:last P from r) where not null rating;
+ show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating;
  -1"we can use svd to foldin a new user";
  .ml.foldin[.ml.nsvd[500] usv;0b] 0^Y[2];
  -1"or even a new movie";
@@ -147,9 +145,9 @@ xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
 
 -1"predict missing ratings";
 P:(b+ub)+mb+/:.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
-show rpt update score:last P from r
+show 10#`score xdesc update score:last P,movieId.title from r
 -1"compare against existing ratings";
-show rpt select from (update score:last P from r) where not null rating
+show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating
 
 -1"check collaborative filtering gradient calculations";
 .util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
@@ -171,9 +169,9 @@ XTHETA:last a:(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;
 
 -1"predict missing ratings";
 P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
-show rpt update score:last P from r
+show 10#`score xdesc update score:last P,movieId.title from r
 -1"compare against existing ratings";
-show rpt select from (update score:last P from r) where not null rating
+show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating
 
 / weighted regularized alternating least squares
 
@@ -196,7 +194,7 @@ XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;Y]]/(cf;::)@
 
 -1"predict missing ratings";
 P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
-show rpt update score:last P from r
+show 10#`score xdesc update score:last P,movieId.title from r
 -1"compare against existing ratings";
-show rpt s:select from (update score:last P from r) where not null rating
+show 10#`score xdesc s:select from (update score:last P,movieId.title from r) where not null rating
 .util.assert[.03f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from s

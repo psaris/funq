@@ -69,7 +69,7 @@ pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
 hmean:1f%avg 1f%                / harmonic mean
-cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
+cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance
 
@@ -105,7 +105,7 @@ prb:dax[%;sum]
 /srank:{(avg each rank[x] group x) x}
 srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
 / spearman's rank correlation
-scor:{srank[x w] cor srank y w:wnan(x;y)}
+scor:{srank[x i] cor srank y i:wnan(x;y)}
 scordist:1f-scor::              / spearman rank correlation distance
 
 / frequency and mode primitives
@@ -761,7 +761,7 @@ ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 / given (l2) regularization parameter, target vector y and data matri(x),
 / return the theta vector resulting from performing weighted ridge regression
 / by scaling the regularization parameter by the count of non-null values
-wridge:{[l2;X;y]first ridge[l2*count w;enlist y w;X[;w:where not null y]]}
+wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
 
 / linear predict Y values by prepending matri(X) with a vector of 1s
 / and multiplying the result to (THETA) coefficients

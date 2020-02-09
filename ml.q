@@ -73,11 +73,12 @@ cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance
 
-/ null aware primitives (account for nulls in matrices)
+/ null-aware primitives (account for nulls in matrices)
 
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}
 nsum:{$[type x;sum x;0i {x+0i^y}/ x]}
 navg:{$[type x;avg x;nsum[x]%ncount x]}
+nwavg:{[w;x]$[type x;w wavg x;(%/){x+y*(0f^z;not null z)}/[0 0f;w;x]]}
 nvar:{$[type x;var x;navg[x*x]-m*m:navg x]}
 ndev:sqrt nvar::
 nsvar:{$[type x;svar x;(n*nvar x)%-1+n:ncount x]}
@@ -126,9 +127,9 @@ wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
 / weighted average or mode
-isord:{type[x] in 0 8 9h}              / is ordered
-aom:{$[isord x;avg;mode]x}             / average or mode
-waom:{[w;x]$[isord x;wavg;wmode][w;x]} / weighted average or mode
+isord:{type[x] in 0 8 9h}               / is ordered
+aom:{$[isord x;avg;mode]x}              / average or mode
+waom:{[w;x]$[isord x;nwavg;wmode][w;x]} / weighted average or mode
 
 / binary classification evaluation metrics (summary statistics)
 

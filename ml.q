@@ -101,13 +101,6 @@ minmax:{(x-m)%max[x]-m:min x}
 / convert densities into probabilities
 prb:dax[%;sum]
 
-/ null aware statistics
-
-/ compute the average of the top n items
-tnavg:{[n;x;y]navg y (n&count x)#idesc x}
-/ compute the weighted average of the top n items
-tnwavg:{[n;x;y]nsum[x*y i]%sum abs x@:i:(n&count x)#idesc x}
-
 / spearman's rank (tied value get averaged rank)
 /srank:{(avg each rank[x] group x) x}
 srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}

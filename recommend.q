@@ -74,7 +74,7 @@ show select[10;>n] avg rating, n:count i by movieId.title from mlense.rating
 
 -1"to ensure the ratings matrix only contains movies with relevant movies,";
 -1"we generate a list of unique movie ids that meet our threshold.";
-n:10
+n:20
 show m:exec distinct asc movieId from mlense.rating where n<(count;i) fby movieId
 r:([]movieId:m)#r
 
@@ -96,19 +96,15 @@ y:r-'mb+b+last ub
 
 k:20
 -1"average top ",string[k], "users based on correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[cor;.ml.tnavg k;0^Y] rating from y
-/show rpt b+mb+'last[ub]+update score:.ml.fknn[1+0*;{neg cor[y] peach x};k;0^Y;0^Y] rating from y
--1"weighted average top n users based on spearman correlation";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.scor;.ml.tnwavg k;0^Y] rating from y
+p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.cordist\:;k;Y;Y] (0!y)`rating
+show 10#`score xdesc update score:p,movieId.title,movieId.year from r
+select from (update score:p,movieId.title,movieId.year from r) where not null rating
+-1"average top n users based on spearman correlation";
+p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.scordist\:;k;Y;Y] (0!y)`rating
+show 10#`score xdesc update score:p,movieId.title from r
 -1"weighted average top n users based on cosine similarity";
-show rpt b+mb+'last[ub]+update score:.ml.uucf[.ml.cossim;.ml.tnwavg k;0^Y] rating from y
--1"what if we would like recommend more niche movies.";
--1"ie: underweight movies with more ratings?";
--1"we can use the 'idf' (inverse document frequency) calculation ";
--1"from nlp (natural language processing)";
--1"weighted average top n users based on cosine similarity of idf-adjusted ratings";
-/ weight by inverse user frequencies to underweight universally liked movies
-show rpt b+mb+'last[ub]+update score:.ml.uucf['[.ml.cossim . .ml.idf[Y]*/:;enlist];.ml.tnwavg[k];0^Y] rating from y
+p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.cosdist\:;k;Y;Y] (0!y)`rating
+show 10#`score xdesc update score:p,movieId.title from r
 nf:10;
 
 if[2<count key `.qml;
@@ -121,7 +117,7 @@ if[2<count key `.qml;
 
  usv:.qml.msvd 0^Y;
  -1"predict missing ratings using low rank approximations";
- P:b+ub+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv;
+ P:(b+ub)+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv;
  show rpt update score:last P from r;
  -1"compare against existing ratings";
  show rpt select from (update score:last P from r) where not null rating;
@@ -150,7 +146,7 @@ xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
+P:(b+ub)+mb+/:.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -174,7 +170,7 @@ mf:.ml.cfupd1[.05;.2;Y]
 XTHETA:last a:(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.cfpredict . XTHETA    / predictions
+P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
 show rpt select from (update score:last P from r) where not null rating
@@ -199,8 +195,8 @@ XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;Y]]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:b+ub+mb+/:.ml.cfpredict . XTHETA          / predictions
+P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
 show rpt update score:last P from r
 -1"compare against existing ratings";
-show rpt r:select from (update score:last P from r) where not null rating
-.util.assert[.02f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from r
+show rpt s:select from (update score:last P from r) where not null rating
+.util.assert[.03f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from s

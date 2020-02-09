@@ -71,6 +71,7 @@ mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
 hmean:1f%avg 1f%                / harmonic mean
 cossim:{sum[x*y]%enorm[x w]*enorm y w:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
+cordist:1f-(cor)::                               / correlation distance
 
 / null aware primitives (account for nulls in matrices)
 
@@ -111,6 +112,7 @@ tnwavg:{[n;x;y]nsum[x*y i]%sum abs x@:i:(n&count x)#idesc x}
 srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
 / spearman's rank correlation
 scor:{srank[x w] cor srank y w:wnan(x;y)}
+scordist:1f-scor::              / spearman rank correlation distance
 
 / frequency and mode primitives
 

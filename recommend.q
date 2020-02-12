@@ -75,18 +75,12 @@ show select[10;>n] avg rating, n:count i by movieId.title from rating
 -1"we generate a list of unique movie ids that meet our threshold.";
 n:20
 show m:exec distinct movieId from rating where n<(count;i) fby movieId
-r:([]movieId:m)#r
-
-show R:value exec (movieId!rating) m by userId from rating
+show R:value exec (movieId!rating) m by userId from rating where movieId in m
 -1"then add our own ratings";
-R,:value[r]`rating
--1"demean the data and store global/user bias";
-b:avg 2 raze/ R                         / bias
-Y:Y-ub:avg each Y:Y-\:mb:.ml.navg Y:R-b / bias, move bias, user bias
-Y:Y-ub:avg each Y:R;b:0f;mb:0f          / user bias
-/Y:Y-ub:avg each Y:R-b;mb:0f             / bias, user bias
-/Y:R;ub:0;mb:0;b:0                       / no bias
-y:r-'mb+b+last ub
+R,:r[([]movieId:m);`rating]
+-1"demean each user";
+Y:R-a:avg each R
+y:last Y
 
 / user user collaborative filtering
 
@@ -97,15 +91,15 @@ y:r-'mb+b+last ub
 -1"[ ] should we use cosine similarity instead?";
 
 k:20
--1"average top ",string[k], "users based on correlation";
-p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.cordist\:;k;Y;Y] (0!y)`rating
-show 10#`score xdesc update score:p,movieId.title from r
--1"average top n users based on spearman correlation";
-p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.scordist\:;k;Y;Y] (0!y)`rating
-show 10#`score xdesc update score:p,movieId.title from r
--1"weighted average top n users based on cosine similarity";
-p:(mb+b+last ub)+'.ml.fknn[1+0*;.ml.cosdist\:;k;Y;Y] (0!y)`rating
-show 10#`score xdesc update score:p,movieId.title from r
+-1"average top ",string[k], " users based on correlation";
+p:last[a]+.ml.fknn[1+0*;.ml.cordist\:;k;Y;Y] y
+show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
+-1"average top ",string[k], " users based on spearman correlation";
+p:last[a]+.ml.fknn[1+0*;.ml.scordist\:;k;Y;Y] y
+show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
+-1"weighted average top ",string[k], " users based on cosing similarity";
+p:last[a]+.ml.fknn[1+0*;.ml.cosdist\:;k;Y;Y] y
+show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 nf:10;
 
 if[2<count key `.qml;
@@ -118,10 +112,10 @@ if[2<count key `.qml;
 
  usv:.qml.msvd 0^Y;
  -1"predict missing ratings using low rank approximations";
- P:(b+ub)+mb+/:{x$z$/:y} . .ml.nsvd[nf] usv;
- show 10#`score xdesc update score:last P,movieId.title from r;
+ P:a+{x$z$/:y} . .ml.nsvd[nf] usv;
+ show 10#`score xdesc update score:last P,movieId.title from ([]movieId:m)#r;
  -1"compare against existing ratings";
- show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating;
+ show 10#`score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating;
  -1"we can use svd to foldin a new user";
  .ml.foldin[.ml.nsvd[500] usv;0b] 0^Y[2];
  -1"or even a new movie";
@@ -147,10 +141,10 @@ xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;Y];xtheta] / learn
 
 -1"predict missing ratings";
-P:(b+ub)+mb+/:.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
-show 10#`score xdesc update score:last P,movieId.title from r
+P:a+.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
+show 10#`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating
+show 10#`score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
 
 -1"check collaborative filtering gradient calculations";
 .util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
@@ -168,13 +162,13 @@ cf:.ml.cfcost[rf;Y] .
 mf:.ml.cfupd1[.05;.2;Y]
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:last a:(.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
+XTHETA:last (.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
-show 10#`score xdesc update score:last P,movieId.title from r
+P:a+.ml.cfpredict . XTHETA / predictions
+show 10#`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show 10#`score xdesc select from (update score:last P,movieId.title from r) where not null rating
+show 10#`score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
 
 / weighted regularized alternating least squares
 
@@ -196,8 +190,8 @@ XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;Y]]/(cf;::)@\:XTHETA
 
 -1"predict missing ratings";
-P:(b+ub)+mb+/:.ml.cfpredict . XTHETA / predictions
-show 10#`score xdesc update score:last P,movieId.title from r
+P:a+.ml.cfpredict . XTHETA / predictions
+show 10#`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show 10#`score xdesc s:select from (update score:last P,movieId.title from r) where not null rating
+show 10#`score xdesc s:select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
 .util.assert[0f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from s

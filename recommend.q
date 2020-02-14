@@ -92,13 +92,13 @@ y:last Y
 
 k:20
 -1"average top ",string[k], " users based on correlation";
-p:last[a]+.ml.fknn[1+0*;.ml.cordist\:;k;Y;Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cordist\:;k;Y;Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"average top ",string[k], " users based on spearman correlation";
-p:last[a]+.ml.fknn[1+0*;.ml.scordist\:;k;Y;Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.scordist\:;k;Y;Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"weighted average top ",string[k], " users based on cosing similarity";
-p:last[a]+.ml.fknn[1+0*;.ml.cosdist\:;k;Y;Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cosdist\:;k;Y;Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 nf:10;
 

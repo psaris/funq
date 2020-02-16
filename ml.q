@@ -180,10 +180,10 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
 / (w)eighting (f)unction to return the best estimate of y
 knn:{[wf;k;y;d]
  if[not type d;:.z.s[wf;k;y] peach d];        / recurse for matrix d
- if[sum n:null d;d@:i:where not n; y@:i];     / filter null distances
+ if[any n:null d;d@:i:where not n; y@:i];     / filter null distances
  if[count[y]<max k;'`length];                 / prevent k > count y
- n:(waom . (wf d::;y)@\:#[;iasc d]::) each k; / knn algorithm
- n}
+ p:(waom . (wf d::;y)@\:#[;iasc d]::) each k; / make predictions
+ p}
 
 / given (w)eighting (f)unction, (d)istance (f)unction, atom or vector of (k)
 / values, a (y) vector and matrix(X), return a prediction composition

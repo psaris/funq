@@ -90,15 +90,15 @@ y:last Y
 -1"[ ] should we use Pearson's correlation (cor) or Spearman's (.ml.scor)";
 -1"[ ] should we use cosine similarity instead?";
 
-k:20
+k:100
 -1"average top ",string[k], " users based on correlation";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.cordist\:;k;-1_Y;-1_Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cordist\:;k;-1_Y;0^-1_Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"average top ",string[k], " users based on spearman correlation";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.scordist\:;k;-1_Y;-1_Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.scordist\:;k;-1_Y;0^-1_Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"weighted average top ",string[k], " users based on cosing similarity";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.cosdist\:;k;-1_Y;-1_Y] y
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cosdist\:;k;-1_Y;0^-1_Y] y
 show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
 nf:10;
 

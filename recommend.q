@@ -83,6 +83,7 @@ Y:R-a:avg each R
 y:last Y
 
 / user user collaborative filtering
+/ https://grouplens.org/blog/similarity-functions-for-user-user-collaborative-filtering/
 
 -1"user-user collaborative filtering fills missing ratings";
 -1"with averaged values from users who's ratings are most similar to ours";
@@ -92,14 +93,16 @@ y:last Y
 
 k:100
 -1"average top ",string[k], " users based on correlation";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.cordist\:;k;-1_Y;0^-1_Y] y
-show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cordist\:;k;-1_Y;0^-1_Y] 0^y
+show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"average top ",string[k], " users based on spearman correlation";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.scordist\:;k;-1_Y;0^-1_Y] y
-show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
--1"weighted average top ",string[k], " users based on cosing similarity";
-p:last[a]+.ml.fknn[1f%1e-8+;.ml.cosdist\:;k;-1_Y;0^-1_Y] y
-show 10#`score xdesc update score:p,movieId.title from ([]movieId:m)#r
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.scordist\:;k;-1_Y;0^-1_Y] 0^y
+show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
+-1"weighted average top ",string[k], " users based on cosine similarity";
+-1"results in the same recommendations as .ml.cordist because the data";
+-1"has been centered and filled with 0";
+p:last[a]+.ml.fknn[1f%1e-8+;.ml.cosdist\:;k;-1_Y;0^-1_Y] 0^y
+show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
 nf:10;
 
 if[2<count key `.qml;

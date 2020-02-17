@@ -909,7 +909,7 @@ cfpredict:{[X;THETA] mtm[THETA;X]}
 
 / collaborative filtering cost
 cfcost:{[rf;Y;X;THETA]
- J:(.5f%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y;
+ J:(.5f%m:count X 0)*sum (sum') E*E:cfpredict[X;THETA]-Y;
  if[count rf,:();J+:sum rf[;m][;0]@\:(X;THETA)];
  J}
 

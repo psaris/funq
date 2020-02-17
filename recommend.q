@@ -127,9 +127,9 @@ if[2<count key `.qml;
  usv:.qml.msvd 0f^U;
  -1"predict missing ratings using low rank approximations";
  P:a+{x$z$/:y} . .ml.nsvd[nf] usv;
- show `score xdesc update score:last P,movieId.title from ([]movieId:m)#r;
+ show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r;
  -1"compare against existing ratings";
- show `score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating;
+ show select from t where not null rating;
  -1"we can use svd to foldin a new user";
  .ml.foldin[.ml.nsvd[500] usv;0b] 0f^U[2];
  -1"or even a new movie";
@@ -156,9 +156,9 @@ xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;U];xtheta] / learn
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
-show `score xdesc update score:last P,movieId.title from ([]movieId:m)#r
+show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show `score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
+show select from t where not null rating
 
 -1"check collaborative filtering gradient calculations";
 .util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
@@ -180,9 +180,9 @@ XTHETA:last (.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions
-show `score xdesc update score:last P,movieId.title from ([]movieId:m)#r
+show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show `score xdesc select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
+show select from t where not null rating
 
 / weighted regularized alternating least squares
 
@@ -205,7 +205,7 @@ XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;U]]/(cf;::)@
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions
-show `score xdesc update score:last P,movieId.title from ([]movieId:m)#r
+show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
-show `score xdesc s:select from (update score:last P,movieId.title from ([]movieId:m)#r) where not null rating
+show s:select from t where not null rating
 .util.assert[0f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from s

@@ -147,7 +147,7 @@ if[2<count key `.qml;
  "doesn't need to be filled with default values";
  "and can use regularization");
 
-n:(ni:count R 0;nu:count R) / n items, n users
+n:(ni:count U 0;nu:count U) / (n items; n users)
 -1"randomly initialize X and THETA";
 xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 

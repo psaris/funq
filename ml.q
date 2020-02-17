@@ -919,7 +919,7 @@ cfgrad:{[rf;Y;X;THETA]
  if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];
  G}
 
-/ collaborative filtering cut where n:(nu;ni)
+/ collaborative filtering cut where n:(ni;nu)
 cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
 
 / collaborative filtering cost & gradient

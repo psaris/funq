@@ -181,7 +181,7 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
 knn:{[wf;k;y;d]
  if[not type d;:.z.s[wf;k;y] peach d];        / recurse for matrix d
  if[any n:null d;d@:i:where not n; y@:i];     / filter null distances
- if[count[y]<max k;'`length];                 / prevent k > count y
+ k&:count y;                                  / prevent k > count y
  p:(waom . (wf d::;y)@\:#[;iasc d]::) each k; / make predictions
  p}
 

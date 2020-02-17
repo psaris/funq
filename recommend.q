@@ -108,10 +108,11 @@ show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
 -1"with averaged values from movies most similar to movies we've rated";
 
 I-:ai:avg each I:flip R
-
--1"average top ",string[k], " users based on correlation";
-p:ai+.ml.fknn[1f-;.ml.cosdist\:;k;last each I;0f^I] peach 0f^I
-show t:`score xdesc update score:p,movieId.title from ([]movieId:m)#r
+-1"pre-build item-item distance matrix because item similarities are stable";
+D:((0^I) .ml.cosdist\:) peach 0^I
+-1"average top ",string[k], " items based on correlation";
+p:ai+.ml.knn[1f-;k;last each I] D
+show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
 
 nf:10;
 

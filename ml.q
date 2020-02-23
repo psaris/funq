@@ -947,11 +947,6 @@ wrals:{[l2;Y;XTHETA]
  THETA:flip wridge[l2;X] peach Y;    / hold X constant, solve for THETA
  (X;THETA)}
 
-/ user-user collaborative filtering
-/ (s)imilarity (f)unction, (a)veraging (f)unction
-/ (R)ating matrix and new (r)ating vector
-uucf:{[sf;af;R;r]af[sf[r] peach R;R]}
-
 / top n svd factors
 nsvd:{[n;usv]n#''@[usv;1;(n:min n,count each usv 0 2)#]}
 

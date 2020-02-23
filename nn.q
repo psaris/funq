@@ -86,23 +86,24 @@ first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgolf;Y;X];theta];
 /https://www.quora.com/Whats-the-difference-between-gradient-descent-and-stochastic-gradient-descent
 -1"when the batch size is equal to the size of the data set,";
 -1"SGD is equal to batch gradient descent.";
--1"at the other extreme, we can anlayize one observation at a time.";
+-1"at the other extreme, we can analyze one observation at a time.";
 -1"this is called 'on-line learning'";
 
 -1"we first define a minimization projection:";
-mf:{first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgolf;Y[;y];X[;y]];x]}
+mf:first .fmincg.fmincg[5]::
+cgf:.ml.nncostgrad[rf;n;hgolf]
 -1"we then have a few choices to randomize the dataset.";
 -1"A: permutate, then run n non-permuted epochs";
 i:0N?count X 0
 X:X[;i];Y:Y[;i];y@:i
-theta:1 .ml.sgd[mf;til;10000;X]/ theta
+theta:2 .ml.sgd[mf;cgf;til;5;Y;X]/ theta
 -1"B: run n permuted epochs";
-theta:1 .ml.sgd[mf;0N?;10000;X]/ theta
+theta:2 .ml.sgd[mf;cgf;0N?;5;Y;X]/ theta
 -1"C: run n random (with replacement) epochs (aka bootstrap)";
-theta:1 .ml.sgd[mf;{x?x};10000;X]/ theta
+theta:2 .ml.sgd[mf;cgf;{x?x};5;Y;X]/ theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[();n;hgolf;Y;X]::) .ml.sgd[mf;0N?;10000;X]/ theta
+theta:(1f<first .ml.nncostgrad[();n;hgolf;Y;X]::) .ml.sgd[mf;cgf;0N?;5;Y;X]/ theta
 
 -1"what is the final cost?";
 first .ml.nncostgrad[();n;hgolf;Y;X;theta]

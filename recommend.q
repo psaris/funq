@@ -176,7 +176,7 @@ cf:.ml.cfcost[rf;U] .
 mf:.ml.cfupd1[.05;.2;U]
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:last (.ml.converge[.0001]first::).ml.acccost[cf;{x mf/ 0N?flip i}]/(cf;::)@\:XTHETA
+XTHETA:first .ml.iter[-1;.0001;cf;{x mf/ 0N?flip i}] XTHETA
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions
@@ -201,7 +201,7 @@ show select from t where not null rating
 XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:last (.ml.converge[.0001]first@).ml.acccost[cf;.ml.wrals[.01;U]]/(cf;::)@\:XTHETA
+XTHETA:first .ml.iter[1;.0001;.ml.cfcost[();U] .;.ml.wrals[.01;U]] XTHETA
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions

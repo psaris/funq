@@ -69,22 +69,36 @@ alpha:.1                        / learning rate
 THETA:enlist theta:2#0f         / initial values
 -1"by passing a learning rate and function to compute the gradient";
 -1".ml.gd will take one step in the steepest direction";
-.ml.gd[alpha;.ml.lingrad[();Y;X]] THETA
+mf:.ml.gd[alpha;.ml.lingrad[();Y;X]]
+mf THETA
 
 -1"we can then use q's iteration controls";
 -1"to run a fixed number of iterations";
-2 .ml.gd[alpha;.ml.lingrad[();Y;X]]/ THETA
--1"or iterate until the cost is within a tolerance";
-(.4<.ml.lincost[();X;Y]::) .ml.gd[alpha;.ml.lingrad[();Y;X]]/ THETA
+2 mf/ THETA
+-1"iterate until the cost is within a tolerance";
+cf:.ml.lincost[();X;Y]
+(.4<0N!cf::) mf/ THETA
 -1"or even until convergence";
-.ml.gd[alpha;.ml.lingrad[();Y;X]] over THETA
+mf over THETA
+-1"to iterate until cost reductions taper off, we need our own function";
+-1"we can change the logging behavior by changing the file handle";
+-1"no logging";
+first .ml.iter[0N;.01;cf;mf] THETA
+-1"in-place progress";
+first .ml.iter[1;.01;cf;mf] THETA
+-1"new-line progress";
+first .ml.iter[-1;.01;cf;mf] THETA
+-1"by passing an integer for the limit, we can run n iterations";
+first .ml.iter[-1;20;cf;mf] THETA
 
 l:1000f / l2 regularization factor
 -1"we can reduce over-fitting by adding l2 regularization";
-.ml.gd[alpha;.ml.lingrad[.ml.l2[l];Y;X]] over THETA
+gf:.ml.lingrad[.ml.l2[l];Y;X]
+first .ml.iter[1;.01;cf;.ml.gd[alpha;gf]] THETA
 
 -1"we can also use the fmincg minimizer to obtain optimal theta values";
-first .fmincg.fmincg[1000;.ml.lincostgrad[.ml.l2[l];Y;X];theta]
+cgf:.ml.lincostgrad[.ml.l2[l];Y;X]
+first .fmincg.fmincg[1000;cgf;theta]
 
 -1"linear regression with l2 regularization has a closed-form solution";
 -1"called ridge regression";

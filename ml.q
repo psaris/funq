@@ -727,17 +727,22 @@ enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 
 / gradient descent utilities
 
-/ accumulate cost by calling (c)ost (f)unction on the result of (f)unction
-/ applied to x[1].  append resulting cost to x[0] and return.
-acccost:{[cf;f;x] (x[0],cf fx;fx:f x 1)}
+/ accumulate cost by calling (c)ost (f)unction on the result of applying
+/ (m)inimization (f)unction to THETA.  return (THETA;new cost vector)
+acccost:{[cf;mf;THETA;c] (THETA;c,cf THETA:mf THETA)}
 
-/ return 1b until the improvement from the (c)ost is less than
-/ the specified (p)ercent.
-converge:{[p;c]
- b:$[1<n:count c;p<pct:neg -1f+c[n-1]%c[n-2];1b];
- s:"Iteration ",string[n]," | cost: ",string last c;
- 1 s," | pct: ",string[pct],"\n\r"b;
+/ print number of iterations, current (c)ost and pct decrease, then return a
+/ continuation boolean: pct decrease > float (p) or iterations > integer (p)
+continue:{[h;p;c]
+ pct:$[2>n:count c;0w;1f-(%/)c n-1 2];
+ b:$[-8h<type p;p>n;p<pct];
+ s:" | " sv ("iter: ";"cost: ";"pct: ") ,' string (n;last c;pct);
+ if[not null h; h s,"\n\r" b];
  b}
+
+/ keep calling (m)inimization (f)unction on (THETA) until the pct decrease in
+/ the (c)ost (f)unction is less than (p). return (cost vector;THETA)
+iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 
 / (a)lpha: learning rate, gf: gradient function
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent

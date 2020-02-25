@@ -164,19 +164,17 @@ show select from t where not null rating
 .util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
 
 / stochastic regularized gradient descent
-
+-1"by solving for each rating, one at a time";
+-1"we can perform stochastic gradient descent";
 -1"randomly initialize X and THETA";
 xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 
--1"use 'where' to find list of coordinates of non-null items";
-i:.ml.mwhere not null R
 -1"define cost function";
 cf:.ml.cfcost[rf;U] .
 -1"define minimization function";
-mf:.ml.cfupd1[.05;.2;U]
+mf:.ml.cfsgd[.05;.2;0N?;U;;::]
 -1"keep running mf until improvement is lower than pct limit";
-
-XTHETA:first .ml.iter[-1;.0001;cf;{x mf/ 0N?flip i}] XTHETA
+XTHETA:first .ml.iter[-1;.0001;cf;mf] XTHETA
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions

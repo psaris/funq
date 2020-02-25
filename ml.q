@@ -749,7 +749,7 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 / optimize (THETA) by using (m)inimization (f)unction to iteratively apply
 / (c)ost (g)radient (f)unction over (n) subsamples of (X) and (Y) generated
-/ with (s)ampling (f)unction
+/ with (s)ampling (f)unction: no shuffle 'til', shuffle '0N?', bootsrap {x?x}
 sgd:{[mf;cgf;sf;n;Y;X;THETA]    / stochastic gradient descent
  i:(n;0N)#sf count X 0;
  THETA:THETA (mf  . (cgf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ i;
@@ -939,9 +939,12 @@ cfcostgrad:{[rf;n;Y;xtheta]
  if[count rf,:();JG:rf[;m][;;(X;THETA)];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 
-/ collaborative filtering update one rating
-/ (a)lpha: learning rate, (xy): coordinates of Y to update
-cfupd1:{[a;l2;Y;XTHETA;xy]
+/ using learning rate (a)lpha, and (l2) regularization parameter, perform
+/ collaborative filtering stochastic gradient descent by solving for each non
+/ null value one at a time.  (s)ampling (f)unction allows: no shuffle 'til',
+/ shuffle '0N?', bootsrap {x?x}.  pass (::) for xy to initiate sgd.
+cfsgd:{[a;l2;sf;Y;XTHETA;xy]
+ if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip mwhere not null Y];
  e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;reverse xy);
  XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
  XTHETA}

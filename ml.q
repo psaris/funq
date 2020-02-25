@@ -31,6 +31,12 @@ mchol:{[X]                      / cholesky decomposition
   ];
  L}
 
+/ matrix overload of where
+mwhere:{
+ if[type x;:enlist where x];
+ x:(,'/) til[count x] {((1;count y 0)#x),y}' .z.s each x;
+ x}
+
 / returns true if all values are exactly equal
 identical:{min first[x]~':x}
 
@@ -1000,13 +1006,6 @@ checkcfgrad:{[e;rf;n]
 shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
-/ matrix overload of where
-mwhere:{
- if[type x;:where x];
- x:.z.s each x;
- x:til[count x]{enlist[count[first y]#x],y:$[type y;enlist y;y]}'x;
- x:(,'/) x;
- x}
 / sparse from matrix
 sparse:{enlist[shape x],i,enlist (x') . i:mwhere "b"$x}
 / matrix from sparse

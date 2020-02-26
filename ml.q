@@ -754,11 +754,11 @@ iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 / optimize (THETA) by using (m)inimization (f)unction to iteratively apply
-/ (c)ost (g)radient (f)unction over (n) subsamples of (X) and (Y) generated
-/ with (s)ampling (f)unction: no shuffle 'til', shuffle '0N?', bootsrap {x?x}
-sgd:{[mf;cgf;sf;n;Y;X;THETA]    / stochastic gradient descent
+/ (g)radient (f)unction over (n) subsamples of (X) and (Y) generated with
+/ (s)ampling (f)unction: no shuffle 'til', shuffle '0N?', bootsrap {x?x}
+sgd:{[mf;gf;sf;n;Y;X;THETA]    / stochastic gradient descent
  i:(n;0N)#sf count X 0;
- THETA:THETA (mf  . (cgf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ i;
+ THETA:THETA (mf . (gf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ i;
  THETA}
 
 / linear regression

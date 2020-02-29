@@ -172,7 +172,7 @@ xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 -1"define cost function";
 cf:.ml.cfcost[rf;U] .
 -1"define minimization function";
-mf:.ml.cfsgd[.05;.2;0N?;U;;::]
+mf:.ml.sgdmf[.05;.2;0N?;U;;::]
 -1"keep running mf until improvement is lower than pct limit";
 XTHETA:first .ml.iter[-1;.0001;cf;mf] XTHETA
 

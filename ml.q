@@ -955,8 +955,8 @@ sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
  XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
  XTHETA}
 
-/ (w)eighted (r)egularized (a)lternating (l)east (s)quares
-wrals:{[l2;Y;XTHETA]
+/ ALS-WR (a)lternating (l)east (s)quares with (w)eighted (r)egularization
+alswr:{[l2;Y;XTHETA]
  X:flip f2nd[wridge[l2;XTHETA 1]] Y; / hold THETA constant, solve for X
  THETA:flip wridge[l2;X] peach Y;    / hold X constant, solve for THETA
  (X;THETA)}

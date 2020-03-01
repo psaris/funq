@@ -182,7 +182,7 @@ show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
 show select from t where not null rating
 
-/ weighted regularized alternating least squares
+/ alternating least squares with weighted regularization
 
 / Large-scale Parallel Collaborative Filtering for the Netflix Prize
 / http://dl.acm.org/citation.cfm?id=1424269
@@ -199,7 +199,7 @@ show select from t where not null rating
 XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 -1"keep running mf until improvement is lower than pct limit";
 
-XTHETA:first .ml.iter[1;.0001;.ml.cfcost[();U] .;.ml.wrals[.01;U]] XTHETA
+XTHETA:first .ml.iter[1;.0001;.ml.cfcost[();U] .;.ml.alswr[.01;U]] XTHETA
 
 -1"predict missing ratings";
 P:au+.ml.cfpredict . XTHETA / predictions

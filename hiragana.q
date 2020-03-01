@@ -32,8 +32,12 @@ hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 -1"initialize theta with random weights";
 theta:2 raze/ .ml.glorotu'[1+-1_n;1_n];
 
-mf:{[THETA;i]first .fmincg.fmincg[10;.ml.nncostgrad[rf;n;hgolf;Y[;i];X[;i]];THETA]}
-theta:2 .ml.sgd[mf;0N?;250;X]/ theta
+cf:first .ml.nncostgrad[rf;n;hgolf;Y;X]::
+gf:last .ml.nncostgrad[rf;n;hgolf]::
+theta:first .ml.iter[1;.01;cf;.ml.sgd[.4;gf;0N?;50;Y;X]] theta
+
+/ncgf:.ml.nncostgrad[rf;n;hgolf;Y;X]
+/first .fmincg.fmincg[10;cgf;theta]
 
 -1"checking accuracy of parameters";
 avg y=p:.ml.pova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta

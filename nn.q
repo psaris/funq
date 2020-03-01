@@ -90,23 +90,23 @@ first .fmincg.fmincg[5;.ml.nncostgrad[rf;n;hgolf;Y;X];theta];
 -1"this is called 'on-line learning'";
 
 -1"we first define a minimization projection:";
-mf:first .fmincg.fmincg[5]::
-cgf:.ml.nncostgrad[rf;n;hgolf]
+cf:first .ml.nncostgrad[rf;n;hgolf;Y;X]::
+gf:last .ml.nncostgrad[rf;n;hgolf]::
 -1"we then have a few choices to randomize the dataset.";
 -1"A: permutate, then run n non-permuted epochs";
 i:0N?count X 0
 X:X[;i];Y:Y[;i];y@:i
-theta:2 .ml.sgd[mf;cgf;til;5;Y;X]/ theta
+theta:first .ml.iter[1;2;cf;.ml.sgd[.1;gf;til;5;Y;X]] theta
 -1"B: run n permuted epochs";
-theta:2 .ml.sgd[mf;cgf;0N?;5;Y;X]/ theta
+theta:first .ml.iter[1;2;cf;.ml.sgd[.1;gf;0N?;5;Y;X]] theta
 -1"C: run n random (with replacement) epochs (aka bootstrap)";
-theta:2 .ml.sgd[mf;cgf;{x?x};5;Y;X]/ theta
+theta:first .ml.iter[1;2;cf;.ml.sgd[.1;gf;{x?x};5;Y;X]] theta
 
 -1"we can run any above example with cost threshold.";
-theta:(1f<first .ml.nncostgrad[();n;hgolf;Y;X]::) .ml.sgd[mf;cgf;0N?;5;Y;X]/ theta
+theta:first .ml.iter[1;.01;cf;.ml.sgd[.1;gf;{x?x};5;Y;X]] theta
 
 -1"what is the final cost?";
-first .ml.nncostgrad[();n;hgolf;Y;X;theta]
+cf theta
 
 -1"how well did we learn on the training data set?";
 avg y=p:.ml.pova .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
@@ -167,4 +167,4 @@ THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 .ml.nncost[();hgolf;Y;X] .ml.nncut[n] theta
 -1"and the test data";
 .util.assert[0.2] .util.rnd[.1] .ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta
-.util.assert[0.4] .util.rnd[.1] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta
+.util.assert[0.1] .util.rnd[.1] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta

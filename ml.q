@@ -951,8 +951,8 @@ cfcostgrad:{[rf;n;Y;xtheta]
 / shuffle '0N?', bootsrap {x?x}.  pass (::) for xy to initiate sgd.
 sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
  if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip mwhere not null Y];
- e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;reverse xy);
- XTHETA:./[XTHETA;0 1,'i;+;a*(e*reverse xt)-l2*xt];
+ e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;xy 1 0);
+ XTHETA:./[XTHETA;0 1,'i;+;a*(e*xt 1 0)-l2*xt];
  XTHETA}
 
 / ALS-WR (a)lternating (l)east (s)quares with (w)eighted (r)egularization

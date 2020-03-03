@@ -755,7 +755,7 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
 / optimize (THETA) by using gradient descent with learing rate (a) to and
 / (g)radient (f)unction over (n) subsamples of (X) and (Y) generated with
-/ (s)ampling (f)unction: no shuffle 'til', shuffle '0N?', bootsrap {x?x}
+/ (s)ampling (f)unction: no shuffle 'til', shuffle '0N?', bootstrap {x?x}
 sgd:{[a;gf;sf;n;Y;X;THETA]        / stochastic gradient descent
  i:(n;0N)#sf count X 0;
  THETA:THETA (gd[a] . (gf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ i;
@@ -948,7 +948,7 @@ cfcostgrad:{[rf;n;Y;xtheta]
 / using learning rate (a)lpha, and (l2) regularization parameter, factorize
 / matrix Y using stochastic gradient descent by solving for each non null
 / value one at a time.  (s)ampling (f)unction allows: no shuffle 'til',
-/ shuffle '0N?', bootsrap {x?x}.  pass (::) for xy to initiate sgd.
+/ shuffle '0N?', bootstrap {x?x}.  pass (::) for xy to initiate sgd.
 sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
  if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip mwhere not null Y];
  e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;xy 1 0);

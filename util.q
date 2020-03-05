@@ -97,7 +97,7 @@ cm:{
 
 / use heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number
 nicenum:{[rnd;x]
- s:`s#$[rnd;0 1.5 3 7!1 2 5 10f;(0f,1e-15+1 2 5f)!1 2 5 10f];
+ s:`s#$[rnd;0 1.5 3 7;0f,1e-15+1 2 5f]!1 2 5 10f;
  x:f * s x%f:10 xexp floor 10 xlog x;
  x}
 

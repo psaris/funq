@@ -31,8 +31,8 @@ etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 / throw verbose exception if x <> y
 assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
 
-/ generate a range of values between y and z with step-size x
-rng:{y+x*til 1+floor 1e-14+(z-y)%x}
+/ generate a range of values between (s)tart and (e)nd with step-size (w)
+rng:{[w;s;e]s+w*til 1+floor 1e-14+(e-s)%w}
 
 / round y to nearest x
 rnd:{x*"j"$y%x}

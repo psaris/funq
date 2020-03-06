@@ -37,8 +37,8 @@ rng:{[w;s;e]s+w*til 1+floor 1e-14+(e-s)%w}
 / round y to nearest x
 rnd:{x*"j"$y%x}
 
-/ allocate y into x bins
-nbin:{(x-1)&floor x*.5^y%max y-:min y}
+/ allocate x into n bins
+binify:{[n;x](n-1)&floor n*.5^x%max x-:min x}
 
 / divide range (s;e) into n buckets
 nrng:{[n;s;e]s+til[1+n]*(e-s)%n}
@@ -129,7 +129,7 @@ plot:{[w;h;c;af;X]
  y:-1_nrng[h] . (first;last)@\:l;     / compute y axis
  Z:(y;x) bin' "f"$X 1 0;              / allocate (x;y) to (w;h) bins
  Z:af each X[2]group flip Z;          / aggregating overlapping z
- Z:c nbin[count c;0f^Z];              / map values to characters
+ Z:c binify[count c;0f^Z];            / map values to characters
  p:./[(h;w)#" ";key Z;:;value Z];     / plot points
  k:@[count[y]#0n;0|y bin l;:;l];      / generate key
  p:reverse k!p;                       / generate plot
@@ -143,7 +143,7 @@ c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 plt:plot[19;10;c10;avg]         / default plot function
 
 / generate unicode sparkline
-spark:raze("c"$226 150,/:129+til 8)nbin[8]::
+spark:raze("c"$226 150,/:129+til 8)binify[8]::
 
 / image manipulation utilities
 

@@ -1089,9 +1089,9 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 
 cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
-cabs:enorm                      / complex absolute value
 
 / mandelbrot
 
-mandelbrot:{[c;x]c+csqr x}      / mandelbrot
-mbrot:{[c;x]c+((-/)i2;2f*(*/)i;x[2]+not 4f<0w^(+/)i2:i*i:2#x)}
+mbrotf:{[c;x]c+csqr x}                     / mandelbrot function
+mbrotp:{not 4f<0w^enorm2 x}                / mandelbrot predicate
+mbrota:{[c;x;n](x;n+mbrotp x:mbrotf[c;x])} / mandelbrot accumulator

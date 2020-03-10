@@ -30,11 +30,10 @@ x:w cut .ml.mbrotp 20 .ml.mbrotf[c]/0f
 -1"plotting mandelbrot series gray scale";
 x:w cut last 20 .ml.mbrota[c]// (0f;0)
 -1 value plt .util.hmap x;
-`mandel.pgm 0: .util.pgm[b;255] x;
+`mandel.pgm 0: .util.pgm[b;20] x;
 
 -1"plotting mandelbrot series color";
-x:(flip (0;0;desc (neg 1+max over x)?256)) x;
-`mandel.ppm 0: .util.ppm[b;255] x
+`mandel.ppm 0: .util.ppm[b;20] flip[(rand 1+20;til 1+20;rand 1+20)] x;
 
 / tests
 .util.assert[1b] last[x]<last .util.heckbert[4] . x:.47 .56

@@ -155,18 +155,22 @@ gcompress:{?[x>.0031308;-.055+1.055*x xexp 1%2.4;x*12.92]}
 / convert rgb to grayscale
 grayscale:.2126 .7152 .0722 wsum
 
-/ create netpbm formatted strings for bitmap, grayscale and rgb
+/ create netpbm bitmap using ascii (or (b)inary) characters for matrix x
 pbm:{[b;x]
  s:($[b;"P4";"P1"];-3!count'[(x;x 0)]);
  s,:$[b;enlist"c"$raze((0b sv 8#)each 8 cut raze::)each flip x;" "0:"b"$x];
  s}
+
+/ create netpbm graymap using ascii (or (b)inary) characters for matrix x
 pgm:{[b;m;x]
- if[b;if[any 255<m,max over x;'`limit]] / binary version has 255 max
+ if[b;if[255<m|max (max') x;'`limit]] / binary version has 255 max
  s:($[b;"P5";"P2"];-3!count'[(x;x 0)];string m);
  s,:$[b;enlist "c"$raze flip x;" "0:"h"$x];
  s}
+
+/ create netpbm pixmap using ascii (or (b)inary) characters for matrix x
 ppm:{[b;m;x]
- if[b;if[any 255<m,max over x;'`limit]] / binary version has 255 max
+ if[b;if[255<m|max (max') (max'') x;'`limit]] / binary version has 255 max
  s:($[b;"P6";"P3"];-3!count'[(x;x 0)];string m);
  s,:$[b;enlist "c"$2 raze/flip x;" "0:raze flip each "h"$x];
  s}

@@ -5,7 +5,7 @@
 
 -1"applying random forest to the wdbc data set";
 k:20
-d:`train`test!.util.part[3 1] wdbc.t
+d:`train`test!.util.part[3 1;0N?] wdbc.t
 -1"bagging grows B decision trees with random sampling (with replacement)";
 m:.ml.bag[k;.ml.q45[();::]] d`train
 avg d.test.diagnosis=.ml.pbag[k;m] d`test
@@ -16,7 +16,7 @@ m:.ml.bag[k;.ml.q45[(1#`maxff)!1#sqrt;::]] d`train
 avg d.test.diagnosis=.ml.pbag[k;m] d`test
 
 -1"applying random forest to the winequality data set";
-d:`train`test!.util.part[1 1] winequality.red.t
+d:`train`test!.util.part[1 1;0N?] winequality.red.t
 -1"bagging grows B decision trees with random sampling (with replacement)";
 m:.ml.bag[k;.ml.q45[();::]] d`train
 .ml.rms d.test.quality-.ml.pbag[k;m] d`test

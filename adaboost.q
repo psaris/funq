@@ -7,7 +7,7 @@
 -1"discrete adaboost requires the target feature to have values -1 and 1";
 t:update -1 1 "M"=diagnosis from 11#/:wdbc.t
 -1"we can then split into train and test partitions";
-d:`train`test!.util.part[3 1] t
+d:`train`test!.util.part[3 1;0N?] t
 -1 "building a full tree is perfect on the training data";
 tr:.ml.ct[();::] d.train
 .util.assert[1f] .util.rnd[.01] avg d.train.diagnosis=.ml.dtc[tr] each d.train
@@ -43,7 +43,7 @@ ks:1+til 20
 
 n:10
 -1"cross validate with ", string[n], " buckets";
-ts:.util.part[n#1] t
+ts:.util.part[n#1;0N?] t
 ff:.ml.fab[;stump;.ml.dtc]
 pf:.ml.pab[;.ml.dtc]
 e:ts[;`diagnosis]=flip each P:.ml.kfxvt[ff ks;pf ks;ts] peach til n

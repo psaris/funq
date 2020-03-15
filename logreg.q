@@ -3,7 +3,7 @@
 \l wdbc.q
 
 -1"partitioning wdbc data into train and test";
-show d:`train`test!.util.part[3 1] "f"$update "M"=diagnosis from wdbc.t
+show d:`train`test!.util.part[3 1;0N?] "f"$update "M"=diagnosis from wdbc.t
 YX:value flip d`train
 y:first Y:1#YX
 X:1_YX

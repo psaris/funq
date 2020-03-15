@@ -134,7 +134,7 @@ show .util.totals[`TOTAL] .util.cm[yt;"i"$p]
 -1"our feed forward neural network can be used for non-linear regression.";
 
 -1"we split the wine quality data into train and test partitions";
-d:`train`test!.util.part[3 1] winequality.red.t
+d:`train`test!.util.part[3 1;0N?] winequality.red.t
 X:1_value flip d.train
 Y:1#value flip d.train
 -1"and then z-score the train and test data";

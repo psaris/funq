@@ -73,9 +73,10 @@ box:{[c;s]
  s:h,s,h;
  s}
 
-/ use (w)eights to randomly partition (x)
-part:{[w;x]x (floor sums n*prev[0f;w%sum w]) _ 0N?n:count x}
-
+/ use (w)eights to partition (x).  (s)ampling (f)unction allows: no shuffle
+/ 'til', shuffle '0N?'
+part:{[w;sf;x]x (floor sums n*prev[0f;w%sum w]) _ sf n:count x}
+ 
 / one-hot encode vector, (symbol columns of) table or (non-key symbol
 / columns of) keyed table x.
 onehot:{

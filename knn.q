@@ -32,7 +32,7 @@ show t;
 
 n:5
 -1"cross validate with ", string[n], " buckets";
-i:.util.part[n#1] til count X 0
+i:.util.part[n#1;0N?] til count X 0
 Xs:flip X[;i]
 ys:y i
 ff:.ml.fknn[sqrt 1f%;.ml.pedist2]

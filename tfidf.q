@@ -44,7 +44,7 @@ t:update (.util.stripstr lower ::) peach text from t
 -1"tokenizng and stemming text";
 t:update (.porter.stem each " " vs) peach text from t
 -1"partitioning text between training and test";
-d:`train`test!.util.part[3 1] t
+d:`train`test!.util.part[3 1;0N?] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";

@@ -73,8 +73,8 @@ box:{[c;s]
  s:h,s,h;
  s}
 
-/ use (w)eights to partition (x).  (s)ampling (f)unction allows: no shuffle
-/ 'til', shuffle '0N?', stratify vec or table
+/ use (w)eights to partition (x).  (s)ampling (f)unction: til = no shuffle,
+/ 0N? = shuffle, () or ([]) = stratify
 part:{[w;sf;x]
  if[99h<type sf;:x (floor sums n*prev[0f;w%sum w]) _ sf n:count x];
  x@:raze each flip .z.s[w;0N?] each group sf; / stratify

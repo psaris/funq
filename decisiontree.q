@@ -59,8 +59,10 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 -1 .ml.ptree[0] tr:.ml.thaid[(1#`minsl)!1#3;::] t; / classification tree
 .util.assert[`Yes] .ml.dtc[tr] d
 
--1 "we can now split the iris data into training and test batches";
-show d:`train`test!.util.part[3 1;0N?] iris.t
+-1 "we can now split the iris data into training and test batches (w/ stratification)";
+show d:`train`test!.util.part[3 1;iris.t.species] iris.t
+-1 "next we confirm relative frequencies of species are the same";
+.util.assert[1b] .ml.identical value count each group d.train.species
 -1 "then create a classification tree";
 -1 .ml.ptree[0] tr:.ml.ct[();::] `species xcols d`train;
 -1 "testing the tree on the test set produces an accuracy of:";

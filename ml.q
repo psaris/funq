@@ -419,12 +419,12 @@ likelihood:{[l;lf;X;phi;THETA]
 
 / using (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
 / (f)unction with prior probabilities (p)hi and distribution parameters
-/ (t)heta (with optional (f)itting of (p)hi) perform expectation maximization
-em:{[fp;lf;wmf;X;pT]
- W:prb likelihood[0b;lf;X] . pT;    / weights (responsibilities)
- if[fp;pT[0]:avg each W];           / new phi estimates
- pT[1]:wmf[;X] peach W;             / new THETA estimates
- pT}
+/ (THETA) (with optional (f)itting of (p)hi) perform expectation maximization
+em:{[fp;lf;wmf;X;phi;THETA]
+ W:prb likelihood[0b;lf;X;phi;THETA]; / weights (responsibilities)
+ if[fp;phi:avg each W];               / new phi estimates
+ THETA:wmf[;X] peach W;               / new THETA estimates
+ (phi;THETA)}
 
 / term frequency primitives
 

@@ -126,7 +126,7 @@ if[2<count key `.qml;
 
  usv:.qml.msvd 0f^U;
  -1"predict missing ratings using low rank approximations";
- P:a+{x$z$/:y} . .ml.nsvd[nf] usv;
+ P:ai+{x$z$/:y} . .ml.nsvd[nf] usv;
  show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r;
  -1"compare against existing ratings";
  show select from t where not null rating;

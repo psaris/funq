@@ -486,53 +486,53 @@ cmb:{
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
-/ use (imp)urity (f)unction to compute the (w)eighted information gain of x
+/ use (i)m(p)urity (f)unction to compute the (w)eighted information gain of x
 / after splitting on y
-ig:{[impf;w;x;y]                / information gain
- g:impf[w] x;
- g-:sum wodds[w;gy]*(not null key gy)*w[gy] impf' x gy:group y;
+ig:{[ipf;w;x;y]                 / information gain
+ g:ipf[w] x;
+ g-:sum wodds[w;gy]*(not null key gy)*w[gy] ipf' x gy:group y;
  (g;::;gy)}
 
-/ use (imp)urity (f)unction to compute the (w)eighted gain ratio of x after
+/ use (i)m(p)urity (f)unction to compute the (w)eighted gain ratio of x after
 / splitting on y
-gr:{[impf;w;x;y]                / gain ratio
- g:ig[impf;w;x;y];
- g:@[g;0;%[;impf[w;y]]];        / divide by splitinfo
+gr:{[ipf;w;x;y]                 / gain ratio
+ g:ig[ipf;w;x;y];
+ g:@[g;0;%[;ipf[w;y]]];         / divide by splitinfo
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted information gain
+/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
 / of x after splitting across all sets of distinct y
-sig:{[impf;w;x;y]               / set information gain
+sig:{[ipf;w;x;y]                / set information gain
  c:raze cmb[;u] each 1|count[u:distinct y] div 2;
- g:(ig[impf;w;x] y in) peach c;
+ g:(ig[ipf;w;x] y in) peach c;
  g@:i:imax g[;0];               / highest gain
  g[1]:in[;c i];                 / replace split function
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted information gain
+/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
 / of x after splitting across all values of y
-oig:{[impf;w;x;y] / ordered information gain
- g:(ig[impf;w;x] y >) peach u:asc distinct y;
+oig:{[ipf;w;x;y]                / ordered information gain
+ g:(ig[ipf;w;x] y >) peach u:asc distinct y;
  g@:i:imax g[;0];               / highest gain (not gain ratio)
  g[1]:>[;avg u i+0 1];          / split function
  g}
 
-/ use (imp)urity (f)unction to pick the maximum (w)eighted gain ratio of x
+/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted gain ratio of x
 / after splitting across all values of y
-ogr:{[impf;w;x;y] / ordered gain ratio
- g:oig[impf;w;x;y];
- g:@[g;0;%[;impf[w;g[1] y]]]; / divide by splitinfo
+ogr:{[ipf;w;x;y]                / ordered gain ratio
+ g:oig[ipf;w;x;y];
+ g:@[g;0;%[;ipf[w;g[1] y]]];    / divide by splitinfo
  g}
 
 / given a vector of (w)eights (or ::) and a (t)able of features where the
 / first column is the target attribute, create a decision tree using the
-/ (c)ategorical (g)ain (f)unction and (o)rdered (g)ain (f)unction.  the
-/ (imp)urity (f)unction determines which statistic to minimize.  a dictionary
-/ of (opt)ions specify the (max) (d)epth, (min)imum # of (s)amples required
-/ to (s)plit, (min)imum # of samples at each leaf, (min)imum (g)ain and the
+/ (c)ategorical (g)ain (f)unction and (o)rdered (g)ain (f)unction. the
+/ (i)m(p)urity (f)unction determines which statistic to minimize. a dict of
+/ (opt)ions specify the (max) (d)epth, (min)imum # of (s)amples required to
+/ (s)plit, (min)imum # of samples at each leaf, (min)imum (g)ain and the
 / (max)imum (f)eature (f)unction used to sub sample features for random
 / forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)
-dt:{[cgf;ogf;impf;opt;w;t]
+dt:{[cgf;ogf;ipf;opt;w;t]
  if[(::)~w;w:n#1f%n:count t];       / compute default weight vector
  if[1=count d:flip t;:(w;first d)]; / no features to test
  opt:(`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)),opt; / default options
@@ -540,7 +540,7 @@ dt:{[cgf;ogf;impf;opt;w;t]
  if[identical a:first d;:(w;a)]; / check if all values are equal
  if[opt[`minss]>count a;:(w;a)]; / check if insufficent samples
  d:((neg floor opt[`maxff] count d)?key d)#d:1 _d;   / sub-select features
- d:{.[x isord z;y] z}[(cgf;ogf);(impf;w;a)] peach d; / compute gains
+ d:{.[x isord z;y] z}[(cgf;ogf);(ipf;w;a)] peach d;  / compute gains
  d:(where (any opt[`minsl]>count each last::) each d) _ d; / filter on minsl
  if[0=count d;:(w;a)];          / check if all leaves have < minsl samples
  if[opt[`ming]>=first b:d bf:imax d[;0];:(w;a)]; / check gain of best feature
@@ -548,7 +548,7 @@ dt:{[cgf;ogf;impf;opt;w;t]
  / distribute nulls down each branch with reduced weight
  if[c>ni:null[k]?1b;w:@[w;n:g nk:k ni;%;c-1];g:(nk _g),\:n];
  if[(::)~b 1;t:(1#bf)_t];       / don't reuse exhausted features
- b[2]:.z.s[cgf;ogf;impf;@[opt;`maxd;-;1]]'[w g;t g]; / split sub-trees
+ b[2]:.z.s[cgf;ogf;ipf;@[opt;`maxd;-;1]]'[w g;t g]; / split sub-trees
  bf,1_b}
 
 / classify the (d)ictionary based on decision (tr)ee
@@ -596,12 +596,12 @@ subtrees:{[tr]
  trs,:enlist (,'/) leaves tr; / collapse this node too
  trs}
 
-/ given an (imp)urity function and the pair of values (a;tr), return the
+/ given an (i)m(p)urity function and the pair of values (a;tr), return the
 / minimum (a)lpha and its associated sub(tr)ee.
-dtmina:{[impf;atr]
+dtmina:{[ipf;atr]
  if[2=count tr:last atr;:atr];
- en:dtriskn[impf;tr];
- ens:dtriskn[impf] peach trs:subtrees tr;
+ en:dtriskn[ipf;tr];
+ ens:dtriskn[ipf] peach trs:subtrees tr;
  a:neg (%) . en - flip ens;
  atr:(a;trs)@\:i imin a i:idesc ens[;1]; / sort descending # nodes
  atr}

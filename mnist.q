@@ -5,7 +5,7 @@ mnist.zf:(
  "t10k-images.idx3-ubyte")
 mnist.f:ssr[;".";"-"] each mnist.zf
 mnist.b:"http://yann.lecun.com/exdb/mnist/"
--1"[down]loading handwritten digit data set";
+-1"[down]loading handwritten-digit data set";
 .util.download[mnist.b;;".gz";.util.gunzip] mnist.f;
 / rename unzipped file to match zipped file
 mnist.zf {[zf;f]if[zfs~key zfs:`$":",zf;system "r ",zf," ",f]}' mnist.f;

@@ -77,7 +77,7 @@ box:{[c;s]
 / 0N? = shuffle, () or ([]) = stratify
 part:{[w;sf;x]
  if[99h<type sf;:x (floor sums n*prev[0f;w%sum w]) _ sf n:count x];
- x@:raze each flip .z.s[w;0N?] each group sf; / stratify
+ x@:raze each flip value .z.s[w;0N?] each group sf; / stratify
  x}
  
 / one-hot encode vector, (symbol columns of) table or (non-key symbol

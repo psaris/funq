@@ -73,7 +73,7 @@ edist2:enorm2 (-)::            / euclidean distance squared
 edist:enorm (-)::              / euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distanace
+mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distance
 hmean:1f%avg 1f%                / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance

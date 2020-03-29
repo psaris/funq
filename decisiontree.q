@@ -61,6 +61,9 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 
 -1 "we can now split the iris data into training and test batches (w/ stratification)";
 show d:`train`test!.util.part[3 1;iris.t.species] iris.t
+-1 "note that stratification can work on any type of list or table";
+.util.part[3 1;;iris.t] count[iris.t]?5;
+.util.part[3 1;select species from iris.t] iris.t;
 -1 "next we confirm relative frequencies of species are the same";
 .util.assert[1b] .ml.identical value count each group d.train.species
 -1 "then create a classification tree";

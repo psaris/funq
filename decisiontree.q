@@ -60,10 +60,11 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`Yes] .ml.dtc[tr] d
 
 -1 "we can now split the iris data into training and test batches (w/ stratification)";
-show d:`train`test!.util.part[3 1;iris.t.species] iris.t
+w:`train`test!3 1
+show d:.util.part[w;iris.t.species] iris.t
 -1 "note that stratification can work on any type of list or table";
-.util.part[3 1;;iris.t] count[iris.t]?5;
-.util.part[3 1;select species from iris.t] iris.t;
+.util.part[w;;iris.t] count[iris.t]?5;
+.util.part[w;select species from iris.t] iris.t;
 -1 "next we confirm relative frequencies of species are the same";
 .util.assert[1b] .ml.identical value count each group d.train.species
 -1 "then create a classification tree";
@@ -79,7 +80,7 @@ avg d.test.species=p:tr .ml.dtc/: d`test
 -1 "first we need to one-hot encode the species";
 t:"f"$.util.onehot iris.t
 -1 "then split the data into training and test batches"
-show d:`train`test!.util.part[3 1;0N?] t
+show d:.util.part[w;0N?] t
 -1 "and generate a regression tree";
 -1 .ml.ptree[0] tr:.ml.rt[();::]  `plength xcols d`train;
 -1 "we now compute the root mean square error (rmse)";
@@ -111,7 +112,7 @@ show e:avg each ts[;`species]=p:.ml.dtkfxv[dtf;ef;b;ts] peach til n
 -1 .ml.ptree[0] atr[1] 0N!.ml.imax 0N!avg e;
 
 -1 "or even grow and prune a regression tree with wine quality data";
-d:`train`test!.util.part[1 1;0N?] winequality.red.t
+d:.util.part[`train`test!1 1;0N?] winequality.red.t
 dtf:.ml.rt[();::]
 ef:.ml.wmse
 -1 "the fully grown tree has more than 200 leaves!";

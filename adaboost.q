@@ -7,7 +7,7 @@
 -1"discrete adaboost requires the target feature to have values -1 and 1";
 t:update -1 1 "M"=diagnosis from 11#/:wdbc.t
 -1"we can then split into train and test partitions";
-d:`train`test!.util.part[3 1;0N?] t
+d:.util.part[`train`test!3 1;0N?] t
 -1 "building a full tree is perfect on the training data";
 tr:.ml.ct[();::] d.train
 .util.assert[1f] .util.rnd[.01] avg d.train.diagnosis=.ml.dtc[tr] each d.train

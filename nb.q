@@ -83,7 +83,7 @@ t:update (.util.stripstr lower .util.cleanstr::) peach text from smsspam.t
 -1"tokenizng and stemming sms text";
 t:update (.porter.stem each " " vs) peach text from t
 -1"partitioning sms messages between training and test";
-d:`train`test!.util.part[3 1;0N?] t
+d:.util.part[`train`test!3 1;0N?] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";

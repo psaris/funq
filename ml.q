@@ -119,7 +119,7 @@ prb:dax[%;sum]
 wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
 freq:wfreq[1]
 
-/ given a (w)eight return (x)-value which occurs most frequently
+/ given a (w)eight return (x)-value that occurs most frequently
 wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
@@ -720,11 +720,11 @@ pab:{[k;cf;m;t]
 revo:{[f;x]$[type x;f x;type first x;f f peach x;f .z.s[f] peach x]}
 
 / given l1 regularization (l)ambda and size of dimension (m), return two
-/ function compositions which compute the cost and gradient
+/ function compositions that compute the cost and gradient
 l1:{[l;m]((l%m)*revo[sum] abs::;(l%m)*signum::)}
 
 / given l2 regularization (l)ambda and size of dimension (m), return two
-/ function compositions which compute the cost and gradient
+/ function compositions that compute the cost and gradient
 l2:{[l;m]((.5*l%m)*revo[sum] {x*x}::;(l%m)*)}
 
 / given (a)lpha and (l)ambda (r)atio elastic net parameters, convert them
@@ -862,7 +862,7 @@ logcostgradf:{[rf;Y;X]
 fova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 
 / given data matri(X) and (THETA) coefficients, return integer of THETA
-/ vector which produces highest one-vs-all value (probability)
+/ vector that produces highest one-vs-all value (probability)
 pova:{[Y]f2nd[imax] Y}
 
 / neural network matrix initialization primitives

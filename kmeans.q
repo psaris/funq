@@ -65,7 +65,7 @@ C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()}[X] each 1+til 10
 show .util.plt .ml.dist[X] peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
--1"which finds actual data points at the center of each cluster";
+-1"that finds actual data points at the center of each cluster";
 -1"the algorithm is slower than k-means because it must computer";
 -1"the full dissimilarity matrix for each cluster";
 -1"the implementation is know as *partitioning around medoids*";

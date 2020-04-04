@@ -1,7 +1,7 @@
 \d .ml
 
-/ apply f (in parallel) to the 2nd dimension of x (flip if -g 0)
-f2nd:{[f;x]$[system"g";(f value::) peach flip (count[x]#`)!x;f peach flip x]}
+/ apply (f)unction (in parallel) to the 2nd dimension of (X) (flip if -g 0)
+f2nd:{[f;X]$[system"g";(f value::) peach flip (count[X]#`)!X;f peach flip X]}
 
 / matrix primitives
 

@@ -58,23 +58,23 @@ wnan:{$[all type each x;where not any null x;::]}
 
 / norm primitives
 
-mnorm:sum abs::               / manhattan (taxicab) norm
+mnorm:sum abs::                 / manhattan (taxicab) norm
 / euclidean norm squared
-/ NOTE: wavg converts all types to float
+/ NOTE: wsum converts all types to float
 enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
-enorm:sqrt enorm2::                        / euclidean norm
-pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p}  / p norm
+enorm:sqrt enorm2::             / euclidean norm
+pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / p norm
 
 / distance primitives
 
-hdist:sum (<>)::               / hamming distance
-mdist:mnorm (-)::              / manhattan distance (taxicab metric)
-edist2:enorm2 (-)::            / euclidean distance squared
-edist:enorm (-)::              / euclidean distance
+hdist:sum (<>)::                / hamming distance
+mdist:mnorm (-)::               / manhattan (taxicab) distance
+edist2:enorm2 (-)::             / euclidean distance squared
+edist:enorm (-)::               / euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]pnorm[p] x-y}    / minkowski distance
-hmean:1f%avg 1f%                / harmonic mean
+mkdist:{[p;x;y]pnorm[p] x-y}                     / minkowski distance
+hmean:1f%avg 1f%                                 / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance

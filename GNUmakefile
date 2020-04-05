@@ -100,6 +100,9 @@ clean-liblinear: | liblinear
 clean-xgboost: | xgboost
 	$(MAKE) -C xgboost clean
 
+clean-data:
+	git clean -Xdf
+
 clean: clean-libsvm clean-liblinear
 	$(RM) *.so *.o
 

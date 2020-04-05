@@ -75,7 +75,7 @@ endif
 test-funq:
 	set -ex; SSL_VERIFY_SERVER=NO;\
 	for f in $(FUNQFILES);\
-		do $(Q) $$f -s 4 >/dev/null </dev/null;\
+		do SSL_VERIFY_SERVER=NO $(Q) $$f -s 4 >/dev/null </dev/null;\
   done
 
 test-svm: libsvm/heart_scale.model

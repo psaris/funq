@@ -155,7 +155,7 @@ fmincg:{[n;F;X]
  v[`z1]:(n:n,1)[1]%1f-v`d1;     / initial step is red/(|s|+1)
  n@:0;                          / n is first element
  v[`i]+:n<0;                    / count epochs?!
- 
+
  while[v[`i]<abs n;             / while not finished
   X0:v`X`f1`df1;                / make a copy of current values
   v:loop[n;F;v];

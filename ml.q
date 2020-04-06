@@ -194,7 +194,7 @@ knn:{[wf;k;y;d]
 / given (w)eighting (f)unction, (d)istance (f)unction, atom or vector of (k)
 / values, a (y) vector and matrix(X), return a prediction composition
 fknn:{[wf;df;k;y;X] knn[wf;k;y] df[X]::}
- 
+
 / k-(means|medians)
 
 / using the (d)istance (f)unction, group matri(X) based on the closest
@@ -291,7 +291,7 @@ link:{[lf;D]
  if[-11h=type lf;lf:get lf];                    / dereference lf
  l:1_last .[lancewilliams lf] over (D;(i;();())); / obtain linkage stats
  l}
- 
+
 / use (l)ink stats to create (k) clusters
 clust:{[l;k]
  if[0h>type k;:first .z.s[l] k,()]; / special case atoms
@@ -821,7 +821,7 @@ dsoftmax:{diag[x] - x*\:/:x:softmax x} / softmax gradient
 
 / given true (y) and (p)redicted values return the log loss
 logloss:{[y;p]neg (y*log 1e-15|p)+(1f-y)*log 1e-15|1f-p}
-/ given true (y) and (p)redicted values return the cross entropy loss 
+/ given true (y) and (p)redicted values return the cross entropy loss
 celoss:{[y;p]neg sum y*log 1e-15|p}
 / given true (y) and (p)redicted values return the mean squared error loss
 mseloss:{[y;p].5*y*y-:p}

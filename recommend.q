@@ -25,7 +25,7 @@ show X:"f"$flip genre in/: value[movie]`genres
 -1"we then initialize the THETA matrix";
 theta:raze 0N!THETA:(1;1+count X)#0f
 -1"since we don't use other user's preferences, this is quick optimization";
-rf:.ml.l2[.1]                   / l2 regularization 
+rf:.ml.l2[.1]                   / l2 regularization
 theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_theta
@@ -121,7 +121,7 @@ if[2<count key `.qml;
   "singular value decomposition (svd) allows us to compute latent factors (off-line)";
   "and perform simple matrix multiplication to make predictions (on-line)");
  -1"compute score based on top n svd factors";
- 
+
  / singular value decomposition
 
  usv:.qml.msvd 0f^U;

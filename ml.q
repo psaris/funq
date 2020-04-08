@@ -207,7 +207,7 @@ iwrand:{[n;w]s binr n?last s:sums w}
 wrand:{[n;w;x]x iwrand[n] w}
 
 / kmeans++ initialization algorithm
-/ using (d)istance (f)function and matri(X), append the next centroid to the
+/ using (d)istance (f)unction and matri(X), append the next centroid to the
 / min centroid (d)istance and all (C)entroids
 kpp:{[df;X;d;C]
  if[not count C;:(0w;X@\:1?count X 0)]; / first centroid
@@ -241,7 +241,7 @@ sse:{[X]sum edist2[X] avg each X}
 ssw:{[X;I]sum (sse X@\:) peach I}
 / given matri(X) and cluster (I)ndices, compute between-cluster sse
 ssb:{[X;I]count'[I] wsum edist2[(avg '')G] (avg raze::) each G:X@\:I}
-/ usting data matri(X) and (C)entroids, compute total cluster distortion
+/ using data matri(X) and (C)entroids, compute total cluster distortion
 dist:{[X;C]ssw[X] cgroup[edist2;X] C}
 
 / given (d)istance (f)unction, matri(X), and cluster (I)ndices, compute the

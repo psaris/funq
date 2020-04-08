@@ -50,12 +50,11 @@ tcross:{value flip ([]x) cross ([]y)}
 / returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
 mem:{(3#system"w")%x (1024*)/ 1}
 
-/ given a dictionary who's values are indices representing result of the
-/ group operator, return the original ungrouped list.  generate the
-/ dictionary key if only the indices are provided
+/ given a dictionary representing results of the group operator, return the
+/ original ungrouped list.  generate the dictionary key if none provided
 ugrp:{
- if[not type x;:.z.s til[count x]!x];
- x:(key[x] where count each value x)iasc raze x;
+ if[not type x;x:til[count x]!x];
+ x:@[sum[count each x]#k;value x;:;k:key x];
  x}
 
 / append a total row and (c)olumn to (t)able

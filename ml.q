@@ -206,7 +206,7 @@ iwrand:{[n;w]s binr n?last s:sums w}
 / find n (w)eighted samples of x
 wrand:{[n;w;x]x iwrand[n] w}
 
-/ kmeans++ initialization algorithm
+/ k-means++ initialization algorithm
 / using (d)istance (f)unction and matri(X), append the next centroid to the
 / min centroid (d)istance and all (C)entroids
 kpp:{[df;X;d;C]
@@ -215,7 +215,8 @@ kpp:{[df;X;d;C]
  d&:df[X] C[;n-1];                      / update distance vector
  C:C,'X@\: first iwrand[1] d;           / pick next centroid
  (d;C)}
-kmeanspp:kpp[edist2]
+kmeanspp:kpp[edist2]            / k-means++ initialization
+kmedianspp:kpp[mdist]           / k-medians++ initialization
 
 / stuart lloyd's algorithm. uses (d)istance (f)unction to assign the
 / matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction

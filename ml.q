@@ -414,8 +414,8 @@ wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 / expectation maximization
 
 likelihood:{[l;lf;X;phi;THETA]
- p:(@[;X]lf .) peach THETA;    / compute [log] probability densitities
- p:$[l;p+log phi;p*phi];       / apply prior probabiliites
+ p:(@[;X]lf .) peach THETA;    / compute [log] probability densities
+ p:$[l;p+log phi;p*phi];       / apply prior probabilities
  p}
 
 / using (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator

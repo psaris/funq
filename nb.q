@@ -80,15 +80,16 @@ show flip pT:.ml.fnb[.ml.wmultimle[1];::;X;y]
 -1"modeling spam/ham classifier";
 -1"cleaning and stripping sms text";
 t:update (.util.stripstr lower .util.cleanstr::) peach text from smsspam.t
--1"tokenizng and stemming sms text";
-t:update (.porter.stem each " " vs) peach text from t
+-1"tokenizng and removing stop words from sms text";
+t:update (except[;stopwords.xpo6] " " vs) peach text from t
+-1"stemming sms txt";
+t:update (.porter.stem') peach text from t
 -1"partitioning sms messages between training and test";
 d:.util.part[`train`test!3 1;0N?] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";
-sw:.porter.stem peach stopwords.xpo6
-X:.ml.tdm[c] v:asc distinct[raze c] except sw
+X:.ml.tdm[c] v:asc distinct raze c
 ct:d . `test`text
 yt:d . `test`class
 Xt:.ml.tdm[ct] v

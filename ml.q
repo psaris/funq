@@ -130,7 +130,7 @@ waom:{[w;x]$[isord x;nwavg;wmode][w;x]} / weighted average or mode
 
 / binary classification evaluation metrics (summary statistics)
 
-/ given expected boolean values x and observered value y, compute
+/ given expected boolean values x and observed value y, compute
 / (tp;tn;fp;fn)
 tptnfpfn:{tp,(("i"$count x)-tp+sum f),f:(sum x;sum y)-tp:sum x&y}
 

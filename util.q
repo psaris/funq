@@ -234,8 +234,8 @@ ha:1_ha
 
 / map (p)unctuation characters to their (w)hitespace replacements
 pw:(!) . (2;1;0)#""
-pw["[][\n\\/()<>@#$%^&*=_+.,;:!?-]"]:" " / replace with white space
-pw["['\"0-9]"]:""                        / delete altogether
+pw["[][\n\\/()<>@#$%^&*=_+.,;:!?-]"]:" " / replace with whitespace
+pw["['\"0-9]"]:""                        / delete
 pw:1_pw
 
 / search (s)tring for all instances of key[d] and replace with value[d]

@@ -7,7 +7,7 @@ mlense.movie:1!("I**";1#",") 0: `$mlense.f,"/movies.csv"
 -1"removing movies without genres";
 update 0#'genres from `mlense.movie where genres like "(no genres listed)";
 -1"converting unicode in titles to ascii";
-update .util.cleanstr each rtrim title from `mlense.movie;
+update .util.sr[.util.ua] peach rtrim title from `mlense.movie;
 -1"extracting the movie's year from the title";
 update year:"I"$-1_/:-5#/:title from `mlense.movie;
 update -7_/:title from `mlense.movie where not null year;

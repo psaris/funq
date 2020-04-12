@@ -181,55 +181,59 @@ ppm:{[b;mx;X]
 
 / text utilities
 
-/ remove byte order mark if it exists
-rbom:{$["\357\273\277"~3#x[0];@[x;0;3_];x]}
+/ map (u)nicode characters to their (a)scii equivalents
+ua:(!) . (2;1;0)#""
+ua["\342\200\223"]:"--"                  / endash
+ua["\342\200\224"]:"---"                 / emdash
+ua["\342\200[\231\230]"]:"'"             / single quotes
+ua["\342\200[\234\235]"]:"\""            / double quotes
+ua["\342\200\246"]:"..."                 / ellipses
+ua["\302\222"]:"'"                       / single quotes
+ua["\302\241"]:"!"                       / !
+ua["\302\243"]:"$"                       / pound symbol
+ua["\302\260"]:"o"                       / o
+ua["\302\262"]:"^2"                      / ^2
+ua["\302\263"]:"^3"                      / ^3
+ua["\302\267"]:"-"                       / -
+ua["\302\274"]:"1/4"                     / 1/4
+ua["\302\275"]:"1/2"                     / 1/2
+ua["\302\276"]:"3/4"                     / 3/4
+ua["\302\277"]:"?"                       / ?
+ua["\303[\200\201\202\203\204\205]"]:"A" / A
+ua["\303\206"]:"AE"                      / AE
+ua["\303\207"]:"C"                       / C
+ua["\303[\210\211\212\213]"]:"E"         / E
+ua["\303[\214\215\216\217]"]:"I"         / I
+ua["\303\220"]:"D"                       / D
+ua["\303\221"]:"N"                       / N
+ua["\303[\222\223\224\225\226\230]"]:"O" / O
+ua["\303[\231\232\233\234]"]:"U"         / U
+ua["\303\235"]:"Y"                       / y
+ua["\303\237"]:"s"                       / s
+ua["\303[\240\241\242\243\244\245]"]:"a" / a
+ua["\303\246"]:"ae"                      / ae
+ua["\303\247"]:"c"                       / c
+ua["\303[\250\251\252\253]"]:"e"         / e
+ua["\303[\254\255\256\257]"]:"i"         / i
+ua["\303\260"]:"d"                       / d
+ua["\303\261"]:"n"                       / n
+ua["\303[\262\263\264\265\266\270]"]:"o" / o
+ua["\303[\271\272\273\274]"]:"u"         / u
+ua["\303\275"]:"y"                       / y
+ua:1_ua
 
-/ clean (s)tring of non ascii characters
-cleanstr:{[s]
- s:ssr[s;"\342\200[\234\235]";"\""];            / replace double quotes
- s:ssr[s;"\342\200[\231\230]";"'"];             / replace single quotes
- s:ssr[s;"\342\200\246";"..."];                 / replace ellipses
- s:ssr[s;"\342\200\223";"--"];                  / replace endash
- s:ssr[s;"\342\200\224";"---"];                 / replace emdash
- s:ssr[s;"\302\222";"'"];                       / replace single quotes
- s:ssr[s;"\302\241";"!"];                       / replace !
- s:ssr[s;"\302\243";"$"];                       / replace pound symbol with $
- s:ssr[s;"\302\260";"o"];                       / replace o
- s:ssr[s;"\302\262";"^2"];                      / replace ^2
- s:ssr[s;"\302\263";"^3"];                      / replace ^3
- s:ssr[s;"\302\267";"-"];                       / replace -
- s:ssr[s;"\302\274";"1/4"];                     / replace 1/4
- s:ssr[s;"\302\275";"1/2"];                     / replace 1/2
- s:ssr[s;"\302\276";"3/4"];                     / replace 3/4
- s:ssr[s;"\302\277";"?"];                       / replace ?
- s:ssr[s;"\303[\200\201\202\203\204\205]";"A"]; / replace A
- s:ssr[s;"\303\206";"AE"];                      / replace AE
- s:ssr[s;"\303\207";"C"];                       / replace C
- s:ssr[s;"\303[\210\211\212\213]";"E"];         / replace E
- s:ssr[s;"\303[\214\215\216\217]";"I"];         / replace I
- s:ssr[s;"\303\220";"D"];                       / replace D
- s:ssr[s;"\303\221";"N"];                       / replace N
- s:ssr[s;"\303[\222\223\224\225\226\230]";"O"]; / replace O
- s:ssr[s;"\303[\231\232\233\234]";"U"];         / replace U
- s:ssr[s;"\303\235";"Y"];                       / replace y
- s:ssr[s;"\303\237";"s"];                       / replace s
- s:ssr[s;"\303[\240\241\242\243\244\245]";"a"]; / replace a
- s:ssr[s;"\303\246";"ae"];                      / replace ae
- s:ssr[s;"\303\247";"c"];                       / replace c
- s:ssr[s;"\303[\250\251\252\253]";"e"];         / replace e
- s:ssr[s;"\303[\254\255\256\257]";"i"];         / replace i
- s:ssr[s;"\303\260";"d"];                       / replace d
- s:ssr[s;"\303\261";"n"];                       / replace n
- s:ssr[s;"\303[\262\263\264\265\266\270]";"o"]; / replace o
- s:ssr[s;"\303[\271\272\273\274]";"u"];         / replace u
- s:ssr[s;"\303\275";"y"];                       / replace y
- s:ssr[s;"&lt;";"<"];                           / replace <
- s:ssr[s;"&gt;";">"];                           / replace >
- s:ssr[s;"&amp;";"&"];                          / replace &
- s}
+/ map (h)tml entities to their (a)scii equivalents
+ha:(!) . (2;1;0)#""
+ha["&lt;"]:"<"                           / <
+ha["&gt;"]:">"                           / >
+ha["&amp;"]:"&"                          / &
+ha:1_ha
 
-/ strip (s)tring of puntuation marks
-stripstr:{[s]
- s:ssr[s;"[][\n\\/()<>@#$%^&*=_+.,;:!?-]";" "]; / replace with white space
- s:ssr[s;"['\"0-9]";""];            / delete altogether
- s}
+/ map (p)unctuation characters to their (w)hitespace replacements
+pw:(!) . (2;1;0)#""
+pw["[][\n\\/()<>@#$%^&*=_+.,;:!?-]"]:" " / replace with white space
+pw["['\"0-9]"]:""                        / delete altogether
+pw:1_pw
+
+/ search (s)tring for all instances of key[d] and replace with value[d]
+sr:{[d;s] ssr/[s;key d;value d]}

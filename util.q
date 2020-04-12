@@ -227,6 +227,9 @@ ha:(!) . (2;1;0)#""
 ha["&lt;"]:"<"                           / <
 ha["&gt;"]:">"                           / >
 ha["&amp;"]:"&"                          / &
+ha["&apos;"]:"'"                         / '
+ha["&quot;"]:"\""                        / "
+ha["&nbsp;"]:" "                         /
 ha:1_ha
 
 / map (p)unctuation characters to their (w)hitespace replacements

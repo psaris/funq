@@ -10,9 +10,11 @@
 \l persuasion.q
 
 -1 "remove punctuation from text";
-c:lower .util.sr[.util.pw] peach moby.s
--1 "stem text after removing stop words";
-c:(.porter.stem each except[;stopwords.xpo6] " " vs ) peach c
+c:.util.sr[.util.pw] peach moby.s
+-1 "tokenize and remove stop words";
+c:(except[;stopwords.xpo6] " " vs ) peach lower c
+-1 "user porter stemmer to stem each word";
+c:(.porter.stem') peach c
 -1 "building a term document matrix from corpus and vocabulary";
 m:.ml.tdm[c] v:asc distinct raze c
 -1 "building a vector space model (with different examples of tf-idf)";
@@ -41,9 +43,11 @@ t,:flip `text`class!(northanger.s;`NA) / northanger abbey
 t,:flip `text`class!(persuasion.s;`PE) / persuasion
 
 -1"remove punctuation from text";
-t:update lower .util.sr[.util.pw] peach text from t
--1"stem text after removing stop words";
-t:update (.porter.stem each except[;stopwords.xpo6] " " vs ) peach text from t
+t:update .util.sr[.util.pw] peach text from t
+-1"tokenize and remove stop words";
+t:update (except[;stopwords.xpo6] " " vs ) peach lower text from t
+-1 "user porter stemmer to stem each word";
+t:update (.porter.stem') peach text from t
 -1"partitioning text between training and test";
 d:.util.part[`train`test!3 1;0N?] t
 c:d . `train`text

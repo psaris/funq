@@ -27,13 +27,13 @@ show .util.plot[19;10;.util.c10;sum] X
 -1" 1. randomly pick k centroids (k-means++ and forgy method)";
 -1" 2. assign points randomly to k centroids - random partition method";
 -1"the forgy method is the simplest to implement";
-.ml.kmeans[X] over neg[k]?/:X
+.ml.kmeans[X] over .ml.forgy[k] X
 -1"the k-means++ method is supplied as an alternate initialization method";
 .ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()
 -1"the random partition method can also be done by hand";
-.ml.kmeans[X] over (avg'') X@\:value group count[X 0]?k
+.ml.kmeans[X] over .ml.rpart[avg;k] X
 -1"we can plot the data and overlay the centroids found using kmeans++";
-show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
+show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over .ml.forgy[k] X
 
 -1"kmedians uses the lloyd algorithm, but uses the *manhattan distance*";
 -1"also known as the taxicab metric to assign points to clusters";
@@ -43,7 +43,7 @@ show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over neg[k]?/:X
 -1"the centroid can be (x1;y2;z3), and not necessarily (x3;y3;z3)";
 -1"(to use actual points from the data see k-medoids below)";
 -1"we can see the progress by using scan instead of over";
-show .ml.kmedians[X] scan neg[k]?/:X
+show .ml.kmedians[X] scan .ml.forgy[k] X
 
 -1"we can apply kmeans to the classic machine learning iris data";
 `X`y`t set' iris`X`y`t;

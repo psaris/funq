@@ -195,12 +195,14 @@ knn:{[wf;k;y;d]
 / values, a (y) vector and matrix(X), return a prediction composition
 fknn:{[wf;df;k;y;X] knn[wf;k;y] df[X]::}
 
-/ k-(means|medians)
+/ partitional clustering initialization methods
 
-/ using the (d)istance (f)unction, group matri(X) based on the closest
-/ (C)entroid and return the cluster indices
-cgroup:{[df;X;C]value group f2nd[imin] f2nd[df X] C}
-
+/ generate (k) centroids by randomly choosing (k) samples from matri(X)
+forgy:{[k;X]neg[k]?/:X}         / forgy method
+/ generate (k) centroids by applying (c)entroid (f)unction to (k) random
+/ partitions of matri(X)
+rpart:{[cf;k;X](cf'') X@\:value group count[X 0]?k} / random partition
+ 
 / return the index of n (w)eighted samples
 iwrand:{[n;w]s binr n?last s:sums w}
 / find n (w)eighted samples of x
@@ -217,6 +219,12 @@ kpp:{[df;X;d;C]
  (d;C)}
 kmeanspp:kpp[edist2]            / k-means++ initialization
 kmedianspp:kpp[mdist]           / k-medians++ initialization
+
+/ partitional clustering algorithms
+
+/ using the (d)istance (f)unction, group matri(X) based on the closest
+/ (C)entroid and return the cluster indices
+cgroup:{[df;X;C]value group f2nd[imin] f2nd[df X] C}
 
 / stuart lloyd's algorithm. uses (d)istance (f)unction to assign the
 / matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction

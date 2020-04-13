@@ -50,8 +50,8 @@ tcross:{value flip ([]x) cross ([]y)}
 / returned in units specified by x (0:B;1:KB;2:MB;3:GB;...)
 mem:{(3#system"w")%x (1024*)/ 1}
 
-/ given a dictionary representing results of the group operator, return the
-/ original ungrouped list.  generate the dictionary key if none provided
+/ given a dictionary mirroring the group operator return value, reconstruct
+/ the original ungrouped list.  generate the dictionary key if none provided
 ugrp:{
  if[not type x;x:til[count x]!x];
  x:@[sum[count each x]#k;value x;:;k:key x];

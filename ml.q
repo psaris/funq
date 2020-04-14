@@ -762,7 +762,7 @@ iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 / (a)lpha: learning rate, gf: gradient function
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
-/ optimize (THETA) by using gradient descent with learing rate (a) to and
+/ optimize (THETA) by using gradient descent with learning rate (a) and
 / (g)radient (f)unction over (n) subsamples of (X) and (Y) generated with
 / (s)ampling (f)unction: til = no shuffle, 0N? = shuffle, {x?x} = bootstrap
 sgd:{[a;gf;sf;n;Y;X;THETA]        / stochastic gradient descent

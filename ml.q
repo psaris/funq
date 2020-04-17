@@ -815,8 +815,8 @@ linear:(::)                                   / linear
 dlinear:{1f+0f*$[99h=type x;x`z;x]}           / linear gradient
 sigmoid:1f%1f+exp neg::                       / sigmoid
 dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
-tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
-dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyberbolic tangent gradient
+tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyperbolic tangent
+dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyperbolic tangent gradient
 relu:0f|                              / rectified linear unit
 drelu:{"f"$0f<=$[99h=type x;x`z;x]}   / rectified linear unit gradient
 lrelu:{x*1 .01@0f>x}                  / leaky rectified linear unit

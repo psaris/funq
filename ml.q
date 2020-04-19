@@ -514,7 +514,7 @@ gr:{[ipf;w;x;y]                 / gain ratio
 / use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
 / of x after splitting across all sets of distinct y
 sig:{[ipf;w;x;y]                / set information gain
- c:raze cmb[;u] each 1|count[u:distinct y] div 2;
+ c:raze cmb[;u] peach 1+til 1|count[u:distinct y] div 2;
  g:(ig[ipf;w;x] y in) peach c;
  g@:i:imax g[;0];               / highest gain
  g[1]:in[;c i];                 / replace split function

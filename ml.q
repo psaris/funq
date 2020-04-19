@@ -321,7 +321,7 @@ pi:acos -1f
 twopi:2f*pi
 logtwopi:log twopi
 
-/ box-muller (m?-n in k7)
+/ box-muller
 bm:{
  if[count[x] mod 2;:-1_.z.s x,rand 1f];
  x:raze (sqrt -2f*log first x)*/:(cos;sin)@\:twopi*last x:2 0N#x;

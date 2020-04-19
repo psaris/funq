@@ -167,14 +167,14 @@ pbm:{[b;X]
 
 / create netpbm graymap using ascii (or (b)inary) characters for matrix x
 pgm:{[b;mx;X]
- if[b;if[255<mx|max (max') X;'`limit]] / binary version has 255 max
+ if[b;if[255<mx|max (max') X;'`limit]]; / binary version has 255 max
  s:($[b;"P5";"P2"];-3!count'[(X;X 0)];string mx);
  s,:$[b;enlist "c"$raze flip X;" "0:"h"$X];
  s}
 
 / create netpbm pixmap using ascii (or (b)inary) characters for matrix x
 ppm:{[b;mx;X]
- if[b;if[255<mx|max (max') (max'') X;'`limit]] / binary version has 255 max
+ if[b;if[255<mx|max (max') (max'') X;'`limit]]; / binary version has 255 max
  s:($[b;"P6";"P3"];-3!count'[(X;X 0)];string mx);
  s,:$[b;enlist "c"$2 raze/flip X;" "0:raze flip each "h"$X];
  s}

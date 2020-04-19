@@ -489,10 +489,10 @@ wmae:{[w;x]avg abs x-w wavg x}         / weighted mean absolute error
 
 rms:{sqrt avg x*x}              / root mean square error
 
-/ create all combinations of length x from a list (or size of) y
+/ combinations of length x (or all lengths if null x) from count (or list) y
 cmb:{
- if[not 0>type y;:y .z.s[x] count y];
- if[null x;:raze .z.s[;y] each 1+til y];
+ if[not 0>type y;:y .z.s[x] count y];    / list y
+ if[null x;:raze .z.s[;y] each 1+til y]; / null x = all lengths
  c:flip enlist flip enlist til y-:x-:1;
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
@@ -507,32 +507,32 @@ ig:{[ipf;w;x;y]                 / information gain
 / use (i)m(p)urity (f)unction to compute the (w)eighted gain ratio of x after
 / splitting on y
 gr:{[ipf;w;x;y]                 / gain ratio
- g:ig[ipf;w;x;y];
- g:@[g;0;%[;ipf[w;y]]];         / divide by splitinfo
+ g:ig[ipf;w;x;y];               / first compute information gain
+ g:@[g;0;%[;ipf[w;y]]];         / then divide by splitinfo
  g}
 
 / use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
 / of x after splitting across all sets of distinct y
 sig:{[ipf;w;x;y]                / set information gain
- c:raze cmb[;u] peach 1+til 1|count[u:distinct y] div 2;
- g:(ig[ipf;w;x] y in) peach c;
- g@:i:imax g[;0];               / highest gain
- g[1]:in[;c i];                 / replace split function
+ c:raze cmb[;u] peach 1+til 1|count[u:distinct y] div 2; / combinations of y
+ g:(ig[ipf;w;x] y in) peach c;                           / all gains
+ g@:i:imax g[;0];                                        / highest gain
+ g[1]:in[;c i];                                          / replace split func
  g}
 
 / use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
 / of x after splitting across all values of y
-oig:{[ipf;w;x;y]                / ordered information gain
- g:(ig[ipf;w;x] y >) peach u:asc distinct y;
- g@:i:imax g[;0];               / highest gain (not gain ratio)
- g[1]:>[;avg u i+0 1];          / split function
+oig:{[ipf;w;x;y]                             / ordered information gain
+ g:(ig[ipf;w;x] y >) peach u:asc distinct y; / all gains
+ g@:i:imax g[;0];                            / highest gain (not gain ratio)
+ g[1]:>[;avg u i+0 1];                       / replace split func
  g}
 
 / use (i)m(p)urity (f)unction to pick the maximum (w)eighted gain ratio of x
 / after splitting across all values of y
 ogr:{[ipf;w;x;y]                / ordered gain ratio
- g:oig[ipf;w;x;y];
- g:@[g;0;%[;ipf[w;g[1] y]]];    / divide by splitinfo
+ g:oig[ipf;w;x;y];              / first compute information gain
+ g:@[g;0;%[;ipf[w;g[1] y]]];    / then divide by splitinfo
  g}
 
 / given a vector of (w)eights (or ::) and a (t)able of features where the

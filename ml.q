@@ -51,8 +51,10 @@ ismatrix:{
 
 imax:{x?max x}                  / index of max element
 imin:{x?min x}                  / index of min element
-prepend:{((1;count y 0)#x),y}   / prepend matrix y with row of repeated x
-append:{y,((1;count y 0)#x)}    / append matrix y with row of repeated x
+/ (pre|ap)pend n rows of repeated x to matri(X)
+pend:{[n;x;X]$[n>0;,[;X];X,](abs n;count X 0)#x}
+prepend:pend[1]                 / prepend 1 row of repeated x to matri(X)
+append:pend[-1]                 / append  1 row of repeated x to matri(X)
 / where not any null
 wnan:{$[all type each x;where not any null x;::]}
 
@@ -319,7 +321,7 @@ pi:acos -1f
 twopi:2f*pi
 logtwopi:log twopi
 
-/ box-muller (m?-n in k7)
+/ box-muller
 bm:{
  if[count[x] mod 2;:-1_.z.s x,rand 1f];
  x:raze (sqrt -2f*log first x)*/:(cos;sin)@\:twopi*last x:2 0N#x;

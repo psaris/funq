@@ -782,7 +782,7 @@ normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 / return the THETA matrix resulting from performing ridge regression
 ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 
-/ given (l2) regularization parameter, target vector y and data matri(x),
+/ given (l2) regularization parameter, target vector y and data matri(X),
 / return the theta vector resulting from performing weighted ridge regression
 / by scaling the regularization parameter by the count of non-null values
 wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}

@@ -14,10 +14,10 @@ lf:.ml.binl[n]               / likelihood function
 mf:.ml.wbinmle[n;0]          / parameter maximization function
 phi:2#1f%2f                  / coins are picked with equal probability
 .ml.em[1b;lf;mf;x] . pT:(phi;flip enlist THETA)
-(.ml.em[1b;lf;mf;x].) over pT  / call until convergence
+(.ml.em[1b;lf;mf;x]//) pT  / call until convergence
 / which flips came from which THETA? pick maximum log likelkhood
 
-pT:(.ml.em[1b;lf;mf;x].) over pT
+pT:(.ml.em[1b;lf;mf;x]//) pT
 .util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[0b;lf;x] . pT
 .util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.binll[n];x] . pT
 
@@ -31,7 +31,7 @@ mf:.ml.wmmmmle[k;1e-8]
 mu:.ml.prb each flip 3?/:X
 phi:3#1f%3
 .ml.em[1b;lf;mf;X] . pT:(phi;flip enlist mu)
-show pT:(.ml.em[0b;lf;mf;X].) over pT
+show pT:(.ml.em[0b;lf;mf;X]//) pT
 p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.mmmll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
@@ -53,7 +53,7 @@ mu:neg[k]?X;     / pick k random points as centers
 s2:k#var X;      / use the whole datasets variance
 lf:.ml.gaussl    / likelihood function
 mf:.ml.wgaussmle / maximum likelihood estimator function
-pT:(.ml.em[1b;lf;mf;X].) over (phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
+pT:(.ml.em[1b;lf;mf;X]//) (phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
 group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussll;X] . pT
 
 / let's use the iris data for multivariate gauss
@@ -65,7 +65,7 @@ mu:X@\:/:neg[k]?count y         / pick k random points for mu
 SIGMA:k#enlist X cov\:/: X      / sample covariance
 lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
-pT:(.ml.em[1b;lf;mf;X].) over (phi;flip (mu;SIGMA))
+pT:(.ml.em[1b;lf;mf;X]//) (phi;flip (mu;SIGMA))
 / how well did it cluster the data?
 p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y group p

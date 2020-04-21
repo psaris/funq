@@ -298,9 +298,9 @@ lancewilliams:{[lf;D;I]
 / lance-williams linkage algorithm for hierarchical agglomerative clustering
 / and return the linkage stats: (from index j;to index i)
 link:{[lf;D]
- D:@'[D;i:til count D;:;0n];                    / ignore loops
- if[-11h=type lf;lf:get lf];                    / dereference lf
- l:1_last .[lancewilliams lf] over (D;(i;();())); / obtain linkage stats
+ D:@'[D;i:til count D;:;0n];                   / ignore loops
+ if[-11h=type lf;lf:get lf];                   / dereference lf
+ l:1_last (lancewilliams[lf]//) (D;(i;();())); / obtain linkage stats
  l}
 
 / use (l)ink stats to create (k) clusters

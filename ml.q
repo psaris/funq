@@ -689,9 +689,9 @@ rt:dt[oig;oig;wmse]             / regression tree
 
 / generate (n) decision trees by applying (f) to a resampled (with
 / replacemnt) (t)able
-bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap Aggregating
+bag:{[n;f;t](f ?[;t]::) peach n#count t} / (b)ootstrap (ag)gregating
 
-/ given an atom or list (k), and Bootstrap Aggregating (m)odel, make
+/ given an atom or list (k), and bootstrap aggregating (m)odel, make
 / predictions on samples in (t)able
 pbag:{[k;m;t]
  if[count[m]<max k;'`length];

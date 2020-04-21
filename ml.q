@@ -689,9 +689,9 @@ rt:dt[oig;oig;wmse]             / regression tree
 
 / generate (n) decision trees by applying (f) to a resampled (with
 / replacemnt) (t)able
-bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap AGgregating
+bag:{[n;f;t](f ?[;t]::) peach n#count t} / Bootstrap Aggregating
 
-/ given an atom or list (k), and Bootstrap AGgregating (m)odel, make
+/ given an atom or list (k), and Bootstrap Aggregating (m)odel, make
 / predictions on samples in (t)able
 pbag:{[k;m;t]
  if[count[m]<max k;'`length];
@@ -764,7 +764,7 @@ iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 / (a)lpha: learning rate, gf: gradient function
 gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 
-/ optimize (THETA) by using gradient descent with learing rate (a) to and
+/ optimize (THETA) by using gradient descent with learning rate (a) and
 / (g)radient (f)unction over (n) subsamples of (X) and (Y) generated with
 / (s)ampling (f)unction: til = no shuffle, 0N? = shuffle, {x?x} = bootstrap
 sgd:{[a;gf;sf;n;Y;X;THETA]        / stochastic gradient descent
@@ -782,7 +782,7 @@ normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 / return the THETA matrix resulting from performing ridge regression
 ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 
-/ given (l2) regularization parameter, target vector y and data matri(x),
+/ given (l2) regularization parameter, target vector y and data matri(X),
 / return the theta vector resulting from performing weighted ridge regression
 / by scaling the regularization parameter by the count of non-null values
 wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
@@ -817,8 +817,8 @@ linear:(::)                                   / linear
 dlinear:{1f+0f*$[99h=type x;x`z;x]}           / linear gradient
 sigmoid:1f%1f+exp neg::                       / sigmoid
 dsigmoid:{x*1f-x:$[99h=type x;x`a;sigmoid x]} / sigmoid gradient
-tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyberbolic tangent
-dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyberbolic tangent gradient
+tanh:{(a-b)%(a:exp x)+b:exp neg x}            / hyperbolic tangent
+dtanh:{1f-x*x:$[99h=type x;x`a;tanh x]}       / hyperbolic tangent gradient
 relu:0f|                              / rectified linear unit
 drelu:{"f"$0f<=$[99h=type x;x`z;x]}   / rectified linear unit gradient
 lrelu:{x*1 .01@0f>x}                  / leaky rectified linear unit

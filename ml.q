@@ -116,12 +116,13 @@ prb:dax[%;sum]
 
 / frequency and mode primitives
 
-/ given a (w)eight atom or vector, and data x, return a sorted dictionary
-/ mapping the distinct items to their weighted count
+/ given a (w)eight atom or vector and data (x), return a dictionary (sorted
+/ by key) mapping the distinct items to their weighted count
 wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
 freq:wfreq[1]
 
-/ given a (w)eight return (x)-value that occurs most frequently
+/ given a (w)eight atom or vector and data (x), return x with maximum
+/ weighted frequency
 wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 

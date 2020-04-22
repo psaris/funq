@@ -280,35 +280,35 @@ lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
 / implementation of lance-williams algorithm for performing hierarchical
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
-/ between new and remaining clusters, (D)issimilarity matrix, and (I)ndex
-/ list, return updated D and I
-lancewilliams:{[lf;D;I]
+/ between new and remaining clusters, (D)issimilarity matrix, cluster
+/ (a)ssignments and (L)inkage stats: (j;i). returns updated (D;a;L)
+lancewilliams:{[lf;D;a;L]
  n:count D;
- d:D@'di:imin peach D;                          / find closest distances
- if[null d@:i:imin d;:(D;I)]; j:di i;           / find closest clusters
- c:$[9h=type lf;lf;lf(freq I 0)@/:(i;j;til n)]; / determine coefficients
- nd:sum c*nd,(d;abs(-/)nd:D (i;j));             / calc new distances
- D[;i]:D[i]:nd;                                 / update distances
- D[;j]:D[j]:n#0n;                               / erase j
- I[0;where j=I 0]:i;            / all elements in cluster j are now in i
- I[1 2],:(j;i);                 / append return values
- (D;I)}
+ d:D@'di:imin peach D;                        / find closest distances
+ if[null d@:i:imin d;:(D;a;L)]; j:di i;       / find closest clusters
+ c:$[9h=type lf;lf;lf(freq a)@/:(i;j;til n)]; / determine coefficients
+ nd:sum c*nd,(d;abs(-/)nd:D (i;j));           / calc new distances
+ D[;i]:D[i]:nd;                               / update distances
+ D[;j]:D[j]:n#0n;                             / erase j
+ a[where j=a]:i;                / all elements in cluster j are now in i
+ L:L,'(j;i);                    / append linkage stats
+ (D;a;L)}
 
 / given a (l)inkage (f)unction and (D)issimilarity matrix, run the
 / lance-williams linkage algorithm for hierarchical agglomerative clustering
 / and return the linkage stats: (from index j;to index i)
 link:{[lf;D]
- D:@'[D;i:til count D;:;0n];                   / ignore loops
- if[-11h=type lf;lf:get lf];                   / dereference lf
- l:1_last (lancewilliams[lf]//) (D;(i;();())); / obtain linkage stats
- l}
+ D:@'[D;a:til count D;:;0n];    / define cluster assignments and ignore loops
+ if[-11h=type lf;lf:get lf];    / dereference lf
+ L:last .[lancewilliams[lf]] over (D;a;2#()); / obtain linkage stats
+ L}
 
-/ use (l)ink stats to create (k) clusters
-clust:{[l;k]
- if[0h>type k;:first .z.s[l] k,()]; / special case atoms
- c:1 cut til 1+count l 0;           / initial clusters
+/ use (L)inkage stats to create (k) clusters
+clust:{[L;k]
+ if[0h>type k;:first .z.s[L] k,()]; / special case atoms
+ c:1 cut til 1+count L 0;           / initial clusters
  k@:i:idesc k;                      / sort k descending
- fl:(1-mk:last k)_ flip l;          / drop unwanted links
+ fl:(1-mk:last k)_ flip L;          / drop unwanted links
  fls:(0,-1_count[c]-k) cut fl;      / list of flipped link stats
  c:{[c;fl]{x[y 1],:x y 0;x[y 0]:();x}/[c;fl]}\[c;fls]; / link into k clusters
  c:c except\: enlist ();        / remove empty clusters

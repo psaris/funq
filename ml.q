@@ -876,10 +876,6 @@ logcostgradf:{[rf;Y;X]
 / against Y for each unique (lbls)
 fova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 
-/ given data matri(X) and (THETA) coefficients, return integer of THETA
-/ vector that produces highest one-vs-all value (probability)
-pova:{[Y]f2nd[imax] Y}
-
 / neural network matrix initialization primitives
 
 / Xavier Glorot and Yoshua Bengio (2010) initialization

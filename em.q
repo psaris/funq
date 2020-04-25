@@ -18,8 +18,8 @@ phi:2#1f%2f                  / coins are picked with equal probability
 / which flips came from which THETA? pick maximum log likelkhood
 
 pT:(.ml.em[1b;lf;mf;x]//) pT
-.util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[0b;lf;x] . pT
-.util.assert[1 0 0 1 0] .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.binll[n];x] . pT
+.util.assert[1 0 0 1 0] .ml.imax .ml.likelihood[0b;lf;x] . pT
+.util.assert[1 0 0 1 0] .ml.imax .ml.likelihood[1b;.ml.binll[n];x] . pT
 
 
 / multinomial example
@@ -32,7 +32,7 @@ mu:.ml.prb each flip 3?/:X
 phi:3#1f%3
 .ml.em[1b;lf;mf;X] . pT:(phi;flip enlist mu)
 show pT:(.ml.em[0b;lf;mf;X]//) pT
-p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.mmmll;X] . pT
+p:.ml.imax .ml.likelihood[1b;.ml.mmmll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
@@ -54,7 +54,7 @@ s2:k#var X;      / use the whole datasets variance
 lf:.ml.gaussl    / likelihood function
 mf:.ml.wgaussmle / maximum likelihood estimator function
 pT:(.ml.em[1b;lf;mf;X]//) (phi;flip (mu;s2)) / returns best guess for (phi;mu;s)
-group .ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussll;X] . pT
+group .ml.imax .ml.likelihood[1b;.ml.gaussll;X] . pT
 
 / let's use the iris data for multivariate gauss
 
@@ -67,7 +67,7 @@ lf:.ml.gaussmvl
 mf:.ml.wgaussmvmle
 pT:(.ml.em[1b;lf;mf;X]//) (phi;flip (mu;SIGMA))
 / how well did it cluster the data?
-p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.gaussmvll;X] . pT
+p:.ml.imax .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
@@ -104,7 +104,7 @@ pT:.ml.em[1b;lf;mf;X] . pT
 -1"let's run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]// pT
 -1"grouping the data and finding the mode identifies the clusters";
-p:.ml.f2nd[.ml.imax] .ml.likelihood[1b;.ml.bmmll[1];X] . pT
+p:.ml.imax .ml.likelihood[1b;.ml.bmmll[1];X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";

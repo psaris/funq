@@ -49,8 +49,11 @@ ismatrix:{
 
 / basic utilities
 
-imax:{x?max x}                  / index of max element
-imin:{x?min x}                  / index of min element
+/ find index of atom or vector (x) in matri(X)
+mfind:{[X;x]{[x;i;j;y]?[y=x;i&j;i]}[x]/[count[X 0]#n;til n:count X;X]}
+imax:{$[type x;?;mfind][x;max x]} / index of max element
+imin:{$[type x;?;mfind][x;min x]} / index of min element
+
 / (pre|ap)pend n rows of repeated x to matri(X)
 pend:{[n;x;X]$[n>0;,[;X];X,](abs n;count X 0)#x}
 prepend:pend[1]                 / prepend 1 row of repeated x to matri(X)
@@ -227,7 +230,7 @@ kmedianspp:kpp[mdist]           / k-medians++ initialization
 
 / using the (d)istance (f)unction, group matri(X) based on the closest
 / (C)entroid and return the cluster indices
-cgroup:{[df;X;C]value group f2nd[imin] f2nd[df X] C}
+cgroup:{[df;X;C]value group imin f2nd[df X] C}
 
 / stuart lloyd's algorithm. uses (d)istance (f)unction to assign the
 / matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction

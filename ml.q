@@ -1,7 +1,10 @@
 \d .ml
 
-/ apply (f)unction (in parallel) to the 2nd dimension of (X) (flip if -g 0)
-f2nd:{[f;X]$[system"g";(f value::) peach flip (count[X]#`)!X;f peach flip X]}
+/ returns boolean indicating preference not to flip matrices
+noflip:{system"g"}              / redefine to customize behavior
+
+/ apply (f)unction (in parallel) to the 2nd dimension of (X)
+f2nd:{[f;X]$[noflip[];(f value::) peach flip (count[X]#`)!X;f peach flip X]}
 
 / matrix primitives
 

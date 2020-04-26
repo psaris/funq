@@ -105,7 +105,7 @@ nicenum:{[rnd;x]
  x:f * s x%f:10 xexp floor 10 xlog x;
  x}
 
-/ given requested (n)umber of labels and the (m)i(n) and (m)a(x) values, use
+/ given suggested (n)umber of labels and the (m)i(n) and (m)a(x) values, use
 / heckbert's algorithm to generate a series of nice numbers
 heckbert:{[n;mn;mx]
  r:nicenum[0b] mx-mn;           / range of values

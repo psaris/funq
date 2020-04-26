@@ -1098,7 +1098,7 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 
 / complex primitives
 
-cmul:{((-/)x*y;(+/)x*(|:)y)}    / complex multiplication
+cmul:{((-/)x*y;(+/)x*(|)y)}     / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
 
 / mandelbrot

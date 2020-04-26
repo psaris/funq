@@ -49,7 +49,7 @@ ismatrix:{
 
 / basic utilities
 
-/ find index of atom or vector (x) in matri(X)
+/ find row indices of each atom or vector (x) in matri(X)
 mfind:{[X;x]{[x;i;j;y]?[y=x;i&j;i]}[x]/[count[X 0]#n;til n:count X;X]}
 imax:{$[type x;?;mfind][x;max x]} / index of max element
 imin:{$[type x;?;mfind][x;min x]} / index of min element

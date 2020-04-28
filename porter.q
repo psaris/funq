@@ -38,15 +38,15 @@ hasvowel:{any vowel x}
 / returns true if x ends in a double consonant
 doublec:{$[2>count x;0b;(=) . -2#x;last cons x;0b]}
 
-/ return true if last three letters are consontant - vowel -
-/ consontant and last letter is not in "wxy"
+/ return true if last three letters are consonant - vowel -
+/ consonant and last letter is not in "wxy"
 cvc:{$[3>count x;0b;101b~-3#cons x;not last[x] in "wxy";0b]}
 
-/ if a<m replace n charaters with (r)eplacement suffix
+/ if a<m replace n characters with (r)eplacement suffix
 r:{[a;n;r;x]$[a<m n:n _ x;n,r;x]}
 
 / compute m where m in c?(vc){m}v? and c and v are consecutive lists
-/ of consontants and vowels
+/ of consonants and vowels
 m:{sum[x] - first x:x where differ x:cons x}
 
 / remove plurals and -ed or -ing

@@ -15,7 +15,7 @@ mf:.ml.wbinmle[n;0]          / parameter maximization function
 phi:2#1f%2f                  / coins are picked with equal probability
 .ml.em[1b;lf;mf;x] . pT:(phi;flip enlist THETA)
 (.ml.em[1b;lf;mf;x]//) pT  / call until convergence
-/ which flips came from which THETA? pick maximum log likelkhood
+/ which flips came from which THETA? pick maximum log likelihood
 
 pT:(.ml.em[1b;lf;mf;x]//) pT
 .util.assert[1 0 0 1 0] .ml.imax .ml.likelihood[0b;lf;x] . pT
@@ -46,7 +46,7 @@ mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
 X:raze X0:mu0+s0*(.ml.bm ?[;1f]::) each m0 / build dataset
-show .util.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and guassian curves
+show .util.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and gaussian curves
 k:count mu0
 phi:k#1f%k;      / guess that distributions occur with equal frequency
 mu:neg[k]?X;     / pick k random points as centers

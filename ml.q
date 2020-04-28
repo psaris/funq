@@ -66,11 +66,9 @@ wnan:{$[all type each x;where not any null x;::]}
 
 / norm primitives
 
-mnorm:sum abs::                 / manhattan (taxicab) norm
-/ euclidean norm squared
-/ NOTE: wsum converts all types to float
-enorm2:{$[9h=t:type x;dot[x;x];t or not system "g";x wsum x;f2nd[.z.s;x]]}
-enorm:sqrt enorm2::             / euclidean norm
+mnorm:sum abs::                           / manhattan (taxicab) norm
+enorm2:{x wsum x}                         / euclidean norm squared
+enorm:sqrt enorm2::                       / euclidean norm
 pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / p norm
 
 / distance primitives

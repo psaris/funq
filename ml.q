@@ -400,7 +400,7 @@ gaussl:{[mu;sigma;x]
  p:exp (x*x-:mu)%-2*sigma;
  p%:sqrt sigma*twopi;
  p}
-/ guassian log likelihood
+/ gaussian log likelihood
 gaussll:{[mu;sigma;X] -.5*sum (logtwopi;log sigma;(X*X-:mu)%sigma)}
 / gaussian maximum likelihood estimator
 gaussmle:{[x](mu;avg x*x-:mu:avg x)}
@@ -433,7 +433,7 @@ likelihood:{[l;lf;X;phi;THETA]
  p:$[l;p+log phi;p*phi];       / apply prior probabilities
  p}
 
-/ using (l)ikelhood (f)unction, (w)eighted (m)aximum likelihood estimator
+/ using (l)ikelihood (f)unction, (w)eighted (m)aximum likelihood estimator
 / (f)unction with prior probabilities (p)hi and distribution parameters
 / (THETA) (with optional (f)itting of (p)hi) perform expectation maximization
 em:{[fp;lf;wmf;X;phi;THETA]
@@ -448,7 +448,7 @@ em:{[fp;lf;wmf;X;phi;THETA]
 tdm:{[c;v](-1_@[(1+count v)#0;;+;1]::) each v?c}
 
 lntf:{log 1f+x}                    / log normalized term frequency
-dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequenecy
+dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequency
 
 idf: {log count[x]%sum 0<x}     / inverse document frequency
 idfs:{log 1f+count[x]%sum 0<x}  / inverse document frequency smooth
@@ -554,7 +554,7 @@ dt:{[cgf;ogf;ipf;opt;w;t]
  opt:(`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)),opt; / default options
  if[0=opt`maxd;:(w;first d)];    / check if we've reached max depth
  if[identical a:first d;:(w;a)]; / check if all values are equal
- if[opt[`minss]>count a;:(w;a)]; / check if insufficent samples
+ if[opt[`minss]>count a;:(w;a)]; / check if insufficient samples
  d:((neg floor opt[`maxff] count d)?key d)#d:1 _d;   / sub-select features
  d:{.[x isord z;y] z}[(cgf;ogf);(ipf;w;a)] peach d;  / compute gains
  d:(where (any opt[`minsl]>count each last::) each d) _ d; / filter on minsl
@@ -575,7 +575,7 @@ dtcr:{[tr;d]                    / recursive component
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
  v}
 
-/ decistion tree pruning primitives
+/ decision tree pruning primitives
 
 / wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
@@ -637,7 +637,7 @@ dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
 
 / decision tree utilities
 
-/ print leaf: prediction followd by classification error% or regresssion sse
+/ print leaf: prediction followed by classification error% or regression sse
 pleaf:{[w;x]
  v:waom[w;x];                   / value
  e:$[isord x;string sum e*e:v-x;string[.1*"i"$1e3*1f-avg x = v],"%"];
@@ -693,7 +693,7 @@ rt:dt[oig;oig;wmse]             / regression tree
 / random forest
 
 / generate (n) decision trees by applying (f) to a resampled (with
-/ replacemnt) (t)able
+/ replacement) (t)able
 bag:{[n;f;t](f ?[;t]::) peach n#count t} / (b)ootstrap (ag)gregating
 
 / given an atom or list (k), and bootstrap aggregating (m)odel, make

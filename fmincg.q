@@ -1,4 +1,4 @@
-/ Minimize a continuous differentialble multivariate function. Starting point
+/ Minimize a continuous differentiable multivariate function. Starting point
 / is given by "X" (D by 1), and the function named in the string "f", must
 / return a function value and a vector of partial derivatives. The Polack-
 / Ribiere flavour of conjugate gradients is used to compute search
@@ -53,7 +53,7 @@
 /  f) introduced BREAK variable to overcome q's lack of break statement
 / 2) max length "n" is now mandatory
 
-\d .fmincg / function minimize nonlinear congjugate gradient
+\d .fmincg / function minimize nonlinear conjugate gradient
 
 RHO:.01     / a bunch of constants for line searches
 SIG:.5      / RHO and SIG are the constants in the Wolfe-Powell conditions
@@ -93,12 +93,12 @@ minimize:{[F;v]
 extrapolate:{[F;v]
  v[`z2]:cubicextrapolation . v`f2`f3`d2`d3`z3;
  v[`z2]:$[$[0>v`z2;1b;0w=v`z2];$[.5>=v`limit;v[`z1]*EXT-1;.5*v[`limit]-v`z1];
-  / extraplation beyond max? -> bisect
+  / extrapolation beyond max? -> bisect
   $[-.5<v`limit;v[`limit]<v[`z2]+v`z1;0b];.5*v[`limit]-v`z1;
-  / extraplation beyond limit? -> set to limit
+  / extrapolation beyond limit? -> set to limit
   $[-.5>v`limit;(EXT*v`z1)<v[`z2]+v`z1;0b];v[`z1]*EXT-1;
   v[`z2]<v[`z3]*neg INT;v[`z3]*neg INT;
-  / too clost to limit?
+  / too close to limit?
   $[-.5<v`limit;v[`z2]<(v[`limit]-v`z1)*1f-INT;0b];(v[`limit]-v`z1)*1f-INT;
   v[`z2]];
  v[`f3]:v`f2;v[`d3]:v`d2;v[`z3]:neg v`z2; / set pt 3 = pt 2

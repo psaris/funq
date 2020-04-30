@@ -137,9 +137,8 @@ waom:{[w;x]$[isord x;nwavg;wmode][w;x]} / weighted average or mode
 
 / binary classification evaluation metrics (summary statistics)
 
-/ given expected boolean values x and observed value y, compute
-/ (tp;tn;fp;fn)
-tptnfpfn:{tp,(("i"$count x)-tp+sum f),f:(sum x;sum y)-tp:sum x&y}
+/ given actual values (y) and (p)redicted values, compute (tp;tn;fp;fn)
+tptnfpfn:{[y;p]tp,(("i"$count y)-tp+sum f),f:(sum p;sum y)-/:tp:sum p&y}
 
 / aka rand measure (William M. Rand 1971)
 accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}

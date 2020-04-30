@@ -34,7 +34,7 @@ n:0N!"j"$.util.nbin[2;count X;count Y]
 
 -1"correctly picking the initial THETA values is important.";
 -1"instead of setting them all to a 0 (or any constant value),";
--1"we must set them to randomn values to 'break the symmetry'.";
+-1"we must set them to random values to 'break the symmetry'.";
 -1"additionally, we must chose values that ensure the gradient";
 -1"of the sigmoid function is not too small.  .ml.glorotu does this";
 0N!theta:2 raze/ THETA:.ml.glorotu'[1+-1_n;1_n];
@@ -69,7 +69,7 @@ hgolf:`h`g`o`l!`.ml.linear`.ml.dlinear`.ml.linear`.ml.mseloss
 
 hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 
--1"we can now run (batch) gradient descent across the whole datatset.";
+-1"we can now run (batch) gradient descent across the whole data set.";
 -1"this will always move along the steepest gradient, but makes slow progress";
 -1"and is prone to finding local minima";
 
@@ -156,7 +156,7 @@ theta:2 raze/ .ml.heu'[1+-1_n;1_n];
 hgolf:`h`g`o`l!`.ml.lrelu`.ml.dlrelu`.ml.linear`.ml.mseloss
 theta:first r:.fmincg.fmincg[1000;.ml.nncostgrad[rf;n;hgolf;Y;X];theta]
 
--1"before revealing how our non-linear neural network faired,";
+-1"before revealing how our non-linear neural network fared,";
 -1"lets review the mse resulting from ridge regression on the train data";
 THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 .ml.lincost[();Y;X] THETA

@@ -16,13 +16,13 @@ show t:weather.t
 -1"use the id3 algorithm to build a decision tree";
 -1 .ml.ptree[0] tr:.ml.id3[();::] t;
 `:tree.dot 0: .ml.pgraph tr
--1"the tree is built with tripplets.";
+-1"the tree is built with triplets.";
 -1"the first value is the decision feature,";
 -1"and the second value is operator to use on the feature";
 -1"and the third value is a dictionary representing the leaves";
 -1"we can then use the (d)ecission (t)ree (c)lassifier function to classify our data";
 avg t.Play=p:.ml.dtc[tr] each t / accuracy
--1"since the test and training data are the same, it is no suprise we have 100% accuracy";
+-1"since the test and training data are the same, it is no surprise we have 100% accuracy";
 -1".ml.dtc does not fail on missing features. it digs deeper into the tree";
 .util.assert[.71428571428571431] avg t.Play=p:.ml.dtc[.ml.id3[();::] (1#`Outlook) _ t] each t
 -1"id3 only handles discrete features.  c4.5 handles continues features";
@@ -44,7 +44,7 @@ z:@[{.qml.nicdf x};.0125;2.241403];
 .util.assert[1f] avg s.Play=p:.ml.dtc[tr] each s / accuracy
 -1"we can still handle null values by using the remaining features";
 .util.assert[`Yes] .ml.dtc[tr] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85f;`)
--1"we can even can handle nulls in the training data by propegating them down the tree";
+-1"we can even can handle nulls in the training data by propagating them down the tree";
 s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tr:.ml.q45[();::] s;
 .util.assert[`No] .ml.dtc[tr] d
@@ -55,7 +55,7 @@ d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 -1 "we can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tr:.ml.aid[(1#`minsl)!1#3;::] update "e"$`Yes=Play from t; / regression tree
 .util.assert[.2] .ml.dtc[tr] d
--1 "we can also create a thaid tree for classifiction";
+-1 "we can also create a thaid tree for classification";
 -1 .ml.ptree[0] tr:.ml.thaid[(1#`minsl)!1#3;::] t; / classification tree
 .util.assert[`Yes] .ml.dtc[tr] d
 

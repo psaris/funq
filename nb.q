@@ -80,7 +80,7 @@ show flip pT:.ml.fnb[.ml.wmultimle[1];::;X;y]
 -1"modeling spam/ham classifier";
 -1"remove unicode and punctuation characters from sms text";
 t:update .util.sr[.util.ua,.util.ha,.util.pw] peach text from smsspam.t
--1"tokenizng and removing stop words from sms text";
+-1"tokenizing and removing stop words from sms text";
 t:update (except[;stopwords.xpo6] " " vs) peach lower text from t
 -1"user porter stemmer to stem sms txt";
 t:update (.porter.stem') peach text from t

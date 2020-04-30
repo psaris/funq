@@ -70,8 +70,8 @@ show .util.plt .ml.distortion[X] peach C
 -1"the full dissimilarity matrix for each cluster";
 -1"the implementation is know as *partitioning around medoids*";
 -1"and is implemented in .ml.pam";
--1"we can use any distance metric, but manhattan and euclidian";
--1"(not euclidian squared) are the most popular";
+-1"we can use any distance metric, but manhattan and euclidean";
+-1"(not euclidean squared) are the most popular";
 C:.ml.pam[.ml.edist][X] over X@\:3?count X
 show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
 

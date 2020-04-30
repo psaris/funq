@@ -6,7 +6,7 @@
 `X`Xt`y`yt set' pendigits`X`Xt`y`yt;
 k:4
 df:`.ml.edist2
--1"checking accuracy of using ",string[k], " nearest neigbors and df=", string df;
+-1"checking accuracy of using ",string[k], " nearest neighbors and df=", string df;
 -1"and uniform weight the points";
 -1"using .ml.f2nd to peach across the 2nd dimension of Xt to build distance matrix";
 avg yt=p:.ml.knn[0n<;k;y] D:.ml.f2nd[df X] Xt

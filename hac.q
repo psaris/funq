@@ -52,7 +52,7 @@ I:.ml.clust[L] 1+til 10
 -1"plot silhouette curve (k vs silhouette)";
 show .util.plt (avg raze .ml.silhouette[.ml.edist;X]::) peach I
 
--1"let's apply the analyis to one of the uef reference cluster datasets";
+-1"let's apply the analysis to one of the uef reference cluster datasets";
 X:uef.d32
 show .util.plot[39;20;.util.c10;sum] X
 -1"using pedist2 makes calculating the dissimilarity matrix much faster";

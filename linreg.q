@@ -3,7 +3,7 @@
 
 plt:.util.plot[30;15;.util.c10]
 
--1"generating 2 sets of independant normal random variables";
+-1"generating 2 sets of independent normal random variables";
 / NOTE: matrix variables are uppercase
 -1 .util.box["**"](
  "suppress the desire to flip matrices";
@@ -27,15 +27,15 @@ show plt[sum] X
 -1 .util.box["**"] (
  "mmu is usually used for matrix multiplication";
  "$ is usually used for vector dot product";
- "but they can be used interchangably");
+ "but they can be used interchangeably");
 
 Y:-1#X
 X:1#X
 
 -1"linear algebra often involves an operation such as";
--1"Y times X transpse or Y*X'. Matlab and Octave can parse";
+-1"Y times X transpose or Y*X'. Matlab and Octave can parse";
 -1"this syntax and perform the multiplication/transpose";
--1"by a change of indexation rather than physcially moving the data";
+-1"by a change of indexation rather than physically moving the data";
 -1"to get this same effect in q, we can change the";
 -1"operation from 'Y mmu flip X' to 'X$/:Y'";
 -1"timing with the flip";

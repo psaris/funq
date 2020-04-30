@@ -15,7 +15,7 @@ tr:.ml.ct[();::] d.train
 .util.assert[.9] .util.rnd[.01] avg d.test.diagnosis=.ml.dtc[tr] each d.test
 -1 "how many leaves did we create?";
 count .ml.leaves tr
--1 "adaboost creates an ensemble of weak learners to produce a strongn learning";
+-1 "adaboost creates an ensemble of weak learners to produce a strong learning";
 -1 "a decision stump (tree with one branch) is a good weak learner";
 -1 "because it has > 50% accuracy";
 stump:.ml.ct[(1#`maxd)!1#1]

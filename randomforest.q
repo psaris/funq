@@ -11,7 +11,7 @@ m:.ml.bag[k;.ml.q45[();::]] d`train
 avg d.test.diagnosis=.ml.pbag[k;m] d`test
 
 -1"a random forest grows B decision trees with random sampling (with replacement)";
--1"and a sub-selection of sqrt (for classifiction) of the features at each split";
+-1"and a sub-selection of sqrt (for classification) of the features at each split";
 m:.ml.bag[k;.ml.q45[(1#`maxff)!1#sqrt;::]] d`train
 avg d.test.diagnosis=.ml.pbag[k;m] d`test
 

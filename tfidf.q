@@ -46,7 +46,7 @@ t,:flip `text`class!(persuasion.s;`PE) / persuasion
 t:update .util.sr[.util.pw] peach text from t
 -1"tokenize and remove stop words";
 t:update (except[;stopwords.xpo6] " " vs ) peach lower text from t
--1 "user porter stemmer to stem each word";
+-1 "use porter stemmer to stem each word";
 t:update (.porter.stem') peach text from t
 -1"partitioning text between training and test";
 d:.util.part[`train`test!3 1;0N?] t

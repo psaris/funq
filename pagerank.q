@@ -51,6 +51,6 @@ show node[i]!r i:idesc r:$[;.ml.google[d;A]] over r:n#1f%n:count A
 node:asc distinct raze berkstan.l
 l:node?berkstan.l
 show S:(1 2#1+max over l), .ml.append[1f] l
--1"not enough memory to convert Sparse -> full matrix";
+-1"not enough memory to convert sparse -> full matrix";
 -1"just perform a few sparse iterations";
 show node[i]!r i:idesc r:10 .ml.pageranks[d;S]/ r:n#1f%n:S[0;0]

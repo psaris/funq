@@ -18,8 +18,8 @@ t:(2#/:zoo.t),'([]silhouette:.ml.silhouette[df;zoo.X;zoo.y])
 -1"then by actual data point silhouette value";
 -1"provides good intuition on cluster quality";
 show select[>([](avg;silhouette) fby typ;silhouette)] from t
--1"we see that mamals platypus, seal, dolphin and porpoise";
--1"as well as all the reptiles are beter classifed";
+-1"we see that mammals platypus, seal, dolphin and porpoise";
+-1"as well as all the reptiles are better classified";
 -1"as another type";
 show 75_select[>([](avg;silhouette) fby typ;silhouette)] from t
 

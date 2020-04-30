@@ -30,10 +30,10 @@ vowel:{
  v}
 
 / are the letters in x consonants
-cons:{not vowel x}
+cons:not vowel::
 
 / returns true if x contains a vowel
-hasvowel:{any vowel x}
+hasvowel:any vowel::
 
 / returns true if x ends in a double consonant
 doublec:{$[2>count x;0b;(=) . -2#x;last cons x;0b]}

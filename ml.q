@@ -69,7 +69,7 @@ wnan:{$[all type each x;where not any null x;::]}
 mnorm:sum abs::                           / manhattan (taxicab) norm
 enorm2:{x wsum x}                         / euclidean norm squared
 enorm:sqrt enorm2::                       / euclidean norm
-pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / p norm
+pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / parameterized norm
 
 / distance primitives
 

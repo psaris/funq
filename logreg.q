@@ -66,13 +66,13 @@ theta:(1+count X)#0f;
 theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 
 -1"test models accuracy";
-avg yt=p:"i"$first .ml.logpredict[Xt;enlist theta]
+avg yt="i"$p:first .ml.logpredict[Xt;enlist theta]
 
-show .util.totals[`TOTAL] .util.cm["i"$yt;p]
+show .util.totals[`TOTAL] .util.cm["i"$yt;"i"$p]
 
 -1"demonstrate a few binary classification evaluation metrics";
 -1"how well did we fit the data";
-tptnfpfn:.ml.tptnfpfn . (yt;p)
+tptnfpfn:.ml.tptnfpfn . "i"$(yt;p)
 -1"accuracy: ",                                         string .ml.accuracy . tptnfpfn;
 -1"precision: ",                                        string .ml.precision . tptnfpfn;
 -1"recall: ",                                           string .ml.recall . tptnfpfn;
@@ -80,3 +80,17 @@ tptnfpfn:.ml.tptnfpfn . (yt;p)
 -1"FM (geometric mean between precision and recall): ", string .ml.FM . tptnfpfn;
 -1"jaccard (0 <-> 1 similarity measure): ",             string .ml.jaccard . tptnfpfn;
 -1"MCC (-1 <-> 1 correlation measure): ",               string .ml.MCC . tptnfpfn;
+
+-1"plot receiver operating characteristic (ROC) curve";
+show .util.plt roc:2#.ml.roc . (yt;p)
+-1"area under the curve (AUC)";
+.ml.auc . 2#roc
+fprtprf:(0 0 .5 .5 1;0 .5 .5 1 1;0w .8 .4 .35 .1)
+-1"confirm accurate roc results";
+.util.assert[fprtprf] .ml.roc . (0 0 1 1;.1 .4 .35 .8)
+-1"use random values to confirm large vectors don't explode memory";
+y:100000?0b
+p:100000?1f
+show .util.plt roc:2#.ml.roc . (y;p)
+-1"confirm auc for random data is .5";
+.util.assert[.5] .util.rnd[.01] .ml.auc . roc

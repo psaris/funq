@@ -143,7 +143,19 @@ tptnfpfn:{[y;p]tp,(("i"$count y)-tp+sum f),f:(sum p;sum y)-/:tp:sum p&y}
 / aka rand measure (William M. Rand 1971)
 accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}
 precision:{[tp;tn;fp;fn]tp%tp+fp}
-recall:{[tp;tn;fp;fn]tp%tp+fn}
+recall:sensitivity:hitrate:tpr:{[tp;tn;fp;fn]tp%tp+fn} / true positive rate
+selectivity:specificity:tnr:{[tp;tn;fp;fn]tn%tn+fp}    / true negative rate
+fallout:fpr:{[tp;tn;fp;fn]fp%fp+tn}                    / false positive rate
+missrate:fnr:{[tp;tn;fp;fn]fn%fn+tp}                   / false negative rate
+
+/ receiver operating characteristic
+roc:{[y;p]
+ u:0w,desc distinct p;                       / thresholds
+ TPTNFPFN:flip (.ml.tptnfpfn[y]p>=) peach u; / matrix of tptnfpfn
+ r:(fpr . TPTNFPFN; tpr . TPTNFPFN; u);
+ r}
+
+auc:{[x;y] .5*sum (x-prev x)*y+prev y} / area under the curve
 
 / f measure: given (b)eta and tp,tn,fp,fn compute the harmonic mean of
 / precision and recall

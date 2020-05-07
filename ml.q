@@ -601,7 +601,7 @@ prune:{[ef;tr]
  if[2=count tr;:tr];               / (w;a)
  b:value tr[2]:.z.s[ef] each tr 2; / prune subtree
  if[any 3=count each b;:tr];       / can't prune
- e:ef . wa:(,'/) b;            / pruned error
+ e:ef . wa:(,'/) b;                / pruned error
  if[e<((sum first::) each b) wavg (ef .) each b;:wa];
  tr}
 

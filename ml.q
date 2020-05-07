@@ -461,7 +461,7 @@ em:{[fp;lf;wmf;X;phi;THETA]
 / term document matrix built from (c)orpus and (v)ocabulary
 tdm:{[c;v](-1_@[(1+count v)#0;;+;1]::) each v?c}
 
-lntf:{log 1f+x}                    / log normalized term frequency
+lntf:log 1f+                       / log normalized term frequency
 dntf:{[k;x]k+(1f-k)*x% max each x} / double normalized term frequency
 
 idf: {log count[x]%sum 0<x}     / inverse document frequency

@@ -52,16 +52,13 @@ ismatrix:{
 
 / basic utilities
 
-/ find row indices of each atom or vector (x) in matri(X)
-mfind:{[X;x]{[x;i;j;y]?[y=x;i&j;i]}[x]/[count[X 0]#n;til n:count X;X]}
+/ find row indices of each atom/vec y in matrix/flipped table x
+mfind:{{[x;i;j;y]?[y=x;i&j;i]}[y]/[count[first x]#n;til n:count x;x]}
 
-/ apply aggregating (f)unction to (x) and return index of first occurrence
-iagg:{[f;x]
- if[98h=t:type x;:key[x].z.s[f;value x;x:flip x]]; / table
- i:$[t;?;mfind][x;f x];                            / list/dict or matrix
- i}
-imax:iagg[max]                  / index of max element
-imin:iagg[min]                  / index of min element
+/ return first index of atom/vec y in vec/dict/matrix/flipped table x
+find:{$[0h>type first x;?;type x;key[x]mfind::;mfind][x;y]}
+imax:{find[x;max x]}            / index of max element
+imin:{find[x;min x]}            / index of min element
 
 / (pre|ap)pend n rows of repeated x to matri(X)
 pend:{[n;x;X]$[n>0;,[;X];X,](abs n;count X 0)#x}
@@ -486,7 +483,7 @@ fnb:{[wmf;w;X;y]
 / bayes prediction
 pnb:{[l;lf;pT;X]
  d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
- c:imax flip $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
+ c:imax $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
  c}
 
 / decision trees

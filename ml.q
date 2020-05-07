@@ -153,10 +153,9 @@ missrate:fnr:{[tp;tn;fp;fn]fn%fn+tp}                   / false negative rate
 
 / receiver operating characteristic
 roc:{[y;p]
- u:0w,desc distinct p;                       / thresholds
- TPTNFPFN:flip (.ml.tptnfpfn[y]p>=) peach u; / matrix of tptnfpfn
- r:(fpr . TPTNFPFN; tpr . TPTNFPFN; u);
- r}
+ u:0w,desc distinct p;                              / distinct thresholds
+ r:(fpr;tpr) .\: flip (.ml.tptnfpfn[y]p>=) peach u; / fpr,tpr for each thresh
+ r,enlist u}
 
 auc:{[x;y] .5*sum (x-prev x)*y+prev y} / area under the curve
 

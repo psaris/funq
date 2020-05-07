@@ -385,7 +385,7 @@ bmmll:sum binll::
 bmml:exp bmmll::             / more numerically stable
 / binomial mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
-bmmmle:{[n;a;w;x]enlist avg each a+x%n}
+bmmmle:{[n;a;x]enlist avg each a+x%n}
 wbmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 / multinomial log likelihood
@@ -403,7 +403,7 @@ mmmll:sum multill::
 /mmml:exp mmmll::             / more numerically stable
 / multinomial mixture model maximum likelihood estimator (where a is
 / the dirichlet smoothing parameter)
-mmmmle:{[n;a;w;x]enlist avg each a+x%n}
+mmmmle:{[n;a;x]enlist avg each a+x%n}
 wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 / gaussian kernel

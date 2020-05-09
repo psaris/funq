@@ -161,25 +161,25 @@ auc:{[x;y] .5*sum (x-prev x)*y+prev y} / area under the curve
 
 / f measure: given (b)eta and tp,tn,fp,fn compute the harmonic mean of
 / precision and recall
-F:{[b;tp;tn;fp;fn]
+f:{[b;tp;tn;fp;fn]
  f:1+b2:b*b;
  f*:r:recall[tp;tn;fp;fn];
  f*:p:precision[tp;tn;fp;fn];
  f%:r+p*b2;
  f}
-F1:F[1]
+f1:f[1]
 
 / Fowlkes–Mallows index (E. B. Fowlkes & C. L. Mallows 1983)
 / geometric mean of precision and recall
-FM:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
+fm:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
 
 / returns a number between 0 and 1 indicating the similarity of two datasets
 jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}
 
-/ Matthews Correlation Coefficient
+/ Matthews correlation coefficient
 / correlation coefficient between the observed and predicted
 / -1 0 1 (none right, same as random prediction, all right)
-MCC:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
+mcc:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
 
 / k-fold cross validation primitives
 
@@ -285,7 +285,7 @@ silhouette:{[df;X;I]
 
 / hierarchical agglomerative clustering
 
-/ lance-williams algorithm linkage functions. can be either a vector of four
+/ Lance-Williams algorithm linkage functions. can be either a vector of four
 / floats or a function that accepts the cluster counts of i, j and list of
 / all cluster counts
 lw.single:.5 .5 0 -.5
@@ -296,7 +296,7 @@ lw.centroid:{((x,neg prd[x]%s)%s:sum x _:2),0f}
 lw.median:.5 .5 -.25 0
 lw.ward:{((k+/:x 0 1),(neg k:x 2;0f))%\:sum x}
 
-/ implementation of lance-williams algorithm for performing hierarchical
+/ implementation of Lance-Williams algorithm for performing hierarchical
 / agglomerative clustering. given (l)inkage (f)unction to determine distance
 / between new and remaining clusters, (D)issimilarity matrix, cluster
 / (a)ssignments and (L)inkage stats: (j;i). returns updated (D;a;L)
@@ -313,7 +313,7 @@ lancewilliams:{[lf;D;a;L]
  (D;a;L)}
 
 / given a (l)inkage (f)unction and (D)issimilarity matrix, run the
-/ lance-williams linkage algorithm for hierarchical agglomerative clustering
+/ Lance-Williams linkage algorithm for hierarchical agglomerative clustering
 / and return the linkage stats: (from index j;to index i)
 link:{[lf;D]
  D:@'[D;a:til count D;:;0n];    / define cluster assignments and ignore loops

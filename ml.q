@@ -478,8 +478,8 @@ fnb:{[wmf;w;X;y]
  pT:(odds g; w[value g] wmf' X@\:/:g:group y);
  pT}
 
-/ using a [log](l)ikelihood (f)unction and (cl)assi(f)ication perform naive
-/ bayes prediction
+/ using a [log](l)ikelihood (f)unction and prior probabilities (p)hi and
+/ distribution parameters (T)HETA, perform naive bayes classification
 pnb:{[l;lf;pT;X]
  d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
  c:imax $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];

@@ -182,7 +182,7 @@ ppm:{[b;mx;X]
 / text utilities
 
 / map (u)nicode characters to their (a)scii equivalents
-ua:(!/) (2;1;0)#""
+ua:(!/) 2 1 0#""
 ua["\342\200\223"]:"--"                  / endash
 ua["\342\200\224"]:"---"                 / emdash
 ua["\342\200[\231\230]"]:"'"             / single quotes
@@ -223,7 +223,7 @@ ua["\303\275"]:"y"                       / y
 ua:1_ua
 
 / map (h)tml entities to their (a)scii equivalents
-ha:(!/) (2;1;0)#""
+ha:(!/) 2 1 0#""
 ha["&lt;"]:"<"                           / <
 ha["&gt;"]:">"                           / >
 ha["&amp;"]:"&"                          / &
@@ -233,7 +233,7 @@ ha["&nbsp;"]:" "                         /
 ha:1_ha
 
 / map (p)unctuation characters to their (w)hitespace replacements
-pw:(!/) (2;1;0)#""
+pw:(!/) 2 1 0#""
 pw["[][\n\\/()<>@#$%^&*=_+.,;:!?-]"]:" " / replace with whitespace
 pw["['\"0-9]"]:""                        / delete
 pw:1_pw

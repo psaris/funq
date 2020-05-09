@@ -171,7 +171,7 @@ f1:f[1]
 
 / Fowlkes–Mallows index (E. B. Fowlkes & C. L. Mallows 1983)
 / geometric mean of precision and recall
-fm:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
+fmi:{[tp;tn;fp;fn]tp%sqrt(tp+fp)*tp+fn}
 
 / returns a number between 0 and 1 indicating the similarity of two datasets
 jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}

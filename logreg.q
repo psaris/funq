@@ -77,7 +77,7 @@ tptnfpfn:.ml.tptnfpfn . "i"$(yt;p)
 -1"precision: ",                                        string .ml.precision . tptnfpfn;
 -1"recall: ",                                           string .ml.recall . tptnfpfn;
 -1"F1 (harmonic mean between precision and recall): ",  string .ml.f1 . tptnfpfn;
--1"FM (geometric mean between precision and recall): ", string .ml.fm . tptnfpfn;
+-1"FMI (geometric mean between precision and recall): ", string .ml.fmi . tptnfpfn;
 -1"jaccard (0 <-> 1 similarity measure): ",             string .ml.jaccard . tptnfpfn;
 -1"MCC (-1 <-> 1 correlation measure): ",               string .ml.mcc . tptnfpfn;
 

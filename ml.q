@@ -252,8 +252,8 @@ kmedianspp:kpp[mdist]           / k-medians++ initialization
 cgroup:{[df;X;C]value group imin f2nd[df X] C}
 
 / Stuart Lloyd's algorithm. uses (d)istance (f)unction to assign the
-/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction
-/ to update the centroid location.
+/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid
+/ (f)unction to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k-means
@@ -453,7 +453,7 @@ likelihood:{[l;lf;X;phi;THETA]
 
 / using (l)ikelihood (f)unction, (w)eighted (m)aximum likelihood estimator
 / (f)unction with prior probabilities (p)hi and distribution parameters
-/ (THETA) (with optional (f)itting of (p)hi) perform expectation maximization
+/ (THETA), optionally (f)fit (p)hi and perform expectation maximization
 em:{[fp;lf;wmf;X;phi;THETA]
  W:prb likelihood[0b;lf;X;phi;THETA]; / weights (responsibilities)
  if[fp;phi:avg each W];               / new phi estimates
@@ -516,31 +516,31 @@ cmb:{
  c:raze c {(x+z){raze x,''y}'x#\:y}[1+til y]/til x;
  c}
 
-/ use (i)m(p)urity (f)unction to compute the (w)eighted information gain of x
-/ after splitting on y
+/ use (i)m(p)urity (f)unction to compute the (w)eighted information gain of
+/ x after splitting on y
 ig:{[ipf;w;x;y]                 / information gain
  g:ipf[w] x;
  g-:sum wodds[w;gy]*(not null key gy)*w[gy] ipf' x gy:group y;
  (g;::;gy)}
 
-/ use (i)m(p)urity (f)unction to compute the (w)eighted gain ratio of x after
-/ splitting on y
+/ use (i)m(p)urity (f)unction to compute the (w)eighted gain ratio of x
+/ after splitting on y
 gr:{[ipf;w;x;y]                 / gain ratio
  g:ig[ipf;w;x;y];               / first compute information gain
  g:@[g;0;%[;ipf[w;y]]];         / then divide by splitinfo
  g}
 
-/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
-/ of x after splitting across all sets of distinct y
+/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information
+/ gain of x after splitting across all sets of distinct y
 sig:{[ipf;w;x;y]                / set information gain
  c:raze cmb[;u] peach 1+til 1|count[u:distinct y] div 2; / combinations of y
  g:(ig[ipf;w;x] y in) peach c;                           / all gains
  g@:i:imax g[;0];                                        / highest gain
- g[1]:in[;c i];                                          / replace split func
+ g[1]:in[;c i];                 / replace split func
  g}
 
-/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information gain
-/ of x after splitting across all values of y
+/ use (i)m(p)urity (f)unction to pick the maximum (w)eighted information
+/ gain of x after splitting across all values of y
 oig:{[ipf;w;x;y]                             / ordered information gain
  g:(ig[ipf;w;x] y >) peach u:asc distinct y; / all gains
  g@:i:imax g[;0];                            / highest gain (not gain ratio)
@@ -608,8 +608,8 @@ prune:{[ef;tr]
 / return the leaves of (tr)ee
 leaves:{[tr]$[2=count tr;enlist tr;raze .z.s each last tr]}
 
-/ using (e)rror (f)unction, return the decision (tr)ee's risk R(T) and number
-/ of terminal nodes |T|
+/ using (e)rror (f)unction, return the decision (tr)ee's risk R(T) and
+/ number of terminal nodes |T|
 dtriskn:{[ef;tr](sum'[l[;0]] wsum ef ./: l;count l:leaves tr)}
 
 / using (e)rror (f)unction and regularization coefficient a, compute cost
@@ -776,8 +776,8 @@ continue:{[h;p;c]
  if[not null h; h s,"\n\r" b];
  b}
 
-/ keep calling (m)inimization (f)unction on (THETA) until the pct decrease in
-/ the (c)ost (f)unction is less than (p). return (cost vector;THETA)
+/ keep calling (m)inimization (f)unction on (THETA) until the pct decrease
+/ in the (c)ost (f)unction is less than (p). return (cost vector;THETA)
 iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 
 / (a)lpha: learning rate, gf: gradient function
@@ -802,8 +802,8 @@ normeq:{[Y;X]mm[mmt[Y;X]] minv mmt[X;X]} / normal equations ols
 ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 
 / given (l2) regularization parameter, target vector y and data matri(X),
-/ return the theta vector resulting from performing weighted ridge regression
-/ by scaling the regularization parameter by the count of non-null values
+/ return theta vector resulting from performing weighted ridge regression by
+/ scaling the regularization parameter by the count of non-null values
 wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
 
 / linear predict Y values by prepending matri(X) with a vector of 1s
@@ -813,7 +813,7 @@ linpredict:{[X;THETA]mm[THETA] prepend[1f] X}
 / linear regression cost
 lincost:{[rf;Y;X;THETA]
  J:(.5%m:count X 0)*sum (sum') E*E:0f^linpredict[X;THETA]-Y; / cost
- if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]];   / regularization
+ if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 
 / linear regression gradient
@@ -923,15 +923,15 @@ nngrad:{[rf;hgof;Y;X;THETA]
  P:hgof[`o] linpredict[last[ZA]1;last THETA]; / prediction
  G:hgof[`g]@'`z`a!/:1_ZA;                     / activation gradient
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
- G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
+ G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full grad
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]]; / regularization
  G}
 
 / neural network cut
 nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
 
-/ (r)egularization (f)unction, (n)etwork topology dimensions, hgolf: (h)idden
-/ (g)radient (o)utput (l)oss functions
+/ (r)egularization (f)unction, (n)etwork topology dimensions, hgolf:
+/ (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;          / unroll theta
  ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgolf`h]\ -1_THETA;
@@ -996,12 +996,12 @@ foldin:{[usv;ui;r]@[usv;0 2 ui;,;mm[enlist r] mm[usv 2 0 ui] minv usv 1]}
 
 / gradient checking primitives
 
-/ compute numerical gradient of (f)unction evaluated at x using steps of size
-/ (e)psilon. compute partial derivatives if (e)psilon is a list
+/ compute numerical gradient of (f)unction evaluated at x using steps of
+/ size (e)psilon. compute partial derivatives if (e)psilon is a list
 numgrad:{[f;x;e](.5%e)*{x[y+z]-x[y-z]}[f;x] peach diag e}
 
-/ return analytic gradient using (g)radient (f)unction and numerical gradient
-/ by evaluating (c)ost (f)unction on theta perturbed by (e)psilon
+/ return analytic gradient using (g)radient (f)unction and numerical
+/ gradient by evaluating (c)ost (f)unction on theta perturbed by (e)psilon
 checkgrad:{[e;cf;gf;theta]
  ag:gf theta;                         / analytic gradient
  ng:numgrad[cf;theta] count[theta]#e; / numerical gradient

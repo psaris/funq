@@ -72,7 +72,7 @@ box:{[c;s]
  s:h,s,h;
  s}
 
-/ use (w)eight vector or dictionary to partition (x).  (s)ampling (f)unction:
+/ use (w)eight vector or dictionary to partition (x). (s)ampling (f)unction:
 / til = no shuffle, 0N? = shuffle, () or ([]) = stratify
 part:{[w;sf;x]
  if[99h=type w;:key[w]!.z.s[value w;sf;x]];

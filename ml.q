@@ -87,11 +87,11 @@ hmean:1f%avg 1f%                                 / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance
-/ spearman's rank (tied values get averaged rank)
+/ Spearman's rank (tied values get averaged rank)
 srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
 /srank:{(avg each rank[x] group x) x}
-scor:{srank[x i] cor srank y i:wnan(x;y)} / spearman's rank correlation
-scordist:1f-scor::              / spearman's rank correlation distance
+scor:{srank[x i] cor srank y i:wnan(x;y)} / Spearman's rank correlation
+scordist:1f-scor::              / Spearman's rank correlation distance
 
 / null-aware primitives (account for nulls in matrices)
 
@@ -148,7 +148,7 @@ waom:{[w;x]$[isord x;nwavg;wmode][w;x]} / weighted average or mode
 / given actual values (y) and (p)redicted values, compute (tp;tn;fp;fn)
 tptnfpfn:{[y;p]tp,(("i"$count y)-tp+sum f),f:(sum p;sum y)-/:tp:sum p&y}
 
-/ aka rand measure (William M. Rand 1971)
+/ aka Rand measure (William M. Rand 1971)
 accuracy:{[tp;tn;fp;fn](tp+tn)%tp+tn+fp+fn}
 precision:{[tp;tn;fp;fn]tp%tp+fp}
 recall:sensitivity:hitrate:tpr:{[tp;tn;fp;fn]tp%tp+fn} / true positive rate
@@ -251,7 +251,7 @@ kmedianspp:kpp[mdist]           / k-medians++ initialization
 / (C)entroid and return the cluster indices
 cgroup:{[df;X;C]value group imin f2nd[df X] C}
 
-/ stuart lloyd's algorithm. uses (d)istance (f)unction to assign the
+/ Stuart Lloyd's algorithm. uses (d)istance (f)unction to assign the
 / matrix(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction
 / to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
@@ -388,7 +388,7 @@ bmml:prd binl::
 bmmll:sum binll::
 bmml:exp bmmll::             / more numerically stable
 / binomial mixture model maximum likelihood estimator (where a is
-/ the dirichlet smoothing parameter)
+/ the Dirichlet smoothing parameter)
 bmmmle:{[n;a;x]enlist avg each a+x%n}
 wbmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
@@ -406,32 +406,32 @@ mmml:prd multil::
 mmmll:sum multill::
 /mmml:exp mmmll::             / more numerically stable
 / multinomial mixture model maximum likelihood estimator (where a is
-/ the dirichlet smoothing parameter)
+/ the Dirichlet smoothing parameter)
 mmmmle:{[n;a;x]enlist avg each a+x%n}
 wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
-/ gaussian kernel
+/ Gaussian kernel
 gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2*sigma}
 
-/ gaussian likelihood
+/ Gaussian likelihood
 gaussl:{[mu;sigma;x]
  p:exp (x*x-:mu)%-2*sigma;
  p%:sqrt sigma*twopi;
  p}
-/ gaussian log likelihood
+/ Gaussian log likelihood
 gaussll:{[mu;sigma;X] -.5*sum (logtwopi;log sigma;(X*X-:mu)%sigma)}
 / gaussian maximum likelihood estimator
 gaussmle:{[x](mu;avg x*x-:mu:avg x)}
 wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
 
-/ gaussian multivariate
+/ Gaussian multivariate
 gaussmvl:{[mu;SIGMA;X]
  if[type SIGMA;SIGMA:diag count[X]#SIGMA];
  p:exp -.5*sum X*mm[minv SIGMA;X-:mu];
  p*:sqrt 1f%mdet SIGMA;
  p*:twopi xexp -.5*count X;
  p}
-/ gaussian multivariate log likelihood
+/ Gaussian multivariate log likelihood
 gaussmvll:{[mu;SIGMA;X]
  if[type SIGMA;SIGMA:diag count[X]#SIGMA];
  p:sum X*mm[minv SIGMA;X-:mu];
@@ -439,7 +439,7 @@ gaussmvll:{[mu;SIGMA;X]
  p+:count[X]*logtwopi;
  p*:-.5;
  p}
-/ gaussian multi variate maximum likelihood estimator
+/ Gaussian multi variate maximum likelihood estimator
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
@@ -474,7 +474,7 @@ idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
-/ naive bayes
+/ naive Bayes
 
 / fit parameters given (w)eighted (m)aximization (f)unction returns a
 / dictionary with prior and conditional likelihoods
@@ -484,7 +484,7 @@ fnb:{[wmf;w;X;y]
  pT}
 
 / using a [log](l)ikelihood (f)unction and prior probabilities (p)hi and
-/ distribution parameters (T)HETA, perform naive bayes classification
+/ distribution parameters (T)HETA, perform naive Bayes classification
 pnb:{[l;lf;pT;X]
  d:{(x . z) y}[lf]'[X] peach pT[1]; / compute probability densities
  c:imax $[l;log[pT 0]+sum flip d;pT[0]*prd flip d];
@@ -1054,9 +1054,9 @@ sma:{
 / google pagerank
 
 / given a (d)amping factor (1 - the probability of random surfing) and the
-/ (A)djacency matrix, create the markov Google matrix
+/ (A)djacency matrix, create the Markov Google matrix
 google:{[d;A]
- M:A%1f|s:sum each A;           / convert to markov matrix
+ M:A%1f|s:sum each A;           / convert to Markov matrix
  M+:(0f=s)%n:count M;           / add links to dangling pages
  M:(d*M)+(1f-d)%n;              / dampen
  M}
@@ -1064,7 +1064,7 @@ google:{[d;A]
 / given a (d)amping factor (1 - the probability of random surfing) and the
 / (A)djacency matrix, obtain the pagerank algebraically
 pageranka:{[d;A]
- M:A%1f|s:sum each A;           / convert to markov matrix
+ M:A%1f|s:sum each A;           / convert to Markov matrix
  M+:(0f=s)%n:count M;           / add links to dangling pages
  r:prb first mlsq[(1;n)#(1f-d)%n] eye[n]-d*M; / compute rankings
  r}
@@ -1093,7 +1093,7 @@ covm:{[X] mmt[X;X]%count X 0}     / covariance matrix
 pca:{[X] last .qml.mev covm X}    / eigen vectors of scatter matrix
 project:{[V;X] mtm[V] mm[V;X]}    / project X onto subspace V
 
-/ markov clustering
+/ Markov clustering
 
 addloop:{x|diag max peach x|flip x}
 

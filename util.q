@@ -97,16 +97,16 @@ cm:{
  t:([]x:u)!flip (`$string u)!m;
  t}
 
-/ heckbert's axis label algorithm
+/ Heckbert's axis label algorithm
 
-/ use heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number
+/ use Heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number
 nicenum:{[rnd;x]
  s:`s#$[rnd;0 1.5 3 7;0f,1e-15+1 2 5f]!1 2 5 10f;
  x:f * s x%f:10 xexp floor 10 xlog x;
  x}
 
 / given suggested (n)umber of labels and the (m)i(n) and (m)a(x) values, use
-/ heckbert's algorithm to generate a series of nice numbers
+/ Heckbert's algorithm to generate a series of nice numbers
 heckbert:{[n;mn;mx]
  r:nicenum[0b] mx-mn;           / range of values
  s:nicenum[1b] r%n-1;           / step size

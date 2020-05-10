@@ -121,6 +121,11 @@ minmax:{(x-m)%max[x]-m:min x}
 / convert densities into probabilities
 prb:dax[%;sum]
 
+/ given (g)rouped dictionary, compute the odds
+odds:{[g]prb count each g}
+/ given (w)eight vector and (g)rouped dictionary, compute the weighted odds
+wodds:{[w;g]prb sum each w g}
+
 / frequency and mode primitives
 
 / given a (w)eight atom or vector and data (x), return a dictionary (sorted
@@ -486,10 +491,6 @@ pnb:{[l;lf;pT;X]
  c}
 
 / decision trees
-
-/ odds & weighted odds
-odds:{[g]prb count each g}
-wodds:{[w;g]prb sum each w g}
 
 / classification impurity functions
 misc:{1f-avg x=mode x}                  / misclassification

@@ -81,7 +81,6 @@ mdist:mnorm (-)::               / Manhattan (taxicab) distance
 edist2:enorm2 (-)::             / Euclidean distance squared
 edist:enorm (-)::               / Euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
-/pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
 mkdist:{[p;x;y]pnorm[p] x-y}                     / Minkowski distance
 hmean:1f%avg 1f%                                 / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
@@ -89,7 +88,6 @@ cosdist:1f-cossim::                              / cosine distance
 cordist:1f-(cor)::                               / correlation distance
 / Spearman's rank (tied values get averaged rank)
 srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
-/srank:{(avg each rank[x] group x) x}
 scor:{srank[x i] cor srank y i:wnan(x;y)} / Spearman's rank correlation
 scordist:1f-scor::              / Spearman's rank correlation distance
 

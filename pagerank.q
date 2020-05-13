@@ -33,7 +33,7 @@ show node[i]!r i:idesc r:.ml.pageranki[d;A] over r:n#1f%n:count A
 S:.ml.sparse A                  / sparse matrix
 show node[i]!r i:idesc r:.ml.pageranks[d;S] over r:n#1f%n:S[0;0]
 -1 "this can be optimized by using the power method";
--1 "first compute the google matrix, then iteratively multiply until convergence";
+-1 "first compute the Google matrix, then iteratively multiply until convergence";
 show node[i]!r i:idesc r:$[;.ml.google[d;A]] over r:n#1f%n:count A
 
 

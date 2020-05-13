@@ -39,7 +39,7 @@ avg y=m p
 show .util.totals[`TOTAL] .util.cm[y;m p]
 
 
-/ gaussian mixtures
+/ Gaussian mixtures
 / http://mccormickml.com/2014/08/04/gaussian-mixture-models-tutorial-and-matlab-code/
 / 1d gauss
 mu0:10 20 30                    / distribution's mu
@@ -75,8 +75,8 @@ show .util.totals[`TOTAL] .util.cm[y;m p]
 -1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
 -1"let's cluster hand written numbers into groups";
--1"assuming each pixel of a black/white image is a bernoulli distribution,";
--1"we can model each picture as a bernoulli mixture model";
+-1"assuming each pixel of a black/white image is a Bernoulli distribution,";
+-1"we can model each picture as a Bernoulli mixture model";
 `X`y set' mnist`X`y;
 -1"shrinking training set";
 X:1000#'X;y:1000#y;
@@ -87,7 +87,7 @@ k:10
 -1"let's use ",string[k]," clusters";
 -1"we first initialize phi to be equal weight across all clusters";
 phi:k#1f%k                      / equal prior probability
--1"then we use the hamming distance to pick different prototypes";
+-1"then we use the Hamming distance to pick different prototypes";
 mu:flip last k .ml.kpp[.ml.hdist;X]// 2#() / pick k distant proto
 -1"and finally we add a bit of noise without 'pathological' extreme values";
 mu:.5*mu+.15+count[X]?/:k#.7            / randomly disturb around .5

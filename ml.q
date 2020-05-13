@@ -21,7 +21,7 @@ mdet:{[X]                       / determinant
  if[2=n;:(X[0;0]*X[1;1])-X[0;1]*X[1;0]];
  d:dot[X 0;(n#1 -1)*(.z.s (X _ 0)_\:) each til n];
  d}
-mchol:{[X]                      / cholesky decomposition
+mchol:{[X]                      / Cholesky decomposition
  m:count X;
  L:(m;m)#0f;
  i:-1;
@@ -69,20 +69,20 @@ wnan:{$[all type each x;where not any null x;::]}
 
 / norm primitives
 
-mnorm:sum abs::                           / manhattan (taxicab) norm
-enorm2:{x wsum x}                         / euclidean norm squared
-enorm:sqrt enorm2::                       / euclidean norm
+mnorm:sum abs::                           / Manhattan (taxicab) norm
+enorm2:{x wsum x}                         / Euclidean norm squared
+enorm:sqrt enorm2::                       / Euclidean norm
 pnorm:{[p;x]sum[abs[x] xexp p] xexp 1f%p} / parameterized norm
 
 / distance primitives
 
-hdist:sum (<>)::                / hamming distance
-mdist:mnorm (-)::               / manhattan (taxicab) distance
-edist2:enorm2 (-)::             / euclidean distance squared
-edist:enorm (-)::               / euclidean distance
+hdist:sum (<>)::                / Hamming distance
+mdist:mnorm (-)::               / Manhattan (taxicab) distance
+edist2:enorm2 (-)::             / Euclidean distance squared
+edist:enorm (-)::               / Euclidean distance
 pedist2:{enorm2[x]+/:enorm2[y]+-2f*mtm["f"$y;"f"$x]} / pairwise edist2
 /pedist2:{enorm2[x]+/:enorm2[y]+-2f*f2nd[sum x*;y]} / pairwise edist2
-mkdist:{[p;x;y]pnorm[p] x-y}                     / minkowski distance
+mkdist:{[p;x;y]pnorm[p] x-y}                     / Minkowski distance
 hmean:1f%avg 1f%                                 / harmonic mean
 cossim:{sum[x*y]%enorm[x i]*enorm y i:wnan(x;y)} / cosine similarity
 cosdist:1f-cossim::                              / cosine distance
@@ -223,7 +223,7 @@ fknn:{[wf;df;k;y;X] knn[wf;k;y] df[X]::}
 / partitional clustering initialization methods
 
 / generate (k) centroids by randomly choosing (k) samples from matri(X)
-forgy:{[k;X]neg[k]?/:X}         / forgy method
+forgy:{[k;X]neg[k]?/:X}         / Forgy method
 / generate (k) centroids by applying (c)entroid (f)unction to (k) random
 / partitions of matri(X)
 rpart:{[cf;k;X](cf'') X@\:value group count[X 0]?k} / random partition
@@ -344,7 +344,7 @@ pi:acos -1f
 twopi:2f*pi
 logtwopi:log twopi
 
-/ box-muller
+/ Box-Muller
 bm:{
  if[count[x] mod 2;:-1_.z.s x,rand 1f];
  x:raze (sqrt -2f*log first x)*/:(cos;sin)@\:twopi*last x:2 0N#x;
@@ -353,11 +353,11 @@ bm:{
 / random number generators
 / generate (n) variates from a uniform distribution
 runif:{[n]n?1f}
-/ generate (n) variates from a bernoulli distribution with
+/ generate (n) variates from a Bernoulli distribution with
 / (p)robability of success
 rbern:{[n;p]p>runif n}
 / generate (n) variates from a binomial distribution (sum of
-/ bernoulli) with (k) trials and (p)robability
+/ Bernoulli) with (k) trials and (p)robability
 rbinom:{[n;k;p]sum rbern[n] each k#p}
 / generate (n) variate-vectors from a multinomial distribution with
 / (k) trials and (p)robability vector defined for each class
@@ -420,7 +420,7 @@ gaussl:{[mu;sigma;x]
  p}
 / Gaussian log likelihood
 gaussll:{[mu;sigma;X] -.5*sum (logtwopi;log sigma;(X*X-:mu)%sigma)}
-/ gaussian maximum likelihood estimator
+/ Gaussian maximum likelihood estimator
 gaussmle:{[x](mu;avg x*x-:mu:avg x)}
 wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
 
@@ -495,8 +495,8 @@ pnb:{[l;lf;pT;X]
 / classification impurity functions
 misc:{1f-avg x=mode x}                  / misclassification
 wmisc:{[w;x]1f-avg x=wmode[w;x]}        / weighted misclassification
-gini:{1f-enorm2 odds group x}           / gini
-wgini:{[w;x]1f-enorm2 wodds[w] group x} / weighted gini
+gini:{1f-enorm2 odds group x}           / Gini
+wgini:{[w;x]1f-enorm2 wodds[w] group x} / weighted Gini
 entropy:{neg sum x*log x:odds group x}  / entropy
 wentropy:{[w;x]neg sum x*log x:wodds[w] group x} / weighted entropy
 
@@ -591,7 +591,7 @@ dtcr:{[tr;d]                    / recursive component
 
 / decision tree pruning primitives
 
-/ wilson score - binary confidence interval (Edwin Bidwell Wilson)
+/ Wilson score - binary confidence interval (Edwin Bidwell Wilson)
 wscore:{[z;f;n](f+(.5*z2n)+-1 1f*z*sqrt((.25*z2n)+f-f*f)%n)%1f+z2n:z*z%n}
 / pessimistic error
 perr:{[z;w;x]last wscore[z;wmisc[w;x];count x]}
@@ -1051,7 +1051,7 @@ sma:{
  m:enlist[x 0],value flip t;
  m}
 
-/ google pagerank
+/ Google PageRank
 
 / given a (d)amping factor (1 - the probability of random surfing) and the
 / (A)djacency matrix, create the Markov Google matrix
@@ -1116,8 +1116,8 @@ interpret:{1_asc distinct f2nd[where] 0<x}
 cmul:{((-/)x*y;(+/)x*(|)y)}     / complex multiplication
 csqr:{((-/)x*x;2f*(*/)x)}       / complex square
 
-/ mandelbrot
+/ Mandelbrot
 
-mbrotf:{[c;x]c+csqr x}                     / mandelbrot function
-mbrotp:{not 4f<0w^enorm2 x}                / mandelbrot predicate
-mbrota:{[c;x;n](x;n+mbrotp x:mbrotf[c;x])} / mandelbrot accumulator
+mbrotf:{[c;x]c+csqr x}                     / Mandelbrot function
+mbrotp:{not 4f<0w^enorm2 x}                / Mandelbrot predicate
+mbrota:{[c;x;n](x;n+mbrotp x:mbrotf[c;x])} / Mandelbrot accumulator

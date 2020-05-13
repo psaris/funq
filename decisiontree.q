@@ -48,7 +48,7 @@ z:@[{.qml.nicdf x};.0125;2.241403];
 s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tr:.ml.q45[();::] s;
 .util.assert[`No] .ml.dtc[tr] d
--1 "we can also use the gini impurity instead of entropy (faster with similar behavior)";
+-1 "we can also use the Gini impurity instead of entropy (faster with similar behavior)";
 -1 .ml.ptree[0] tr:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;();::] t;
 d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
 .util.assert[`No] .ml.dtc[tr] d

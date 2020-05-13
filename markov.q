@@ -21,7 +21,7 @@ m:.ml.inflate[1;0f] .ml.addloop m|:flip m:.ml.full enlist[2#count k],exec (`k?k1
 .util.assert[(`hat`bat`cat;`bit`fit`hit)] (get`k!) each .ml.interpret .ml.mcl[2;1.5;0f] over m
 
 / cluster the iris data
-sm:.5<.ml.gaussk[iris.X;.5] each flip iris.X / similarity matrix based on gaussian kernel
+sm:.5<.ml.gaussk[iris.X;.5] each flip iris.X / similarity matrix based on Gaussian kernel
 show .ml.interpret .ml.mcl[2;1.5;10] over .ml.inflate[1;0f] sm
 / are there 4 species: http://www.siam.org/students/siuro/vol4/S01075.pdf
 

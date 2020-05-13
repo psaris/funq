@@ -9,7 +9,7 @@ X:(6 5.92 5.58 5.92 5 5.5 5.42 5.75; / height (feet)
  12 11 12 10 6 8 7 9f)               / foot size (inches)
 y:`male`male`male`male`female`female`female`female / classes
 Xt:(6 7f;130 190f;8 12f)                           / test data
--1"assuming gaussian distribution";
+-1"assuming Gaussian distribution";
 -1"analyzing mock dataset";
 -1"building classifier";
 show pT:.ml.fnb[.ml.wgaussmle/:;::;X;y] / build classifier
@@ -36,17 +36,17 @@ X:(2 0 0 1 5 0 0 1 0 0 0;       / goal
  1 0 0 1 9 1 0 2 0 0 0)         / field
 Xt:flip(8 0 0 1 7 1 0 1;0 1 3 0 3 0 1 0)
 y:(6#`sport),5#`informatics
--1"assuming bernoulli distribution";
+-1"assuming Bernoulli distribution";
 -1"analyzing mock dataset";
-/ bernoulli
+/ Bernoulli
 -1"building classifier";
 show pT:.ml.fnb[.ml.wbinmle[1;0]/:;::;0<X;y] / build classifier
 -1"confirming accuracy";
 .util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[1];pT] Xt / make classification prediction
 .util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[1];pT] Xt / make classification prediction
 
-/ bernoulli - add one smoothing
--1"testing bernoulli add one smoothing";
+/ Bernoulli - add one smoothing
+-1"testing Bernoulli add one smoothing";
 show pT:.ml.fnb[.ml.wbinmle[2;0]/:;::;1+0<X;y]
 .util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[2];pT] Xt
 .util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[2];pT] Xt / use log likelihood

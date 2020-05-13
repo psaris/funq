@@ -19,14 +19,14 @@ show .util.plot[19;10;.util.c10;sum] X
  "kmeans is an implementation of lloyds algorithm,";
  "which alternates between assigning points to a cluster";
  "and updating the cluster's center.");
--1"kmeans uses the *euclidean distance* to assign points to clusters";
+-1"kmeans uses the *Euclidean distance* to assign points to clusters";
 -1"and generates clusters using the *average* of the data points.";
 -1"each call to kmeans performs a single iteration.";
 -1"to find the centroids, we call kmeans iteratively until convergence.";
 -1"there are two ways to initialze the algorithm:";
--1" 1. randomly pick k centroids (k-means++ and forgy method)";
+-1" 1. randomly pick k centroids (k-means++ and Forgy method)";
 -1" 2. assign points randomly to k centroids - random partition method";
--1"the forgy method is the simplest to implement";
+-1"the Forgy method is the simplest to implement";
 .ml.kmeans[X] over .ml.forgy[k] X
 -1"the k-means++ method is supplied as an alternate initialization method";
 .ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()
@@ -35,7 +35,7 @@ show .util.plot[19;10;.util.c10;sum] X
 -1"we can plot the data and overlay the centroids found using kmeans++";
 show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over .ml.forgy[k] X
 
--1"kmedians uses the lloyd algorithm, but uses the *manhattan distance*";
+-1"kmedians uses the lloyd algorithm, but uses the *Manhattan distance*";
 -1"also known as the taxicab metric to assign points to clusters";
 -1"in addition, it uses the median instead of mean to compute the centroid";
 -1"this forces the resulting centroid to have values picked from the data";
@@ -70,8 +70,8 @@ show .util.plt .ml.distortion[X] peach C
 -1"the full dissimilarity matrix for each cluster";
 -1"the implementation is know as *partitioning around medoids*";
 -1"and is implemented in .ml.pam";
--1"we can use any distance metric, but manhattan and euclidean";
--1"(not euclidean squared) are the most popular";
+-1"we can use any distance metric, but Manhattan and Euclidean";
+-1"(not Euclidean squared) are the most popular";
 C:.ml.pam[.ml.edist][X] over X@\:3?count X
 show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
 

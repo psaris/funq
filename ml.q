@@ -364,12 +364,13 @@ rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif::) each n#k}
 / standard deviation (sigma)
 rnorm:{[n;mu;sigma]mu+sigma*bm runif n}
 
-/ binomial pdf (not atomic because of factorial)
-binpdf:{[n;p;k]
- if[0<max type each (n;p;k);:.z.s'[n;p;k]];
- r:prd[1+k+til n]%prd 1+til n-:k;
- r*:prd (p;1f-p) xexp (k;n);
- r}
+/ C(n,k) or n choose k
+choose:{[n;k] prd[1f+k+til n]%prd 1f+til n-:k}
+/ P(n,k) or n permute k
+permute:{[n;k] prd (n-k) _ 1f+til n}
+
+/ binomial pdf
+binpdf:{[n;p;k] binl[n;p;k]*choose[n;k]}
 
 / binomial likelihood approximation (without the coefficient)
 binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}

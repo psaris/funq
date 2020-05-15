@@ -365,9 +365,9 @@ rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif::) each n#k}
 rnorm:{[n;mu;sigma]mu+sigma*bm runif n}
 
 / C(n,k) or n choose k
-choose:{[n;k] prd[1f+k+til n]%prd 1f+til n-:k}
+choose:{[n;k](%). prd each(n-k;0)+\:1f+til k&:n-k}
 / P(n,k) or n permute k
-permute:{[n;k] prd (n-k) _ 1f+til n}
+permute:{[n;k]prd(1f+n-k)+til k}
 
 / binomial pdf
 binpdf:{[n;p;k] binl[n;p;k]*choose[n;k]}

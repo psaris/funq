@@ -192,7 +192,7 @@ kfxvyx:{[ff;pf;ys;Xs;i]     / k-fold cross validate vec y and matrix X
  X:(,'/)Xs _ i;             / drop i and raze
  y:raze ys _ i;             / drop i and raze
  m:ff[y;X];                 / fit model
- p:pf[m] Xs i;              / use model to make predictions:
+ p:pf[m] Xs i;              / use model to make predictions
  p}
 
 / use all data from (t)able(s) except the (i)th element to fit a model using

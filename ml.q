@@ -208,10 +208,9 @@ kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
 / find (k) smallest values from (d)istance vector (or matrix) and use
 / (w)eighting (f)unction to return the best estimate of y
 knn:{[wf;k;y;d]
- if[not type d;:.z.s[wf;k;y] peach d];        / recurse for matrix d
- if[any n:null d;d@:i:where not n; y@:i];     / filter null distances
- k&:count y;                                  / prevent k > count y
- p:(waom . (wf d::;y)@\:#[;iasc d]::) each k; / make predictions
+ if[not type d;:.z.s[wf;k;y] peach d];    / recurse for matrix d
+ if[any n:null d;d@:i:where not n; y@:i]; / filter null distances
+ p:(waom . (wf d::;y)@\:#[;iasc d]::) peach k&count d; / make predictions
  p}
 
 / given (w)eighting (f)unction, (d)istance (f)unction, atom or vector of (k)

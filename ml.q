@@ -356,7 +356,7 @@ runif:{[n]n?1f}
 rbern:{[n;p]p>runif n}
 / generate (n) variates from a binomial distribution (sum of
 / Bernoulli) with (k) trials and (p)robability
-rbinom:{[n;k;p]sum rbern[n] each k#p}
+rbinom:{[n;k;p](sum rbern[k]::) each n#p}
 / generate (n) variate-vectors from a multinomial distribution with
 / (k) trials and (p)robability vector defined for each class
 rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif::) each n#k}

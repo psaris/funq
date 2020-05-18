@@ -438,7 +438,7 @@ gaussmvll:{[mu;SIGMA;X]
  p+:count[X]*logtwopi;
  p*:-.5;
  p}
-/ Gaussian multi variate maximum likelihood estimator
+/ Gaussian multivariate maximum likelihood estimator
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 

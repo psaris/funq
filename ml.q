@@ -385,7 +385,7 @@ wbinmle:{[n;a;w;x]1#w wavg a+x%n}
 bmml:prd binl::
 / binomial mixture model log likelihood
 bmmll:sum binll::
-bmml:exp bmmll::             / more numerically stable
+/bmml:exp bmmll::             / more numerically stable
 / binomial mixture model maximum likelihood estimator (where a is
 / the Dirichlet smoothing parameter)
 bmmmle:{[n;a;x]enlist avg each a+x%n}

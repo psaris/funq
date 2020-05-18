@@ -349,19 +349,18 @@ bm:{
  x}
 
 / random number generators
-/ generate (n) variates from a uniform distribution
+/ generate (n) uniform distribution variates
 runif:{[n]n?1f}
-/ generate (n) variates from a Bernoulli distribution with
-/ (p)robability of success
+/ generate (n) Bernoulli distribution variates with (p)robability of success
 rbern:{[n;p]p>runif n}
-/ generate (n) variates from a binomial distribution (sum of
-/ Bernoulli) with (k) trials and (p)robability
+/ generate (n) binomial distribution (sum of Bernoulli) variates with (k)
+/ trials and (p)robability
 rbinom:{[n;k;p](sum rbern[k]::) each n#p}
-/ generate (n) variate-vectors from a multinomial distribution with
-/ (k) trials and (p)robability vector defined for each class
+/ generate (n) multinomial distribution variate-vectors with (k) trials and
+/ (p)robability vector defined for each class
 rmultinom:{[n;k;p](sum til[count p]=/:sums[p] binr runif::) each n#k}
-/ generate (n) variates from a normal distribution with mean (mu) and
-/ standard deviation (sigma)
+/ generate (n) normal distribution variates with mean (mu) and standard
+/ deviation (sigma)
 rnorm:{[n;mu;sigma]mu+sigma*bm runif n}
 
 / C(n,k) or n choose k

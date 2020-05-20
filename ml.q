@@ -566,7 +566,7 @@ ogr:{[ipf;w;x;y]                / ordered gain ratio
 / (c)ategorical (g)ain (f)unction and (o)rdered (g)ain (f)unction. the
 / (i)m(p)urity (f)unction determines which statistic to minimize. a dict of
 / (opt)ions specify the (max) (d)epth, (min)imum # of (s)amples required to
-/ (s)plit, (min)imum # of samples at each leaf, (min)imum (g)ain and the
+/ (s)plit, (min)imum # of (s)amples at each (l)eaf, (min)imum (g)ain and the
 / (max)imum (f)eature (f)unction used to sub sample features for random
 / forests.  defaults are: opt:`maxd`minss`minsl`ming`maxff!(0N;2;1;0;::)
 dt:{[cgf;ogf;ipf;opt;w;t]

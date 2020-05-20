@@ -10,9 +10,9 @@ t:update -1 1 "M"=diagnosis from 11#/:wdbc.t
 d:.util.part[`train`test!3 1;0N?] t
 -1 "building a full tree is perfect on the training data";
 tr:.ml.ct[();::] d.train
-.util.assert[1f] .util.rnd[.01] avg d.train.diagnosis=.ml.dtc[tr] each d.train
+.util.assert[1f] .util.rnd[.01] avg d.train.diagnosis=.ml.pdt[tr] each d.train
 -1 "but not as good on the test data";
-.util.assert[.9] .util.rnd[.01] avg d.test.diagnosis=.ml.dtc[tr] each d.test
+.util.assert[.9] .util.rnd[.01] avg d.test.diagnosis=.ml.pdt[tr] each d.test
 -1 "how many leaves did we create?";
 count .ml.leaves tr
 -1 "adaboost creates an ensemble of weak learners to produce a strong learning";
@@ -24,18 +24,18 @@ stump:.ml.ct[(1#`maxd)!1#1]
 -1 "convert wdbc.diagnosis to discrete values -1 and 1";
 k:50
 -1 "let's run ",string[k]," rounds of adaboost";
-m:.ml.fab[k;stump;.ml.dtc] d.train
-p:.ml.pab[k;.ml.dtc;m] d.train
+m:.ml.fab[k;stump;.ml.pdt] d.train
+p:.ml.pab[k;.ml.pdt;m] d.train
 .util.assert[.98] .util.rnd[.01] avg d.train.diagnosis=p
 -1 "plot the improvement to accuracy on the training set as we increase the ensemble size";
-P:.ml.pab[1+til k;.ml.dtc;m] d.train
+P:.ml.pab[1+til k;.ml.pdt;m] d.train
 show .util.plt (avg d.train.diagnosis=) each P
 
 -1 "but how does each extra stump help in predicting the test set?";
-pt:.ml.pab[k;.ml.dtc;m] d.test
+pt:.ml.pab[k;.ml.pdt;m] d.test
 .util.assert[.97] .util.rnd[.01] avg d.test.diagnosis=pt
 -1 "we can also plot the improvement to accuracy on the test set as we increase the ensemble size";
-Pt:.ml.pab[1+til k;.ml.dtc;m] d.test
+Pt:.ml.pab[1+til k;.ml.pdt;m] d.test
 show .util.plt (avg d.test.diagnosis=) each Pt
 
 -1 "the number of elements in our ensemble should be decided by cross validation";
@@ -44,8 +44,8 @@ ks:1+til 20
 n:10
 -1"cross validate with ", string[n], " buckets";
 ts:.util.part[n#1;0N?] t
-ff:.ml.fab[;stump;.ml.dtc]
-pf:.ml.pab[;.ml.dtc]
+ff:.ml.fab[;stump;.ml.pdt]
+pf:.ml.pab[;.ml.pdt]
 e:ts[;`diagnosis]=flip each P:.ml.kfxvt[ff ks;pf ks;ts] peach til n
 
 -1"find k with maximum accuracy";

@@ -588,9 +588,9 @@ dt:{[cgf;ogf;ipf;opt;w;t]
  b[2]:.z.s[cgf;ogf;ipf;@[opt;`maxd;-;1]]'[w g;t g]; / split sub-trees
  bf,1_b}
 
-/ classify the (d)ictionary based on decision (tr)ee
-dtc:{[tr;d] waom . dtcr[tr;d]}  / decision tree classifier
-dtcr:{[tr;d]                    / recursive component
+/ predict the (d)ictionary based on decision (tr)ee
+pdt:{[tr;d] waom . pdtr[tr;d]}
+pdtr:{[tr;d]                    / recursive component
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
@@ -654,7 +654,7 @@ dtmincc:{[ef;tr;a]
 
 / k-fold cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
 / (f)unction, (a)lphas and misclassification (e)rror (f)unction
-dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;dtc\:/:;ts]}
+dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;pdt\:/:;ts]}
 
 / decision tree utilities
 
@@ -721,7 +721,7 @@ bag:{[n;f;t](f ?[;t]::) peach n#count t} / (b)ootstrap (ag)gregating
 / predictions on samples in (t)able
 pbag:{[k;m;t]
  if[count[m]<max k;'`length];
- p:k {(aom x#) each y}\: m dtc\:/: t;
+ p:k {(aom x#) each y}\: m pdt\:/: t;
  p}
 
 / discrete adaptive boosting

@@ -20,11 +20,11 @@ show t:weather.t
 -1"the first value is the decision feature,";
 -1"and the second value is operator to use on the feature";
 -1"and the third value is a dictionary representing the leaves";
--1"we can then use the (d)ecission (t)ree (c)lassifier function to classify our data";
-avg t.Play=p:.ml.dtc[tr] each t / accuracy
+-1"we can then use the (p)redict (d)ecission (t)ree function to classify our data";
+avg t.Play=p:.ml.pdt[tr] each t / accuracy
 -1"since the test and training data are the same, it is no surprise we have 100% accuracy";
--1".ml.dtc does not fail on missing features. it digs deeper into the tree";
-.util.assert[.71428571428571431] avg t.Play=p:.ml.dtc[.ml.id3[();::] (1#`Outlook) _ t] each t
+-1".ml.pdt does not fail on missing features. it digs deeper into the tree";
+.util.assert[.71428571428571431] avg t.Play=p:.ml.pdt[.ml.id3[();::] (1#`Outlook) _ t] each t
 -1"id3 only handles discrete features.  c4.5 handles continues features";
 -1".ml.q45 implements many of the features of c4.5 including:";
 -1"* information gain normalized by split info";
@@ -41,23 +41,23 @@ show s:@[t;`Humidity;:;85 90 78 96 80 70 65 95 70 80 70 90 75 80f]
 
 z:@[{.qml.nicdf x};.0125;2.241403];
 -1 .ml.ptree[0] tr:.ml.prune[.ml.perr[z]] .ml.q45[();::] s;
-.util.assert[1f] avg s.Play=p:.ml.dtc[tr] each s / accuracy
+.util.assert[1f] avg s.Play=p:.ml.pdt[tr] each s / accuracy
 -1"we can still handle null values by using the remaining features";
-.util.assert[`Yes] .ml.dtc[tr] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85f;`)
+.util.assert[`Yes] .ml.pdt[tr] d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;85f;`)
 -1"we can even can handle nulls in the training data by propagating them down the tree";
 s:update Temperature:` from s where Humidity=70f
 -1 .ml.ptree[0] tr:.ml.q45[();::] s;
-.util.assert[`No] .ml.dtc[tr] d
+.util.assert[`No] .ml.pdt[tr] d
 -1 "we can also use the Gini impurity instead of entropy (faster with similar behavior)";
 -1 .ml.ptree[0] tr:.ml.dt[.ml.gr;.ml.ogr;.ml.wgini;();::] t;
 d:`Outlook`Temperature`Humidity`Wind!(`Rain;`Hot;`High;`) / remove null
-.util.assert[`No] .ml.dtc[tr] d
+.util.assert[`No] .ml.pdt[tr] d
 -1 "we can also create an aid tree when the target is numeric";
 -1 .ml.ptree[0] tr:.ml.aid[(1#`minsl)!1#3;::] update "e"$`Yes=Play from t; / regression tree
-.util.assert[.2] .ml.dtc[tr] d
+.util.assert[.2] .ml.pdt[tr] d
 -1 "we can also create a thaid tree for classification";
 -1 .ml.ptree[0] tr:.ml.thaid[(1#`minsl)!1#3;::] t; / classification tree
-.util.assert[`Yes] .ml.dtc[tr] d
+.util.assert[`Yes] .ml.pdt[tr] d
 
 -1 "we can now split the iris data into training and test batches (w/ stratification)";
 w:`train`test!3 1
@@ -70,7 +70,7 @@ show d:.util.part[w;iris.t.species] iris.t
 -1 "then create a classification tree";
 -1 .ml.ptree[0] tr:.ml.ct[();::] `species xcols d`train;
 -1 "testing the tree on the test set produces an accuracy of:";
-avg d.test.species=p:tr .ml.dtc/: d`test
+avg d.test.species=p:tr .ml.pdt/: d`test
 -1 "we can save the decision tree into graphviz compatible format";
 `:tree.dot 0: .ml.pgraph tr;
 -1 "using graphviz to convert the .dot file into a png";
@@ -84,7 +84,7 @@ show d:.util.part[w;0N?] t
 -1 "and generate a regression tree";
 -1 .ml.ptree[0] tr:.ml.rt[();::]  `plength xcols d`train;
 -1 "we now compute the root mean square error (rmse)";
-.ml.rms d.test.plength-p:tr .ml.dtc/: d`test
+.ml.rms d.test.plength-p:tr .ml.pdt/: d`test
 
 -1 "using breiman algorithm, compute pruning alphas";
 dtf:.ml.ct[();::]
@@ -129,4 +129,4 @@ show e:avg each e*e:ts[;`quality]-p:(.ml.dtkfxv[dtf;ef;b;ts]0N!) peach til k
 -1 "the pruned tree has less than 25 leaves";
 .util.assert[1b] 25>0N!count .ml.leaves btr
 -1 "and an rms less than .73";
-.util.assert[1b] .73>0N!.ml.rms d.test.quality - btr .ml.dtc/: d`test
+.util.assert[1b] .73>0N!.ml.rms d.test.quality - btr .ml.pdt/: d`test

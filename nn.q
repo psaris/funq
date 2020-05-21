@@ -126,7 +126,7 @@ p w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"we can view the confusion matrix as well";
-show .util.totals[`TOTAL] .util.cm[yt;"i"$p]
+show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
 -1"neural networks are not limited to classification problems.";
 -1"using a linear activation function on the output layer";

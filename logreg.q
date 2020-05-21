@@ -68,7 +68,7 @@ theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 -1"test models accuracy";
 avg yt="i"$p:first .ml.logpredict[Xt;enlist theta]
 
-show .util.totals[`TOTAL] .util.cm["i"$yt;"i"$p]
+show .util.totals[`TOTAL] .ml.cm["i"$yt;"i"$p]
 
 -1"demonstrate a few binary classification evaluation metrics";
 -1"how well did we fit the data";

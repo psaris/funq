@@ -21,7 +21,7 @@ avg yt=p:.ml.knn[sqrt 1f%;k;y] D:.ml.pedist2[X;Xt]
 -1"computing the accuracy of each digit";
 show avg each (p=yt)[i] group yt i:iasc yt
 -1"viewing the confusion matrix, we can see 7 is often confused with 1";
-show .util.totals[`TOTAL] .util.cm[yt;p]
+show .util.totals[`TOTAL] .ml.cm[yt;p]
 
 ks:1+til 10
 -1"compare different choices of k: ", -3!ks;

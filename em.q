@@ -36,7 +36,7 @@ p:.ml.imax .ml.likelihood[1b;.ml.mmmll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .util.cm[y;m p]
+show .util.totals[`TOTAL] .ml.cm[y;m p]
 
 
 / Gaussian mixtures
@@ -71,7 +71,7 @@ p:.ml.imax .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .util.cm[y;m p]
+show .util.totals[`TOTAL] .ml.cm[y;m p]
 -1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
 -1"let's cluster hand written numbers into groups";
@@ -108,4 +108,4 @@ p:.ml.imax .ml.likelihood[1b;.ml.bmmll[1];X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .util.cm[y;m p]
+show .util.totals[`TOTAL] .ml.cm[y;m p]

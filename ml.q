@@ -184,6 +184,13 @@ jaccard:{[tp;tn;fp;fn]tp%tp+fp+fn}
 / -1 0 1 (none right, same as random prediction, all right)
 mcc:{[tp;tn;fp;fn]((tp*tn)-fp*fn)%prd sqrt(tp;tp;tn;tn)+(fp;fn;fp;fn)}
 
+/ given true labels y and predicted labels p, return a confusion matrix
+cm:{[y;p]
+ n:count u:asc distinct y,p;
+ m:./[(n;n)#0;flip (u?p;u?y);1+];
+ t:([]y:u)!flip (`$string u)!m;
+ t}
+
 / k-fold cross validation primitives
 
 / use all data from ys and Xs except the (i)th element to fit a model using

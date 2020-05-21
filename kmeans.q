@@ -57,7 +57,7 @@ show m:.ml.mode each y I:.ml.cgroup[.ml.edist2;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
 avg y=p:.util.ugrp m!I            / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .util.cm[y;p]
+show .util.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
 -1"we can also plot the total ssw from using different values for k";

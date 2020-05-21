@@ -90,13 +90,6 @@ onehot:{
  x:c _ x,' flip raze D;                               / append to table
  x}
 
-/ given true labels y and predicted labels p, return a confusion matrix
-cm:{[y;p]
- n:count u:asc distinct y,p;
- m:./[(n;n)#0;flip (u?p;u?y);1+];
- t:([]y:u)!flip (`$string u)!m;
- t}
-
 / Heckbert's axis label algorithm
 
 / use Heckbert's values to (r)ou(nd) or floor (x) to the nearest nice number

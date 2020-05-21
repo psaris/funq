@@ -90,11 +90,11 @@ onehot:{
  x:c _ x,' flip raze D;                               / append to table
  x}
 
-/ confusion matrix
-cm:{
- n:count u:asc distinct x,y;
- m:./[(n;n)#0;flip (u?y;u?x);1+];
- t:([]x:u)!flip (`$string u)!m;
+/ given true labels y and predicted labels p, return a confusion matrix
+cm:{[y;p]
+ n:count u:asc distinct y,p;
+ m:./[(n;n)#0;flip (u?p;u?y);1+];
+ t:([]y:u)!flip (`$string u)!m;
  t}
 
 / Heckbert's axis label algorithm

@@ -740,7 +740,7 @@ adaboost:{[tf;cf;w;t]
  if[(::)~w;w:n#1f%n:count t];    / initialize weights
  m:tf[w] t;                      / train model
  p:cf[m] each t;                 / make predictions
- e:sum w*not c:p=y:first flip t; / compute weighted error
+ e:sum w*not p=y:first flip t;   / compute weighted error
  a:.5*log (c:1f-e)%e;            / compute alpha (minimize exponential loss)
  / w*:exp neg a*y*p;               / increase/decrease weights
  / w%:sum w;                       / normalize weights

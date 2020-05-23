@@ -733,9 +733,10 @@ pbag:{[k;m;t]
 
 / discrete adaptive boosting
 
-/ given (t)rain (f)unction, discrete (c)lassifier (f)unction, (t)able, and
-/ initial (w)eights, return ((m)odel;(a)lpha;new (w)eights)
-adaboost:{[tf;cf;t;w]
+/ given (t)rain (f)unction, discrete (c)lassifier (f)unction, initial
+/ (w)eights, and (t)able with -1 1 discrete target class values in first
+/ column, return ((m)odel;(a)lpha;new (w)eights)
+adaboost:{[tf;cf;w;t]
  if[(::)~w;w:n#1f%n:count t];    / initialize weights
  m:tf[w] t;                      / train model
  p:cf[m] each t;                 / make predictions
@@ -748,7 +749,7 @@ adaboost:{[tf;cf;t;w]
 
 / given an atom or list (k), (t)rain (f)unction, discrete (c)lassifier
 / (f)unction, and (t)able perform max(k) iterations of adaboost
-fab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;t] last::)\ (::)}
+fab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;;t] last::)\ (::)}
 
 / given an atom or list (k), discrete (c)lassifier function, adaboost
 / (m)odel, make predictions on samples in (t)able

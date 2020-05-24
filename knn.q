@@ -37,7 +37,7 @@ Xs:flip X[;i]
 ys:y i
 ff:.ml.fknn[sqrt 1f%;.ml.pedist2]
 pf:@
-e:ys=p:.ml.kfxvyx[ff ks;pf;ys;Xs] peach til n
+e:ys=p:.ml.xv[ff ks;pf;flip (ys;Xs)] peach til n
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

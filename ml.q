@@ -191,23 +191,14 @@ cm:{[y;p]
  t:([]y:u)!flip (`$string u)!m;
  t}
 
-/ k-fold cross validation primitives
-
-/ use all data from ys and Xs except the (i)th element to fit a model using
-/ the (f)itting (f)unction and then apply (p)rediction (f)unction on Xs[i]
-kfxvyx:{[ff;pf;ys;Xs;i]     / k-fold cross validate vec y and matrix X
- X:(,'/)Xs _ i;             / drop i and raze
- y:raze ys _ i;             / drop i and raze
- m:ff[y;X];                 / fit model
- p:pf[m] Xs i;              / use model to make predictions
- p}
-
-/ use all data from (t)able(s) except the (i)th element to fit a model using
-/ the (f)itting (f)unction and then use (p)rediction (f)unction on ts[i]
-kfxvt:{[ff;pf;ts;i]             / k-fold cross validate table
- t:raze ts _ i;                 / drop i and raze
- m:ff[t];                       / fit model
- p:pf[m] ts i;                  / use model to make predictions
+/ use all (f)old(s) (except the (i)th) to fit a model using the (f)itting
+/ (f)unction and then use (p)rediction (f)unction on fs[i]. fs can be a list
+/ of tables or (y;X) pairs -- corresponding to ff arguments.
+xv:{[ff;pf;fs;i]                / cross validate
+ v:fs i;fs _: i;                / split training and validation sets
+ a:$[type v;enlist raze fs;[v@:1;(raze;,'/)@'flip fs]]; / build ff arguments
+ m:ff . a;                      / fit model on training set
+ p:pf[m] v;                     / make predictions on validation set
  p}
 
 / k nearest neighbors
@@ -661,7 +652,7 @@ dtmincc:{[ef;tr;a]
 
 / k-fold cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
 / (f)unction, (a)lphas and misclassification (e)rror (f)unction
-dtkfxv:{[dtf;ef;a;ts]kfxvt[dtmincc[ef]\[;a]dtf::;pdt\:/:;ts]}
+dtxv:{[dtf;ef;a;ts]xv[dtmincc[ef]\[;a]dtf::;pdt\:/:;ts]}
 
 / decision tree utilities
 

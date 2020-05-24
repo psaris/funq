@@ -46,7 +46,7 @@ n:10
 ts:.util.part[n#1;0N?] t
 ff:.ml.fab[;stump;.ml.pdt]
 pf:.ml.pab[;.ml.pdt]
-e:ts[;`diagnosis]=flip each P:.ml.kfxvt[ff ks;pf ks;ts] peach til n
+e:ts[;`diagnosis]=flip each P:.ml.xv[ff ks;pf ks;ts] peach til n
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

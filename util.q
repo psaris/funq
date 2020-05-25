@@ -1,5 +1,13 @@
 \d .util
 
+/ assert minimum required version of q
+
+/ throw verbose exception if x <> y
+assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
+
+assert[2016.05.12] 2016.05.12&.z.k / supports random permutation 0N?
+assert[3.4] 3.4&.z.K  / supports reshape for an arbitrary list of dimensions
+
 / data loading utilities
 
 / load (f)ile if it exists and return success boolean
@@ -27,9 +35,6 @@ mnist:{
 etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
 / general utilities
-
-/ throw verbose exception if x <> y
-assert:{if[not x~y;'`$"expecting '",(-3!x),"' but found '",(-3!y),"'"]}
 
 / generate a range of values between (s)tart and (e)nd with step-size (w)
 rng:{[w;s;e]s+w*til 1+floor 1e-14+(e-s)%w}

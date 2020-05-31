@@ -28,7 +28,7 @@ k:30
 X:flip raze .ml.rmultinom[1;k] each  (6#1f%6;.5,5#.1;(2#.1),4#.2)y:n?3
 lf:.ml.mmml
 mf:.ml.wmmmmle[k;1e-8]
-mu:.ml.prb each flip 3?/:X
+mu:flip .ml.prb 3?/:X
 phi:3#1f%3
 .ml.em[1b;lf;mf;X] . pT:(phi;flip enlist mu)
 show pT:(.ml.em[0b;lf;mf;X]//) pT

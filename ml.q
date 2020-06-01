@@ -396,9 +396,9 @@ multil:{[p;k]p xexp k}
 / multinomial log likelihood
 multill:{[p;k]k*log p}
 / multinomial mle with (a)dditive smoothing
-multimle:{[a;x]enlist each x%sum x:a+sum each x}
+multimle:{[a;x]enlist each prb a+sum each x}
 / weighted multinomial mle with (a)dditive smoothing
-wmultimle:{[a;w;x]enlist each x%sum x:a+w wsum/: x}
+wmultimle:{[a;w;x]enlist each prb a+w wsum/: x}
 
 / multinomial mixture model likelihood
 mmml:prd multil::

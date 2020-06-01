@@ -414,16 +414,13 @@ mmmmle:{[n;a;x]enlist avg each a+x%n}
 wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 / Gaussian kernel
-gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2*sigma}
+gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2f*sigma}
 
 / Gaussian likelihood
-gaussl:{[mu;sigma;x]
- p:exp (x*x-:mu)%-2*sigma;
- p%:sqrt sigma*twopi;
- p}
+gaussl:{[mu;sigma;x] exp[(x*x-:mu)%-2f*sigma]%sqrt sigma*twopi}
 / Gaussian log likelihood
-gaussll:{[mu;sigma;X] -.5*sum (logtwopi;log sigma;(X*X-:mu)%sigma)}
 / Gaussian maximum likelihood estimator
+gaussll:{[mu;sigma;x] -.5*logtwopi+log[sigma]+(x*x-:mu)%sigma}
 gaussmle:{[x](mu;avg x*x-:mu:avg x)}
 / weighted Gaussian maximum likelihood estimator
 wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
@@ -432,15 +429,13 @@ wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
 gaussmvl:{[mu;SIGMA;X]
  if[type SIGMA;SIGMA:diag count[X]#SIGMA];
  p:exp -.5*sum X*mm[minv SIGMA;X-:mu];
- p*:sqrt 1f%mdet SIGMA;
- p*:twopi xexp -.5*count X;
+ p%:sqrt mdet[SIGMA]*twopi xexp count X;
  p}
 / Gaussian multivariate log likelihood
 gaussmvll:{[mu;SIGMA;X]
  if[type SIGMA;SIGMA:diag count[X]#SIGMA];
  p:sum X*mm[minv SIGMA;X-:mu];
- p+:log mdet SIGMA;
- p+:count[X]*logtwopi;
+ p+:log[mdet SIGMA]+logtwopi*count X;
  p*:-.5;
  p}
 / Gaussian multivariate maximum likelihood estimator

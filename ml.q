@@ -366,51 +366,48 @@ choose:{[n;k](%). prd each(n-k;0)+\:1f+til k&:n-k}
 / P(n,k) or n permute k
 permute:{[n;k]prd(1f+n-k)+til k}
 
-/ binomial pdf
-binpdf:{[n;p;k] binl[n;p;k]*choose[n;k]}
+/ [log]likelihood and maximum likelihood estimator (mle)
 
-/ binomial likelihood approximation (without the coefficient)
+/ binomial likelihood (without the binomial coefficient nCk)
 binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}
 / binomial log likelihood
 binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
-/binl:exp binll::
-/ binomial maximum likelihood estimator
+/binl:exp binll::                / more numerically stable
+/ binomial mle with Dirichlet smoothing (a)
 binmle:{[n;a;x]1#avg a+x%n}
-/ weighted binomial maximum likelihood estimator
+/ weighted binomial mle with Dirichlet smoothing (a)
 wbinmle:{[n;a;w;x]1#w wavg a+x%n}
+
+/ binomial density
+bind:{[n;p;k] choose[n;k]*binl[n;p;k]}
 
 / binomial mixture model likelihood
 bmml:prd binl::
 / binomial mixture model log likelihood
 bmmll:sum binll::
 /bmml:exp bmmll::             / more numerically stable
-/ binomial mixture model maximum likelihood estimator (where a is
-/ the Dirichlet smoothing parameter)
+/ binomial mixture model mle with Dirichlet smoothing (a)
 bmmmle:{[n;a;x]enlist avg each a+x%n}
-/ weighted binomial mixture model maximum likelihood estimator (where a is
-/ the Dirichlet smoothing parameter)
+/ weighted binomial mixture model mle with Dirichlet smoothing (a)
 wbmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
+/ multinomial likelihood approximation (without the multinomial coefficient)
+multil:{[p;k]p xexp k}
 / multinomial log likelihood
 multill:{[p;k]k*log p}
-/ multinomial likelihood approximation
-multil:{[p;k]p xexp k}
-/ multinomial maximum likelihood estimator (where n is for add n smoothing)
-multimle:{[n;x]enlist each x%sum x:n+sum each x}
-/ weighted multinomial maximum likelihood estimator (where n is for add n
-/ smoothing)
-wmultimle:{[n;w;x]enlist each x%sum x:n+w wsum/: x}
+/ multinomial mle with (a)dditive smoothing
+multimle:{[a;x]enlist each x%sum x:a+sum each x}
+/ weighted multinomial mle with (a)dditive smoothing
+wmultimle:{[a;w;x]enlist each x%sum x:a+w wsum/: x}
 
 / multinomial mixture model likelihood
 mmml:prd multil::
 / multinomial mixture model log likelihood
 mmmll:sum multill::
 /mmml:exp mmmll::             / more numerically stable
-/ multinomial mixture model maximum likelihood estimator (where a is
-/ the Dirichlet smoothing parameter)
+/ multinomial mixture model mle with Dirichlet smoothing (a)
 mmmmle:{[n;a;x]enlist avg each a+x%n}
-/ weighted multinomial mixture model maximum likelihood estimator (where a
-/ is the Dirichlet smoothing parameter)
+/ weighted multinomial mixture model mle with Dirichlet smoothing (a)
 wmmmmle:{[n;a;w;x]enlist w wavg/: a+x%n}
 
 / Gaussian kernel
@@ -419,10 +416,10 @@ gaussk:{[mu;sigma;x] exp (enorm2 x-mu)%-2f*sigma}
 / Gaussian likelihood
 gaussl:{[mu;sigma;x] exp[(x*x-:mu)%-2f*sigma]%sqrt sigma*twopi}
 / Gaussian log likelihood
-/ Gaussian maximum likelihood estimator
 gaussll:{[mu;sigma;x] -.5*logtwopi+log[sigma]+(x*x-:mu)%sigma}
+/ Gaussian mle
 gaussmle:{[x](mu;avg x*x-:mu:avg x)}
-/ weighted Gaussian maximum likelihood estimator
+/ weighted Gaussian mle
 wgaussmle:{[w;x](mu;w wavg x*x-:mu:w wavg x)}
 
 / Gaussian multivariate
@@ -438,9 +435,9 @@ gaussmvll:{[mu;SIGMA;X]
  p+:log[mdet SIGMA]+logtwopi*count X;
  p*:-.5;
  p}
-/ Gaussian multivariate maximum likelihood estimator
+/ Gaussian multivariate mle
 gaussmvmle:{[X](mu;avg X (*\:/:)' X:flip X-mu:avg each X)}
-/ weighted Gaussian multivariate maximum likelihood estimator
+/ weighted Gaussian multivariate mle
 wgaussmvmle:{[w;X](mu;w wavg X (*\:/:)' X:flip X-mu:w wavg/: X)}
 
 

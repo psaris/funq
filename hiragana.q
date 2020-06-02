@@ -40,7 +40,7 @@ theta:first .ml.iter[1;.01;cf;.ml.sgd[.4;gf;0N?;50;Y;X]] theta
 /first .fmincg.fmincg[10;cgf;theta]
 
 -1"checking accuracy of parameters";
-avg y=p:.ml.imax .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
+avg y=p:.ml.imax .ml.pnn[hgolf;X] .ml.nncut[n] theta
 
 w:where not y=p
 -1"view a few confused characters";

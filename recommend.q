@@ -31,7 +31,7 @@ theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
 show {(5#x),-5#x}desc genre!1_theta
 -1"how closely do the computed scores match our preferences";
 THETA:(count[Y];0N)#theta
-r:update score:first .ml.linpredict[X;THETA] from r
+r:update score:first .ml.plin[X;THETA] from r
 show select[>score] rating,score,movieId.title from r where not null rating
 -1"and finally, show the recommendations";
 show select[10;>score] movieId,score,movieId.title from r
@@ -155,7 +155,7 @@ xtheta:2 raze/ XTHETA:(X:-1+ni?/:nf#2f;THETA:-1+nu?/:nf#2f)
 xtheta:first .fmincg.fmincg[100;.ml.cfcostgrad[rf;n;U];xtheta] / learn
 
 -1"predict missing ratings";
-P:au+.ml.cfpredict . XTHETA:.ml.cfcut[n] xtheta / predictions
+P:au+.ml.pcf . XTHETA:.ml.cfcut[n] xtheta / predictions
 show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
 show select from t where not null rating
@@ -177,7 +177,7 @@ mf:.ml.sgdmf[.05;.2;0N?;U;;::]
 XTHETA:first .ml.iter[-1;.0001;cf;mf] XTHETA
 
 -1"predict missing ratings";
-P:au+.ml.cfpredict . XTHETA / predictions
+P:au+.ml.pcf . XTHETA           / predictions
 show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
 show select from t where not null rating
@@ -202,7 +202,7 @@ XTHETA:(X:-1+ni?/:nf#1f;THETA:-1+nu?/:nf#2f)
 XTHETA:first .ml.iter[1;.0001;.ml.cfcost[();U] .;.ml.alswr[.01;U]] XTHETA
 
 -1"predict missing ratings";
-P:au+.ml.cfpredict . XTHETA / predictions
+P:au+.ml.pcf . XTHETA           / predictions
 show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
 show s:select from t where not null rating

@@ -109,7 +109,7 @@ theta:first .ml.iter[1;.01;cf;.ml.sgd[.1;gf;{x?x};5;Y;X]] theta
 cf theta
 
 -1"how well did we learn on the training data set?";
-avg y=p:.ml.imax .ml.nnpredict[hgolf;X] .ml.nncut[n] theta
+avg y=p:.ml.imax .ml.pnn[hgolf;X] .ml.nncut[n] theta
 
 -1"we can visualize the hidden features";
 -1 plt 1_ rand first .ml.nncut[n] theta
@@ -119,7 +119,7 @@ p w:where not y=p
 do[2;-1 plt X[;i:rand w];show ([]p;y) i]
 
 -1"how well can we predict unseen data";
-avg yt=p:.ml.imax .ml.nnpredict[hgolf;Xt] .ml.nncut[n] theta
+avg yt=p:.ml.imax .ml.pnn[hgolf;Xt] .ml.nncut[n] theta
 
 -1"or view a few mistakes";
 p w:where not yt=p

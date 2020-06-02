@@ -59,14 +59,14 @@ theta:first .fmincg.fmincg[1000;.ml.logcostgrad[();Y;X];theta]
 .ml.logcost[();Y;X;enlist theta]
 
 -1"test models accuracy";
-avg yt="i"$p:first .ml.logpredict[Xt;enlist theta]
+avg yt="i"$p:first .ml.plog[Xt;enlist theta]
 
 -1"lets add some regularization";
 theta:(1+count X)#0f;
 theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 
 -1"test models accuracy";
-avg yt="i"$p:first .ml.logpredict[Xt;enlist theta]
+avg yt="i"$p:first .ml.plog[Xt;enlist theta]
 
 show .util.totals[`TOTAL] .ml.cm["i"$yt;"i"$p]
 

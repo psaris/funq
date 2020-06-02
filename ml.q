@@ -804,13 +804,13 @@ ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 / scaling the regularization parameter by the count of non-null values
 wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
 
-/ linear predict Y values by prepending matri(X) with a vector of 1s
-/ and multiplying the result to (THETA) coefficients
-linpredict:{[X;THETA]mm[THETA] prepend[1f] X}
+/ linearly predict Y values by prepending matri(X) with a vector of 1s and
+/ multiplying the result to (THETA) coefficients
+plin:{[X;THETA]mm[THETA] prepend[1f] X}
 
 / linear regression cost
 lincost:{[rf;Y;X;THETA]
- J:(.5%m:count X 0)*sum (sum') E*E:0f^linpredict[X;THETA]-Y; / cost
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^plin[X;THETA]-Y; / cost
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 
@@ -857,11 +857,11 @@ mseloss:{[y;p].5*y*y-:p}
 / logistic regression
 
 / logistic regression predict
-logpredict:sigmoid linpredict::
+plog:sigmoid plin::
 
 / logistic regression cost
 logcost:{[rf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') logloss[Y] logpredict[X;THETA]; / cost
+ J:(1f%m:count X 0)*sum (sum') logloss[Y] plog[X;THETA];   / cost
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 
@@ -904,22 +904,22 @@ hen:{[i;o]rnorm'[o#i;0f;sqrt 2f%i]}  / normal
 / neural network primitives
 
 / use (h)idden and (o)utput layer functions to predict neural network Y
-nnpredict:{[hof;X;THETA]
- X:X (hof[`h] linpredict::)/ -1_THETA;
- Y:hof[`o] linpredict[X] last THETA;
+pnn:{[hof;X;THETA]
+ X:X (hof[`h] plin::)/ -1_THETA;
+ Y:hof[`o] plin[X] last THETA;
  Y}
 
 / (r)egularization (f)unction, holf: (h)idden (o)utput (l)oss functions
 nncost:{[rf;holf;Y;X;THETA]
- J:(1f%m:count X 0)*sum (sum') holf[`l][Y] nnpredict[holf;X] THETA; / cost
+ J:(1f%m:count X 0)*sum (sum') holf[`l][Y] pnn[holf;X] THETA; / cost
  if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 
 / (r)egularization (f)unction, hgof: (h)idden (g)radient (o)utput functions
 nngrad:{[rf;hgof;Y;X;THETA]
- ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgof`h]\ -1_THETA;
- P:hgof[`o] linpredict[last[ZA]1;last THETA]; / prediction
- G:hgof[`g]@'`z`a!/:1_ZA;                     / activation gradient
+ ZA:enlist[(X;X)],(X;X) {(z;x z:plin[y 1;z])}[hgof`h]\ -1_THETA;
+ P:hgof[`o] plin[last[ZA]1;last THETA]; / prediction
+ G:hgof[`g]@'`z`a!/:1_ZA;               / activation gradient
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1%m:count X 0)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full grad
  if[count rf,:();THETA[;;0]:0f; G+:sum rf[;m][;1][;THETA]]; / regularization
@@ -932,10 +932,10 @@ nncut:{[n;x]n cut' sums[prev[n+:1]*n:-1_n] cut x}
 / (h)idden (g)radient (o)utput (l)oss functions
 nncostgrad:{[rf;n;hgolf;Y;X;theta]
  THETA:nncut[n] theta;          / unroll theta
- ZA:enlist[(X;X)],(X;X) {(z;x z:linpredict[y 1;z])}[hgolf`h]\ -1_THETA;
- P:hgolf[`o] linpredict[last[ZA]1;last THETA];    / prediction
- J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P];    / cost
- G:hgolf[`g]@'`z`a!/:1_ZA;                        / activation gradient
+ ZA:enlist[(X;X)],(X;X) {(z;x z:plin[y 1;z])}[hgolf`h]\ -1_THETA;
+ P:hgolf[`o] plin[last[ZA]1;last THETA];       / prediction
+ J:(1f%m:count X 0)*sum (sum') hgolf[`l][Y;P]; / cost
+ G:hgolf[`g]@'`z`a!/:1_ZA;                     / activation gradient
  D:reverse{[D;THETA;G]G*1_mtm[THETA;D]}\[E:P-Y;reverse 1_THETA;reverse G];
  G:(1f%m)*(D,enlist E) mmt' prepend[1f] each ZA[;1]; / full gradient
  if[count rf,:();THETA[;;0]:0f;JG:rf[;m][;;THETA];J+:sum JG@'0;G+:sum JG@'1];
@@ -944,18 +944,18 @@ nncostgrad:{[rf;n;hgolf;Y;X;theta]
 / collaborative filtering
 
 / collaborative filtering predict
-cfpredict:{[X;THETA] mtm[THETA;X]}
+pcf:{[X;THETA] mtm[THETA;X]}
 
 / collaborative filtering cost
 cfcost:{[rf;Y;X;THETA]
- J:(.5f%m:count X 0)*sum (sum') E*E:cfpredict[X;THETA]-Y; / cost
- if[count rf,:();J+:sum rf[;m][;0]@\:(X;THETA)];          / regularization
+ J:(.5f%m:count X 0)*sum (sum') E*E:pcf[X;THETA]-Y; / cost
+ if[count rf,:();J+:sum rf[;m][;0]@\:(X;THETA)];    / regularization
  J}
 
 / collaborative filtering gradient
 cfgrad:{[rf;Y;X;THETA]
- G:(1f%m:count X 0)*(mm[THETA;E];mmt[X]E:0f^cfpredict[X;THETA]-Y); / gradient
- if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)]; / regularization
+ G:(1f%m:count X 0)*(mm[THETA;E];mmt[X]E:0f^pcf[X;THETA]-Y); / gradient
+ if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];             / regularization
  G}
 
 / collaborative filtering cut where n:(ni;nu)
@@ -964,8 +964,8 @@ cfcut:{[n;x]n cut'(0,n[0]*count[x]div sum n) cut x}
 / collaborative filtering cost & gradient
 cfcostgrad:{[rf;n;Y;xtheta]
  THETA:last X:cfcut[n] xtheta;X@:0; / unroll theta
- J:(.5%m:count X 0)*sum (sum') E*E:0f^cfpredict[X;THETA]-Y; / cost
- G:(1f%m)*(mm[THETA;E];mmt[X;E]);                           / gradient
+ J:(.5%m:count X 0)*sum (sum') E*E:0f^pcf[X;THETA]-Y; / cost
+ G:(1f%m)*(mm[THETA;E];mmt[X;E]);                     / gradient
  if[count rf,:();JG:rf[;m][;;(X;THETA)];J+:sum JG@'0;G+:sum JG@'1];
  (J;2 raze/ G)}
 

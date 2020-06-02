@@ -765,8 +765,8 @@ enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 / (m)inimization (f)unction to THETA.  return (THETA;new cost vector)
 acccost:{[cf;mf;THETA;c] (THETA;c,cf THETA:mf THETA)}
 
-/ print number of iterations, current (c)ost and pct decrease, then return a
-/ continuation boolean: pct decrease > float (p) or iterations > integer (p)
+/ print # of iterations, current (c)ost and % decrease to (h)andle, return a
+/ continuation boolean: % decrease > float (p) or iterations > integer (p)
 continue:{[h;p;c]
  pct:$[2>n:count c;0w;1f-(%/)c n-1 2];
  b:$[-8h<type p;p>n;p<pct];
@@ -774,8 +774,9 @@ continue:{[h;p;c]
  if[not null h; h s,"\n\r" b];
  b}
 
-/ keep calling (m)inimization (f)unction on (THETA) until the pct decrease
-/ in the (c)ost (f)unction is less than (p). return (cost vector;THETA)
+/ keep calling (m)inimization (f)unction on (THETA) and logging status to
+/ (h)andle until the % decrease in the (c)ost (f)unction is less than
+/ (p). return (cost vector;THETA)
 iter:{[h;p;cf;mf;THETA](continue[h;p]last::)acccost[cf;mf]//(::;cf)@\:THETA}
 
 / (a)lpha: learning rate, gf: gradient function

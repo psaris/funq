@@ -374,9 +374,9 @@ binl:{[n;p;k](p xexp k)*(1f-p) xexp n-k}
 binll:{[n;p;k](k*log p)+(n-k)*log 1f-p}
 /binl:exp binll::                / more numerically stable
 / binomial mle with Dirichlet smoothing (a)
-binmle:{[n;a;x]1#avg a+x%n}
+binmle:{[n;a;x]enlist avg a+x%n}
 / weighted binomial mle with Dirichlet smoothing (a)
-wbinmle:{[n;a;w;x]1#w wavg a+x%n}
+wbinmle:{[n;a;w;x]enlist w wavg a+x%n}
 
 / binomial density
 bind:{[n;p;k] choose[n;k]*binl[n;p;k]}

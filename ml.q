@@ -477,7 +477,7 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 / dictionary with prior and conditional likelihoods
 fnb:{[wmf;w;X;y]
  if[(::)~w;w:count[y]#1f];      / handle unassigned weight
- pT:(odds g; w[value g] wmf' X@\:/:g:group y);
+ pT:(odds g; (wmf . (w;X@\:) @\:) peach g:group y);
  pT}
 
 / using a [log](l)ikelihood (f)unction and prior probabilities (p)hi and

@@ -1028,7 +1028,7 @@ checkcfgrad:{[e;rf;n]
 / sparse matrix manipulation
 
 / shape of a tensor (atom, vector, matrix, etc)
-shape:{$[0h>t:type x;();n:count x;n,.z.s x 0;1#0]}
+shape:{$[0h>t:type x;0#0;n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
 / sparse from matrix

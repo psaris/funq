@@ -766,7 +766,7 @@ enet:{[a;lr](l1 a*lr;l2 a*1f-lr)}
 acccost:{[cf;mf;THETA;c] (THETA;c,cf THETA:mf THETA)}
 
 / print # of iterations, current (c)ost and % decrease to (h)andle, return a
-/ continuation boolean: % decrease > float (p) or iterations > integer (p)
+/ continuation boolean: % decrease > float (p) or iterations < integer (p)
 continue:{[h;p;c]
  pct:$[2>n:count c;0w;1f-(%/)c n-1 2];
  b:$[-8h<type p;p>n;p<pct];

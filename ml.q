@@ -811,7 +811,7 @@ plin:{[X;THETA]mm[THETA] prepend[1f] X}
 
 / linear regression cost
 lincost:{[rf;Y;X;THETA]
- J:(.5%m:count X 0)*revo[sum] E*E:0f^plin[X;THETA]-Y;      / cost
+ J:(.5%m:count X 0)*revo[sum] E*E:plin[X;THETA]-Y;         / cost
  if[count rf,:();THETA[;0]:0f; J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 

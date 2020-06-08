@@ -27,6 +27,8 @@ theta:raze 0N!THETA:(1;1+count X)#0f
 -1"since we don't use other user's preferences, this is quick optimization";
 rf:.ml.l2[.1]                   / l2 regularization
 theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
+-1"confirm lincostgrad handled the null Y values";
+.util.assert[2.4 0.2 0.4 -0.2 0.4] .util.rnd[.1] 5#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_theta
 -1"how closely do the computed scores match our preferences";

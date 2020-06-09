@@ -157,8 +157,8 @@ missrate:fnr:{[tp;tn;fp;fn]fn%fn+tp}                   / false negative rate
 / receiver operating characteristic
 roc:{[y;p]
  r:(til[count s]-s;s:0f,sums y i:idesc p); / (fp;tp)
- r%:last each r;                           / (fpr;tpr)
- r,:enlist 0w,p i;                         / (fpr;tpr;threshold)
+ r:(r%last each r),enlist 0w,p i;          / (fpr;tpr;threshold)
+ r:r@\:where reverse differ reverse r 2;   / filter duplicate thresholds
  r}
 
 auc:{[x;y] .5*sum (x-prev x)*y+prev y} / area under the curve

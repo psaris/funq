@@ -914,7 +914,7 @@ pnn:{[hof;X;THETA]
 / (r)egularization (f)unction, holf: (h)idden (o)utput (l)oss functions
 nncost:{[rf;holf;Y;X;THETA]
  J:(1f%m:count X 0)*revo[sum] holf[`l][Y] pnn[holf;X] THETA; / cost
- if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]];   / regularization
+ if[count rf,:();THETA[;;0]:0f;J+:sum rf[;m][;0][;THETA]]; / regularization
  J}
 
 / (r)egularization (f)unction, hgof: (h)idden (g)radient (o)utput functions
@@ -957,7 +957,7 @@ cfcost:{[rf;Y;X;THETA]
 / collaborative filtering gradient
 cfgrad:{[rf;Y;X;THETA]
  G:(1f%m:count X 0)*(mm[THETA;E];mmt[X]E:0f^pcf[X;THETA]-Y); / gradient
- if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)];             / regularization
+ if[count rf,:();G+:sum rf[;m][;1]@\:(X;THETA)]; / regularization
  G}
 
 / collaborative filtering cut where n:(ni;nu)

@@ -104,18 +104,24 @@ nsdev:sqrt nsvar::
 
 / normalization primitives
 
+/ return a function that applies (d)yadic function to the result of
+/ (a)ggregating vector/matrix/dictionary/table x
+daxf:{[d;a;x]$[0h>type first x; d[;a x]; d[;a x] peach]}
 / apply (d)yadic function to the result of (a)ggregating
 / vector/matrix/dictionary/table x
-dax:{[d;a;x]$[0h>type first x; d[x;a x]; d[;a x]peach x]}
+dax:{[d;a;x]daxf[d;a;x] x}
+
+/ apply the result of f[x] to x
+fxx:{[f;x]f[x] x}
 
 / normalize each vector to unit length
 normalize:dax[%;enorm]
 / centered
-demean:dax[-;navg]
+demean:fxx demeanf:daxf[-;navg]
 / feature normalization (centered/unit variance)
-zscore:dax[%;nsdev] demean::
+zscore:fxx zscoref:{daxf[%;nsdev;x] demeanf[x]::}
 / feature normalization (scale values to [0,1])
-minmax:{(x-m)%max[x]-m:min x}
+minmax:fxx minmaxf:{daxf[%;{max[x]-min x};x] daxf[-;min;x]::}
 / convert densities into probabilities
 prb:dax[%;sum]
 

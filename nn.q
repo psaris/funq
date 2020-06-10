@@ -137,14 +137,13 @@ show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 d:.util.part[`train`test!3 1;0N?] winequality.red.t
 X:1_value flip d.train
 Y:1#value flip d.train
--1"and then z-score the train and test data";
-a:avg each X
-sd:sdev each X
 Xt:1_value flip d.test
 Yt:1#value flip d.test
-X:(X-a)%sd
-Xt:(Xt-a)%sd
-
+-1"and then create a z-score function";
+zsf:.ml.zscoref each X
+-1"to normalized the train and test data with the same values";
+X:zsf @' X
+Xt:zsf @' Xt
 
 -1"next we define the topology";
 n:"j"$.util.nbin[2;count X;count Y];

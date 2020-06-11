@@ -135,10 +135,8 @@ show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
 -1"we split the wine quality data into train and test partitions";
 d:.util.part[`train`test!3 1;0N?] winequality.red.t
-X:1_value flip d.train
-Y:1#value flip d.train
-Xt:1_value flip d.test
-Yt:1#value flip d.test
+`Y`X set' 0 1 cut value flip d.train
+`Yt`Xt set' 0 1 cut value flip d.test
 -1"and then create a z-score function";
 zsf:.ml.zscoref each X
 -1"to normalized the train and test data with the same values";

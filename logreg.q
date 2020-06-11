@@ -4,12 +4,8 @@
 
 -1"partitioning wdbc data into train and test";
 show d:.util.part[`train`test!3 1;0N?] "f"$update "M"=diagnosis from wdbc.t
-YX:value flip d`train
-y:first Y:1#YX
-X:1_YX
-YXt:value flip d`test
-yt:first Yt:1#YXt
-Xt:1_YXt
+y:first get first `Y`X set' 0 1 cut value flip d`train
+yt:first get first `Yt`Xt set' 0 1 cut value flip d`test
 
 -1"the sigmoid function is used to represent a binary outcome";
 plt:.util.plot[30;15;.util.c10;sum]

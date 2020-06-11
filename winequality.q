@@ -5,6 +5,6 @@ winequality.b,:"wine-quality/"
 .util.download[winequality.b;;"";""] each winequality.f;
 .winequality.load:{[f]
  YX:value flip t:`quality xcols .Q.id (12#"F";1#";")0:f;
- d:`YX`X`Y`y`t!(YX;1_YX;1#YX;YX 0;t);
+ d:`X`Y`y`t!(1_YX;1#YX;YX 0;t);
  d}
 winequality,:.winequality.load each `$winequality.f

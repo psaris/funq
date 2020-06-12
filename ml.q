@@ -128,7 +128,7 @@ prb:dax[%;sum]
 / given (g)rouped dictionary, compute the odds
 odds:{[g]prb count each g}
 / given (w)eight vector and (g)rouped dictionary, compute the weighted odds
-wodds:{[w;g]prb sum each w g}
+wodds:{[w;g]prb sum each w*g}
 
 / frequency and mode primitives
 

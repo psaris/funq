@@ -893,7 +893,7 @@ logcostgradf:{[rf;Y;X]
 
 / one vs all
 
-/ given binary classification fitting (f)unction, fit a one-vs-all model
+/ given binary classification fitting (f)unction, fit a one-vs.-all model
 / against Y for each unique (lbls)
 fova:{[f;Y;lbls] (f "f"$Y=) peach lbls}
 

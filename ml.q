@@ -219,8 +219,9 @@ knn:{[wf;k;y;d]
  p}
 
 / given (w)eighting (f)unction, (d)istance (f)unction, atom or vector of (k)
-/ values, a (y) vector and matrix(X), return a prediction composition
+/ values, a (y) vector and matri(X), 'fit' a knn 'model'
 fknn:{[wf;df;k;y;X] knn[wf;k;y] df[X]::}
+pknn:@               / predict knn by applying model returned from fknn to X
 
 / partitional clustering initialization methods
 
@@ -254,8 +255,8 @@ kmedianspp:kpp[mdist]           / k-medians++ initialization
 cgroup:{[df;X;C]value group imin f2nd[df X] C}
 
 / Stuart Lloyd's algorithm. uses (d)istance (f)unction to assign the
-/ matrix(X) to the nearest (C)entroid and then uses the (c)entroid
-/ (f)unction to update the centroid location.
+/ matri(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction
+/ to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 
 kmeans:lloyd[edist2;avg'']      / k-means

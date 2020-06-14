@@ -36,7 +36,7 @@ i:.util.part[n#1;0N?] til count X 0
 Xs:flip X[;i]
 ys:y i
 ff:.ml.fknn[sqrt 1f%;.ml.pedist2]
-pf:@
+pf:.ml.pknn
 e:ys=p:.ml.xv[ff ks;pf;flip (ys;Xs)] peach til n
 
 -1"find k with maximum accuracy";

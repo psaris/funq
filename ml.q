@@ -586,9 +586,13 @@ dt:{[cgf;ogf;ipf;opt;w;t]
  b[2]:.z.s[cgf;ogf;ipf;@[opt;`maxd;-;1]]'[w g;t g]; / split sub-trees
  bf,1_b}
 
-/ predict the (d)ictionary based on decision (tr)ee
-pdt:{[tr;d] waom . pdtr[tr;d]}
-pdtr:{[tr;d]                    / recursive component
+/ use decision (tr)ee to make predictions for (d)ictionary
+pdt:{[tr;d]
+ if[98h=type d;:.z.s[tr] peach d]; / iterate on a table
+ p:waom . pdtr[tr;d];
+ p}
+/ use decision (tr)ee to recursively find leaf/leaves for (d)ictionary
+pdtr:{[tr;d]
  if[2=count tr;:tr];            / (w;a)
  if[not null k:d tr 0;if[(a:tr[1][k]) in key tr[2];:.z.s[tr[2] a;d]]];
  v:(,'/) tr[2] .z.s\: d;    / dig deeper for null values
@@ -716,10 +720,11 @@ rt:dt[oig;oig;wmse]             / regression tree
 bag:{[n;f;t](f ?[;t]::) peach n#count t} / (b)ootstrap (ag)gregating
 
 / given an atom or list (k), and bootstrap aggregating (m)odel, make
-/ predictions on samples in (t)able
-pbag:{[k;m;t]
+/ prediction on (d)ictionary
+pbag:{[k;m;d]
  if[count[m]<max k;'`length];
- p:k {(aom x#) each y}\: m pdt\:/: t;
+ if[98h=type d;:.z.s[k;m] peach d]; / iterate on a table
+ p:k {aom x#y}\: pdt[;d] peach m;
  p}
 
 / discrete adaptive boosting
@@ -730,7 +735,7 @@ pbag:{[k;m;t]
 adaboost:{[tf;cf;w;t]
  if[(::)~w;w:n#1f%n:count t];    / initialize weights
  m:tf[w] t;                      / train model
- p:cf[m] each t;                 / make predictions
+ p:cf[m] t;                      / make predictions
  e:sum w*not p=y:first flip t;   / compute weighted error
  a:.5*log (c:1f-e)%e;            / compute alpha (minimize exponential loss)
  / w*:exp neg a*y*p;               / increase/decrease weights
@@ -743,10 +748,11 @@ adaboost:{[tf;cf;w;t]
 fab:{[k;tf;cf;t] 1_max[k] (adaboost[tf;cf;;t] last::)\ (::)}
 
 / given an atom or list (k), discrete (c)lassifier function, adaboost
-/ (m)odel, make predictions on samples in (t)able
-pab:{[k;cf;m;t]
+/ (m)odel, make prediction on (d)ictionary
+pab:{[k;cf;m;d]
  if[count[m]<mx:max k;'`length];
- p:m[;1] * m[;0] cf/:\: t;
+ if[98h=type d;:.z.s[k;cf;m] peach d]; / iterate on a table
+ p:m[;1] * cf[;d] peach m[;0];
  p:signum $[0h>type k;sum k#p;sums[mx#p] k-1];
  p}
 

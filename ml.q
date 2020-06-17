@@ -34,8 +34,8 @@ mchol:{[X]                      / Cholesky decomposition
   ];
  L}
 
-/ matrix overload of where
-mwhere:{
+/ tensor variant of where
+twhere:{
  if[type x;:enlist where x];
  x:(,'/) til[count x] {((1;count y 0)#x),y}' .z.s each x;
  x}
@@ -989,7 +989,7 @@ cfcostgrad:{[rf;n;Y;xtheta]
 / value one at a time.  (s)ampling (f)unction: til = no shuffle, 0N? =
 / shuffle, {x?x} = bootstrap.  pass (::) for xy to initiate sgd.
 sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
- if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip mwhere not null Y];
+ if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip twhere not null Y];
  e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;xy 1 0); / error
  XTHETA:./[XTHETA;0 1,'i;+;a*(e*xt 1 0)-l2*xt];  / adjust X and THETA
  XTHETA}
@@ -1046,7 +1046,7 @@ shape:{$[0h>t:type x;0#0;n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
 / sparse from tensor
-sparse:{(shape x;(x') . i),i:mwhere "b"$x}
+sparse:{(shape x;(x') . i),i:twhere "b"$x}
 / tensor from sparse
 full:{./[x[0]#0f;flip 2_x;:;x 1]}
 / sparse matrix transpose

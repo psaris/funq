@@ -19,7 +19,7 @@ show l:(i;j)
 node:asc distinct raze l
 l:node?l
 -1 "we can transform the sparse connectivity matrix";
-show S:(1 2#1+max over l), .ml.append[1f] l
+show S:(1 2#1+max over l), .ml.prepend[1f] l
 -1 "into a full matrix";
 show A:.ml.full S
 -1 "using matrix inversion, we can algebraically compute the pagerank";
@@ -40,7 +40,7 @@ show node[i]!r i:idesc r:$[;.ml.google[d;A]] over r:n#1f%n:count A
 / https://lintool.github.io/Cloud9/docs/exercises/pagerank.html
 node:asc distinct raze cloud9.l
 l:node?cloud9.l
-show S:(1 2#1+max over l), .ml.append[1f] l
+show S:(1 2#1+max over l), .ml.prepend[1f] l
 show node[i]!r i:idesc r:.ml.pageranks[d;S] over r:n#1f%n:S[0;0]
 -1 "into a full matrix";
 show A:.ml.full S
@@ -50,7 +50,7 @@ show node[i]!r i:idesc r:$[;.ml.google[d;A]] over r:n#1f%n:count A
 
 node:asc distinct raze berkstan.l
 l:node?berkstan.l
-show S:(1 2#1+max over l), .ml.append[1f] l
+show S:(1 2#1+max over l), .ml.prepend[1f] l
 -1"not enough memory to convert sparse -> full matrix";
 -1"just perform a few sparse iterations";
 show node[i]!r i:idesc r:10 .ml.pageranks[d;S]/ r:n#1f%n:S[0;0]

@@ -1046,22 +1046,22 @@ shape:{$[0h>t:type x;0#0;n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
 / sparse from tensor
-sparse:{enlist[shape x],i,enlist (x') . i:mwhere "b"$x}
+sparse:{(shape x;(x') . i),i:mwhere "b"$x}
 / tensor from sparse
-full:{./[x[0]#0f;flip x 1+til -2+count x;:;last x]}
+full:{./[x[0]#0f;flip 2_x;:;x 1]}
 / sparse matrix transpose
-smt:{(reverse x 0;x 2;x 1;x 3)}
+smt:{(reverse x 0;x 1;x 3;x 2)}
 / sparse matrix multiplication
 smm:{
- t:ej[`;flip ``c`v!1_y;flip`r``w!1_x];
- t:0!select sum w*v by r,c from t;
- m:enlist[(x[0;0];y[0;1])],value flip t;
+ t:ej[`;flip `v``c!1_y;flip`w`r`!1_x];
+ t:0!select sum w*v by c,r from t;
+ m:enlist[(x[0;0];y[0;1])],reverse value flip t;
  m}
 / sparse matrix addition
 sma:{
- t:flip[`r`c`v!1_y],flip`r`c`v!1_x;
- t:0!select sum v by r,c from t;
- m:enlist[x 0],value flip t;
+ t:flip[`v`r`c!1_y],flip`v`r`c!1_x;
+ t:0!select sum v by c,r from t;
+ m:enlist[x 0],reverse value flip t;
  m}
 
 / Google PageRank
@@ -1095,7 +1095,7 @@ pageranki:{[d;A;r]
 / (S)parse adjacency matrix and an initial (r)ank vector, obtain a better
 / ranking (iterative model)
 pageranks:{[d;S;r]
- w:sum r*0f=s:0f^sum'[S[3] group S 1]til n:S[0;0]; / compute dangling weight
+ w:sum r*0f=s:0f^sum'[S[1] group S 2]til n:S[0;0]; / compute dangling weight
  r:first full[smm[sparse enlist r%1f|s;S]]+w%n;    / compute rankings
  r:(d*r)+(1f-d)%n;                                 / dampen
  r}

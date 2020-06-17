@@ -1045,10 +1045,10 @@ checkcfgrad:{[e;rf;n]
 shape:{$[0h>t:type x;0#0;n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
-/ sparse from matrix
+/ sparse from tensor
 sparse:{enlist[shape x],i,enlist (x') . i:mwhere "b"$x}
-/ matrix from sparse
-full:{./[x[0]#0f;flip x 1 2;:;x 3]}
+/ tensor from sparse
+full:{./[x[0]#0f;flip x 1+til -2+count x;:;last x]}
 / sparse matrix transpose
 smt:{(reverse x 0;x 2;x 1;x 3)}
 / sparse matrix multiplication

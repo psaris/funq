@@ -817,7 +817,7 @@ ridge:{[l2;Y;X]mm[mmt[Y;X]] minv mmt[X;X]+diag count[X]#l2}
 / given (l2) regularization parameter, target vector y and data matri(X),
 / return theta vector resulting from performing weighted ridge regression by
 / scaling the regularization parameter by the count of non-null values
-wridge:{[l2;X;y]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
+wridge:{[l2;y;X]first ridge[l2*count i;enlist y i;X[;i:where not null y]]}
 
 / linearly predict Y values by prepending matri(X) with a vector of 1s and
 / multiplying the result to (THETA) coefficients
@@ -996,8 +996,8 @@ sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
 
 / ALS-WR (a)lternating (l)east (s)quares with (w)eighted (r)egularization
 alswr:{[l2;Y;XTHETA]
- X:flip f2nd[wridge[l2;XTHETA 1]] Y; / hold THETA constant, solve for X
- THETA:flip wridge[l2;X] peach Y;    / hold X constant, solve for THETA
+ X:flip f2nd[wridge[l2;;XTHETA 1]] Y; / hold THETA constant, solve for X
+ THETA:flip wridge[l2;;X] peach Y;    / hold X constant, solve for THETA
  (X;THETA)}
 
 / top n svd factors

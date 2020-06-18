@@ -483,7 +483,7 @@ tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
 / fit parameters given (w)eighted (m)aximization (f)unction returns a
 / dictionary with prior and conditional likelihoods
-fnb:{[wmf;w;X;y]
+fnb:{[wmf;w;y;X]
  if[(::)~w;w:count[y]#1f];      / handle unassigned weight
  pT:(odds g; (wmf . (w;X@\:) @\:) peach g:group y);
  pT}

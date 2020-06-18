@@ -12,7 +12,7 @@ Xt:(6 7f;130 190f;8 12f)                           / test data
 -1"assuming Gaussian distribution";
 -1"analyzing mock dataset";
 -1"building classifier";
-show pT:.ml.fnb[.ml.wgaussmle/:;::;X;y] / build classifier
+show pT:.ml.fnb[.ml.wgaussmle/:;::;y;X] / build classifier
 -1"confirming accuracy";
 .util.assert[`female`male] .ml.pnb[0b;.ml.gaussl;pT] Xt / make classification predictions
 .util.assert[`female`male] .ml.pnb[1b;.ml.gaussll;pT] Xt / use log likelihood
@@ -20,7 +20,7 @@ show pT:.ml.fnb[.ml.wgaussmle/:;::;X;y] / build classifier
 / iris
 -1"analyzing iris data set";
 -1"building classifier";
-pT:.ml.fnb[.ml.wgaussmle/:;::;iris.X;iris.y] / build classifier
+pT:.ml.fnb[.ml.wgaussmle/:;::;iris.y;iris.X] / build classifier
 -1"confirming accuracy";
 .util.assert[.96f] avg iris.y=.ml.pnb[0b;.ml.gaussl;pT] iris.X / how good is classification
 .util.assert[.96f] avg iris.y=.ml.pnb[1b;.ml.gaussll;pT] iris.X / how good is classification
@@ -40,20 +40,20 @@ y:(6#`sport),5#`informatics
 -1"analyzing mock dataset";
 / Bernoulli
 -1"building classifier";
-show pT:.ml.fnb[.ml.wbinmle[1;0]/:;::;0<X;y] / build classifier
+show pT:.ml.fnb[.ml.wbinmle[1;0]/:;::;y;0<X] / build classifier
 -1"confirming accuracy";
 .util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[1];pT] Xt / make classification prediction
 .util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[1];pT] Xt / make classification prediction
 
 / Bernoulli - add one smoothing
 -1"testing Bernoulli add one smoothing";
-show pT:.ml.fnb[.ml.wbinmle[2;0]/:;::;1+0<X;y]
+show pT:.ml.fnb[.ml.wbinmle[2;0]/:;::;y;1+0<X]
 .util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[2];pT] Xt
 .util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[2];pT] Xt / use log likelihood
 
 / multinomial - add one smoothing
 -1"testing multinomial add one smoothing";
-show pT:.ml.fnb[.ml.wmultimle[1];::;X;y]
+show pT:.ml.fnb[.ml.wmultimle[1];::;y;X]
 .util.assert[`sport`informatics] .ml.pnb[0b;.ml.multil;pT] Xt
 .util.assert[`sport`informatics] .ml.pnb[1b;.ml.multill;pT] Xt / use log likelihood
 
@@ -72,7 +72,7 @@ Xt:flip enlist 3 0 0 0 1 1
 
 / multinomial - add one smoothing
 -1"building classifier";
-show flip pT:.ml.fnb[.ml.wmultimle[1];::;X;y]
+show flip pT:.ml.fnb[.ml.wmultimle[1];::;y;X]
 -1"confirming accuracy";
 .util.assert[1#`c] .ml.pnb[0b;.ml.multil;pT] Xt
 .util.assert[1#`c] .ml.pnb[1b;.ml.multill;pT] Xt
@@ -94,7 +94,7 @@ ct:d . `test`text
 yt:d . `test`class
 Xt:.ml.tdm[ct] v
 -1 "fitting multinomial naive bayes classifier";
-pT:.ml.fnb[.ml.wmultimle[1];::;flip X;y]
+pT:.ml.fnb[.ml.wmultimle[1];::;y;flip X]
 -1"confirming accuracy";
 avg yt=p:.ml.pnb[0b;.ml.multil;pT] flip Xt
 -1 "sorting model by strong spam signal";

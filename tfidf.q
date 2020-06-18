@@ -55,7 +55,7 @@ y:d . `train`class
 -1"generating vocabulary and term document matrix";
 X:0f^.ml.tfidf[.ml.lntf;.ml.idf] .ml.tdm[c] v:asc distinct raze c
 -1 "fitting multinomial naive bayes classifier";
-pT:.ml.fnb[.ml.wmultimle[1];(::);flip X;y]
+pT:.ml.fnb[.ml.wmultimle[1];(::);y;flip X]
 -1"confirming accuracy";
 ct:d . `test`text
 yt:d . `test`class

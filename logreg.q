@@ -54,14 +54,14 @@ theta:first .fmincg.fmincg[1000;.ml.logcostgrad[();Y;X];theta]
 -1"compute cost of initial theta estimate";
 .ml.logcost[();Y;X;enlist theta]
 
--1"test models accuracy";
+-1"test model's accuracy";
 avg yt="i"$p:first .ml.plog[Xt;enlist theta]
 
 -1"lets add some regularization";
 theta:(1+count X)#0f;
 theta:first .fmincg.fmincg[1000;.ml.logcostgrad[.ml.l1[10];Y;X];theta]
 
--1"test models accuracy";
+-1"test model's accuracy";
 avg yt="i"$p:first .ml.plog[Xt;enlist theta]
 
 show .util.totals[`TOTAL] .ml.cm["i"$yt;"i"$p]

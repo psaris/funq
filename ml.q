@@ -800,8 +800,8 @@ gd:{[a;gf;THETA] THETA-a*gf THETA} / gradient descent
 / (g)radient (f)unction over (n) subsamples of (X) and (Y) generated with
 / (s)ampling (f)unction: til = no shuffle, 0N? = shuffle, {x?x} = bootstrap
 sgd:{[a;gf;sf;n;Y;X;THETA]        / stochastic gradient descent
- i:(n;0N)#sf count X 0;
- THETA:THETA (gd[a] . (gf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ i;
+ I:(n;0N)#sf count X 0;
+ THETA:THETA (gd[a] . (gf .;::)@'{(x[;;z];y)}[(Y;X)]::)/ I;
  THETA}
 
 / linear regression
@@ -989,9 +989,9 @@ cfcostgrad:{[rf;n;Y;xtheta]
 / value one at a time.  (s)ampling (f)unction: til = no shuffle, 0N? =
 / shuffle, {x?x} = bootstrap.  pass (::) for xy to initiate sgd.
 sgdmf:{[a;l2;sf;Y;XTHETA;xy] / sgd matrix factorization
- if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ i sf count i:flip twhere not null Y];
- e:(Y . xy)-dot . xt:XTHETA .'i:flip(::;xy 1 0); / error
- XTHETA:./[XTHETA;0 1,'i;+;a*(e*xt 1 0)-l2*xt];  / adjust X and THETA
+ if[(::)~xy;:XTHETA .z.s[a;l2;sf;Y]/ I sf count I:flip twhere not null Y];
+ e:(Y . xy)-dot . xt:XTHETA .'I:flip(::;xy 1 0); / error
+ XTHETA:./[XTHETA;0 1,'I;+;a*(e*xt 1 0)-l2*xt];  / adjust X and THETA
  XTHETA}
 
 / ALS-WR (a)lternating (l)east (s)quares with (w)eighted (r)egularization
@@ -1046,7 +1046,7 @@ shape:{$[0h>t:type x;0#0;n:count x;n,.z.s x 0;1#0]}
 / rank of a tensor (atom, vector, matrix, etc)
 dim:count shape::
 / sparse from tensor
-sparse:{(shape x;(x') . i),i:twhere "b"$x}
+sparse:{(shape x;(x') . I),I:twhere "b"$x}
 / tensor from sparse
 full:{./[x[0]#0f;flip 2_x;:;x 1]}
 / sparse matrix transpose

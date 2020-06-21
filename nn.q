@@ -30,7 +30,7 @@ show Y:.ml.diag[(1+max y)#1f]@\:y
 -1"we present an example with a single hidden layer";
 -1"the size of the first and last layer are fixed.";
 -1"a good size for the middle layer is the average of the first and last";
-n:0N!"j"$.util.nbin[2;count X;count Y]
+n:0N!"j"$.util.nseq[2;count X;count Y]
 
 -1"correctly picking the initial THETA values is important.";
 -1"instead of setting them all to a 0 (or any constant value),";
@@ -144,7 +144,7 @@ X:zsf @' X
 Xt:zsf @' Xt
 
 -1"next we define the topology";
-n:"j"$.util.nbin[2;count X;count Y];
+n:"j"$.util.nseq[2;count X;count Y];
 -1"add some regularization";
 rf:.ml.l2[l2:10f];
 -1"add initialize the THETA coefficients";

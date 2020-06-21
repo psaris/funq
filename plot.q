@@ -23,7 +23,7 @@ plt:.util.plot[w:40;h:20;c:.util.c10;sum]
 b:1b / use binary encoding for portable (bit|pix)map
 
 -1"plotting black/white Mandelbrot series";
-c:.util.tcross . (.util.nbin .) each flip (-1+w:1000;-2 -1.25;.5 1.25)
+c:.util.tcross . (.util.nseq .) each flip (-1+w:1000;-2 -1.25;.5 1.25)
 x:w cut .ml.mbrotp 20 .ml.mbrotf[c]/0f
 -1 value  plt .util.hmap x;
 -1"saving PBM image";

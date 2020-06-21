@@ -21,7 +21,7 @@ avg yt=p:.ml.knn[sqrt 1f%;k;y] D:.ml.pedist2[X;Xt]
 -1"computing the accuracy of each digit";
 show avg each (p=yt)[i] group yt i:iasc yt
 -1"viewing the confusion matrix, we can see 7 is often confused with 1";
-show .util.totals[`TOTAL] .ml.cm[yt;p]
+show .ut.totals[`TOTAL] .ml.cm[yt;p]
 
 ks:1+til 10
 -1"compare different choices of k: ", -3!ks;
@@ -32,7 +32,7 @@ show t;
 
 n:5
 -1"cross validate with ", string[n], " buckets";
-i:.util.part[n#1;0N?] til count X 0
+i:.ut.part[n#1;0N?] til count X 0
 Xs:flip X[;i]
 ys:y i
 ff:.ml.fknn[sqrt 1f%;.ml.pedist2]

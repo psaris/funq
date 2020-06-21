@@ -1,9 +1,9 @@
 etl9b.f:"ETL9B"
 etl9b.b:"http://etlcdb.db.aist.go.jp/etlcdb/data/"
 -1"[down]loading handwritten-kanji data set";
-.util.download[etl9b.b;;".zip";.util.unzip] etl9b.f;
+.ut.download[etl9b.b;;".zip";.ut.unzip] etl9b.f;
 -1"loading etl9b ('binalized' dataset)";
-etl9b.x:.util.etl9b read1 `:ETL9B/ETL9B_1
+etl9b.x:.ut.etl9b read1 `:ETL9B/ETL9B_1
 -1"extracting the X matrix and y vector";
 etl9b.h:0x24,/:"x"$0x21+0x01*til 83 / hiragana
 / etl9b.h:0x25,/:"x"$0x21+0x01*til 83 / katakana (missing)

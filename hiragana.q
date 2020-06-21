@@ -19,11 +19,11 @@ X:500#'X;y:500#y;h:500#h;
 system "S ",string "i"$.z.T
 
 -1"view 4 random drawings of the same character";
-plt:value .util.plot[32;16;.util.c10;avg] .util.hmap flip 64 cut
+plt:value .ut.plot[32;16;.ut.c10;avg] .ut.hmap flip 64 cut
 -1 (,'/) plt each X@\:/: rand[count h]+count[distinct y]*til 4;
 
 -1"generate neural network topology with one hidden layer";
-n:0N!"j"$.util.nseq[2;count X;count h]
+n:0N!"j"$.ut.nseq[2;count X;count h]
 Y:.ml.diag[last[n]#1f]@\:"i"$y
 
 rf:.ml.l2[1]                     / l2 regularization function
@@ -48,4 +48,4 @@ w:where not y=p
 -1 (,'/) plt each X@\:/: value ([]p;y) rw:rand w;
 
 -1"view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[y;"j"$p]
+show .ut.totals[`TOTAL] .ml.cm[y;"j"$p]

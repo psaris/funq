@@ -13,9 +13,9 @@ k:3
 show C:"f"$k?/:2#20
 -1"and scatter points around the centroids with normally distributed errors";
 X:raze each C+.ml.bm(2;k)#100?/:(2*k)#1f
-show .util.plot[19;10;.util.c10;sum] X
+show .ut.plot[19;10;.ut.c10;sum] X
 
--1 .util.box["**"] (
+-1 .ut.box["**"] (
  "kmeans is an implementation of lloyds algorithm,";
  "which alternates between assigning points to a cluster";
  "and updating the cluster's center.");
@@ -33,7 +33,7 @@ show .util.plot[19;10;.util.c10;sum] X
 -1"the random partition method can also be done by hand";
 .ml.kmeans[X] over .ml.rpart[avg;k] X
 -1"we can plot the data and overlay the centroids found using kmeans++";
-show .util.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over .ml.forgy[k] X
+show .ut.plt .ml.append[0N;X],' .ml.append[1] .ml.kmeans[X] over .ml.forgy[k] X
 
 -1"kmedians uses the lloyd algorithm, but uses the *Manhattan distance*";
 -1"also known as the taxicab metric to assign points to clusters";
@@ -48,21 +48,21 @@ show .ml.kmedians[X] scan .ml.forgy[k] X
 -1"we can apply kmeans to the classic machine learning iris data";
 `X`y`t set' iris`X`y`t;
 -1"we can see how the data set clusters the petal width";
-show .util.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
+show .ut.plt (t.pwidth;t.plength;{distinct[x]?x} t.species)
 
 -1"we iteratively call kmeans until convergence";
 C:.ml.kmeans[X] over last 3 .ml.kmeanspp[X]// 2#()
 -1"and can show which group each data point was assigned to";
 show m:.ml.mode each y I:.ml.cgroup[.ml.edist2;X;C] / classify
 -1"what percentage of the data did we classify correctly?";
-avg y=p:.util.ugrp m!I            / accuracy
+avg y=p:.ut.ugrp m!I            / accuracy
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;p]
+show .ut.totals[`TOTAL] .ml.cm[y;p]
 
 / plot errors with increasing number of clusters
 -1"we can also plot the total ssw from using different values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()}[X] each 1+til 10
-show .util.plt .ml.distortion[.ml.edist2;X] peach C
+show .ut.plt .ml.distortion[.ml.edist2;X] peach C
 
 -1"an alternative to k-means is the k-medoids algorithm";
 -1"that finds actual data points at the center of each cluster";
@@ -73,21 +73,21 @@ show .util.plt .ml.distortion[.ml.edist2;X] peach C
 -1"we can use any distance metric, but Manhattan and Euclidean";
 -1"(not Euclidean squared) are the most popular";
 C:.ml.pam[.ml.edist][X] over X@\:3?count X
-show .util.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
+show .ut.plt .ml.append[0N;X 1 2],'.ml.append[1] C 1 2
 
 -1"let's apply the analyis to one of the uef reference cluster datasets";
 X:uef.a1
-show .util.plot[39;20;.util.c10;sum] X
+show .ut.plot[39;20;.ut.c10;sum] X
 -1"first we generate the centroids for a few values for k";
 C:{[X;k].ml.kmeans[X] over last k .ml.kmeanspp[X]// 2#()}[X] peach ks:10+til 20
 -1"then we cluster the data";
 I:.ml.cgroup[.ml.edist2;X] peach C
 -1"plot elbow curve (k vs ssw)";
-show .util.plt .ml.ssw[X] peach I
+show .ut.plt .ml.ssw[X] peach I
 -1"plot elbow curve (k vs % of variance explained)";
-show .util.plt (.ml.ssb[X] peach I)%.ml.sse[X]
+show .ut.plt (.ml.ssb[X] peach I)%.ml.sse[X]
 -1"plot silhouette curve (k vs silhouette)";
-show .util.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
+show .ut.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
-show .util.plot[39;20;.util.c10;avg] .ml.append[0N;X],'.ml.append[1] C i
+show .ut.plot[39;20;.ut.c10;avg] .ml.append[0N;X],'.ml.append[1] C i

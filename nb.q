@@ -14,16 +14,16 @@ Xt:(6 7f;130 190f;8 12f)                           / test data
 -1"building classifier";
 show pT:.ml.fnb[.ml.wgaussmle/:;::;y;X] / build classifier
 -1"confirming accuracy";
-.util.assert[`female`male] .ml.pnb[0b;.ml.gaussl;pT] Xt / make classification predictions
-.util.assert[`female`male] .ml.pnb[1b;.ml.gaussll;pT] Xt / use log likelihood
+.ut.assert[`female`male] .ml.pnb[0b;.ml.gaussl;pT] Xt / make classification predictions
+.ut.assert[`female`male] .ml.pnb[1b;.ml.gaussll;pT] Xt / use log likelihood
 
 / iris
 -1"analyzing iris data set";
 -1"building classifier";
 pT:.ml.fnb[.ml.wgaussmle/:;::;iris.y;iris.X] / build classifier
 -1"confirming accuracy";
-.util.assert[.96f] avg iris.y=.ml.pnb[0b;.ml.gaussl;pT] iris.X / how good is classification
-.util.assert[.96f] avg iris.y=.ml.pnb[1b;.ml.gaussll;pT] iris.X / how good is classification
+.ut.assert[.96f] avg iris.y=.ml.pnb[0b;.ml.gaussl;pT] iris.X / how good is classification
+.ut.assert[.96f] avg iris.y=.ml.pnb[1b;.ml.gaussll;pT] iris.X / how good is classification
 
 / inf2b-learn-note07-2up.pdf
 X:(2 0 0 1 5 0 0 1 0 0 0;       / goal
@@ -42,20 +42,20 @@ y:(6#`sport),5#`informatics
 -1"building classifier";
 show pT:.ml.fnb[.ml.wbinmle[1;0]/:;::;y;0<X] / build classifier
 -1"confirming accuracy";
-.util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[1];pT] Xt / make classification prediction
-.util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[1];pT] Xt / make classification prediction
+.ut.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[1];pT] Xt / make classification prediction
+.ut.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[1];pT] Xt / make classification prediction
 
 / Bernoulli - add one smoothing
 -1"testing Bernoulli add one smoothing";
 show pT:.ml.fnb[.ml.wbinmle[2;0]/:;::;y;1+0<X]
-.util.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[2];pT] Xt
-.util.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[2];pT] Xt / use log likelihood
+.ut.assert[`sport`informatics] .ml.pnb[0b;.ml.binl[2];pT] Xt
+.ut.assert[`sport`informatics] .ml.pnb[1b;.ml.binll[2];pT] Xt / use log likelihood
 
 / multinomial - add one smoothing
 -1"testing multinomial add one smoothing";
 show pT:.ml.fnb[.ml.wmultimle[1];::;y;X]
-.util.assert[`sport`informatics] .ml.pnb[0b;.ml.multil;pT] Xt
-.util.assert[`sport`informatics] .ml.pnb[1b;.ml.multill;pT] Xt / use log likelihood
+.ut.assert[`sport`informatics] .ml.pnb[0b;.ml.multil;pT] Xt
+.ut.assert[`sport`informatics] .ml.pnb[1b;.ml.multill;pT] Xt / use log likelihood
 
 / https://www.youtube.com/watch?v=km2LoOpdB3A
 X:(2 2 1 1; / chinese
@@ -74,18 +74,18 @@ Xt:flip enlist 3 0 0 0 1 1
 -1"building classifier";
 show flip pT:.ml.fnb[.ml.wmultimle[1];::;y;X]
 -1"confirming accuracy";
-.util.assert[1#`c] .ml.pnb[0b;.ml.multil;pT] Xt
-.util.assert[1#`c] .ml.pnb[1b;.ml.multill;pT] Xt
+.ut.assert[1#`c] .ml.pnb[0b;.ml.multil;pT] Xt
+.ut.assert[1#`c] .ml.pnb[1b;.ml.multill;pT] Xt
 
 -1"modeling spam/ham classifier";
 -1"remove unicode and punctuation characters from sms text";
-t:update .util.sr[.util.ua,.util.ha,.util.pw] peach text from smsspam.t
+t:update .ut.sr[.ut.ua,.ut.ha,.ut.pw] peach text from smsspam.t
 -1"tokenizing and removing stop words from sms text";
 t:update (except[;stopwords.xpo6] " " vs) peach lower text from t
 -1"user porter stemmer to stem sms txt";
 t:update (.porter.stem') peach text from t
 -1"partitioning sms messages between training and test";
-d:.util.part[`train`test!3 1;0N?] t
+d:.ut.part[`train`test!3 1;0N?] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";

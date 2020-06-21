@@ -1,4 +1,4 @@
-\d .util
+\d .ut
 
 / assert minimum required version of q
 

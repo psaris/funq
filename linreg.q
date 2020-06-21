@@ -1,11 +1,11 @@
 \c 20 100
 \l funq.q
 
-plt:.util.plot[30;15;.util.c10]
+plt:.ut.plot[30;15;.ut.c10]
 
 -1"generating 2 sets of independent normal random variables";
 / NOTE: matrix variables are uppercase
--1 .util.box["**"](
+-1 .ut.box["**"](
  "suppress the desire to flip matrices";
  "matlab/octave/r all store data in columns";
  "the following matrix *is* a two column matrix in q");
@@ -24,7 +24,7 @@ X[1]:(rho;sqrt 1f-rho*rho)$X
 -1"plotting correlations x,y";
 show plt[sum] X
 
--1 .util.box["**"] (
+-1 .ut.box["**"] (
  "mmu is usually used for matrix multiplication";
  "$ is usually used for vector dot product";
  "but they can be used interchangeably");
@@ -108,8 +108,8 @@ first .fmincg.fmincg[1000;cgf;theta]
 -1"let's check that we've implemented the gradient calculations correctly";
 cf:.ml.lincost[.ml.l2[l];Y;X]enlist::
 gf:first .ml.lingrad[.ml.l2[l];Y;X]enlist::
-.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+.ut.assert . .ut.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
 cgf:.ml.lincostgrad[.ml.l2[l];Y;X]
 cf:first cgf::
 gf:last cgf::
-.util.assert . .util.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]
+.ut.assert . .ut.rnd[1e-6] .ml.checkgrad[1e-4;cf;gf;theta]

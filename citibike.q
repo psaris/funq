@@ -1,25 +1,25 @@
-\l util.q
+\l ut.q
 .z.zd:17 2 6
 sd:2017.01m                     / start date
 ed:2017.12m                     / end date
 
 -1"[down]loading citibike data";
 b:"http://s3.amazonaws.com/tripdata/"
-m1:.util.sseq[1] . 2014.09 2016.12m
+m1:.ut.sseq[1] . 2014.09 2016.12m
 m1:m1 where m1 within (sd;ed)
 f1:,[;"-citibike-tripdata"] each string[m1] except\: "."
-.util.download[b;;".zip";.util.unzip] f1;
+.ut.download[b;;".zip";.ut.unzip] f1;
 
-m2:.util.sseq[1] . 2017.01 2017.12m
+m2:.ut.sseq[1] . 2017.01 2017.12m
 m2:m2 where m2 within (sd;ed)
 f2:,[;"-citibike-tripdata"] each string[m2] except\: "."
-.util.download[b;;".csv.zip";.util.unzip] f2;
+.ut.download[b;;".csv.zip";.ut.unzip] f2;
 
 / data since 2018 has an extra column
-/ m3:.util.sseq[1] . 2018.01m,-1+"m"$.z.D
+/ m3:.ut.sseq[1] . 2018.01m,-1+"m"$.z.D
 / f3:,[;"_citibikenyc_tripdata"] each string[m3] except\: "."
 / -1"[down]loading citibike data";
-/ .util.download[b;;".csv.zip";.util.unzip] f3;
+/ .ut.download[b;;".csv.zip";.ut.unzip] f3;
 
 process:{[month;f]
  -1"parsing ", string f;

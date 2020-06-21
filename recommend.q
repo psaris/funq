@@ -28,7 +28,7 @@ theta:raze 0N!THETA:(1;1+count X)#0f
 rf:.ml.l2[.1]                   / l2 regularization
 theta:first .fmincg.fmincg[20;.ml.lincostgrad[rf;Y;X];theta] / learn
 -1"confirm lincostgrad handled the null Y values";
-.util.assert[2.4 0.2 0.4 -0.2 0.4] .util.rnd[.1] 5#theta
+.ut.assert[2.4 0.2 0.4 -0.2 0.4] .ut.rnd[.1] 5#theta
 -1"view our deduced genre preferences";
 show {(5#x),-5#x}desc genre!1_theta
 -1"how closely do the computed scores match our preferences";
@@ -119,7 +119,7 @@ show `score xdesc update score:p,movieId.title from ([]movieId:m)#r
 nf:10;
 
 if[2<count key `.qml;
- -1 .util.box["**"] (
+ -1 .ut.box["**"] (
   "singular value decomposition (svd) allows us to compute latent factors (off-line)";
   "and perform simple matrix multiplication to make predictions (on-line)");
  -1"compute score based on top n svd factors";
@@ -139,12 +139,12 @@ if[2<count key `.qml;
  -1"what does the first factor look like?";
  show each {(5#x;-5#x)}([]movieId:m idesc usv[2][;0])#movie;
  -1"how much variance does each factor explain?";
- show .util.plot[40;19;.util.c10;avg] {x%sum x*:x}.qml.mdiag usv 1;
+ show .ut.plot[40;19;.ut.c10;avg] {x%sum x*:x}.qml.mdiag usv 1;
  ];
 
 / regularized gradient descent
 
--1 .util.box["**"] (
+-1 .ut.box["**"] (
  "regularized gradient descent collaborative filtering";
  "doesn't need to be filled with default values";
  "and can use regularization");
@@ -163,7 +163,7 @@ show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 show select from t where not null rating
 
 -1"check collaborative filtering gradient calculations";
-.util.assert . .util.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
+.ut.assert . .ut.rnd[1e-6] .ml.checkcfgrad[1e-4;rf;20 5]
 
 / stochastic regularized gradient descent
 -1"by solving for each rating, one at a time";
@@ -208,4 +208,4 @@ P:au+.ml.pcf . XTHETA           / predictions
 show t:`score xdesc update score:last P,movieId.title from ([]movieId:m)#r
 -1"compare against existing ratings";
 show s:select from t where not null rating
-.util.assert[0f] .util.rnd[.01] avg exec .ml.mseloss[rating;score] from s
+.ut.assert[0f] .ut.rnd[.01] avg exec .ml.mseloss[rating;score] from s

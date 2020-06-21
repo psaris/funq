@@ -18,8 +18,8 @@ phi:2#1f%2f                  / coins are picked with equal probability
 / which flips came from which THETA? pick maximum log likelihood
 
 pT:(.ml.em[1b;lf;mf;x]//) pT
-.util.assert[1 0 0 1 0] .ml.imax .ml.likelihood[0b;lf;x] . pT
-.util.assert[1 0 0 1 0] .ml.imax .ml.likelihood[1b;.ml.binll[n];x] . pT
+.ut.assert[1 0 0 1 0] .ml.imax .ml.likelihood[0b;lf;x] . pT
+.ut.assert[1 0 0 1 0] .ml.imax .ml.likelihood[1b;.ml.binll[n];x] . pT
 
 
 / multinomial example
@@ -36,7 +36,7 @@ p:.ml.imax .ml.likelihood[1b;.ml.mmmll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m p]
+show .ut.totals[`TOTAL] .ml.cm[y;m p]
 
 
 / Gaussian mixtures
@@ -46,7 +46,7 @@ mu0:10 20 30                    / distribution's mu
 s20:s0*s0:1 3 2                 / distribution's variance
 m0:100 200 150                  / number of points per distribution
 X:raze X0:mu0+s0*(.ml.bm ?[;1f]::) each m0 / build dataset
-show .util.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and gaussian curves
+show .ut.plt raze each (X0;0f*X0),'(X0;.ml.gaussl'[mu0;s20;X0]) / plot 1d data and gaussian curves
 k:count mu0
 phi:k#1f%k;      / guess that distributions occur with equal frequency
 mu:neg[k]?X;     / pick k random points as centers
@@ -71,8 +71,8 @@ p:.ml.imax .ml.likelihood[1b;.ml.gaussmvll;X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m p]
--1 value .util.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
+show .ut.totals[`TOTAL] .ml.cm[y;m p]
+-1 value .ut.plt .ml.append[0;X 0 2],'.ml.append[1] flip[pT[1;;0]] 0 2;
 
 -1"let's cluster hand written numbers into groups";
 -1"assuming each pixel of a black/white image is a Bernoulli distribution,";
@@ -82,7 +82,7 @@ show .util.totals[`TOTAL] .ml.cm[y;m p]
 X:1000#'X;y:1000#y;
 -1"convert the grayscale image into black/white";
 X>:128
-plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
+plt:value .ut.plot[28;14;.ut.c10;avg] .ut.hmap flip 28 cut
 k:10
 -1"let's use ",string[k]," clusters";
 -1"we first initialize phi to be equal weight across all clusters";
@@ -108,4 +108,4 @@ p:.ml.imax .ml.likelihood[1b;.ml.bmmll[1];X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";
-show .util.totals[`TOTAL] .ml.cm[y;m p]
+show .ut.totals[`TOTAL] .ml.cm[y;m p]

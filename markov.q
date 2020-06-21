@@ -18,7 +18,7 @@ t,:`hit`bit,0.16
 / take max of bidirectional links, enumerate keys
 k:()
 m:.ml.inflate[1;0f] .ml.addloop m|:flip m:.ml.full enlist[2#count k],exec (v;`k?k1;`k?k2) from t
-.util.assert[(`hat`bat`cat;`bit`fit`hit)] (get`k!) each .ml.interpret .ml.mcl[2;1.5;0f] over m
+.ut.assert[(`hat`bat`cat;`bit`fit`hit)] (get`k!) each .ml.interpret .ml.mcl[2;1.5;0f] over m
 
 / cluster the iris data
 sm:.5<.ml.gaussk[iris.X;.5] each flip iris.X / similarity matrix based on Gaussian kernel

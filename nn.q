@@ -12,7 +12,7 @@ X:1000#'X;y:1000#y;
 X%:255f;Xt%:255f
 
 -1"define a plot function that includes the empty space character";
-plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
+plt:value .ut.plot[28;14;.ut.c10;avg] .ut.hmap flip 28 cut
 -1"visualize the data";
 -1 (,'/) plt each X@\:/: -4?count X 0;
 
@@ -30,7 +30,7 @@ show Y:.ml.diag[(1+max y)#1f]@\:y
 -1"we present an example with a single hidden layer";
 -1"the size of the first and last layer are fixed.";
 -1"a good size for the middle layer is the average of the first and last";
-n:0N!"j"$.util.nseq[2;count X;count Y]
+n:0N!"j"$.ut.nseq[2;count X;count Y]
 
 -1"correctly picking the initial THETA values is important.";
 -1"instead of setting them all to a 0 (or any constant value),";
@@ -50,22 +50,22 @@ show .ml.nncostgrad[rf;n;hgolf;Y;X;theta]
 -1"in addition, it is important to confirm that the analytic gradient we compute";
 -1"is the same (at least to a few significant digits)";
 -1"as a discrete (and slower to calculate) gradient.";
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;.ml.l2[.1];3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;.ml.l2[.1];3 5 10 50 2;hgolf]
 -1"confirming gradient of a few different activation and loss functions";
 hgolf:`h`g`o`l!`.ml.relu`.ml.drelu`.ml.sigmoid`.ml.logloss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.relu`.ml.drelu`.ml.softmax`.ml.celoss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.lrelu`.ml.dlrelu`.ml.sigmoid`.ml.logloss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.sigmoid`.ml.logloss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.softmax`.ml.celoss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.tanh`.ml.dtanh`.ml.linear`.ml.mseloss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 hgolf:`h`g`o`l!`.ml.linear`.ml.dlinear`.ml.linear`.ml.mseloss
-.util.assert . a:.util.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
+.ut.assert . a:.ut.rnd[1e-6] .ml.checknngrad[1e-5;();3 5 10 50 2;hgolf]
 
 hgolf:`h`g`o`l!`.ml.sigmoid`.ml.dsigmoid`.ml.softmax`.ml.celoss
 
@@ -126,7 +126,7 @@ p w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"we can view the confusion matrix as well";
-show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
+show .ut.totals[`TOTAL] .ml.cm[yt;"i"$p]
 
 -1"neural networks are not limited to classification problems.";
 -1"using a linear activation function on the output layer";
@@ -134,7 +134,7 @@ show .util.totals[`TOTAL] .ml.cm[yt;"i"$p]
 -1"our feed forward neural network can be used for non-linear regression.";
 
 -1"we split the wine quality data into train and test partitions";
-d:.util.part[`train`test!3 1;0N?] winequality.red.t
+d:.ut.part[`train`test!3 1;0N?] winequality.red.t
 `Y`X set' 0 1 cut value flip d.train
 `Yt`Xt set' 0 1 cut value flip d.test
 -1"and then create a z-score function";
@@ -144,7 +144,7 @@ X:zsf @' X
 Xt:zsf @' Xt
 
 -1"next we define the topology";
-n:"j"$.util.nseq[2;count X;count Y];
+n:"j"$.ut.nseq[2;count X;count Y];
 -1"add some regularization";
 rf:.ml.l2[l2:10f];
 -1"add initialize the THETA coefficients";
@@ -163,5 +163,5 @@ THETA:.ml.ridge[0f,count[X]#l2;Y;.ml.prepend[1f]X]
 -1"now we check for a reduction in the mse using the neural network";
 .ml.nncost[();hgolf;Y;X] .ml.nncut[n] theta
 -1"and the test data";
-.util.assert[0.2] .util.rnd[.1] .ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta
-.util.assert[0.1] .util.rnd[.1] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta
+.ut.assert[0.2] .ut.rnd[.1] .ml.nncost[();hgolf;Yt;Xt] .ml.nncut[n] theta
+.ut.assert[0.1] .ut.rnd[.1] sum 2 raze/ .ml.nngrad[();hgolf;Yt;Xt] .ml.nncut[n] theta

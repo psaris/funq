@@ -10,7 +10,7 @@
 \l persuasion.q
 
 -1 "remove punctuation from text";
-c:.util.sr[.util.pw] peach moby.s
+c:.ut.sr[.ut.pw] peach moby.s
 -1 "tokenize and remove stop words";
 c:(except[;stopwords.xpo6] " " vs ) peach lower c
 -1 "user porter stemmer to stem each word";
@@ -43,13 +43,13 @@ t,:flip `text`class!(northanger.s;`NA) / northanger abbey
 t,:flip `text`class!(persuasion.s;`PE) / persuasion
 
 -1"remove punctuation from text";
-t:update .util.sr[.util.pw] peach text from t
+t:update .ut.sr[.ut.pw] peach text from t
 -1"tokenize and remove stop words";
 t:update (except[;stopwords.xpo6] " " vs ) peach lower text from t
 -1 "use porter stemmer to stem each word";
 t:update (.porter.stem') peach text from t
 -1"partitioning text between training and test";
-d:.util.part[`train`test!3 1;0N?] t
+d:.ut.part[`train`test!3 1;0N?] t
 c:d . `train`text
 y:d . `train`class
 -1"generating vocabulary and term document matrix";
@@ -61,4 +61,4 @@ ct:d . `test`text
 yt:d . `test`class
 Xt:0f^.ml.tfidf[.ml.lntf;.ml.idf] .ml.tdm[ct] v
 avg yt=p:.ml.pnb[1b;.ml.multill;pT] flip Xt
-show .util.rnd[1e-4] select[>PE] from ([]word:v)!flip last pT
+show .ut.rnd[1e-4] select[>PE] from ([]word:v)!flip last pT

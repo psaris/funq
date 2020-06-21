@@ -7,14 +7,14 @@ show X:100 100#"f"$10000?0b
 show S:.ml.sparse X
 -1 "the representation includes the number of rows and columns";
 -1 "followed by the x and y coordinates and finally the matrix valus";
-.util.assert[X] .ml.full S      / matrix -> sparse -> matrix == matrix
+.ut.assert[X] .ml.full S      / matrix -> sparse -> matrix == matrix
 / sparse matrix multiplication == mmu
 -1 "we can perform sparse matrix transposition";
-.util.assert[flip X] .ml.full .ml.smt S
+.ut.assert[flip X] .ml.full .ml.smt S
 -1 "sparse matrix multiplication";
-.util.assert[X$X] .ml.full .ml.smm[S;S]
+.ut.assert[X$X] .ml.full .ml.smm[S;S]
 -1 "sparse matrix addition";
-.util.assert[X+X] .ml.full .ml.sma[S;S]
+.ut.assert[X+X] .ml.full .ml.sma[S;S]
 -1 "sparse tensors";
-.util.assert[T] .ml.full .ml.sparse T:2 3 4#"f"$24?0b
+.ut.assert[T] .ml.full .ml.sparse T:2 3 4#"f"$24?0b
 

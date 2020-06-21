@@ -11,7 +11,7 @@ X:1000#'X;Y:1000#'Y;y:1000#y;
 X%:255f;Xt%:255f
 
 -1"define a plot function that includes the empty space character";
-plt:value .util.plot[28;14;.util.c10;avg] .util.hmap flip 28 cut
+plt:value .ut.plot[28;14;.ut.c10;avg] .ut.hmap flip 28 cut
 -1"visualize the data";
 -1 (,'/) plt each X@\:/: -4?count X 0;
 
@@ -24,7 +24,7 @@ f:first .fmincg.fmincg[5;;theta] .ml.logcostgrad[rf;;X]@
 -1"to run one-vs-all",$[count rf;" with regularization";""];
 -1"we perform multiple runs of logistic regression (one for each digit)";
 -1"this trains one set of parameters for each number";
--1 .util.box["**"] "for performance, we peach across digits";
+-1 .ut.box["**"] "for performance, we peach across digits";
 THETA:.ml.fova[f;Y;lbls]
 
 -1"checking accuracy of parameters";
@@ -35,4 +35,4 @@ w:where not yt=p
 do[2;-1 plt Xt[;i:rand w];show ([]p;yt) i]
 
 -1"view the confusion matrix";
-show .util.totals[`TOTAL] .ml.cm[yt;p]
+show .ut.totals[`TOTAL] .ml.cm[yt;p]

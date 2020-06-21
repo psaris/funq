@@ -1,14 +1,14 @@
 \c 22 100
 \l funq.q
-\l mlense.q
+\l mlens.q
 
--1"reference mlense data from global namespace";
-`rating`movie set' mlense`rating`movie
+-1"reference mlens data from global namespace";
+`rating`movie set' mlens`rating`movie
 
 / personal ratings
 
 -1"we now build a dataset to hold our own ratings/preferences";
-r:1!select `mlense.movie$movieId,rating:0n from movie
+r:1!select `mlens.movie$movieId,rating:0n from movie
 r,:([]movieId:173 208 260 435 1197 2005 1968i;rating:.5 .5 4 .5 4 4 4f)
 r,:([]movieId:2918 4006 53996 69526 87520 112370i;rating:5 5 4 4 5 5f)
 show select movieId,rating,movieId.title from r where not null rating

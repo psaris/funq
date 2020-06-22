@@ -36,10 +36,10 @@ etl9b:{(2 1 1 4 504, 64#1;"hxxs*",64#" ") 1: x}
 
 / general utilities
 
-/ generate a sequence of values within range [b;e] with step-size (s)
+/ generate a sequence of (s)-sized steps between (b)egin and (e)nd
 sseq:{[s;b;e]b+s*til 1+floor 1e-14+(e-b)%s}
 
-/ generate a sequence of (n) steps within range [b;e]
+/ generate a sequence of (n) steps between (b)egin and (e)nd
 nseq:{[n;b;e]b+til[1+n]*(e-b)%n}
 
 / round y to nearest x

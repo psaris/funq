@@ -1,0 +1,47 @@
+= Fun Q Errata
+
+:toc:
+:toc-placement: preamble
+
+Despite my best efforts to create the book with zero errors, readers
+have pointed out a few bugs. The Kindle version has all corrections
+and is available for re-download.  Recent versions of the printed book
+have them as well.  Please report any new errata to
+mailto:nick.psaris@gmail.com[Nick Psaris].
+
+toc::[]
+
+== Preface
+
+== Chapter 1 _Introduction_
+
+== Chapter 2 _K-Nearest Neighbors_
+
+== Chapter 3 _K-Means_
+
+== Chapter 4 _Heirarchical Agglomerative Clustering_
+
+== Chapter 5 _Expectation-Maximization_
+
+== Chapter 6 _Naive Bayes_
+
+== Chapter 7 _Decision Trees_
+
+== Chapter 8 _Decision Tree Ensembles_
+
+== Chapter 9 _Linear Regression_
+
+== Chapter 10 _Logistic Regression_
+
+== Chapter 11 _Neural Networks_
+
+== Chapter 12 _Recommender Systems_
+
+== Chapter 13 _PageRank_
+
+== Chapter 14 _Graphics_
+
+== Appendix A
+
+
+

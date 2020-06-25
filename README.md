@@ -1,87 +1,149 @@
-# Fun Q: A Functional Introduction to Machine Learning in Q
+# Fun Q
 
-clone this project and start q with any of the following:
+This project containts the source files for "Fun Q: A Functional
+Introduction to Machine Learning in Q".
 
-`q plot.q`
+## The Book
 
-`q kmeans.q`
+**Fun Q** will be available on Amazon.
+A Kindle version will be available as well.
+Books may be purchased in quantity and/or special sales by contacting the publisher,
+[Vector Sigma](mailto:sales@vector-sigma.com).  
 
-`q knn.q`
+## The Source
 
-`q hac.q`
+Install `q` from Kx System's kdb+ download
+[page](http://kx.com/software-download.php) and grab a copy of the
+**Fun Q** source.
 
-`q em.q`
+```sh
+$ git clone https://github.com/psaris/funq
+```
 
-`q nb.q`
+## The Fun Q Environment
 
-`q tfidf.q`
+The following command starts the q interpreter with all Fun Q
+libraries loaded and 4 secondary threads for parallel computing.
 
-`q decisiontree.q`
+```sh
+$ q funq.q -s 4
+```
 
-`q adaboost.q`
+## The Errors
 
-`q randomforest.q`
+Any typos and errors are listed [here](errata.adoc).  The Kindle
+version has been updated to include all corrections.
 
-`q linreg.q`
+## More Fun
 
-`q onevsall.q`
+Start q with any of the following or read the comments and run the
+examples one by one.
 
-`q nn.q`
+### Plotting
 
-`q hiragana.q`
+```sh
+q plot.q -s 4
+```
 
-`q recommend.q`
+### K-Nearest Neighbors (KNN)
 
-`q pagerank.q`
+```sh
+q knn.q -s 4
+```
 
-`q supportvectormachine.q`
+### K-Means/Medians/Medoids Clustering
 
+```sh
+q kmeans.q -s 4
+```
 
-you can then read the comments and run the examples one by one. topics include:
+### Hierarchical Agglomerative Clustering (HAC)
 
-## Plotting
+```sh
+q hac.q -s 4
+```
 
-## K-Nearest Neighbors (KNN)
+### Expectation Maximization (EM)
 
-## Binary Classification Evaluation Metrics
+```sh
+q em.q -s 4
+```
 
-## K-Means/Medians/Medoids Clustering
+### Naive Bayes
 
-## Hierarchical Agglomerative Clustering (HAC)
+```sh
+q nb.q -s 4
+```
 
-## Expectation Maximization (EM)
+### Vector Space Model (tf-idf)
 
-## Naive Bayes
+```sh
+q tfidf.q -s 4
+```
 
-## Vector Space Model (tf-idf)
+### Decision Tree (ID3,C4.5,CART)
 
-## Decision Tree (ID3,C4.5,CART)
+```sh
+q decisiontree.q -s 4
+```
 
-## Random Forest (and Boosted Aggregating BAG)
+### Discrete Adaptive Boosting (AdaBoost)
 
-## Discrete Adaptive Boosting (AdaBoost)
+```sh
+q adaboost.q -s 4
+```
 
-## Regularization (L1,L2)
+### Random Forest (and Boosted Aggregating BAG)
 
-## Least Squares Regression
+```sh
+q randomforest.q -s 4
+```
 
-## Gradient Descent
+### Linear Regression
 
-## Logistic Regression
+```sh
+q linreg.q -s 4
+```
 
-## One vs All
+### Logistic Regression
 
-## Neural Network Classification
+```sh
+q logreg.q -s 4
+```
 
-## Neural Network Regression
+### One vs. All
 
-## Content-Based Filtering (Recommender Systems)
+```sh
+q onevsall.q -s 4
+```
 
-## Collaborative Filtering (Recommender Systems)
+### Neural Network Classification/Regression
 
-## Google PageRank
+```sh
+q nn.q -s 4
+```
 
-## Support Vector Machine (SVM)
+### Content-Based/Collaborative Filtering (Recommender Systems)
 
-## Markov Clustering Algorithm (MCL)
+```sh
+q recommend.q -s 4
+```
+
+### Google PageRank
+
+```sh
+q pagerank.q -s 4
+```
+
+### Support Vector Machine (SVM)
+
+```sh
+q supportvectormachine.q -s 4
+```
+
+### Markov Clustering Algorithm (MCL)
+
+```sh
+q markov.q -s 4
+```
 

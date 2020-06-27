@@ -31,7 +31,7 @@ $ q funq.q -s 4
 
 ## The Errors
 
-Any typos and errors are listed [here](errata.adoc).  The Kindle
+Any typos or errors are listed [here](errata.adoc).  The Kindle
 version has been updated to include all corrections.
 
 ## More Fun
@@ -42,108 +42,108 @@ examples one by one.
 ### Plotting
 
 ```sh
-q plot.q -s 4
+$ q plot.q -s 4
 ```
 
 ### K-Nearest Neighbors (KNN)
 
 ```sh
-q knn.q -s 4
+$ q knn.q -s 4
 ```
 
 ### K-Means/Medians/Medoids Clustering
 
 ```sh
-q kmeans.q -s 4
+$ q kmeans.q -s 4
 ```
 
 ### Hierarchical Agglomerative Clustering (HAC)
 
 ```sh
-q hac.q -s 4
+$ q hac.q -s 4
 ```
 
 ### Expectation Maximization (EM)
 
 ```sh
-q em.q -s 4
+$ q em.q -s 4
 ```
 
 ### Naive Bayes
 
 ```sh
-q nb.q -s 4
+$ q nb.q -s 4
 ```
 
 ### Vector Space Model (tf-idf)
 
 ```sh
-q tfidf.q -s 4
+$ q tfidf.q -s 4
 ```
 
 ### Decision Tree (ID3,C4.5,CART)
 
 ```sh
-q decisiontree.q -s 4
+$ q decisiontree.q -s 4
 ```
 
 ### Discrete Adaptive Boosting (AdaBoost)
 
 ```sh
-q adaboost.q -s 4
+$ q adaboost.q -s 4
 ```
 
 ### Random Forest (and Boosted Aggregating BAG)
 
 ```sh
-q randomforest.q -s 4
+$ q randomforest.q -s 4
 ```
 
 ### Linear Regression
 
 ```sh
-q linreg.q -s 4
+$ q linreg.q -s 4
 ```
 
 ### Logistic Regression
 
 ```sh
-q logreg.q -s 4
+$ q logreg.q -s 4
 ```
 
 ### One vs. All
 
 ```sh
-q onevsall.q -s 4
+$ q onevsall.q -s 4
 ```
 
 ### Neural Network Classification/Regression
 
 ```sh
-q nn.q -s 4
+$ q nn.q -s 4
 ```
 
 ### Content-Based/Collaborative Filtering (Recommender Systems)
 
 ```sh
-q recommend.q -s 4
+$ q recommend.q -s 4
 ```
 
 ### Google PageRank
 
 ```sh
-q pagerank.q -s 4
+$ q pagerank.q -s 4
 ```
 
 ### Support Vector Machine (SVM)
 
 ```sh
-q supportvectormachine.q -s 4
+$ q supportvectormachine.q -s 4
 ```
 
 ### Markov Clustering Algorithm (MCL)
 
 ```sh
-q markov.q -s 4
+$ q markov.q -s 4
 ```
 

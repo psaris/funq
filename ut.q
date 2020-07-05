@@ -65,7 +65,7 @@ ugrp:{
 / append a total row and (c)olumn to (t)able
 totals:{[c;t]
  t[key[t]0N]:sum value t;
- t:t,'flip (1#c)!enlist sum each value t;
+ t:t,'flip (1#c)!enlist sum flip value t;
  t}
 
 / surround a (s)tring or list of stings with a box of (c)haracters

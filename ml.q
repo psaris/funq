@@ -681,24 +681,25 @@ ptree:{[n;tr]
  x:(,'/) x;
  (x;s)}
 
-/ print a single node for graphviz
-pnode:{[p;l;tr]
- s:string[i:I+:1], " [label=\""; / 'I' shared across leaves
- c:$[b:2=count tr;enlist (tr;());.z.s'[i;key tr 2;value tr 2]];
- x:(,'/) first each c;
- s,:pleaf . x;
- if[not b;s,:"\\n",raze string[tr 0 1],\: " "];
- s:enlist s,"\"] ;";
- if[i>0;s,:enlist string[p]," -> ",string[i]," [label=\"",string[l],"\"] ;"];
+/ given (p)arent id, (n)ode id, label and (tr)ee print Graphviz node
+pnode:{[p;n;l;tr]
+ s:n," [label = \"";                                         / label
+ st:$[b:2=count tr;();tr 2];                                 / sub tree
+ cn:n,/:"0"^(neg max count each cn)$ cn:string til count st; / child node ids
+ c:$[b;enlist (tr;st);.z.s[n]'[cn;key st;value st]];         / children
+ s,:pleaf . x:(,'/) first each c;                            / error stats
+ if[not b;s,:"\\n",raze string[2#tr],\: " "];                / node title
+ s:enlist s,"\"]";
+ if[count p;s,:enlist p," -> ",n," [label = \"",string[l],"\"]"]; / edge
  s,:raze last each c;
  (x;s)}
 
-/ print graph text for use with the 'dot' graphviz command, graph-easy or
+/ print graph text for use with the 'dot' Graphviz command, graph-easy or
 / http://webgraphviz.com
 pgraph:{[tr]
  s:enlist "digraph Tree {";
- s,:enlist "node [shape=box] ;";
- s,:last pnode[I::-1;`;tr]; / reset global variable used by pnode
+ s,:enlist "node [shape = box]";
+ s,:last pnode["";"0";`;tr];
  s,:1#"}";
  s}
 

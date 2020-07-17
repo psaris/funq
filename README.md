@@ -5,7 +5,7 @@ Introduction to Machine Learning in Q".
 
 ## The Book
 
-**Fun Q** will be available on Amazon.
+**Fun Q** can be purchased on [Amazon](https://www.amazon.com/dp/1734467509).
 Books may be purchased in quantity and/or special sales by contacting the publisher,
 [Vector Sigma](mailto:sales@vector-sigma.com).  
 

@@ -33,8 +33,8 @@ $ q funq.q -s 4
 
 ## The Errors
 
-Any typos or errors are listed [here](errata.adoc).  The Kindle
-version has been updated to include all corrections.
+Any typos or errors are listed [here](errata.adoc) and are
+incorporated into recent printings of the book.
 
 ## More Fun
 

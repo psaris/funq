@@ -4,7 +4,7 @@ endif
 
 OS := $(shell uname)
 ifndef QARCH
-QARCH=$(firstword $(wildcard $(QHOME)/[wml]64 [wml]32))
+QARCH=$(notdir $(firstword $(wildcard $(QHOME)/[wml][36][24])))
 $(warning QARCH not specified, defaulting to $(QARCH))
 endif
 Q ?= $(QHOME)/$(QARCH)/q

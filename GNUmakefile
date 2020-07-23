@@ -9,7 +9,8 @@ $(warning QARCH not specified, defaulting to $(QARCH))
 endif
 Q ?= $(QHOME)/$(QARCH)/q
 export CFLAGS = -Wall -O3 -fPIC -DKXVER=3 $(if $(filter %32,$(QARCH)),-m32)
-LDFLAGS = $(if $(filter Darwin,$(OS)),-bundle -undefined dynamic_lookup -install_name,-shared -Wl,-soname)
+comma:=,
+soflags = $(if $(filter Darwin,$(OS)),-bundle -undefined dynamic_lookup,-shared -Wl$(comma)-soname$(comma)$(1))
 
 all: lib
 
@@ -49,10 +50,10 @@ liblinear/linear.h: | liblinear
 	$(CC) $(CFLAGS) -I . -I libsvm -I liblinear -c -o $@ $<
 
 libsvm.so: svm.o libsvm/svm.o
-	$(CC) $(CFLAGS) $(LDFLAGS),$@ $^ -o $@
+	$(CC) $(CFLAGS) $(call soflags,$@) $^ -o $@
 
 liblinear.so: linear.o liblinear/linear.o liblinear/tron.o liblinear/blas/blas.a
-	$(CC) $(CFLAGS) $(LDFLAGS),$@ $^ -o $@
+	$(CC) $(CFLAGS) $(call soflags,$@) $^ -o $@
 
 lib: libsvm.so liblinear.so #xgboost /lib/libxgboost.dylib
 

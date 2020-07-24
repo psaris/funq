@@ -136,16 +136,3 @@ $ q recommend.q -s 4
 ```sh
 $ q pagerank.q -s 4
 ```
-
-### Support Vector Machine (SVM)
-
-```sh
-$ q supportvectormachine.q -s 4
-```
-
-### Markov Clustering Algorithm (MCL)
-
-```sh
-$ q markov.q -s 4
-```
-

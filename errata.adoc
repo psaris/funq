@@ -16,6 +16,12 @@ toc::[]
 == Chapter 1 _Introduction_
 
 == Chapter 2 _K-Nearest Neighbors_
+* p. 16, *2.4 Loading Data Sets*, the last sentence should read "Once
+the iris.q[380] library is loaded, we have access to the independent
+(petal and sepal measurements) and dependent (species labels)
+variables.
++
+_Posted 2020.07.23. Brian Runk_
 
 == Chapter 3 _K-Means_
 

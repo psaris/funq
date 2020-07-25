@@ -36,6 +36,11 @@ $ q funq.q -s 4
 Any typos or errors are listed [here](errata.adoc) and are
 incorporated into recent printings of the book.
 
+## The Swag
+
+Swag can be found on the [Vector Sigma Teespring
+site](https://teespring.com/stores/vectorsigma).
+
 ## More Fun
 
 Start q with any of the following or read the comments and run the

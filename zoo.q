@@ -1,5 +1,5 @@
 zoo.f:"zoo.data"
-zoo.b:"https://archive.ics.uci.edu/ml/machine-learning-databases/"
+zoo.b:"http://archive.ics.uci.edu/ml/machine-learning-databases/"
 zoo.b,:"zoo/"
 -1"[down]loading zoo data set";
 .ut.download[zoo.b;;"";""] zoo.f;

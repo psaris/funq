@@ -104,7 +104,7 @@ pT:.ml.em[1b;lf;mf;X] . pT
 -1"let's run 10 more em steps";
 pT:10 .ml.em[1b;lf;mf;X]// pT
 -1"grouping the data and finding the mode identifies the clusters";
-p:.ml.imax .ml.likelihood[1b;.ml.bmmll[1];X] . pT
+p:.ml.imax .ml.likelihood[0b;.ml.bmml[1];X] . pT
 show m:.ml.mode each y group p
 avg y=m p
 -1"what does the confusion matrix look like?";

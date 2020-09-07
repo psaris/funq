@@ -1,7 +1,7 @@
 # Fun Q
 
 This project containts the source files for "Fun Q: A Functional
-Introduction to Machine Learning in Q".
+Introduction to Machine Learning in Q".[^fn1]
 
 ## The Book
 
@@ -141,3 +141,7 @@ $ q recommend.q -s 4
 ```sh
 $ q pagerank.q -s 4
 ```
+
+<!----- Footnotes ----->
+
+[^fn1]: More presentations, competitions and books by Nick Psaris can be found at <https://nick.psaris.com>

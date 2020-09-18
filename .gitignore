@@ -46,3 +46,5 @@ xgboost
 /s[1-4].txt
 /a[1-3].txt
 /dow_jones_index.*
+/optdigits.tes
+/optdigits.tra

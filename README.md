@@ -1,6 +1,6 @@
 # Fun Q
 
-This project containts the source files for "Fun Q: A Functional
+This project contains the source files for "Fun Q: A Functional
 Introduction to Machine Learning in Q".[^fn1]
 
 ## The Book

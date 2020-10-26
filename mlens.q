@@ -12,9 +12,9 @@ update .ut.sr[.ut.ua] peach rtrim title from `mlens.movie;
 update year:"I"$-1_/:-5#/:title from `mlens.movie;
 update -7_/:title from `mlens.movie where not null year;
 -1"adding `u on movieId and splitting genres";
-update `u#movieId,`$"|"vs'genres from `mlens.movie
+update `u#movieId,`$"|"vs'genres from `mlens.movie;
 -1"adding the decade as a genre";
-update genres:(genres,'`$string 10 xbar year) from `mlens.movie
+update genres:(genres,'`$string 10 xbar year) from `mlens.movie;
 -1"enumerating genres";
 mlens.movie:update `genre?/:genres from mlens.movie
 -1"loading movie ratings";

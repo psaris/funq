@@ -9,8 +9,10 @@ Introduction to Machine Learning in Q".[^fn1]
 [Amazon](https://www.amazon.com/dp/1734467509) and [Amazon
 UK](https://www.amazon.co.uk/gp/product/1734467509). Books may be
 purchased in quantity and/or special sales by contacting the
-publisher,
-[Vector Sigma](mailto:sales@vector-sigma.com).  
+publisher, [Vector Sigma](mailto:sales@vector-sigma.com). 
+Read a [review](https://vector.org.uk/book-review-fun-q-a-functional-introduction-to-machine-learning-in-q/)
+by [Daniel Krizian](https://www.linkedin.com/in/danielkrizian/) published by [Vector Magazine](https://vector.org.uk/).
+
 
 ## The Source
 

@@ -198,6 +198,32 @@ cm:{[y;p]
  t:([]y:u)!flip (`$string u)!m;
  t}
 
+/ given group (I)ndices, return list of (train;test) splits (where each split
+/ is used for validation and the remaining k-1 folds are for training)
+kfold:{[I]flip ((raze I _) each til count I;I)}
+/ given group (I)ndices, return list of time-series (train;test) splits
+/ (where each split is used for validation and the prior folds are for
+/ training). (tr)ai(n) (f)unction and (t)e(st) (f)unction can be used to
+/ customize the folds.
+tsfold:{[trnf;tstf;I]
+ trn:(trnf raze #[;I]::) each 1_til count I;
+ tst:tstf each 1_I;
+ flip (trn;tst)}
+
+/ index vector or second dimension of matrix
+at:{[x;i]$[type x;x i;x[;i]]}
+
+/ use (train;test) (i)ndices to fit a model using the (f)itting (f)unction
+/ with training subset of x. return predictions obtained from using the
+/ (p)rediction (f)unction on the test subset. x can be a table or (y|Y;x|X)
+/ pair -- corresponding to ff arguments.
+cv:{[ff;pf;x;i]                           / cross validate
+ if[not type i 0;:.z.s[ff;pf;x] peach i]; / iterate over folds
+ tt:$[type x;x i;raze[x at\:/:i] _ 2];    / handle table vs (y|Y;x|X)
+ m:ff . -1 _ tt;                          / fit model on train set
+ p:pf[m] last tt;                         / make predictions
+ p}
+
 / use all (f)old(s) (except the (i)th) to fit a model using the (f)itting
 / (f)unction and then use (p)rediction (f)unction on fs[i]. fs can be a list
 / of tables or (y;X) pairs -- corresponding to ff arguments.
@@ -657,6 +683,10 @@ dtmincc:{[ef;tr;a]
 / k-fold cross validate (i)th table in (t)able(s) using (d)ecision (t)ree
 / (f)unction, (a)lphas and misclassification (e)rror (f)unction
 dtxv:{[dtf;ef;a;ts]xv[dtmincc[ef]\[;a]dtf::;pdt\:/:;ts]}
+
+/ use (train;test) (i)ndices to cross validate (t)able using (d)ecision
+/ (t)ree (f)unction, (a)lphas and misclassification (e)rror (f)unction
+dtcv:{[dtf;ef;a;t;i]cv[dtmincc[ef]\[;a]dtf::;pdt\:/:;t;i]}
 
 / decision tree utilities
 

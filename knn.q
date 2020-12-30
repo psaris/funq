@@ -32,12 +32,10 @@ show t;
 
 n:5
 -1"cross validate with ", string[n], " buckets";
-i:.ut.part[n#1;0N?] til count X 0
-Xs:flip X[;i]
-ys:y i
+I:.ut.part[n#1;0N?] til count X 0
 ff:.ml.fknn[sqrt 1f%;.ml.pedist2]
 pf:.ml.pknn
-e:ys=p:.ml.xv[ff ks;pf;flip (ys;Xs)] peach til n
+e:y[I]=p:.ml.cv[ff ks;pf;(y;X)] .ml.kfold I
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

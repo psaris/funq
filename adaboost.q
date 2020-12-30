@@ -43,10 +43,10 @@ ks:1+til 20
 
 n:10
 -1"cross validate with ", string[n], " buckets";
-ts:.ut.part[n#1;0N?] t
+I:.ut.part[n#1;0N?] til count t
 ff:.ml.fab[;stump;.ml.pdt]
 pf:.ml.pab[;.ml.pdt]
-e:ts[;`diagnosis]=P:.ml.xv[ff ks;pf ks;ts] peach til n
+e:t[`diagnosis][I]=P:.ml.cv[ff ks;pf ks;t] .ml.kfold I
 
 -1"find k with maximum accuracy";
 k:0N!ks .ml.imax avg avg each e

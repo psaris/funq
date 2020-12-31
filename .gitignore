@@ -48,3 +48,4 @@ xgboost
 /dow_jones_index.*
 /optdigits.tes
 /optdigits.tra
+/Bitfinex_*

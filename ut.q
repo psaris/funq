@@ -144,8 +144,12 @@ c68,:"uvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 plt:plot[19;10;c10;avg]         / default plot function
 
-/ generate unicode sparkline
-spark:raze("c"$226 150,/:129+til 8)nbin[8]::
+/ generate unicode sparkline (with nulls rendered as spaces)
+spark:{
+ s:("c"$226 150,/:129+til 8) nbin[8] x; / map to 8 unicode characters
+ if[n:count w:where null x;s[w]:(n;3)#"c"$226 128 136]; / replace null values
+ s:raze s;
+ s}
 
 / image manipulation utilities
 

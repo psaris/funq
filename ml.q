@@ -91,6 +91,13 @@ srank:{@[x;g;:;avg each (x:"f"$rank x) g@:where 1<count each g:group x]}
 scor:{srank[x i] cor srank y i:wnan(x;y)} / Spearman's rank correlation
 scordist:1f-scor::              / Spearman's rank correlation distance
 
+gower:{                                             / Gower distance
+ if[0h=t:min abs type each (x;y);:navg .z.s'[x;y]]; / iterate
+ if[1h=t;:not[all (x;y)]+0n 0 any (x;y)];           / asymmetric binary
+ if[(t > 19h)|t in 2 10 11h;:"f"$not x=y];          / nominal
+ d:abs[x-y]%(-) . (max;min) revo\: (x;y);           / ordinal and continuous
+ d}
+
 / null-aware primitives (account for nulls in matrices)
 
 ncount:{count[x]-$[type x;sum null x;0i {x+null y}/ x]}

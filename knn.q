@@ -1,6 +1,7 @@
 \c 20 100
 \l funq.q
 \l pendigits.q
+\l adult.q
 
 -1"referencing pendigits data from global namespace";
 `X`Xt`y`yt set' pendigits`X`Xt`y`yt;
@@ -42,3 +43,11 @@ k:0N!ks .ml.imax avg avg each e
 
 -1"confirm accuracy against test dataset";
 avg yt=p:pf[;Xt] ff[k;y;X]
+
+-1"using the Gower distance allows us to compute distances";
+-1"for ordinal asymmetric binary and nominal features as well";
+-1"the 'adult' data set allows us to test knn on mixed-type features";
+`X`y`Xt`yt set' adult`X`y`Xt`yt
+df:`.ml.gower
+k:3
+.ut.assert[.82] .ut.rnd[.01] 0N!avg yt=p:.ml.f2nd[.ml.knn[0n<;k;y] df[X]@] Xt

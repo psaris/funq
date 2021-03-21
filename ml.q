@@ -159,6 +159,7 @@ recall:sensitivity:hitrate:tpr:{[tp;tn;fp;fn]tp%tp+fn} / true positive rate
 selectivity:specificity:tnr:{[tp;tn;fp;fn]tn%tn+fp}    / true negative rate
 fallout:fpr:{[tp;tn;fp;fn]fp%fp+tn}                    / false positive rate
 missrate:fnr:{[tp;tn;fp;fn]fn%fn+tp}                   / false negative rate
+dice:{[tp;tn;fp;fn]tp%fp+fn+tp*:2}                     / dice coefficient
 
 / receiver operating characteristic
 roc:{[y;p]

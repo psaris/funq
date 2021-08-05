@@ -131,6 +131,7 @@ zscore:fxx zscoref:{daxf[%;nsdev;x] demeanf[x]::}
 minmax:fxx minmaxf:{daxf[%;{max[x]-min x};x] daxf[-;min;x]::}
 / convert densities into probabilities
 prb:dax[%;sum]
+/ identify the minimum values with 1b
 ismin:dax[=;min]
 
 / given (g)rouped dictionary, compute the odds
@@ -299,17 +300,17 @@ cgroup:{[df;X;C]value group imin f2nd[df X] C}
 / to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
 / use (r)esponsibility (f)unction David Mackay's Information Theory..(pg289)
-lloyds:{[df;cf;rf;X;C] cf[rf .ml.f2nd[df X] C;X]} /soft assignment 
+lloyds:{[df;cf;rf;X;C] cf[rf f2nd[df X] C;X]} / soft assignment
 
 kmeans:lloyd[edist2;avg'']      / k-means
 kmedians:lloyd[mdist;med'']     / k-medians
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 
-kmeanss:lloyds[edist2;wavg\:/:;ismin] /k-means using loyd with rf
-/ kmeansoft v1 David Mackay (b)eta stiffness param 
-/ sigma or radius of cluster is 1%sqrt b
-kmeanssmax:{[b;X] lloyds[edist2;wavg\:/:;softmax neg[b]*;X]} 
+kmeanss:lloyds[edist2;wavg\:/:;ismin] / k-means using Lloyd with rf
+/ v1 David Mackay using stiffness parameter (b)eta. 1%sqrt b represents the
+/ sigma (or radius) of the cluster
+kmeanssmax:{[b;X]lloyds[edist2;wavg\:/:;softmax neg[b]*;X]}
 
 / using (d)istance (f)unction, find the medoid in matri(X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}

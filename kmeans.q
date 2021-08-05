@@ -91,3 +91,10 @@ show .ut.plt s:(avg raze .ml.silhouette[.ml.edist;X]::) peach I
 ks i:.ml.imax s
 -1"superimpose the centroids on the data";
 show .ut.plot[39;20;.ut.c10;avg] .ml.append[0N;X],'.ml.append[1] C i
+
+-1"a soft version of Lloyds algorithm is available with .ml.lloyds";
+-1".ml.kmeanss and .ml.kmeanssmax should be identical to ml.kmeans";
+X:iris.X
+C:asc flip .ml.kmeans[X] over C0:last 3 .ml.kmeanspp[X]// 2#()
+.ut.assert[C] asc flip .ml.kmeanss[X] over C0
+.ut.assert[C] asc flip .ml.kmeanssmax[500;X] over C0

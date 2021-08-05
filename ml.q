@@ -310,7 +310,7 @@ skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
 kmeanss:lloyds[edist2;wavg\:/:;ismin] / k-means using Lloyd with rf
 / v1 David Mackay using stiffness parameter (b)eta. 1%sqrt b represents the
 / sigma (or radius) of the cluster
-kmeanssmax:{[b;X]lloyds[edist2;wavg\:/:;softmax neg[b]*;X]}
+kmeanssmax:{[b;X]lloyds[edist2;wavg\:/:;ssoftmax neg[b]*;X]}
 
 / using (d)istance (f)unction, find the medoid in matri(X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}

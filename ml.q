@@ -131,6 +131,7 @@ zscore:fxx zscoref:{daxf[%;nsdev;x] demeanf[x]::}
 minmax:fxx minmaxf:{daxf[%;{max[x]-min x};x] daxf[-;min;x]::}
 / convert densities into probabilities
 prb:dax[%;sum]
+ismin:dax[=;min]
 
 / given (g)rouped dictionary, compute the odds
 odds:{[g]prb count each g}
@@ -297,11 +298,18 @@ cgroup:{[df;X;C]value group imin f2nd[df X] C}
 / matri(X) to the nearest (C)entroid and then uses the (c)entroid (f)unction
 / to update the centroid location.
 lloyd:{[df;cf;X;C]cf X@\: cgroup[df;X;C]}
+/ use (r)esponsibility (f)unction David Mackay's Information Theory..(pg289)
+lloyds:{[df;cf;rf;X;C] cf[rf .ml.f2nd[df X] C;X]} /soft assignment 
 
 kmeans:lloyd[edist2;avg'']      / k-means
 kmedians:lloyd[mdist;med'']     / k-medians
 khmeans:lloyd[edist2;hmean'']   / k harmonic means
 skmeans:lloyd[cosdist;normalize (avg'')::] / spherical k-means
+
+kmeanss:lloyds[edist2;wavg\:/:;ismin] /k-means using loyd with rf
+/ kmeansoft v1 David Mackay (b)eta stiffness param 
+/ sigma or radius of cluster is 1%sqrt b
+kmeanssmax:{[b;X] lloyds[edist2;wavg\:/:;softmax neg[b]*;X]} 
 
 / using (d)istance (f)unction, find the medoid in matri(X)
 medoid:{[df;X]X@\:imin f2nd[sum df[X]::] X}

@@ -1,6 +1,6 @@
 / northanger abbey
-northanger.f:"121.txt"
-northanger.b:"http://www.gutenberg.org/files/121/"
+northanger.f:"20080515-121.txt"
+northanger.b:"https://www.gutenberg.org/files/121/old/"
 -1"[down]loading northanger abbey text";
 .ut.download[northanger.b;;"";""] northanger.f;
 northanger.txt:read0 `$northanger.f

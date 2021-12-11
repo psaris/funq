@@ -1,6 +1,6 @@
 / emma
 emma.f:"158.txt"
-emma.b:"http://www.gutenberg.org/files/158/"
+emma.b:"https://www.gutenberg.org/files/158/old/"
 -1"[down]loading emma text";
 .ut.download[emma.b;;"";""] emma.f;
 emma.txt:{x where not x like "VOLUME*"} read0 `$emma.f

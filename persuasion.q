@@ -1,6 +1,6 @@
 / persuasion
 persuasion.f:"105.txt"
-persuasion.b:"http://www.gutenberg.org/files/105/"
+persuasion.b:"https://www.gutenberg.org/files/105/"
 -1"[down]loading persuasion text";
 .ut.download[persuasion.b;;"";""] persuasion.f;
 persuasion.txt:read0 `$persuasion.f

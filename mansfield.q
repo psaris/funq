@@ -1,6 +1,6 @@
 / mansfield park
 mansfield.f:"141.txt"
-mansfield.b:"http://www.gutenberg.org/files/141/"
+mansfield.b:"https://www.gutenberg.org/files/141/old/"
 -1"[down]loading mansfield park text";
 .ut.download[mansfield.b;;"";""] mansfield.f;
 mansfield.txt:read0 `$mansfield.f

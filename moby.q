@@ -1,6 +1,6 @@
 / moby-dick
 moby.f:"2701.txt"
-moby.b:"http://www.gutenberg.org/files/2701/"
+moby.b:"https://www.gutenberg.org/files/2701/old/"
 -1"[down]loading moby-dick text";
 .ut.download[moby.b;;"";""] moby.f;
 moby.txt:read0 `$moby.f

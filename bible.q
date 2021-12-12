@@ -1,6 +1,6 @@
 / the bible
 bible.f:"10.txt"
-bible.b:"http://www.gutenberg.org/files/10/"
+bible.b:"https://www.gutenberg.org/files/10/old/"
 -1"[down]loading bible text";
 .ut.download[bible.b;;"";""] bible.f;
 bible.txt:read0 `$bible.f

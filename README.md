@@ -19,9 +19,7 @@ APL Association.
 
 ## The Source
 
-Install `q` from Kx System's kdb+ download
-[page](http://kx.com/software-download.php) and grab a copy of the
-**Fun Q** source.
+Install `q` from Kx System's kdb+ [download page](https://kx.com/developers/download-licenses/) and grab a copy of the **Fun Q** [source]({{site.github.repository_url}}).
 
 ```sh
 $ git clone https://github.com/psaris/funq
@@ -29,7 +27,7 @@ $ git clone https://github.com/psaris/funq
 
 ## The Fun Q Environment
 
-The following command starts the q interpreter with all Fun Q
+The following command starts the q interpreter with all **Fun Q**
 libraries loaded and 4 secondary threads for parallel computing.
 
 ```sh

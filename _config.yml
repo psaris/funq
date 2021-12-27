@@ -12,3 +12,30 @@ exclude:
   - liblinear
   - libsvm
   - ml-latest-small
+  - readme
+  - SMSSpamCollection
+  - dow_jones_index.names
+  - test.cmd
+  - GNUmakefile
+  - "*.dot"
+  - "*.txt"
+  - "*.ppm"
+  - "*.pbm"
+  - "*.pgm"
+  - "*.data"
+  - "*.test"
+  - "*.tes"
+  - "*.tra"
+  - "*.png"
+  - "*.png"
+  - "*.zip"
+  - "*-ubyte"
+  - "*.c"
+  - "*.h"
+  - "*.csv"
+  - "*.q"
+  - Gemfile*
+  - CNAME
+  - LICENSE
+  - ref.csv
+  - errata.adoc

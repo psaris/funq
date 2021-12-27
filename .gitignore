@@ -54,3 +54,5 @@ xgboost
 /Bitstamp_*
 /Binance_*
 /adult.test
+Gemfile.lock
+_site

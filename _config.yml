@@ -6,3 +6,9 @@ theme: jekyll-theme-hacker
 
 plugins:
   - jekyll-mentions
+
+exclude:
+  - xgboost
+  - liblinear
+  - libsvm
+  - ml-latest-small

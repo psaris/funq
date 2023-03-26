@@ -129,6 +129,8 @@ demean:fxx demeanf:daxf[-;navg]
 zscore:fxx zscoref:{daxf[%;nsdev;x] demeanf[x]::}
 / feature normalization (scale values to [0,1])
 minmax:fxx minmaxf:{daxf[%;{max[x]-min x};x] daxf[-;min;x]::}
+/ decimal precision (scale values to [0,1])
+decprec:{x%10 xexp ceiling max 10 xlog abs x}
 / convert densities into probabilities
 prb:dax[%;sum]
 / identify the minimum values with 1b

@@ -145,7 +145,7 @@ wodds:{[w;g]prb sum each w g}
 
 / given a (w)eight atom or vector and data (x), return a dictionary (sorted
 / by key) mapping the distinct items to their weighted count
-wfreq:{[w;x]@[x!count[x:asc distinct x]#0*first w;x;+;w]}
+wfreq:{[w;x]x!@[count[x]#0*first w;(x:asc distinct x)?x;+;w]}
 freq:wfreq[1]
 
 / given a (w)eight atom or vector and data (x), return x with maximum

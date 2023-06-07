@@ -13,8 +13,8 @@ Books may be purchased in quantity and/or special sales by contacting
 the publisher, [Vector Sigma](mailto:sales@vector-sigma.com).  Read a
 [review](https://vector.org.uk/book-review-fun-q-a-functional-introduction-to-machine-learning-in-q/)
 by [Daniel Krizian](https://www.linkedin.com/in/danielkrizian/)
-published by [Vector](https://vector.org.uk/), the Journal of British
-APL Association.
+published by [Vector](https://vector.org.uk/), the Journal of the
+British APL Association.
 
 
 ## The Source

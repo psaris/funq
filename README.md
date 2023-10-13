@@ -48,9 +48,9 @@ kindle version.
 
 ## The Swag
 
-Swag can be found on the [Vector Sigma Teespring site][TEESPRING].
+Swag can be found on the [Vector Sigma Spring site][SPRING].
 
-[TEESPRING]: https://teespring.com/stores/vectorsigma "Vector Sigma Teespring"
+[SPRING]: https://vectorsigma.creator-spring.com/ "Vector Sigma Swag"
 
 ## More Fun
 

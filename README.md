@@ -5,21 +5,27 @@ Introduction to Machine Learning in Q".[^fn1]
 
 ## The Book
 
-**Fun Q** can be purchased on
-[Amazon](https://www.amazon.com/dp/1734467509) and [Amazon
-UK](https://www.amazon.co.uk/gp/product/1734467509). A [Kindle
-version](https://www.amazon.com/dp/B08R5W95WF) is also available.
-Books may be purchased in quantity and/or special sales by contacting
-the publisher, [Vector Sigma](mailto:sales@vector-sigma.com).  Read a
-[review](https://vector.org.uk/book-review-fun-q-a-functional-introduction-to-machine-learning-in-q/)
-by [Daniel Krizian](https://www.linkedin.com/in/danielkrizian/)
-published by [Vector](https://vector.org.uk/), the Journal of the
+**Fun Q** can be purchased on [Amazon][BOOK] and [Amazon
+UK][BOOKUK]. A [Kindle version][KINDLE] is also available.  Books may
+be purchased in quantity and/or special sales by contacting the
+publisher, [Vector Sigma][VECSIG].  Read a [review][REVIEW] by [Daniel
+Krizian][KRIZIAN] published by [Vector][VECTOR], the Journal of the
 British APL Association.
 
+[BOOK]: https://www.amazon.com/dp/1734467509 "Fun Q book"
+[BOOKUK]: https://www.amazon.co.uk/gp/product/1734467509 "Fun Q book"
+[KINDLE]: https://www.amazon.com/dp/B08R5W95WF "Fun Q e-book"
+[VECSIG]: mailto:sales@vector-sigma.com "Vector Sigma e-mail"
+[REVIEW]: https://vector.org.uk/book-review-fun-q-a-functional-introduction-to-machine-learning-in-q/ "Fun Q book review"
+[KRIZIAN]: https://www.linkedin.com/in/danielkrizian/ "Daniel Krizian"
+[VECTOR]: https://vector.org.uk/ "Vector - Journal of the British APL Association"
 
 ## The Source
 
-Install `q` from Kx System's kdb+ [download page](https://kx.com/developers/download-licenses/) and grab a copy of the **Fun Q** [source]({{site.github.repository_url}}).
+Install `q` from Kx System's kdb+ [download page][DOWNLOAD] and grab a
+copy of the **Fun Q** [source]({{site.github.repository_url}}).
+
+[DOWNLOAD]: https://kx.com/developers/download-licenses/ "Download Q"
 
 ```sh
 $ git clone https://github.com/psaris/funq
@@ -42,8 +48,9 @@ kindle version.
 
 ## The Swag
 
-Swag can be found on the [Vector Sigma Teespring
-site](https://teespring.com/stores/vectorsigma).
+Swag can be found on the [Vector Sigma Teespring site][TEESPRING].
+
+[TEESPRING]: https://teespring.com/stores/vectorsigma "Vector Sigma Teespring"
 
 ## More Fun
 
@@ -148,4 +155,5 @@ $ q pagerank.q -s 4
 
 <!----- Footnotes ----->
 
-[^fn1]: More presentations, competitions and books by Nick Psaris can be found at <https://nick.psaris.com>
+[^fn1]: More presentations, competitions and books by Nick Psaris can
+    be found at <https://nick.psaris.com>

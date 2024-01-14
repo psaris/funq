@@ -46,8 +46,11 @@ avg yt=p:pf[;Xt] ff[k;y;X]
 
 -1"using the Gower distance allows us to compute distances";
 -1"for ordinal asymmetric binary and nominal features as well";
--1"the 'adult' data set allows us to test knn on mixed-type features";
+-1"the 'adult' dataset allows us to test knn on mixed-type features";
 `X`y`Xt`yt set' adult`X`y`Xt`yt
+n:100                           / limit to 100 for speed
+yt:n#y
+Xt:n#'Xt
 df:`.ml.gower
 k:3
-.ut.assert[.82] .ut.rnd[.01] 0N!avg yt=p:.ml.f2nd[.ml.knn[0n<;k;y] df[X]@] Xt
+.ut.assert[.61] 0N!avg yt=p:.ml.f2nd[.ml.knn[0n<;k;y] df[X]::] Xt

@@ -154,7 +154,8 @@ wmode:imax wfreq::              / weighted mode
 mode:wmode[1]                   / standard mode
 
 / weighted average or mode
-isord:{type[x] in 0 8 9h}               / is ordered
+otypes:0 8 9h                           / ordered types
+isord:{type[x] in otypes}               / is ordered
 aom:{$[isord x;avg;mode]x}              / average or mode
 waom:{[w;x]$[isord x;nwavg;wmode][w;x]} / weighted average or mode
 

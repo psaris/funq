@@ -24,6 +24,8 @@ vsm:0f^.ml.tfidf[::;.ml.idf] m
 vsm:0f^.ml.tfidf[.ml.lntf;.ml.idfm] m
 -1 "double normalized term frequency, probabilistic inverse document frequency";
 vsm:0f^.ml.tfidf[.ml.dntf[.5];.ml.pidf] m
+-1 "best matching 25 bm25";
+vsm:0f^.ml.bm25[1.25;.75] m
 -1 "display values of top words based on tf-idf";
 show vsm@'idesc each vsm
 -1 "display top words based on tf-idf";

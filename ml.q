@@ -530,6 +530,12 @@ idfm:{log 1f+max[x]%x:sum 0<x}  / inverse document frequency max
 pidf:{log (max[x]-x)%x:sum 0<x} / probabilistic inverse document frequency
 tfidf:{[tff;idff;x]tff[x]*\:idff x}
 
+/ bm25 term frequency
+bm25tf:{[k;b;x](k+1f)*x%x+k*(1f-b)+b*d%avg d:sum each x}
+bmidf:  {log 1f+(.5+count[x]-df)%.5+df:sum 0<x} / lucene idf
+rbmidf: {log    (.5+count[x]-df)%.5+df:sum 0<x} / robertson idf
+bm25:{[k;b;x] tfidf[bm25tf[k;b];bmidf;x]}       / best matching 25
+
 / naive Bayes
 
 / fit parameters given (w)eighted (m)aximization (f)unction returns a
